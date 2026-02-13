@@ -43,6 +43,11 @@ wp-config.php
 
 # All themes
 #
-# Note: If you wish to whitelist themes,
+# Note: If you wish to whitelist plugins,
 # uncomment the next line
 #/wp-content/themes
+
+# Plugin development artifacts
+node_modules/
+vendor/
+.wp-env.json
