@@ -1,0 +1,58 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mcb/mortgage-calculator",
+	"version": "1.1.0",
+	"title": "Mortgage Calculator",
+	"category": "mcb",
+	"icon": "calculator",
+	"description": "Interactive mortgage calculator with monthly payments and amortization schedule.",
+	"keywords": [ "mortgage", "loan", "calculator", "payment", "amortization" ],
+	"textdomain": "mortgage-calculator-block",
+	"attributes": {
+		"loanAmount": {
+			"type": "number",
+			"default": 300000
+		},
+		"interestRate": {
+			"type": "number",
+			"default": 6.5
+		},
+		"loanTerm": {
+			"type": "number",
+			"default": 30
+		},
+		"downPayment": {
+			"type": "number",
+			"default": 60000
+		},
+		"currencySymbol": {
+			"type": "string",
+			"default": "$"
+		},
+		"showAmortization": {
+			"type": "boolean",
+			"default": true
+		},
+		"theme": {
+			"type": "string",
+			"default": "light",
+			"enum": [ "light", "dark", "ocean", "sunset", "forest" ]
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"color": {
+			"background": true,
+			"text": true,
+			"gradients": true
+		},
+		"spacing": {
+			"padding": true,
+			"margin": true
+		}
+	},
+	"editorScript": "mcb-editor-script",
+	"editorStyle": "mcb-editor-style"
+}
