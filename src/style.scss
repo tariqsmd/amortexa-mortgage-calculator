@@ -1,0 +1,355 @@
+/**
+ * Front-end styles for the Mortgage Calculator block.
+ *
+ * Shared by the rendered block on the site and the live preview in the
+ * editor (the editor bundle imports this file as well).
+ */
+
+.mcb-calc {
+	--mcb-accent: #1a6f4b;
+	--mcb-accent-2: #d97706;
+	--mcb-accent-soft: rgba(26, 111, 75, 0.12);
+	--mcb-bg: #fff;
+	--mcb-surface: #f6f8f7;
+	--mcb-text: #1f2933;
+	--mcb-text-muted: #5c6b73;
+	--mcb-border: #dde4e9;
+
+	background-color: var(--mcb-bg);
+	color: var(--mcb-text);
+	border: 1px solid var(--mcb-border);
+	border-radius: 12px;
+	padding: 24px;
+	font-family: inherit;
+	line-height: 1.5;
+	max-width: 100%;
+
+	&.mcb-theme-dark {
+		--mcb-accent: #4ade80;
+		--mcb-accent-2: #f59e0b;
+		--mcb-accent-soft: rgba(74, 222, 128, 0.14);
+		--mcb-bg: #10161b;
+		--mcb-surface: #1a232a;
+		--mcb-text: #eef3f2;
+		--mcb-text-muted: #9db0b9;
+		--mcb-border: #2d3942;
+	}
+}
+
+.mcb-calc__grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 24px;
+	align-items: start;
+}
+
+@media (max-width: 600px) {
+
+	.mcb-calc__grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.mcb-calc__form {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 16px;
+	margin: 0;
+	padding: 20px;
+	background-color: var(--mcb-surface);
+	border-radius: 10px;
+}
+
+.mcb-calc__control {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.mcb-calc__label,
+.mcb-calc__result-label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--mcb-text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	margin: 0;
+}
+
+.mcb-calc__field {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 12px;
+	font-size: 16px;
+	color: var(--mcb-text);
+	background-color: var(--mcb-bg);
+	border: 1px solid var(--mcb-border);
+	border-radius: 8px;
+
+	&:focus-visible {
+		outline: 2px solid var(--mcb-accent);
+		outline-offset: 1px;
+	}
+}
+
+.mcb-calc__results {
+	padding: 4px 8px;
+}
+
+.mcb-calc__result-primary {
+	font-size: clamp(28px, 4vw, 40px);
+	font-weight: 700;
+	color: var(--mcb-accent);
+	margin: 4px 0 18px;
+	line-height: 1.15;
+}
+
+.mcb-calc__result-list {
+	margin: 0;
+	border-top: 1px solid var(--mcb-border);
+}
+
+.mcb-calc__result-row {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 0;
+	border-bottom: 1px solid var(--mcb-border);
+
+	dt {
+		color: var(--mcb-text-muted);
+	}
+
+	dd {
+		margin: 0;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+.mcb-calc__schedule {
+	margin-top: 24px;
+}
+
+/* Hidden until the view script enhances the block with collapse behavior. */
+.mcb-calc__toggle {
+	display: none;
+	margin: 0 0 12px;
+	padding: 8px 14px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--mcb-accent);
+	background-color: var(--mcb-accent-soft);
+	border: 1px solid transparent;
+	border-radius: 999px;
+	cursor: pointer;
+
+	&[aria-expanded="false"]::after {
+		content: " ▸";
+	}
+
+	&[aria-expanded="true"]::after {
+		content: " ▾";
+	}
+}
+
+.mcb-calc__table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px;
+
+	th,
+	td {
+		padding: 8px 12px;
+		text-align: right;
+		font-variant-numeric: tabular-nums;
+		border-bottom: 1px solid var(--mcb-border);
+	}
+
+	thead th {
+		font-weight: 600;
+		color: var(--mcb-text-muted);
+		text-transform: uppercase;
+		font-size: 12px;
+		letter-spacing: 0.04em;
+	}
+
+	th:first-child,
+	td:first-child {
+		text-align: left;
+	}
+
+	tbody tr:hover td {
+		background-color: var(--mcb-accent-soft);
+	}
+}
+
+@media (max-width: 600px) {
+
+	.mcb-calc {
+		padding: 16px;
+	}
+
+	.mcb-calc__table {
+
+		th,
+		td {
+			padding: 6px 8px;
+			font-size: 13px;
+		}
+	}
+}
+
+/* ----------------------------------------------------------------
+ * Skins (attribute: theme)
+ * Each skin only re-maps the palette custom properties declared on
+ * .mcb-calc, so charts and sliders re-theme automatically.
+ * ---------------------------------------------------------------- */
+
+.mcb-calc.mcb-theme-ocean {
+	--mcb-accent: #2563eb;
+	--mcb-accent-2: #0891b2;
+	--mcb-accent-soft: rgba(37, 99, 235, 0.1);
+	--mcb-surface: #eff6ff;
+	--mcb-border: #bfdbfe;
+}
+
+.mcb-calc.mcb-theme-sunset {
+	--mcb-accent: #ea580c;
+	--mcb-accent-2: #db2777;
+	--mcb-accent-soft: rgba(234, 88, 12, 0.1);
+	--mcb-surface: #fff7ed;
+	--mcb-border: #fed7aa;
+}
+
+.mcb-calc.mcb-theme-forest {
+	--mcb-accent: #15803d;
+	--mcb-accent-2: #65a30d;
+	--mcb-accent-soft: rgba(21, 128, 61, 0.1);
+	--mcb-surface: #f0fdf4;
+	--mcb-border: #bbf7d0;
+}
+
+/* ----------------------------------------------------------------
+ * Range sliders (paired with number inputs)
+ * accent-color themes the track/thumb in all modern browsers.
+ * ---------------------------------------------------------------- */
+
+.mcb-calc__control-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.mcb-calc__slider {
+	flex: 1;
+	min-width: 0;
+	height: 18px;
+	margin: 0;
+	accent-color: var(--mcb-accent);
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid var(--mcb-accent);
+		outline-offset: 2px;
+	}
+}
+
+.mcb-calc__control-row .mcb-calc__field {
+	flex: 0 0 auto;
+	width: 110px;
+}
+
+@media (max-width: 600px) {
+
+	.mcb-calc__control-row {
+		flex-wrap: wrap;
+	}
+
+	.mcb-calc__control-row .mcb-calc__field {
+		width: 100%;
+	}
+}
+
+/* ----------------------------------------------------------------
+ * Charts (dependency-free SVG rendered by the view script/editor)
+ * ---------------------------------------------------------------- */
+
+.mcb-calc__charts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 24px;
+	margin-top: 24px;
+}
+
+.mcb-calc__chart {
+	margin: 0;
+	padding: 20px;
+	background-color: var(--mcb-surface);
+	border-radius: 10px;
+}
+
+.mcb-calc__chart-title {
+	display: block;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--mcb-text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	margin-bottom: 12px;
+}
+
+.mcb-calc__chart-body {
+
+	svg {
+		width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	text {
+		fill: var(--mcb-text-muted);
+		font-family: inherit;
+		font-size: 11px;
+	}
+
+	.mcb-chart__center-title {
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.mcb-chart__center-value {
+		font-size: 16px;
+		font-weight: 700;
+		fill: var(--mcb-text);
+	}
+
+	.mcb-chart__gridline {
+		stroke: var(--mcb-border);
+		stroke-width: 1;
+	}
+}
+
+.mcb-calc__legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	margin-top: 12px;
+}
+
+.mcb-calc__legend-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	color: var(--mcb-text-muted);
+}
+
+.mcb-calc__legend-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	display: inline-block;
+}
