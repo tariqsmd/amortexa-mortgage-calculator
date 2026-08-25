@@ -768,7 +768,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			<div { ...blockProps } ref={ rootRef }>
 				<p className="mcb-calc__editor-note">
 					{ __(
-						'Live preview — visitors will see this calculator rendered by the server.',
+						'Live preview — edit values in the Settings sidebar. Visitors get a fully interactive calculator.',
 						'mortgage-calculator-block'
 					) }
 				</p>
@@ -803,6 +803,7 @@ export default function Edit( { attributes, setAttributes } ) {
 											min={ field.sliderMin }
 											max={ sliderMaxFor( field ) }
 											step={ field.sliderStep }
+											tabIndex={ -1 }
 											aria-label={ field.label }
 											onChange={ ( event ) =>
 												setNumericAttribute(
@@ -822,6 +823,7 @@ export default function Edit( { attributes, setAttributes } ) {
 										min={ field.min }
 										max={ field.max }
 										step={ field.step }
+										tabIndex={ -1 }
 										onChange={ ( event ) =>
 											setNumericAttribute(
 												field.key,

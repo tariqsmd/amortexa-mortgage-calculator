@@ -18,3 +18,12 @@
 	border-left: 3px solid #3858e9;
 	border-radius: 4px;
 }
+
+// Inert preview controls. Without this, clicking the block focuses a nested
+// input/slider, which swallows Backspace/Delete and makes the block feel
+// impossible to remove. Values are edited via the Settings sidebar instead;
+// the front end stays fully interactive.
+.mcb-calc__slider,
+.mcb-calc__field {
+	pointer-events: none;
+}
