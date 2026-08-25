@@ -9,6 +9,8 @@
 import { __ } from '@wordpress/i18n';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import {
+	BaseControl,
+	ColorPalette,
 	PanelBody,
 	SelectControl,
 	TextControl,
@@ -37,6 +39,87 @@ const SKINS = [
 	{
 		value: 'forest',
 		label: __( 'Forest Green', 'mortgage-calculator-block' ),
+	},
+	{
+		value: 'midnight',
+		label: __( 'Midnight Violet', 'mortgage-calculator-block' ),
+	},
+	{
+		value: 'rose',
+		label: __( 'Rose Quartz', 'mortgage-calculator-block' ),
+	},
+	{
+		value: 'slate',
+		label: __( 'Minimal Slate', 'mortgage-calculator-block' ),
+	},
+	{
+		value: 'grape',
+		label: __( 'Royal Grape', 'mortgage-calculator-block' ),
+	},
+	{ value: 'aqua', label: __( 'Aqua Fresh', 'mortgage-calculator-block' ) },
+	{
+		value: 'mocha',
+		label: __( 'Mocha Cream', 'mortgage-calculator-block' ),
+	},
+	{ value: 'cyber', label: __( 'Cyber Neon', 'mortgage-calculator-block' ) },
+];
+
+const FONT_FAMILIES = [
+	{
+		value: 'inherit',
+		label: __( 'Theme default', 'mortgage-calculator-block' ),
+	},
+	{
+		value: 'sans',
+		label: __( 'Modern Sans (system)', 'mortgage-calculator-block' ),
+	},
+	{
+		value: 'serif',
+		label: __( 'Classic Serif (system)', 'mortgage-calculator-block' ),
+	},
+	{
+		value: 'mono',
+		label: __( 'Monospace (system)', 'mortgage-calculator-block' ),
+	},
+];
+
+const FONT_STACKS = {
+	inherit: '',
+	sans: 'system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif',
+	serif: 'Georgia, "Times New Roman", Times, serif',
+	mono: 'ui-monospace, "SF Mono", "Cascadia Code", Consolas, Menlo, monospace',
+};
+
+const COLOR_CONTROLS = [
+	{
+		key: 'accentColor',
+		label: __( 'Accent', 'mortgage-calculator-block' ),
+		cssVar: '--mcb-accent',
+	},
+	{
+		key: 'accentAltColor',
+		label: __( 'Secondary accent (charts)', 'mortgage-calculator-block' ),
+		cssVar: '--mcb-accent-2',
+	},
+	{
+		key: 'labelColor',
+		label: __( 'Label text', 'mortgage-calculator-block' ),
+		cssVar: '--mcb-label-color',
+	},
+	{
+		key: 'fieldTextColor',
+		label: __( 'Field text', 'mortgage-calculator-block' ),
+		cssVar: '--mcb-field-text',
+	},
+	{
+		key: 'fieldBackgroundColor',
+		label: __( 'Field background', 'mortgage-calculator-block' ),
+		cssVar: '--mcb-field-bg',
+	},
+	{
+		key: 'fieldBorderColor',
+		label: __( 'Field border', 'mortgage-calculator-block' ),
+		cssVar: '--mcb-field-border',
 	},
 ];
 
@@ -84,19 +167,22 @@ const NUMERIC_FIELDS = [
 ];
 
 /**
- * Formats an amount with a currency symbol prefix.
+ * Formats an amount with a currency symbol placed before or after it.
  *
- * @param {number} amount Amount to format.
- * @param {string} symbol Currency symbol.
- * @return {string} Formatted amount such as "$1,234.56".
+ * @param {number} amount   Amount to format.
+ * @param {string} symbol   Currency symbol.
+ * @param {string} position Symbol placement: 'prefix' or 'suffix'.
+ * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 €".
  */
-function formatAmount( amount, symbol ) {
+function formatAmount( amount, symbol, position = 'prefix' ) {
 	const formatted = new Intl.NumberFormat( undefined, {
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2,
 	} ).format( Number.isFinite( amount ) ? amount : 0 );
 
-	return `${ symbol }${ formatted }`;
+	return 'suffix' === position
+		? `${ formatted }${ symbol }`
+		: `${ symbol }${ formatted }`;
 }
 
 /**
@@ -144,12 +230,16 @@ export default function Edit( { attributes, setAttributes } ) {
 		loanTerm,
 		downPayment,
 		currencySymbol,
+		currencyPosition,
 		showAmortization,
 		showCharts,
+		showSliders,
+		showResults,
 		chartType,
 		paymentFontSize,
 		paymentFontWeight,
 		theme,
+		fontFamily,
 	} = attributes;
 
 	const result = useMemo(
@@ -173,10 +263,42 @@ export default function Edit( { attributes, setAttributes } ) {
 		[ result.principal, interestRate, loanTerm ]
 	);
 
+	/**
+	 * Builds inline CSS custom property overrides from the per-block color
+	 * and font settings so they beat any skin in both specificity orders.
+	 *
+	 * @return {Object} React style object with CSS variables.
+	 */
+	function getPaletteOverrides() {
+		const overrides = {};
+
+		COLOR_CONTROLS.forEach( ( control ) => {
+			const value = attributes[ control.key ];
+
+			if ( value ) {
+				overrides[ control.cssVar ] = value;
+			}
+		} );
+
+		const stack =
+			FONT_STACKS[
+				FONT_FAMILIES.some( ( f ) => f.value === fontFamily )
+					? fontFamily
+					: 'inherit'
+			];
+
+		if ( stack ) {
+			overrides.fontFamily = stack;
+		}
+
+		return Object.keys( overrides ).length ? overrides : undefined;
+	}
+
 	const blockProps = useBlockProps( {
 		className: `mcb-calc mcb-theme-${
 			SKINS.some( ( skin ) => skin.value === theme ) ? theme : 'light'
 		}`,
+		style: getPaletteOverrides(),
 	} );
 
 	const donutRef = useRef( null );
@@ -214,7 +336,8 @@ export default function Edit( { attributes, setAttributes } ) {
 						),
 						centerValue: formatAmount(
 							result.monthlyPayment,
-							currencySymbol
+							currencySymbol,
+							currencyPosition
 						),
 					}
 				)
@@ -244,7 +367,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						width: 520,
 						height: 250,
 						formatY: ( value ) =>
-							formatAmount( value, '' ).replace(
+							formatAmount( value, '', currencyPosition ).replace(
 								/\B(?=(\d{3})+(?!\d))/g,
 								','
 							),
@@ -292,7 +415,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				color: palette.accent2,
 			},
 		] );
-	}, [ result, chartSchedule, currencySymbol ] );
+	}, [ result, chartSchedule, currencySymbol, currencyPosition ] );
 
 	const setNumericAttribute = ( key, raw ) => {
 		setAttributes( {
@@ -323,9 +446,27 @@ export default function Edit( { attributes, setAttributes } ) {
 	const scheduleRows = chartSchedule.map( ( row ) => (
 		<tr key={ row.year }>
 			<td>{ row.year }</td>
-			<td>{ formatAmount( row.principal, currencySymbol ) }</td>
-			<td>{ formatAmount( row.interest, currencySymbol ) }</td>
-			<td>{ formatAmount( row.balance, currencySymbol ) }</td>
+			<td>
+				{ formatAmount(
+					row.principal,
+					currencySymbol,
+					currencyPosition
+				) }
+			</td>
+			<td>
+				{ formatAmount(
+					row.interest,
+					currencySymbol,
+					currencyPosition
+				) }
+			</td>
+			<td>
+				{ formatAmount(
+					row.balance,
+					currencySymbol,
+					currencyPosition
+				) }
+			</td>
 		</tr>
 	) );
 
@@ -365,11 +506,61 @@ export default function Edit( { attributes, setAttributes } ) {
 							} )
 						}
 					/>
+					<SelectControl
+						label={ __(
+							'Currency Position',
+							'mortgage-calculator-block'
+						) }
+						value={
+							[ 'prefix', 'suffix' ].includes( currencyPosition )
+								? currencyPosition
+								: 'prefix'
+						}
+						options={ [
+							{
+								value: 'prefix',
+								label: __(
+									'Before amount ($99)',
+									'mortgage-calculator-block'
+								),
+							},
+							{
+								value: 'suffix',
+								label: __(
+									'After amount (99 €)',
+									'mortgage-calculator-block'
+								),
+							},
+						] }
+						onChange={ ( value ) =>
+							setAttributes( { currencyPosition: value } )
+						}
+					/>
 				</PanelBody>
 
 				<PanelBody
 					title={ __( 'Display', 'mortgage-calculator-block' ) }
 				>
+					<ToggleControl
+						label={ __(
+							'Show Results Summary',
+							'mortgage-calculator-block'
+						) }
+						checked={ showResults }
+						onChange={ ( value ) =>
+							setAttributes( { showResults: value } )
+						}
+					/>
+					<ToggleControl
+						label={ __(
+							'Show Sliders',
+							'mortgage-calculator-block'
+						) }
+						checked={ showSliders }
+						onChange={ ( value ) =>
+							setAttributes( { showSliders: value } )
+						}
+					/>
 					<ToggleControl
 						label={ __(
 							'Show Charts',
@@ -442,9 +633,48 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 
 				<PanelBody
+					title={ __( 'Colors', 'mortgage-calculator-block' ) }
+					initialOpen={ false }
+				>
+					<p>
+						{ __(
+							'Leave a color empty to use the selected skin.',
+							'mortgage-calculator-block'
+						) }
+					</p>
+					{ COLOR_CONTROLS.map( ( control ) => (
+						<BaseControl
+							key={ control.key }
+							id={ `mcb-color-${ control.key }` }
+							label={ control.label }
+						>
+							<ColorPalette
+								value={ attributes[ control.key ] || undefined }
+								onChange={ ( value ) =>
+									setAttributes( {
+										[ control.key ]: value || '',
+									} )
+								}
+							/>
+						</BaseControl>
+					) ) }
+				</PanelBody>
+
+				<PanelBody
 					title={ __( 'Typography', 'mortgage-calculator-block' ) }
 					initialOpen={ false }
 				>
+					<SelectControl
+						label={ __(
+							'Font Family',
+							'mortgage-calculator-block'
+						) }
+						value={ fontFamily }
+						options={ FONT_FAMILIES }
+						onChange={ ( value ) =>
+							setAttributes( { fontFamily: value } )
+						}
+					/>
 					<TextControl
 						type="number"
 						label={ __(
@@ -542,7 +772,11 @@ export default function Edit( { attributes, setAttributes } ) {
 						'mortgage-calculator-block'
 					) }
 				</p>
-				<div className="mcb-calc__grid">
+				<div
+					className={ `mcb-calc__grid${
+						showResults ? '' : ' mcb-calc__grid--form-only'
+					}` }
+				>
 					<form
 						className="mcb-calc__form"
 						onSubmit={ ( event ) => event.preventDefault() }
@@ -559,23 +793,25 @@ export default function Edit( { attributes, setAttributes } ) {
 									{ field.label }
 								</label>
 								<div className="mcb-calc__control-row">
-									<input
-										type="range"
-										className="mcb-calc__slider"
-										value={ Number(
-											attributes[ field.key ]
-										) }
-										min={ field.sliderMin }
-										max={ sliderMaxFor( field ) }
-										step={ field.sliderStep }
-										aria-label={ field.label }
-										onChange={ ( event ) =>
-											setNumericAttribute(
-												field.key,
-												event.target.value
-											)
-										}
-									/>
+									{ showSliders && (
+										<input
+											type="range"
+											className="mcb-calc__slider"
+											value={ Number(
+												attributes[ field.key ]
+											) }
+											min={ field.sliderMin }
+											max={ sliderMaxFor( field ) }
+											step={ field.sliderStep }
+											aria-label={ field.label }
+											onChange={ ( event ) =>
+												setNumericAttribute(
+													field.key,
+													event.target.value
+												)
+											}
+										/>
+									) }
 									<input
 										type="number"
 										id={ `mcb-edit-${ field.key }` }
@@ -598,67 +834,73 @@ export default function Edit( { attributes, setAttributes } ) {
 						) ) }
 					</form>
 
-					<div className="mcb-calc__results">
-						<p className="mcb-calc__result-label">
-							{ __(
-								'Monthly Payment',
-								'mortgage-calculator-block'
-							) }
-						</p>
-						<p
-							className="mcb-calc__result-primary"
-							style={ paymentTypography }
-						>
-							{ formatAmount(
-								result.monthlyPayment,
-								currencySymbol
-							) }
-						</p>
-						<dl className="mcb-calc__result-list">
-							<div className="mcb-calc__result-row">
-								<dt>
-									{ __(
-										'Financed Principal',
-										'mortgage-calculator-block'
-									) }
-								</dt>
-								<dd>
-									{ formatAmount(
-										result.principal,
-										currencySymbol
-									) }
-								</dd>
-							</div>
-							<div className="mcb-calc__result-row">
-								<dt>
-									{ __(
-										'Total Interest',
-										'mortgage-calculator-block'
-									) }
-								</dt>
-								<dd>
-									{ formatAmount(
-										result.totalInterest,
-										currencySymbol
-									) }
-								</dd>
-							</div>
-							<div className="mcb-calc__result-row">
-								<dt>
-									{ __(
-										'Total Paid',
-										'mortgage-calculator-block'
-									) }
-								</dt>
-								<dd>
-									{ formatAmount(
-										result.totalPaid,
-										currencySymbol
-									) }
-								</dd>
-							</div>
-						</dl>
-					</div>
+					{ showResults && (
+						<div className="mcb-calc__results">
+							<p className="mcb-calc__result-label">
+								{ __(
+									'Monthly Payment',
+									'mortgage-calculator-block'
+								) }
+							</p>
+							<p
+								className="mcb-calc__result-primary"
+								style={ paymentTypography }
+							>
+								{ formatAmount(
+									result.monthlyPayment,
+									currencySymbol,
+									currencyPosition
+								) }
+							</p>
+							<dl className="mcb-calc__result-list">
+								<div className="mcb-calc__result-row">
+									<dt>
+										{ __(
+											'Financed Principal',
+											'mortgage-calculator-block'
+										) }
+									</dt>
+									<dd>
+										{ formatAmount(
+											result.principal,
+											currencySymbol,
+											currencyPosition
+										) }
+									</dd>
+								</div>
+								<div className="mcb-calc__result-row">
+									<dt>
+										{ __(
+											'Total Interest',
+											'mortgage-calculator-block'
+										) }
+									</dt>
+									<dd>
+										{ formatAmount(
+											result.totalInterest,
+											currencySymbol,
+											currencyPosition
+										) }
+									</dd>
+								</div>
+								<div className="mcb-calc__result-row">
+									<dt>
+										{ __(
+											'Total Paid',
+											'mortgage-calculator-block'
+										) }
+									</dt>
+									<dd>
+										{ formatAmount(
+											result.totalPaid,
+											currencySymbol,
+											currencyPosition
+										) }
+									</dd>
+								</div>
+							</dl>
+						</div>
+					) }
 				</div>
 
 				{ showCharts && (

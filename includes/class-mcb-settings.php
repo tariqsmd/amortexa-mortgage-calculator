@@ -111,6 +111,49 @@ class MCB_Settings {
 			self::PAGE_SLUG,
 			'mcb_section_defaults'
 		);
+
+		add_settings_field(
+			'default_loan_amount',
+			esc_html__( 'Default loan amount', MCB_TEXT_DOMAIN ),
+			array( $this, 'render_loan_amount_field' ),
+			self::PAGE_SLUG,
+			'mcb_section_defaults',
+			array( 'label_for' => 'mcb-default-loan-amount' )
+		);
+
+		add_settings_field(
+			'default_down_payment',
+			esc_html__( 'Default down payment', MCB_TEXT_DOMAIN ),
+			array( $this, 'render_down_payment_field' ),
+			self::PAGE_SLUG,
+			'mcb_section_defaults',
+			array( 'label_for' => 'mcb-default-down-payment' )
+		);
+
+		add_settings_field(
+			'default_loan_term',
+			esc_html__( 'Default term (years)', MCB_TEXT_DOMAIN ),
+			array( $this, 'render_loan_term_field' ),
+			self::PAGE_SLUG,
+			'mcb_section_defaults',
+			array( 'label_for' => 'mcb-default-loan-term' )
+		);
+
+		add_settings_field(
+			'default_theme',
+			esc_html__( 'Default skin', MCB_TEXT_DOMAIN ),
+			array( $this, 'render_theme_field' ),
+			self::PAGE_SLUG,
+			'mcb_section_defaults'
+		);
+
+		add_settings_field(
+			'default_chart_type',
+			esc_html__( 'Default chart type', MCB_TEXT_DOMAIN ),
+			array( $this, 'render_chart_type_field' ),
+			self::PAGE_SLUG,
+			'mcb_section_defaults'
+		);
 	}
 
 	/**
@@ -226,6 +269,117 @@ class MCB_Settings {
 			/>
 			<?php esc_html_e( 'When enabled, new blocks include the annual amortization schedule.', MCB_TEXT_DOMAIN ); ?>
 		</label>
+		<?php
+	}
+
+	/**
+	 * Renders the default loan amount field.
+	 */
+	public function render_loan_amount_field() {
+		$settings = mcb_get_settings();
+		?>
+		<input
+			type="number"
+			id="mcb-default-loan-amount"
+			name="mcb_settings[default_loan_amount]"
+			value="<?php echo esc_attr( (string) $settings['default_loan_amount'] ); ?>"
+			min="0"
+			step="any"
+			class="regular-text"
+		/>
+		<p class="description"><?php esc_html_e( 'Loan amount pre-filled when a new calculator block is inserted.', MCB_TEXT_DOMAIN ); ?></p>
+		<?php
+	}
+
+	/**
+	 * Renders the default down payment field.
+	 */
+	public function render_down_payment_field() {
+		$settings = mcb_get_settings();
+		?>
+		<input
+			type="number"
+			id="mcb-default-down-payment"
+			name="mcb_settings[default_down_payment]"
+			value="<?php echo esc_attr( (string) $settings['default_down_payment'] ); ?>"
+			min="0"
+			step="any"
+			class="regular-text"
+		/>
+		<p class="description"><?php esc_html_e( 'Down payment pre-filled for new blocks. Interest is charged on the financed principal only.', MCB_TEXT_DOMAIN ); ?></p>
+		<?php
+	}
+
+	/**
+	 * Renders the default loan term field.
+	 */
+	public function render_loan_term_field() {
+		$settings = mcb_get_settings();
+		?>
+		<input
+			type="number"
+			id="mcb-default-loan-term"
+			name="mcb_settings[default_loan_term]"
+			value="<?php echo esc_attr( (string) $settings['default_loan_term'] ); ?>"
+			min="1"
+			max="60"
+			step="1"
+			class="small-text"
+		/>
+		<p class="description"><?php esc_html_e( 'Loan term in years (1–60) used for new blocks and API fallbacks.', MCB_TEXT_DOMAIN ); ?></p>
+		<?php
+	}
+
+	/**
+	 * Renders the default skin select field.
+	 */
+	public function render_theme_field() {
+		$settings = mcb_get_settings();
+		$skins    = array(
+			'light'    => __( 'Classic Light', MCB_TEXT_DOMAIN ),
+			'dark'     => __( 'Elegant Dark', MCB_TEXT_DOMAIN ),
+			'ocean'    => __( 'Ocean Blue', MCB_TEXT_DOMAIN ),
+			'sunset'   => __( 'Sunset Warm', MCB_TEXT_DOMAIN ),
+			'forest'   => __( 'Forest Green', MCB_TEXT_DOMAIN ),
+			'midnight' => __( 'Midnight Violet', MCB_TEXT_DOMAIN ),
+			'rose'     => __( 'Rose Quartz', MCB_TEXT_DOMAIN ),
+			'slate'    => __( 'Minimal Slate', MCB_TEXT_DOMAIN ),
+			'grape'    => __( 'Royal Grape', MCB_TEXT_DOMAIN ),
+			'aqua'     => __( 'Aqua Fresh', MCB_TEXT_DOMAIN ),
+			'mocha'    => __( 'Mocha Cream', MCB_TEXT_DOMAIN ),
+			'cyber'    => __( 'Cyber Neon', MCB_TEXT_DOMAIN ),
+		);
+		?>
+		<select name="mcb_settings[default_theme]">
+			<?php foreach ( $skins as $value => $label ) : ?>
+				<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $settings['default_theme'], $value ); ?>>
+					<?php echo esc_html( $label ); ?>
+				</option>
+			<?php endforeach; ?>
+		</select>
+		<p class="description"><?php esc_html_e( 'Skin applied to new blocks; each block can still override it in the editor.', MCB_TEXT_DOMAIN ); ?></p>
+		<?php
+	}
+
+	/**
+	 * Renders the default chart type select field.
+	 */
+	public function render_chart_type_field() {
+		$settings = mcb_get_settings();
+		$types    = array(
+			'both'  => __( 'Both charts', MCB_TEXT_DOMAIN ),
+			'donut' => __( 'Donut only', MCB_TEXT_DOMAIN ),
+			'line'  => __( 'Line only', MCB_TEXT_DOMAIN ),
+		);
+		?>
+		<select name="mcb_settings[default_chart_type]">
+			<?php foreach ( $types as $value => $label ) : ?>
+				<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $settings['default_chart_type'], $value ); ?>>
+					<?php echo esc_html( $label ); ?>
+				</option>
+			<?php endforeach; ?>
+		</select>
+		<p class="description"><?php esc_html_e( 'Chart selection used when no explicit value is set.', MCB_TEXT_DOMAIN ); ?></p>
 		<?php
 	}
 

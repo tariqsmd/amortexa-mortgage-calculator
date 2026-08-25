@@ -50,11 +50,12 @@ function buildXTicks( schedule ) {
 }
 
 /**
- * Formats an amount using the block's configured symbol and precision.
+ * Formats an amount using the block's configured symbol, precision, and
+ * symbol position.
  *
  * @param {number} amount Amount to format.
  * @param {Object} config Block config parsed from data-mcb-config.
- * @return {string} Formatted amount such as "$1,234.56".
+ * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 €".
  */
 function formatAmount( amount, config ) {
 	const decimals = Number.isFinite( config.decimals ) ? config.decimals : 2;
@@ -63,7 +64,9 @@ function formatAmount( amount, config ) {
 		maximumFractionDigits: decimals,
 	} ).format( Number.isFinite( amount ) ? amount : 0 );
 
-	return `${ config.symbol }${ formatted }`;
+	return 'suffix' === config.position
+		? `${ formatted }${ config.symbol }`
+		: `${ config.symbol }${ formatted }`;
 }
 
 /**

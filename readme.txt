@@ -4,7 +4,7 @@ Tags: block, mortgage, calculator, finance, gutenberg
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,8 @@ Features:
 
 * Live monthly payment calculation as visitors type.
 * Slider + number input pairs for loan amount, down payment, rate, and term.
-* Five skins: Classic Light, Elegant Dark, Ocean Blue, Sunset Warm, Forest Green.
+* Twelve skins — Classic Light, Elegant Dark, Ocean Blue, Sunset Warm, Forest Green, Midnight Violet, Rose Quartz, Minimal Slate, Royal Grape, Aqua Fresh, Mocha Cream, Cyber Neon.
+* Per-block Colors panel: override the accent, secondary accent, labels, field text/background/border; plus a whole-calculator font family selector.
 * Dependency-free SVG charts: payment composition donut and balance-over-time line chart with cumulative interest.
 * Down payment support — interest is charged on the financed principal only.
 * Annual amortization schedule (principal vs. interest vs. remaining balance per year).
@@ -53,7 +54,7 @@ A 30-year loan would produce 360 table rows on every page load. Rows are aggrega
 
 = Can I change the currency symbol? =
 
-Yes — per block via its "Currency symbol" setting, site-wide via Settings → Mortgage Calculator, or programmatically with the `mcb_currency_symbol` filter.
+Yes — per block via its "Currency symbol" setting, site-wide via Settings → Mortgage Calculator, or programmatically with the `mcb_currency_symbol` filter. Each block can also place the symbol before or after amounts via its "Currency position" setting.
 
 = Is there a REST API? =
 
@@ -69,6 +70,16 @@ Yes. POST to `/wp-json/mcb/v1/calculate` with JSON body `{ "amount": 300000, "in
 * Action `mcb_settings_saved` — fired after admin settings are updated.
 
 == Changelog ==
+
+= 1.2.0 =
+* New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type under Settings → Mortgage Calculator.
+* New: per-block toggles to show/hide the results summary and the range sliders.
+* New: currency symbol position option per block — before the amount ($99) or after (99 €).
+* New: seven additional design skins — Midnight Violet, Rose Quartz, Minimal Slate, Royal Grape, Aqua Fresh, Mocha Cream, and Cyber Neon (twelve in total).
+* New: per-block Colors panel to override accent, secondary accent, label text, field text/background/border colors.
+* New: font family selector for the calculator (theme default, modern sans, classic serif, monospace).
+* Improved: layout now adapts to the block's container width — columns stack, sliders wrap, charts reflow, and the amortization table scrolls inside narrow columns.
+* Fixed: editor script dependencies are now read from the generated asset manifest, preventing load-order issues in the block editor.
 
 = 1.1.0 =
 * New: five visual skins — Classic Light, Elegant Dark, Ocean Blue, Sunset Warm, Forest Green.

@@ -23,10 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $decimals = absint( mcb_get_settings()['decimal_precision'] );
 $uid      = function_exists( 'wp_unique_id' ) ? wp_unique_id( 'mcb-calc-' ) : uniqid( 'mcb-calc-' );
+$position = isset( $attrs['currencyPosition'] ) ? (string) $attrs['currencyPosition'] : 'prefix';
 
 $config = array(
 	'decimals'         => $decimals,
 	'symbol'           => $symbol,
+	'position'         => $position,
 	'showAmortization' => ! empty( $attrs['showAmortization'] ),
 	'showCharts'       => ! empty( $attrs['showCharts'] ),
 	'chartType'        => (string) $attrs['chartType'],
@@ -115,12 +117,48 @@ if ( '' !== $attrs['paymentFontWeight'] ) {
 }
 
 $typography_attr = implode( ';', $typography );
+
+/*
+ * Per-block palette overrides (accent, labels, fields) and font family.
+ * Empty attribute values mean "use the active skin" and are skipped, so
+ * skins keep working until a user explicitly overrides a color.
+ */
+$style_vars = array();
+
+$color_vars = array(
+	'accentColor'          => '--mcb-accent',
+	'accentAltColor'       => '--mcb-accent-2',
+	'labelColor'           => '--mcb-label-color',
+	'fieldTextColor'       => '--mcb-field-text',
+	'fieldBackgroundColor' => '--mcb-field-bg',
+	'fieldBorderColor'     => '--mcb-field-border',
+);
+
+foreach ( $color_vars as $attr_key => $css_var ) {
+	if ( ! empty( $attrs[ $attr_key ] ) ) {
+		$style_vars[] = $css_var . ':' . (string) $attrs[ $attr_key ];
+	}
+}
+
+$font_stack = mcb_get_font_stack( isset( $attrs['fontFamily'] ) ? (string) $attrs['fontFamily'] : 'inherit' );
+
+if ( '' !== $font_stack ) {
+	$style_vars[] = 'font-family:' . $font_stack;
+}
+
+$wrapper_args = array(
+	'class' => 'mcb-calc mcb-theme-' . esc_attr( $attrs['theme'] ),
+);
+
+if ( ! empty( $style_vars ) ) {
+	$wrapper_args['style'] = implode( ';', $style_vars );
+}
 ?>
 <div
-	<?php echo get_block_wrapper_attributes( array( 'class' => 'mcb-calc mcb-theme-' . esc_attr( $attrs['theme'] ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() escapes internally. ?>
+	<?php echo get_block_wrapper_attributes( $wrapper_args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() escapes internally. ?>
 	data-mcb-config="<?php echo esc_attr( wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) ); ?>"
 >
-	<div class="mcb-calc__grid">
+	<div class="mcb-calc__grid<?php echo empty( $attrs['showResults'] ) ? ' mcb-calc__grid--form-only' : ''; ?>">
 		<form class="mcb-calc__form" autocomplete="off">
 			<?php foreach ( $fields as $field ) : ?>
 				<div class="mcb-calc__control">
@@ -128,16 +166,18 @@ $typography_attr = implode( ';', $typography );
 						<?php echo esc_html( $field['label'] ); ?>
 					</label>
 					<div class="mcb-calc__control-row">
-						<input
-							type="range"
-							class="mcb-calc__slider"
-							data-mcb-slider="<?php echo esc_attr( $field['name'] ); ?>"
-							value="<?php echo esc_attr( $field['value'] ); ?>"
-							min="<?php echo esc_attr( $field['smin'] ); ?>"
-							max="<?php echo esc_attr( $field['smax'] ); ?>"
-							step="<?php echo esc_attr( $field['sstep'] ); ?>"
-							aria-label="<?php echo esc_attr( $field['label'] ); ?>"
-						/>
+						<?php if ( ! empty( $attrs['showSliders'] ) ) : ?>
+							<input
+								type="range"
+								class="mcb-calc__slider"
+								data-mcb-slider="<?php echo esc_attr( $field['name'] ); ?>"
+								value="<?php echo esc_attr( $field['value'] ); ?>"
+								min="<?php echo esc_attr( $field['smin'] ); ?>"
+								max="<?php echo esc_attr( $field['smax'] ); ?>"
+								step="<?php echo esc_attr( $field['sstep'] ); ?>"
+								aria-label="<?php echo esc_attr( $field['label'] ); ?>"
+							/>
+						<?php endif; ?>
 						<input
 							type="number"
 							class="mcb-calc__field"
@@ -156,40 +196,42 @@ $typography_attr = implode( ';', $typography );
 			<?php endforeach; ?>
 		</form>
 
-		<div class="mcb-calc__results">
-			<p class="mcb-calc__result-label" data-mcb-label="monthly">
-				<?php echo esc_html( $config['labels']['monthly'] ); ?>
-			</p>
-			<p
-				class="mcb-calc__result-primary"
-				data-mcb-bind="monthlyPayment"
-				<?php if ( '' !== $typography_attr ) : ?>
-					style="<?php echo esc_attr( $typography_attr ); ?>"
-				<?php endif; ?>
-			>
-				<?php echo esc_html( mcb_format_amount( $result['monthly_payment'], $symbol, $decimals ) ); ?>
-			</p>
-			<dl class="mcb-calc__result-list">
-				<div class="mcb-calc__result-row">
-					<dt><?php echo esc_html( $config['labels']['principal'] ); ?></dt>
-					<dd data-mcb-bind="principal">
-						<?php echo esc_html( mcb_format_amount( $result['principal'], $symbol, $decimals ) ); ?>
-					</dd>
-				</div>
-				<div class="mcb-calc__result-row">
-					<dt><?php echo esc_html( $config['labels']['totalInt'] ); ?></dt>
-					<dd data-mcb-bind="totalInterest">
-						<?php echo esc_html( mcb_format_amount( $result['total_interest'], $symbol, $decimals ) ); ?>
-					</dd>
-				</div>
-				<div class="mcb-calc__result-row">
-					<dt><?php echo esc_html( $config['labels']['totalPaid'] ); ?></dt>
-					<dd data-mcb-bind="totalPaid">
-						<?php echo esc_html( mcb_format_amount( $result['total_paid'], $symbol, $decimals ) ); ?>
-					</dd>
-				</div>
-			</dl>
-		</div>
+		<?php if ( ! empty( $attrs['showResults'] ) ) : ?>
+			<div class="mcb-calc__results">
+				<p class="mcb-calc__result-label" data-mcb-label="monthly">
+					<?php echo esc_html( $config['labels']['monthly'] ); ?>
+				</p>
+				<p
+					class="mcb-calc__result-primary"
+					data-mcb-bind="monthlyPayment"
+					<?php if ( '' !== $typography_attr ) : ?>
+						style="<?php echo esc_attr( $typography_attr ); ?>"
+					<?php endif; ?>
+				>
+					<?php echo esc_html( mcb_format_amount( $result['monthly_payment'], $symbol, $decimals, $position ) ); ?>
+				</p>
+				<dl class="mcb-calc__result-list">
+					<div class="mcb-calc__result-row">
+						<dt><?php echo esc_html( $config['labels']['principal'] ); ?></dt>
+						<dd data-mcb-bind="principal">
+							<?php echo esc_html( mcb_format_amount( $result['principal'], $symbol, $decimals, $position ) ); ?>
+						</dd>
+					</div>
+					<div class="mcb-calc__result-row">
+						<dt><?php echo esc_html( $config['labels']['totalInt'] ); ?></dt>
+						<dd data-mcb-bind="totalInterest">
+							<?php echo esc_html( mcb_format_amount( $result['total_interest'], $symbol, $decimals, $position ) ); ?>
+						</dd>
+					</div>
+					<div class="mcb-calc__result-row">
+						<dt><?php echo esc_html( $config['labels']['totalPaid'] ); ?></dt>
+						<dd data-mcb-bind="totalPaid">
+							<?php echo esc_html( mcb_format_amount( $result['total_paid'], $symbol, $decimals, $position ) ); ?>
+						</dd>
+					</div>
+				</dl>
+			</div>
+		<?php endif; ?>
 	</div>
 
 	<?php if ( ! empty( $attrs['showCharts'] ) ) : ?>
@@ -237,9 +279,9 @@ $typography_attr = implode( ';', $typography );
 					<?php foreach ( $result['schedule'] as $row ) : ?>
 						<tr>
 							<td><?php echo esc_html( (string) $row['year'] ); ?></td>
-							<td><?php echo esc_html( mcb_format_amount( $row['principal'], $symbol, $decimals ) ); ?></td>
-							<td><?php echo esc_html( mcb_format_amount( $row['interest'], $symbol, $decimals ) ); ?></td>
-							<td><?php echo esc_html( mcb_format_amount( $row['balance'], $symbol, $decimals ) ); ?></td>
+							<td><?php echo esc_html( mcb_format_amount( $row['principal'], $symbol, $decimals, $position ) ); ?></td>
+							<td><?php echo esc_html( mcb_format_amount( $row['interest'], $symbol, $decimals, $position ) ); ?></td>
+							<td><?php echo esc_html( mcb_format_amount( $row['balance'], $symbol, $decimals, $position ) ); ?></td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>

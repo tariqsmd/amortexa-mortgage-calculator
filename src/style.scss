@@ -15,6 +15,13 @@
 	--mcb-text-muted: #5c6b73;
 	--mcb-border: #dde4e9;
 
+	/* Element-level hooks so per-block color controls can target inputs,
+	   labels, and borders without touching the rest of the palette. */
+	--mcb-field-bg: var(--mcb-bg);
+	--mcb-field-border: var(--mcb-border);
+	--mcb-field-text: var(--mcb-text);
+	--mcb-label-color: var(--mcb-text-muted);
+
 	background-color: var(--mcb-bg);
 	color: var(--mcb-text);
 	border: 1px solid var(--mcb-border);
@@ -23,6 +30,11 @@
 	font-family: inherit;
 	line-height: 1.5;
 	max-width: 100%;
+
+	/* Turns the calculator into a size container so all responsive rules
+	   below respond to its own rendered width, not the viewport. */
+	container-type: inline-size;
+	container-name: mcb-calc;
 
 	&.mcb-theme-dark {
 		--mcb-accent: #4ade80;
@@ -43,8 +55,15 @@
 	align-items: start;
 }
 
+/* Single-column variant used when the results summary is disabled. */
+.mcb-calc__grid--form-only {
+	grid-template-columns: minmax(0, 1fr);
+}
+
 @media (max-width: 600px) {
 
+	/* Viewport fallback for browsers without container query support;
+	   the @container rules below are the primary breakpoints. */
 	.mcb-calc__grid {
 		grid-template-columns: 1fr;
 	}
@@ -71,7 +90,7 @@
 .mcb-calc__result-label {
 	font-size: 13px;
 	font-weight: 600;
-	color: var(--mcb-text-muted);
+	color: var(--mcb-label-color);
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	margin: 0;
@@ -82,9 +101,9 @@
 	box-sizing: border-box;
 	padding: 10px 12px;
 	font-size: 16px;
-	color: var(--mcb-text);
-	background-color: var(--mcb-bg);
-	border: 1px solid var(--mcb-border);
+	color: var(--mcb-field-text);
+	background-color: var(--mcb-field-bg);
+	border: 1px solid var(--mcb-field-border);
 	border-radius: 8px;
 
 	&:focus-visible {
@@ -97,8 +116,10 @@
 	padding: 4px 8px;
 }
 
+/* cqw scales with the block's own width (falls back to viewport units
+   only when no ancestor container exists). */
 .mcb-calc__result-primary {
-	font-size: clamp(28px, 4vw, 40px);
+	font-size: clamp(24px, 7cqw, 40px);
 	font-weight: 700;
 	color: var(--mcb-accent);
 	margin: 4px 0 18px;
@@ -130,6 +151,10 @@
 
 .mcb-calc__schedule {
 	margin-top: 24px;
+
+	/* Keeps the schedule usable inside narrow columns instead of squeezing
+	   the cells — the table scrolls horizontally when space runs out. */
+	overflow-x: auto;
 }
 
 /* Hidden until the view script enhances the block with collapse behavior. */
@@ -156,6 +181,9 @@
 
 .mcb-calc__table {
 	width: 100%;
+
+	/* Pairs with the schedule wrapper's horizontal scroll. */
+	min-width: 440px;
 	border-collapse: collapse;
 	font-size: 14px;
 
@@ -202,6 +230,54 @@
 }
 
 /* ----------------------------------------------------------------
+ * Container-based responsive layout
+ * The block is a size container (container-type on .mcb-calc), so
+ * these breakpoints respond to the width of whatever column or box
+ * the calculator is placed in — not the browser viewport. The
+ * @media rules elsewhere remain as fallbacks for older browsers.
+ * ---------------------------------------------------------------- */
+
+@container mcb-calc (max-width: 640px) {
+
+	.mcb-calc__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@container mcb-calc (max-width: 560px) {
+
+	.mcb-calc__form {
+		padding: 16px;
+	}
+
+	.mcb-calc__charts {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 16px;
+	}
+}
+
+@container mcb-calc (max-width: 520px) {
+
+	.mcb-calc__control-row {
+		flex-wrap: wrap;
+	}
+
+	.mcb-calc__control-row .mcb-calc__field {
+		flex: 1 1 100%;
+		width: 100%;
+	}
+
+	.mcb-calc__table {
+
+		th,
+		td {
+			padding: 6px 8px;
+			font-size: 13px;
+		}
+	}
+}
+
+/* ----------------------------------------------------------------
  * Skins (attribute: theme)
  * Each skin only re-maps the palette custom properties declared on
  * .mcb-calc, so charts and sliders re-theme automatically.
@@ -229,6 +305,75 @@
 	--mcb-accent-soft: rgba(21, 128, 61, 0.1);
 	--mcb-surface: #f0fdf4;
 	--mcb-border: #bbf7d0;
+}
+
+/* Deep indigo-black with violet and gold accents. */
+.mcb-calc.mcb-theme-midnight {
+	--mcb-accent: #8b5cf6;
+	--mcb-accent-2: #fbbf24;
+	--mcb-accent-soft: rgba(139, 92, 246, 0.16);
+	--mcb-bg: #14122b;
+	--mcb-surface: #1e1b3a;
+	--mcb-text: #ede9fe;
+	--mcb-text-muted: #a5a1c6;
+	--mcb-border: #322e5c;
+}
+
+/* Soft blush pink, elegant and light. */
+.mcb-calc.mcb-theme-rose {
+	--mcb-accent: #e11d48;
+	--mcb-accent-2: #a21caf;
+	--mcb-accent-soft: rgba(225, 29, 72, 0.08);
+	--mcb-surface: #fff1f2;
+	--mcb-border: #fecdd3;
+}
+
+/* Monochrome slate — quiet, minimal, editorial. */
+.mcb-calc.mcb-theme-slate {
+	--mcb-accent: #334155;
+	--mcb-accent-2: #64748b;
+	--mcb-accent-soft: rgba(51, 65, 85, 0.08);
+	--mcb-surface: #f8fafc;
+	--mcb-border: #e2e8f0;
+}
+
+/* Lavender surfaces with royal purple and fuchsia. */
+.mcb-calc.mcb-theme-grape {
+	--mcb-accent: #7c3aed;
+	--mcb-accent-2: #db2777;
+	--mcb-accent-soft: rgba(124, 58, 237, 0.09);
+	--mcb-surface: #faf5ff;
+	--mcb-border: #e9d5ff;
+}
+
+/* Fresh teal-on-mint, airy and modern. */
+.mcb-calc.mcb-theme-aqua {
+	--mcb-accent: #0d9488;
+	--mcb-accent-2: #06b6d4;
+	--mcb-accent-soft: rgba(13, 148, 136, 0.1);
+	--mcb-surface: #f0fdfa;
+	--mcb-border: #99f6e4;
+}
+
+/* Warm cream with coffee and caramel accents. */
+.mcb-calc.mcb-theme-mocha {
+	--mcb-accent: #92400e;
+	--mcb-accent-2: #d97706;
+	--mcb-accent-soft: rgba(146, 64, 14, 0.09);
+	--mcb-surface: #fef3ec;
+	--mcb-border: #ecd9c3;
+}
+
+/* Near-black cyber theme with neon cyan and pink. */
+.mcb-calc.mcb-theme-cyber {
+	--mcb-accent: #22d3ee;
+	--mcb-accent-2: #f472b6;
+	--mcb-accent-soft: rgba(34, 211, 238, 0.14);
+	--mcb-bg: #0a0f16;
+	--mcb-surface: #111827;
+	--mcb-text: #e2e8f0;
+	--mcb-text-muted: #94a3b8;
+	--mcb-border: #1f2b3a;
 }
 
 /* ----------------------------------------------------------------

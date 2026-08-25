@@ -1,5 +1,9 @@
 /**
  * Editor-only styles for the Mortgage Calculator block.
+ *
+ * The block preview intentionally reuses the exact same stylesheet as the
+ * front end (style.scss) so what editors see matches rendered output. This
+ * file only adds editor-specific affordances on top of it.
  */
 
 // Make the interactive preview clearly identifiable inside the editor canvas.
@@ -13,13 +17,4 @@
 	background-color: #f0f0f5;
 	border-left: 3px solid #3858e9;
 	border-radius: 4px;
-}
-
-// Components <TextControl> renders its own markup; keep preview inputs compact.
-.mcb-calc__form .components-base-control__field {
-	margin-bottom: 0;
-}
-
-.mcb-calc__form .components-input-control__container {
-	background-color: var(--mcb-bg);
 }

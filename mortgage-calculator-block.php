@@ -14,7 +14,7 @@
  * Plugin Name:       Mortgage Calculator Block
  * Plugin URI:        https://example.com/plugins/mortgage-calculator-block/
  * Description:       A native Gutenberg block providing an interactive mortgage calculator with live results and an amortization schedule.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Tariq
@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'MCB_TEXT_DOMAIN', 'mortgage-calculator-block' );
-define( 'MCB_VERSION', '1.1.0' );
+define( 'MCB_VERSION', '1.2.0' );
 define( 'MCB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MCB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'MCB_PLUGIN_FILE', __FILE__ );

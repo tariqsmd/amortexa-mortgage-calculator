@@ -43,15 +43,23 @@ class MCB_Assets {
 	/**
 	 * Registers all script/style handles.
 	 *
-	 * Versions use MCB_VERSION for cache busting. During local development,
-	 * swapping the version argument for filemtime() gives per-save busting.
+	 * Script dependencies and versions are read from the webpack-generated
+	 * build/*.asset.php manifests (the standard wp-scripts pattern) so the
+	 * dependency list can never drift from what the bundle actually imports,
+	 * and so cache busting follows content hashes. CSS has no manifest and
+	 * keeps MCB_VERSION.
 	 */
 	public function register_assets() {
+		$editor_asset = self::get_build_asset(
+			'index',
+			array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element', 'wp-i18n' )
+		);
+
 		wp_register_script(
 			self::HANDLE_EDITOR_SCRIPT,
 			MCB_PLUGIN_URL . 'build/index.js',
-			array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element', 'wp-i18n' ),
-			MCB_VERSION,
+			$editor_asset['dependencies'],
+			$editor_asset['version'],
 			true
 		);
 
@@ -72,16 +80,44 @@ class MCB_Assets {
 		}
 
 		if ( file_exists( MCB_PLUGIN_DIR . 'build/view.js' ) ) {
+			$view_asset = self::get_build_asset( 'view', array() );
+
 			wp_register_script(
 				self::HANDLE_VIEW,
 				MCB_PLUGIN_URL . 'build/view.js',
-				array(),
-				MCB_VERSION,
+				$view_asset['dependencies'],
+				$view_asset['version'],
 				true
 			);
 		}
 
 		wp_set_script_translations( self::HANDLE_EDITOR_SCRIPT, MCB_TEXT_DOMAIN );
+	}
+
+	/**
+	 * Reads a webpack-generated asset manifest.
+	 *
+	 * @param string        $entry          Build entry name (e.g., "index").
+	 * @param array<string> $fallback_deps  Dependencies used when the manifest
+	 *                                       is missing (e.g., before a build).
+	 * @return array{dependencies: array<string>, version: string} Asset data.
+	 */
+	private static function get_build_asset( $entry, $fallback_deps = array() ) {
+		$path  = MCB_PLUGIN_DIR . 'build/' . $entry . '.asset.php';
+		$asset = file_exists( $path ) ? include $path : array();
+
+		$deps = ( isset( $asset['dependencies'] ) && is_array( $asset['dependencies'] ) )
+			? array_map( 'strval', $asset['dependencies'] )
+			: $fallback_deps;
+
+		$version = ( isset( $asset['version'] ) && is_string( $asset['version'] ) )
+			? $asset['version']
+			: MCB_VERSION;
+
+		return array(
+			'dependencies' => $deps,
+			'version'      => $version,
+		);
 	}
 
 	/**

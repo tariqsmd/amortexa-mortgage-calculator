@@ -16,7 +16,7 @@ A native WordPress Gutenberg block that adds an interactive mortgage calculator 
 | --- | --- |
 | Live calculations | Monthly payment, financed principal, total interest, and total paid update as visitors type. |
 | Sliders | Every input is paired with a range slider (loan amount, down payment, rate, term), kept in sync both ways. |
-| Five skins | Classic Light, Elegant Dark, Ocean Blue, Sunset Warm, Forest Green — selectable per block. |
+| Twelve skins | Classic Light, Elegant Dark, Ocean Blue, Sunset Warm, Forest Green, Midnight Violet, Rose Quartz, Minimal Slate, Royal Grape, Aqua Fresh, Mocha Cream, Cyber Neon — selectable per block. |
 | Charts | Dependency-free SVG charts: payment-composition donut and balance-over-time line chart with cumulative interest; show/hide and pick the chart type per block. |
 | Typography | Per-block payment font size and weight overrides. |
 | Amortization schedule | Annual rows (principal / interest / remaining balance) aggregated from month-by-month math. |
