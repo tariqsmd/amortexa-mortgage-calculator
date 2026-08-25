@@ -40,6 +40,27 @@
       "type": "boolean",
       "default": true
     },
+    "showCharts": {
+      "type": "boolean",
+      "default": true
+    },
+    "chartType": {
+      "type": "string",
+      "default": "both",
+      "enum": [
+        "donut",
+        "line",
+        "both"
+      ]
+    },
+    "paymentFontSize": {
+      "type": "number",
+      "default": 0
+    },
+    "paymentFontWeight": {
+      "type": "string",
+      "default": ""
+    },
     "theme": {
       "type": "string",
       "default": "light",
