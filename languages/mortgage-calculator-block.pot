@@ -167,6 +167,72 @@ msgctxt "skin"
 msgid "Forest Green"
 msgstr ""
 
+#: src/edit.js
+msgctxt "sidebar panel"
+msgid "Display"
+msgstr ""
+
+#: src/edit.js
+msgid "Show Charts"
+msgstr ""
+
+#: src/edit.js
+msgid "Chart Type"
+msgstr ""
+
+#: src/edit.js
+msgid "Both Charts"
+msgstr ""
+
+#: src/edit.js
+msgid "Donut Only"
+msgstr ""
+
+#: src/edit.js
+msgid "Line Only"
+msgstr ""
+
+#: src/edit.js
+msgctxt "sidebar panel"
+msgid "Typography"
+msgstr ""
+
+#: src/edit.js
+msgid "Payment Font Size (px, 0 = theme default)"
+msgstr ""
+
+#: src/edit.js
+msgid "Payment Font Weight"
+msgstr ""
+
+#: src/edit.js
+msgid "Theme default"
+msgstr ""
+
+#: src/edit.js
+msgid "Light (300)"
+msgstr ""
+
+#: src/edit.js
+msgid "Normal (400)"
+msgstr ""
+
+#: src/edit.js
+msgid "Medium (500)"
+msgstr ""
+
+#: src/edit.js
+msgid "Semi Bold (600)"
+msgstr ""
+
+#: src/edit.js
+msgid "Bold (700)"
+msgstr ""
+
+#: src/edit.js
+msgid "Extra Bold (800)"
+msgstr ""
+
 #: src/block.json
 msgctxt "block title"
 msgid "Mortgage Calculator"

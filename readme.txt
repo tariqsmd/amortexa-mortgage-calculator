@@ -74,6 +74,7 @@ Yes. POST to `/wp-json/mcb/v1/calculate` with JSON body `{ "amount": 300000, "in
 * New: five visual skins — Classic Light, Elegant Dark, Ocean Blue, Sunset Warm, Forest Green.
 * New: range sliders paired with every number input for quick value adjustments.
 * New: SVG charts — payment composition donut and balance-over-time line chart (no external libraries).
+* New: block sidebar settings to show/hide charts, choose chart type (donut, line, or both), toggle the amortization table, and override payment font size and weight.
 
 = 1.0.0 =
 * Initial release: Mortgage Calculator block, settings page, REST endpoint, amortization schedule.
