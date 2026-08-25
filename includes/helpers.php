@@ -93,6 +93,10 @@ function mcb_get_default_attributes() {
 		'downPayment'      => 0.0,
 		'currencySymbol'   => (string) $settings['currency_symbol'],
 		'showAmortization' => (bool) $settings['enable_amortization'],
+		'showCharts'       => true,
+		'chartType'        => 'both',
+		'paymentFontSize'  => 0,
+		'paymentFontWeight'=> '',
 		'theme'            => 'light',
 	);
 
@@ -161,6 +165,25 @@ function mcb_sanitize_attributes( $attributes ) {
 		? (bool) $raw['showAmortization']
 		: (bool) $defaults['showAmortization'];
 
+	$chart_types = array( 'donut', 'line', 'both' );
+
+	if ( isset( $raw['chartType'] ) && in_array( $raw['chartType'], $chart_types, true ) ) {
+		$chart_type = (string) $raw['chartType'];
+	} else {
+		$chart_type = (string) $defaults['chartType'];
+		if ( ! in_array( $chart_type, $chart_types, true ) ) {
+			$chart_type = 'both';
+		}
+	}
+
+	$payment_font_size = array_key_exists( 'paymentFontSize', $raw )
+		? mcb_clamp_float( $raw['paymentFontSize'], 0, 120 )
+		: (float) $defaults['paymentFontSize'];
+
+	$font_weights  = array( '300', '400', '500', '600', '700', '800' );
+	$requested_weight = isset( $raw['paymentFontWeight'] ) ? (string) $raw['paymentFontWeight'] : (string) $defaults['paymentFontWeight'];
+	$payment_font_weight = in_array( $requested_weight, $font_weights, true ) ? $requested_weight : '';
+
 	return array(
 		'loanAmount'       => $loan_amount,
 		'interestRate'     => $interest_rate,
@@ -168,6 +191,12 @@ function mcb_sanitize_attributes( $attributes ) {
 		'downPayment'      => $down_payment,
 		'currencySymbol'   => $currency_symbol,
 		'showAmortization' => $show_amortization,
+		'showCharts'       => array_key_exists( 'showCharts', $raw )
+			? (bool) $raw['showCharts']
+			: (bool) $defaults['showCharts'],
+		'chartType'        => $chart_type,
+		'paymentFontSize'  => $payment_font_size,
+		'paymentFontWeight'=> $payment_font_weight,
 		'theme'            => $theme,
 	);
 }

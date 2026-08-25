@@ -145,6 +145,10 @@ export default function Edit( { attributes, setAttributes } ) {
 		downPayment,
 		currencySymbol,
 		showAmortization,
+		showCharts,
+		chartType,
+		paymentFontSize,
+		paymentFontWeight,
 		theme,
 	} = attributes;
 
@@ -306,6 +310,16 @@ export default function Edit( { attributes, setAttributes } ) {
 		return field.sliderMax;
 	};
 
+	const paymentTypography = {};
+
+	if ( Number( paymentFontSize ) > 0 ) {
+		paymentTypography.fontSize = `${ Number( paymentFontSize ) }px`;
+	}
+
+	if ( paymentFontWeight ) {
+		paymentTypography.fontWeight = paymentFontWeight;
+	}
+
 	const scheduleRows = chartSchedule.map( ( row ) => (
 		<tr key={ row.year }>
 			<td>{ row.year }</td>
@@ -351,6 +365,58 @@ export default function Edit( { attributes, setAttributes } ) {
 							} )
 						}
 					/>
+				</PanelBody>
+
+				<PanelBody
+					title={ __( 'Display', 'mortgage-calculator-block' ) }
+				>
+					<ToggleControl
+						label={ __(
+							'Show Charts',
+							'mortgage-calculator-block'
+						) }
+						checked={ showCharts }
+						onChange={ ( value ) =>
+							setAttributes( { showCharts: value } )
+						}
+					/>
+					<SelectControl
+						label={ __(
+							'Chart Type',
+							'mortgage-calculator-block'
+						) }
+						value={
+							[ 'donut', 'line', 'both' ].includes( chartType )
+								? chartType
+								: 'both'
+						}
+						options={ [
+							{
+								value: 'both',
+								label: __(
+									'Both Charts',
+									'mortgage-calculator-block'
+								),
+							},
+							{
+								value: 'donut',
+								label: __(
+									'Donut Only',
+									'mortgage-calculator-block'
+								),
+							},
+							{
+								value: 'line',
+								label: __(
+									'Line Only',
+									'mortgage-calculator-block'
+								),
+							},
+						] }
+						onChange={ ( value ) =>
+							setAttributes( { chartType: value } )
+						}
+					/>
 					<ToggleControl
 						label={ __(
 							'Show Amortization Table',
@@ -371,6 +437,99 @@ export default function Edit( { attributes, setAttributes } ) {
 						options={ SKINS }
 						onChange={ ( value ) =>
 							setAttributes( { theme: value } )
+						}
+					/>
+				</PanelBody>
+
+				<PanelBody
+					title={ __( 'Typography', 'mortgage-calculator-block' ) }
+					initialOpen={ false }
+				>
+					<TextControl
+						type="number"
+						label={ __(
+							'Payment Font Size (px, 0 = theme default)',
+							'mortgage-calculator-block'
+						) }
+						value={ String( Number( paymentFontSize ) || 0 ) }
+						min={ 0 }
+						max={ 120 }
+						onChange={ ( value ) =>
+							setAttributes( {
+								paymentFontSize: parseFloat( value ) || 0,
+							} )
+						}
+					/>
+					<SelectControl
+						label={ __(
+							'Payment Font Weight',
+							'mortgage-calculator-block'
+						) }
+						value={
+							[
+								'300',
+								'400',
+								'500',
+								'600',
+								'700',
+								'800',
+							].includes( paymentFontWeight )
+								? paymentFontWeight
+								: ''
+						}
+						options={ [
+							{
+								value: '',
+								label: __(
+									'Theme default',
+									'mortgage-calculator-block'
+								),
+							},
+							{
+								value: '300',
+								label: __(
+									'Light (300)',
+									'mortgage-calculator-block'
+								),
+							},
+							{
+								value: '400',
+								label: __(
+									'Normal (400)',
+									'mortgage-calculator-block'
+								),
+							},
+							{
+								value: '500',
+								label: __(
+									'Medium (500)',
+									'mortgage-calculator-block'
+								),
+							},
+							{
+								value: '600',
+								label: __(
+									'Semi Bold (600)',
+									'mortgage-calculator-block'
+								),
+							},
+							{
+								value: '700',
+								label: __(
+									'Bold (700)',
+									'mortgage-calculator-block'
+								),
+							},
+							{
+								value: '800',
+								label: __(
+									'Extra Bold (800)',
+									'mortgage-calculator-block'
+								),
+							},
+						] }
+						onChange={ ( value ) =>
+							setAttributes( { paymentFontWeight: value } )
 						}
 					/>
 				</PanelBody>
@@ -446,7 +605,10 @@ export default function Edit( { attributes, setAttributes } ) {
 								'mortgage-calculator-block'
 							) }
 						</p>
-						<p className="mcb-calc__result-primary">
+						<p
+							className="mcb-calc__result-primary"
+							style={ paymentTypography }
+						>
 							{ formatAmount(
 								result.monthlyPayment,
 								currencySymbol
@@ -499,38 +661,47 @@ export default function Edit( { attributes, setAttributes } ) {
 					</div>
 				</div>
 
-				<div className="mcb-calc__charts">
-					<figure className="mcb-calc__chart">
-						<figcaption className="mcb-calc__chart-title">
-							{ __(
-								'Payment Composition',
-								'mortgage-calculator-block'
-							) }
-						</figcaption>
-						<div
-							className="mcb-calc__chart-body"
-							ref={ donutRef }
-						/>
-						<figcaption
-							className="mcb-calc__legend"
-							ref={ legendRef }
-						/>
-					</figure>
+				{ showCharts && (
+					<div className="mcb-calc__charts">
+						{ [ 'donut', 'both' ].includes( chartType ) && (
+							<figure className="mcb-calc__chart">
+								<figcaption className="mcb-calc__chart-title">
+									{ __(
+										'Payment Composition',
+										'mortgage-calculator-block'
+									) }
+								</figcaption>
+								<div
+									className="mcb-calc__chart-body"
+									ref={ donutRef }
+								/>
+								<figcaption
+									className="mcb-calc__legend"
+									ref={ legendRef }
+								/>
+							</figure>
+						) }
 
-					<figure className="mcb-calc__chart">
-						<figcaption className="mcb-calc__chart-title">
-							{ __(
-								'Balance Over Time',
-								'mortgage-calculator-block'
-							) }
-						</figcaption>
-						<div className="mcb-calc__chart-body" ref={ lineRef } />
-						<figcaption
-							className="mcb-calc__legend"
-							ref={ lineLegendRef }
-						/>
-					</figure>
-				</div>
+						{ [ 'line', 'both' ].includes( chartType ) && (
+							<figure className="mcb-calc__chart">
+								<figcaption className="mcb-calc__chart-title">
+									{ __(
+										'Balance Over Time',
+										'mortgage-calculator-block'
+									) }
+								</figcaption>
+								<div
+									className="mcb-calc__chart-body"
+									ref={ lineRef }
+								/>
+								<figcaption
+									className="mcb-calc__legend"
+									ref={ lineLegendRef }
+								/>
+							</figure>
+						) }
+					</div>
+				) }
 
 				{ showAmortization && (
 					<div className="mcb-calc__schedule">

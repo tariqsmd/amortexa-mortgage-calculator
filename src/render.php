@@ -28,6 +28,8 @@ $config = array(
 	'decimals'         => $decimals,
 	'symbol'           => $symbol,
 	'showAmortization' => ! empty( $attrs['showAmortization'] ),
+	'showCharts'       => ! empty( $attrs['showCharts'] ),
+	'chartType'        => (string) $attrs['chartType'],
 	'labels'           => array(
 		'monthly'  => esc_html__( 'Monthly Payment', MCB_TEXT_DOMAIN ),
 		'principal'=> esc_html__( 'Financed Principal', MCB_TEXT_DOMAIN ),
@@ -97,6 +99,22 @@ $fields = array(
 		'sstep' => '1',
 	),
 );
+
+/*
+ * Inline typography for the primary result. Only emitted when the user set a
+ * custom size or weight; otherwise the stylesheet's responsive default wins.
+ */
+$typography = array();
+
+if ( (float) $attrs['paymentFontSize'] > 0 ) {
+	$typography[] = sprintf( 'font-size:%dpx', (int) $attrs['paymentFontSize'] );
+}
+
+if ( '' !== $attrs['paymentFontWeight'] ) {
+	$typography[] = sprintf( 'font-weight:%s', (string) $attrs['paymentFontWeight'] );
+}
+
+$typography_attr = implode( ';', $typography );
 ?>
 <div
 	<?php echo get_block_wrapper_attributes( array( 'class' => 'mcb-calc mcb-theme-' . esc_attr( $attrs['theme'] ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() escapes internally. ?>
@@ -142,7 +160,13 @@ $fields = array(
 			<p class="mcb-calc__result-label" data-mcb-label="monthly">
 				<?php echo esc_html( $config['labels']['monthly'] ); ?>
 			</p>
-			<p class="mcb-calc__result-primary" data-mcb-bind="monthlyPayment">
+			<p
+				class="mcb-calc__result-primary"
+				data-mcb-bind="monthlyPayment"
+				<?php if ( '' !== $typography_attr ) : ?>
+					style="<?php echo esc_attr( $typography_attr ); ?>"
+				<?php endif; ?>
+			>
 				<?php echo esc_html( mcb_format_amount( $result['monthly_payment'], $symbol, $decimals ) ); ?>
 			</p>
 			<dl class="mcb-calc__result-list">
@@ -168,23 +192,29 @@ $fields = array(
 		</div>
 	</div>
 
-	<div class="mcb-calc__charts">
-		<figure class="mcb-calc__chart">
-			<figcaption class="mcb-calc__chart-title">
-				<?php echo esc_html__( 'Payment Composition', MCB_TEXT_DOMAIN ); ?>
-			</figcaption>
-			<div class="mcb-calc__chart-body" data-mcb-chart="donut"></div>
-			<figcaption class="mcb-calc__legend" data-mcb-legend="donut"></figcaption>
-		</figure>
+	<?php if ( ! empty( $attrs['showCharts'] ) ) : ?>
+		<div class="mcb-calc__charts">
+			<?php if ( in_array( $attrs['chartType'], array( 'donut', 'both' ), true ) ) : ?>
+				<figure class="mcb-calc__chart">
+					<figcaption class="mcb-calc__chart-title">
+						<?php echo esc_html__( 'Payment Composition', MCB_TEXT_DOMAIN ); ?>
+					</figcaption>
+					<div class="mcb-calc__chart-body" data-mcb-chart="donut"></div>
+					<figcaption class="mcb-calc__legend" data-mcb-legend="donut"></figcaption>
+				</figure>
+			<?php endif; ?>
 
-		<figure class="mcb-calc__chart">
-			<figcaption class="mcb-calc__chart-title">
-				<?php echo esc_html__( 'Balance Over Time', MCB_TEXT_DOMAIN ); ?>
-			</figcaption>
-			<div class="mcb-calc__chart-body" data-mcb-chart="line"></div>
-			<figcaption class="mcb-calc__legend" data-mcb-legend="line"></figcaption>
-		</figure>
-	</div>
+			<?php if ( in_array( $attrs['chartType'], array( 'line', 'both' ), true ) ) : ?>
+				<figure class="mcb-calc__chart">
+					<figcaption class="mcb-calc__chart-title">
+						<?php echo esc_html__( 'Balance Over Time', MCB_TEXT_DOMAIN ); ?>
+					</figcaption>
+					<div class="mcb-calc__chart-body" data-mcb-chart="line"></div>
+					<figcaption class="mcb-calc__legend" data-mcb-legend="line"></figcaption>
+				</figure>
+			<?php endif; ?>
+		</div>
+	<?php endif; ?>
 
 	<?php if ( ! empty( $attrs['showAmortization'] ) && ! empty( $result['schedule'] ) ) : ?>
 		<div class="mcb-calc__schedule">
