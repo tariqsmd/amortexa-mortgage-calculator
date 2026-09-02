@@ -18,7 +18,8 @@
 	},
 	"scripts": {
 		"lint": "phpcs --standard=phpcs.xml.dist --report=summary",
-		"lint:fix": "phpcbf --standard=phpcs.xml.dist"
+		"lint:fix": "phpcbf --standard=phpcs.xml.dist",
+		"test": "php tests/parity.php"
 	},
 	"config": {
 		"allow-plugins": {

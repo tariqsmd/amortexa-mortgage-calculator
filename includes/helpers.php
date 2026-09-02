@@ -76,7 +76,24 @@ function mcb_get_default_settings() {
 		'default_chart_type'    => 'both',
 	);
 
-	return apply_filters( 'mcb_default_settings', $defaults );
+	// Guard against accidental recursion: mcb_sanitize_settings() (and thus
+	// mcb_get_settings()/mcb_get_default_attributes()) calls this function, so a
+	// filter on `mcb_default_settings` that calls back into any settings getter
+	// would otherwise loop forever. Return the raw defaults in that case.
+	global $mcb_resolving_defaults;
+
+	if ( ! empty( $mcb_resolving_defaults ) ) {
+		return $defaults;
+	}
+
+	$mcb_resolving_defaults = true;
+	try {
+		$defaults = apply_filters( 'mcb_default_settings', $defaults );
+	} finally {
+		$mcb_resolving_defaults = false;
+	}
+
+	return $defaults;
 }
 
 /**

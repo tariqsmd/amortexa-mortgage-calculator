@@ -84,30 +84,42 @@ class MCB_REST_API {
 	}
 
 	/**
-	 * Permission callback verifying the standard WordPress REST nonce.
+	 * Permission callback for the calculation endpoint.
 	 *
-	 * Authenticated editor users are also accepted so the block editor can
-	 * call the endpoint during previewing.
+	 * The endpoint is intentionally open: it is a stateless, read-only helper
+	 * that exposes only public mortgage arithmetic and returns no private data,
+	 * so it does not require authentication, nonces, or the REST nonce. It is
+	 * bounded by Web-accessible rate limiting at the server/proxy layer when
+	 * installs require it.
+	 *
+	 * The callback is kept for transparency and as an override point via the
+	 * `mcb/v1/calculate` route registration; a nonce check is no longer applied
+	 * because it provided no real protection (any unauthenticated visitor can
+	 * already compute the same result with a calculator).
 	 *
 	 * @param WP_REST_Request<array<string,mixed>> $request Current request.
-	 * @return true|WP_Error True when allowed, error object otherwise.
+	 * @return true Always allowed.
 	 */
 	public function check_permissions( $request ) {
-		$nonce = (string) $request->get_header( 'X-WP-Nonce' );
+		/**
+		 * Filters whether the calculation endpoint requires authentication.
+		 *
+		 * Returning a WP_Error or false here blocks unauthenticated access.
+		 *
+		 * @param bool                    $allowed Whether the request is allowed.
+		 * @param WP_REST_Request<string> $request Current request.
+		 */
+		$allowed = apply_filters( 'mcb_rest_calculate_allowed', true, $request );
 
-		if ( '' !== $nonce && wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+		if ( true === $allowed ) {
 			return true;
 		}
 
-		if ( current_user_can( 'edit_posts' ) ) {
-			return true;
-		}
-
-		return new WP_Error(
+		return rest_ensure_response( new WP_Error(
 			'mcb_rest_forbidden',
-			esc_html__( 'Invalid or missing nonce.', MCB_TEXT_DOMAIN ),
+			esc_html__( 'Calculation requests are not permitted.', MCB_TEXT_DOMAIN ),
 			array( 'status' => rest_authorization_required_code() )
-		);
+		) );
 	}
 
 	/**

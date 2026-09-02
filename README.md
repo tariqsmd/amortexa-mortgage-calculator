@@ -43,8 +43,10 @@ npm run start      # development build with watch
 npm run build      # production build → build/
 npm run lint:js    # ESLint (WordPress config)
 npm run lint:css   # Stylelint (WordPress config)
+npm test           # cross-language PHP/JS math parity test
 composer install   # dev tooling
 composer lint      # WPCS phpcs against phpcs.xml.dist
+composer test      # alias of npm test (php tests/parity.php)
 ```
 
 Source lives in `src/`; webpack extends the default `@wordpress/scripts` config only to compile the extra front-end `view.js` entry.
