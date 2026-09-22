@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Mortgage Calculator Block" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xml.dist">
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="MT Gutenberg Blocks" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xml.dist">
 
-	<description>WordPress Coding Standards for the Mortgage Calculator Block plugin.</description>
+	<description>WordPress Coding Standards for the MT Gutenberg Blocks plugin.</description>
 
 	<!-- Scan all PHP files in the project root and includes/src directories. -->
 	<file>.</file>
@@ -20,14 +20,14 @@
 	<!-- Enforce the plugin text domain on every translation function. -->
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="text_domain" type="array" value="mortgage-calculator-block"/>
+			<property name="text_domain" type="array" value="mt-gutenberg-blocks"/>
 		</properties>
 	</rule>
 
 	<!-- Only allow the documented global prefixes. -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
-			<property name="prefixes" type="array" value="mcb_,MCB_,MortgageCalculatorBlock"/>
+			<property name="prefixes" type="array" value="mtgb_,mtgb_,MortgageCalculatorBlock"/>
 		</properties>
 	</rule>
 

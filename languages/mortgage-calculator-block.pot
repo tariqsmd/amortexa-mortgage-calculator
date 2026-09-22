@@ -2,8 +2,8 @@
 # This file is distributed under the GPL v2 or later license.
 msgid ""
 msgstr ""
-"Project-Id-Version: Mortgage Calculator Block 1.0.0\n"
-"Report-Msgid-Bugs-To: https://example.com/plugins/mortgage-calculator-block/\n"
+"Project-Id-Version: MT Gutenberg Blocks 1.0.0\n"
+"Report-Msgid-Bugs-To: https://example.com/plugins/mt-gutenberg-blocks/\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,65 +12,65 @@ msgstr ""
 "POT-Creation-Date: 2026-08-25T00:00:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
-"X-Domain: mortgage-calculator-block\n"
+"X-Domain: mt-gutenberg-blocks\n"
 
 #. Plugin Name of the plugin
-msgid "Mortgage Calculator Block"
+msgid "MT Gutenberg Blocks"
 msgstr ""
 
 #. Description of the plugin
 msgid "A native Gutenberg block providing an interactive mortgage calculator with live results and an amortization schedule."
 msgstr ""
 
-#: includes/class-mcb-block-registration.php
-msgid "Mortgage Tools"
+#: includes/class-mtgb-block-registration.php
+msgid "MT Gutenberg Blocks"
 msgstr ""
 
-#: includes/class-mcb-rest-api.php
+#: includes/class-mtgb-rest-api.php
 msgid "Invalid or missing nonce."
 msgstr ""
 
-#: includes/class-mcb-settings.php
-msgid "Mortgage Calculator"
+#: includes/class-mtgb-settings.php
+msgid "MT Mortgage Calculator"
 msgstr ""
 
-#: includes/class-mcb-settings.php
+#: includes/class-mtgb-settings.php
 msgid "Defaults"
 msgstr ""
 
-#: includes/class-mcb-settings.php
+#: includes/class-mtgb-settings.php
 msgid "Currency symbol"
 msgstr ""
 
-#: includes/class-mcb-settings.php
+#: includes/class-mtgb-settings.php
 msgid "Symbol displayed next to calculated amounts."
 msgstr ""
 
-#: includes/class-mcb-settings.php
+#: includes/class-mtgb-settings.php
 msgid "Default interest rate (%)"
 msgstr ""
 
-#: includes/class-mcb-settings.php
+#: includes/class-mtgb-settings.php
 msgid "Annual interest rate used when no explicit value is set."
 msgstr ""
 
-#: includes/class-mcb-settings.php
+#: includes/class-mtgb-settings.php
 msgid "Decimal precision"
 msgstr ""
 
-#: includes/class-mcb-settings.php
+#: includes/class-mtgb-settings.php
 msgid "Number of decimal digits shown for amounts (0–4)."
 msgstr ""
 
-#: includes/class-mcb-settings.php
+#: includes/class-mtgb-settings.php
 msgid "Show amortization table by default"
 msgstr ""
 
-#: includes/class-mcb-settings.php
+#: includes/class-mtgb-settings.php
 msgid "When enabled, new blocks include the annual amortization schedule."
 msgstr ""
 
-#: includes/class-mcb-settings.php
+#: includes/class-mtgb-settings.php
 msgid "Settings saved."
 msgstr ""
 
@@ -235,7 +235,7 @@ msgstr ""
 
 #: src/block.json
 msgctxt "block title"
-msgid "Mortgage Calculator"
+msgid "MT Mortgage Calculator"
 msgstr ""
 
 #: src/block.json

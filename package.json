@@ -1,5 +1,5 @@
 {
-	"name": "mortgage-calculator-block",
+	"name": "mt-gutenberg-blocks",
 	"version": "1.2.0",
 	"description": "A native Gutenberg block providing an interactive mortgage calculator with amortization schedule.",
 	"author": "Tariq",
@@ -17,7 +17,7 @@
 		"languages",
 		"assets",
 		"src",
-		"mortgage-calculator-block.php",
+		"mt-gutenberg-blocks.php",
 		"uninstall.php",
 		"readme.txt"
 	],

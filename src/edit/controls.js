@@ -1,5 +1,5 @@
 /**
- * Inspector controls for the Mortgage Calculator block.
+ * Inspector controls for the MT Mortgage Calculator block.
  *
  * Collects every attribute control into a single InspectorControls tree, and
  * shares the skin/font/color/numeric config maps with the preview module so the
@@ -20,58 +20,58 @@ import {
 export const SKINS = [
 	{
 		value: 'light',
-		label: __( 'Classic Light', 'mortgage-calculator-block' ),
+		label: __( 'Classic Light', 'mt-gutenberg-blocks' ),
 	},
-	{ value: 'dark', label: __( 'Elegant Dark', 'mortgage-calculator-block' ) },
-	{ value: 'ocean', label: __( 'Ocean Blue', 'mortgage-calculator-block' ) },
+	{ value: 'dark', label: __( 'Elegant Dark', 'mt-gutenberg-blocks' ) },
+	{ value: 'ocean', label: __( 'Ocean Blue', 'mt-gutenberg-blocks' ) },
 	{
 		value: 'sunset',
-		label: __( 'Sunset Warm', 'mortgage-calculator-block' ),
+		label: __( 'Sunset Warm', 'mt-gutenberg-blocks' ),
 	},
 	{
 		value: 'forest',
-		label: __( 'Forest Green', 'mortgage-calculator-block' ),
+		label: __( 'Forest Green', 'mt-gutenberg-blocks' ),
 	},
 	{
 		value: 'midnight',
-		label: __( 'Midnight Violet', 'mortgage-calculator-block' ),
+		label: __( 'Midnight Violet', 'mt-gutenberg-blocks' ),
 	},
 	{
 		value: 'rose',
-		label: __( 'Rose Quartz', 'mortgage-calculator-block' ),
+		label: __( 'Rose Quartz', 'mt-gutenberg-blocks' ),
 	},
 	{
 		value: 'slate',
-		label: __( 'Minimal Slate', 'mortgage-calculator-block' ),
+		label: __( 'Minimal Slate', 'mt-gutenberg-blocks' ),
 	},
 	{
 		value: 'grape',
-		label: __( 'Royal Grape', 'mortgage-calculator-block' ),
+		label: __( 'Royal Grape', 'mt-gutenberg-blocks' ),
 	},
-	{ value: 'aqua', label: __( 'Aqua Fresh', 'mortgage-calculator-block' ) },
+	{ value: 'aqua', label: __( 'Aqua Fresh', 'mt-gutenberg-blocks' ) },
 	{
 		value: 'mocha',
-		label: __( 'Mocha Cream', 'mortgage-calculator-block' ),
+		label: __( 'Mocha Cream', 'mt-gutenberg-blocks' ),
 	},
-	{ value: 'cyber', label: __( 'Cyber Neon', 'mortgage-calculator-block' ) },
+	{ value: 'cyber', label: __( 'Cyber Neon', 'mt-gutenberg-blocks' ) },
 ];
 
 export const FONT_FAMILIES = [
 	{
 		value: 'inherit',
-		label: __( 'Theme default', 'mortgage-calculator-block' ),
+		label: __( 'Theme default', 'mt-gutenberg-blocks' ),
 	},
 	{
 		value: 'sans',
-		label: __( 'Modern Sans (system)', 'mortgage-calculator-block' ),
+		label: __( 'Modern Sans (system)', 'mt-gutenberg-blocks' ),
 	},
 	{
 		value: 'serif',
-		label: __( 'Classic Serif (system)', 'mortgage-calculator-block' ),
+		label: __( 'Classic Serif (system)', 'mt-gutenberg-blocks' ),
 	},
 	{
 		value: 'mono',
-		label: __( 'Monospace (system)', 'mortgage-calculator-block' ),
+		label: __( 'Monospace (system)', 'mt-gutenberg-blocks' ),
 	},
 ];
 
@@ -85,40 +85,40 @@ export const FONT_STACKS = {
 export const COLOR_CONTROLS = [
 	{
 		key: 'accentColor',
-		label: __( 'Accent', 'mortgage-calculator-block' ),
-		cssVar: '--mcb-accent',
+		label: __( 'Accent', 'mt-gutenberg-blocks' ),
+		cssVar: '--mtgb-accent',
 	},
 	{
 		key: 'accentAltColor',
-		label: __( 'Secondary accent (charts)', 'mortgage-calculator-block' ),
-		cssVar: '--mcb-accent-2',
+		label: __( 'Secondary accent (charts)', 'mt-gutenberg-blocks' ),
+		cssVar: '--mtgb-accent-2',
 	},
 	{
 		key: 'labelColor',
-		label: __( 'Label text', 'mortgage-calculator-block' ),
-		cssVar: '--mcb-label-color',
+		label: __( 'Label text', 'mt-gutenberg-blocks' ),
+		cssVar: '--mtgb-label-color',
 	},
 	{
 		key: 'fieldTextColor',
-		label: __( 'Field text', 'mortgage-calculator-block' ),
-		cssVar: '--mcb-field-text',
+		label: __( 'Field text', 'mt-gutenberg-blocks' ),
+		cssVar: '--mtgb-field-text',
 	},
 	{
 		key: 'fieldBackgroundColor',
-		label: __( 'Field background', 'mortgage-calculator-block' ),
-		cssVar: '--mcb-field-bg',
+		label: __( 'Field background', 'mt-gutenberg-blocks' ),
+		cssVar: '--mtgb-field-bg',
 	},
 	{
 		key: 'fieldBorderColor',
-		label: __( 'Field border', 'mortgage-calculator-block' ),
-		cssVar: '--mcb-field-border',
+		label: __( 'Field border', 'mt-gutenberg-blocks' ),
+		cssVar: '--mtgb-field-border',
 	},
 ];
 
 export const NUMERIC_FIELDS = [
 	{
 		key: 'loanAmount',
-		label: __( 'Loan Amount', 'mortgage-calculator-block' ),
+		label: __( 'Loan Amount', 'mt-gutenberg-blocks' ),
 		min: 0,
 		max: undefined,
 		step: 'any',
@@ -128,7 +128,7 @@ export const NUMERIC_FIELDS = [
 	},
 	{
 		key: 'downPayment',
-		label: __( 'Down Payment', 'mortgage-calculator-block' ),
+		label: __( 'Down Payment', 'mt-gutenberg-blocks' ),
 		min: 0,
 		max: undefined,
 		step: 'any',
@@ -138,7 +138,7 @@ export const NUMERIC_FIELDS = [
 	},
 	{
 		key: 'interestRate',
-		label: __( 'Interest Rate (%)', 'mortgage-calculator-block' ),
+		label: __( 'Interest Rate (%)', 'mt-gutenberg-blocks' ),
 		min: 0,
 		max: 100,
 		step: '0.01',
@@ -148,7 +148,7 @@ export const NUMERIC_FIELDS = [
 	},
 	{
 		key: 'loanTerm',
-		label: __( 'Term (Years)', 'mortgage-calculator-block' ),
+		label: __( 'Term (Years)', 'mt-gutenberg-blocks' ),
 		min: 1,
 		max: 60,
 		step: 1,
@@ -161,27 +161,27 @@ export const NUMERIC_FIELDS = [
 const FONT_WEIGHTS = [ '300', '400', '500', '600', '700', '800' ];
 
 const CHART_TYPES = [
-	{ value: 'both', label: __( 'Both Charts', 'mortgage-calculator-block' ) },
+	{ value: 'both', label: __( 'Both Charts', 'mt-gutenberg-blocks' ) },
 	{
 		value: 'donut',
-		label: __( 'Donut Only', 'mortgage-calculator-block' ),
+		label: __( 'Donut Only', 'mt-gutenberg-blocks' ),
 	},
-	{ value: 'line', label: __( 'Line Only', 'mortgage-calculator-block' ) },
+	{ value: 'line', label: __( 'Line Only', 'mt-gutenberg-blocks' ) },
 ];
 
 const CURRENCY_POSITIONS = [
 	{
 		value: 'prefix',
-		label: __( 'Before amount ($99)', 'mortgage-calculator-block' ),
+		label: __( 'Before amount ($99)', 'mt-gutenberg-blocks' ),
 	},
 	{
 		value: 'suffix',
-		label: __( 'After amount (99 €)', 'mortgage-calculator-block' ),
+		label: __( 'After amount (99 €)', 'mt-gutenberg-blocks' ),
 	},
 ];
 
 const WEIGHT_OPTIONS = [
-	{ value: '', label: __( 'Theme default', 'mortgage-calculator-block' ) },
+	{ value: '', label: __( 'Theme default', 'mt-gutenberg-blocks' ) },
 ].concat(
 	[ '300', '400', '500', '600', '700', '800' ].map( ( weight ) => {
 		const names = {
@@ -233,7 +233,7 @@ export default function Controls( { attributes, setAttributes } ) {
 			<PanelBody
 				title={ __(
 					'Calculator Settings',
-					'mortgage-calculator-block'
+					'mt-gutenberg-blocks'
 				) }
 			>
 				{ NUMERIC_FIELDS.map( ( field ) => (
@@ -253,7 +253,7 @@ export default function Controls( { attributes, setAttributes } ) {
 				<TextControl
 					label={ __(
 						'Currency Symbol',
-						'mortgage-calculator-block'
+						'mt-gutenberg-blocks'
 					) }
 					value={ currencySymbol }
 					maxLength={ 8 }
@@ -264,7 +264,7 @@ export default function Controls( { attributes, setAttributes } ) {
 				<SelectControl
 					label={ __(
 						'Currency Position',
-						'mortgage-calculator-block'
+						'mt-gutenberg-blocks'
 					) }
 					value={
 						[ 'prefix', 'suffix' ].includes( currencyPosition )
@@ -278,11 +278,11 @@ export default function Controls( { attributes, setAttributes } ) {
 				/>
 			</PanelBody>
 
-			<PanelBody title={ __( 'Display', 'mortgage-calculator-block' ) }>
+			<PanelBody title={ __( 'Display', 'mt-gutenberg-blocks' ) }>
 				<ToggleControl
 					label={ __(
 						'Show Results Summary',
-						'mortgage-calculator-block'
+						'mt-gutenberg-blocks'
 					) }
 					checked={ showResults }
 					onChange={ ( value ) =>
@@ -290,21 +290,21 @@ export default function Controls( { attributes, setAttributes } ) {
 					}
 				/>
 				<ToggleControl
-					label={ __( 'Show Sliders', 'mortgage-calculator-block' ) }
+					label={ __( 'Show Sliders', 'mt-gutenberg-blocks' ) }
 					checked={ showSliders }
 					onChange={ ( value ) =>
 						setAttributes( { showSliders: value } )
 					}
 				/>
 				<ToggleControl
-					label={ __( 'Show Charts', 'mortgage-calculator-block' ) }
+					label={ __( 'Show Charts', 'mt-gutenberg-blocks' ) }
 					checked={ showCharts }
 					onChange={ ( value ) =>
 						setAttributes( { showCharts: value } )
 					}
 				/>
 				<SelectControl
-					label={ __( 'Chart Type', 'mortgage-calculator-block' ) }
+					label={ __( 'Chart Type', 'mt-gutenberg-blocks' ) }
 					value={
 						[ 'donut', 'line', 'both' ].includes( chartType )
 							? chartType
@@ -318,7 +318,7 @@ export default function Controls( { attributes, setAttributes } ) {
 				<ToggleControl
 					label={ __(
 						'Show Amortization Table',
-						'mortgage-calculator-block'
+						'mt-gutenberg-blocks'
 					) }
 					checked={ showAmortization }
 					onChange={ ( value ) =>
@@ -326,7 +326,7 @@ export default function Controls( { attributes, setAttributes } ) {
 					}
 				/>
 				<SelectControl
-					label={ __( 'Skin', 'mortgage-calculator-block' ) }
+					label={ __( 'Skin', 'mt-gutenberg-blocks' ) }
 					value={
 						SKINS.some( ( skin ) => skin.value === theme )
 							? theme
@@ -338,19 +338,19 @@ export default function Controls( { attributes, setAttributes } ) {
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Colors', 'mortgage-calculator-block' ) }
+				title={ __( 'Colors', 'mt-gutenberg-blocks' ) }
 				initialOpen={ false }
 			>
 				<p>
 					{ __(
 						'Leave a color empty to use the selected skin.',
-						'mortgage-calculator-block'
+						'mt-gutenberg-blocks'
 					) }
 				</p>
 				{ COLOR_CONTROLS.map( ( control ) => (
 					<BaseControl
 						key={ control.key }
-						id={ `mcb-color-${ control.key }` }
+						id={ `mtgb-color-${ control.key }` }
 						label={ control.label }
 					>
 						<ColorPalette
@@ -366,11 +366,11 @@ export default function Controls( { attributes, setAttributes } ) {
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Typography', 'mortgage-calculator-block' ) }
+				title={ __( 'Typography', 'mt-gutenberg-blocks' ) }
 				initialOpen={ false }
 			>
 				<SelectControl
-					label={ __( 'Font Family', 'mortgage-calculator-block' ) }
+					label={ __( 'Font Family', 'mt-gutenberg-blocks' ) }
 					value={ fontFamily }
 					options={ FONT_FAMILIES }
 					onChange={ ( value ) =>
@@ -381,7 +381,7 @@ export default function Controls( { attributes, setAttributes } ) {
 					type="number"
 					label={ __(
 						'Payment Font Size (px, 0 = theme default)',
-						'mortgage-calculator-block'
+						'mt-gutenberg-blocks'
 					) }
 					value={ String( Number( paymentFontSize ) || 0 ) }
 					min={ 0 }
@@ -395,7 +395,7 @@ export default function Controls( { attributes, setAttributes } ) {
 				<SelectControl
 					label={ __(
 						'Payment Font Weight',
-						'mortgage-calculator-block'
+						'mt-gutenberg-blocks'
 					) }
 					value={
 						FONT_WEIGHTS.includes( paymentFontWeight )

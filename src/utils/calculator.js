@@ -3,7 +3,7 @@
  * front-end view script.
  *
  * This module mirrors the authoritative PHP helpers in includes/helpers.php
- * (mcb_calculate_monthly_payment / mcb_calculate_amortization_schedule) so the
+ * (mtgb_calculate_monthly_payment / mtgb_calculate_amortization_schedule) so the
  * editor and browser previews agree with server-rendered output.
  */
 

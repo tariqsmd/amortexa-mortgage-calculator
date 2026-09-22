@@ -1,5 +1,5 @@
 /**
- * Editor-only styles for the Mortgage Calculator block.
+ * Editor-only styles for the MT Mortgage Calculator block.
  *
  * The block preview intentionally reuses the exact same stylesheet as the
  * front end (style.scss) so what editors see matches rendered output. This
@@ -7,8 +7,8 @@
  */
 
 // Make the interactive preview clearly identifiable inside the editor canvas.
-.mcb-calc__editor-note,
-.editor-styles-wrapper .mcb-calc__editor-note {
+.mtgb-calc__editor-note,
+.editor-styles-wrapper .mtgb-calc__editor-note {
 	display: block;
 	margin: 0 0 14px;
 	padding: 8px 12px;
@@ -23,7 +23,7 @@
 // input/slider, which swallows Backspace/Delete and makes the block feel
 // impossible to remove. Values are edited via the Settings sidebar instead;
 // the front end stays fully interactive.
-.mcb-calc__slider,
-.mcb-calc__field {
+.mtgb-calc__slider,
+.mtgb-calc__field {
 	pointer-events: none;
 }

@@ -1,5 +1,5 @@
 /**
- * Live preview for the Mortgage Calculator block.
+ * Live preview for the MT Mortgage Calculator block.
  *
  * Renders the same structure/classes as the server-side template so editors
  * see a faithful representation, reusing the shared calculation and chart
@@ -75,9 +75,9 @@ function renderLegendInto( host, items ) {
 		...items.map( ( item ) => {
 			const span = document.createElement( 'span' );
 			const dot = document.createElement( 'span' );
-			dot.className = 'mcb-calc__legend-dot';
+			dot.className = 'mtgb-calc__legend-dot';
 			dot.style.backgroundColor = item.color;
-			span.className = 'mcb-calc__legend-item';
+			span.className = 'mtgb-calc__legend-item';
 			span.appendChild( dot );
 			span.appendChild( document.createTextNode( item.label ) );
 			return span;
@@ -128,9 +128,9 @@ export default function Preview( {
 		const styles = window.getComputedStyle( rootRef.current );
 		const palette = {
 			accent:
-				styles.getPropertyValue( '--mcb-accent' ).trim() || '#1a6f4b',
+				styles.getPropertyValue( '--mtgb-accent' ).trim() || '#1a6f4b',
 			accent2:
-				styles.getPropertyValue( '--mcb-accent-2' ).trim() || '#d97706',
+				styles.getPropertyValue( '--mtgb-accent-2' ).trim() || '#d97706',
 		};
 
 		if ( donutRef.current ) {
@@ -145,7 +145,7 @@ export default function Preview( {
 						thickness: 26,
 						centerTitle: __(
 							'Monthly Payment',
-							'mortgage-calculator-block'
+							'mt-gutenberg-blocks'
 						),
 						centerValue: formatAmount(
 							result.monthlyPayment,
@@ -192,21 +192,21 @@ export default function Preview( {
 
 		renderLegendInto( legendRef.current, [
 			{
-				label: __( 'Financed Principal', 'mortgage-calculator-block' ),
+				label: __( 'Financed Principal', 'mt-gutenberg-blocks' ),
 				color: palette.accent,
 			},
 			{
-				label: __( 'Total Interest', 'mortgage-calculator-block' ),
+				label: __( 'Total Interest', 'mt-gutenberg-blocks' ),
 				color: palette.accent2,
 			},
 		] );
 		renderLegendInto( lineLegendRef.current, [
 			{
-				label: __( 'Remaining Balance', 'mortgage-calculator-block' ),
+				label: __( 'Remaining Balance', 'mt-gutenberg-blocks' ),
 				color: palette.accent,
 			},
 			{
-				label: __( 'Cumulative Interest', 'mortgage-calculator-block' ),
+				label: __( 'Cumulative Interest', 'mt-gutenberg-blocks' ),
 				color: palette.accent2,
 			},
 		] );
@@ -257,34 +257,34 @@ export default function Preview( {
 
 	return (
 		<>
-			<p className="mcb-calc__editor-note">
+			<p className="mtgb-calc__editor-note">
 				{ __(
 					'Live preview — edit values in the Settings sidebar. Visitors get a fully interactive calculator.',
-					'mortgage-calculator-block'
+					'mt-gutenberg-blocks'
 				) }
 			</p>
 			<div
-				className={ `mcb-calc__grid${
-					showResults ? '' : ' mcb-calc__grid--form-only'
+				className={ `mtgb-calc__grid${
+					showResults ? '' : ' mtgb-calc__grid--form-only'
 				}` }
 			>
 				<form
-					className="mcb-calc__form"
+					className="mtgb-calc__form"
 					onSubmit={ ( event ) => event.preventDefault() }
 				>
 					{ NUMERIC_FIELDS.map( ( field ) => (
-						<div key={ field.key } className="mcb-calc__control">
+						<div key={ field.key } className="mtgb-calc__control">
 							<label
-								className="mcb-calc__label"
-								htmlFor={ `mcb-edit-${ field.key }` }
+								className="mtgb-calc__label"
+								htmlFor={ `mtgb-edit-${ field.key }` }
 							>
 								{ field.label }
 							</label>
-							<div className="mcb-calc__control-row">
+							<div className="mtgb-calc__control-row">
 								{ showSliders && (
 									<input
 										type="range"
-										className="mcb-calc__slider"
+										className="mtgb-calc__slider"
 										value={ Number(
 											attributes[ field.key ]
 										) }
@@ -303,8 +303,8 @@ export default function Preview( {
 								) }
 								<input
 									type="number"
-									id={ `mcb-edit-${ field.key }` }
-									className="mcb-calc__field"
+									id={ `mtgb-edit-${ field.key }` }
+									className="mtgb-calc__field"
 									value={ String(
 										attributes[ field.key ] ?? ''
 									) }
@@ -325,15 +325,15 @@ export default function Preview( {
 				</form>
 
 				{ showResults && (
-					<div className="mcb-calc__results">
-						<p className="mcb-calc__result-label">
+					<div className="mtgb-calc__results">
+						<p className="mtgb-calc__result-label">
 							{ __(
 								'Monthly Payment',
-								'mortgage-calculator-block'
+								'mt-gutenberg-blocks'
 							) }
 						</p>
 						<p
-							className="mcb-calc__result-primary"
+							className="mtgb-calc__result-primary"
 							style={ paymentTypography }
 						>
 							{ formatAmount(
@@ -342,12 +342,12 @@ export default function Preview( {
 								currencyPosition
 							) }
 						</p>
-						<dl className="mcb-calc__result-list">
-							<div className="mcb-calc__result-row">
+						<dl className="mtgb-calc__result-list">
+							<div className="mtgb-calc__result-row">
 								<dt>
 									{ __(
 										'Financed Principal',
-										'mortgage-calculator-block'
+										'mt-gutenberg-blocks'
 									) }
 								</dt>
 								<dd>
@@ -358,11 +358,11 @@ export default function Preview( {
 									) }
 								</dd>
 							</div>
-							<div className="mcb-calc__result-row">
+							<div className="mtgb-calc__result-row">
 								<dt>
 									{ __(
 										'Total Interest',
-										'mortgage-calculator-block'
+										'mt-gutenberg-blocks'
 									) }
 								</dt>
 								<dd>
@@ -373,11 +373,11 @@ export default function Preview( {
 									) }
 								</dd>
 							</div>
-							<div className="mcb-calc__result-row">
+							<div className="mtgb-calc__result-row">
 								<dt>
 									{ __(
 										'Total Paid',
-										'mortgage-calculator-block'
+										'mt-gutenberg-blocks'
 									) }
 								</dt>
 								<dd>
@@ -394,40 +394,40 @@ export default function Preview( {
 			</div>
 
 			{ showCharts && (
-				<div className="mcb-calc__charts">
+				<div className="mtgb-calc__charts">
 					{ [ 'donut', 'both' ].includes( chartType ) && (
-						<figure className="mcb-calc__chart">
-							<figcaption className="mcb-calc__chart-title">
+						<figure className="mtgb-calc__chart">
+							<figcaption className="mtgb-calc__chart-title">
 								{ __(
 									'Payment Composition',
-									'mortgage-calculator-block'
+									'mt-gutenberg-blocks'
 								) }
 							</figcaption>
 							<div
-								className="mcb-calc__chart-body"
+								className="mtgb-calc__chart-body"
 								ref={ donutRef }
 							/>
 							<figcaption
-								className="mcb-calc__legend"
+								className="mtgb-calc__legend"
 								ref={ legendRef }
 							/>
 						</figure>
 					) }
 
 					{ [ 'line', 'both' ].includes( chartType ) && (
-						<figure className="mcb-calc__chart">
-							<figcaption className="mcb-calc__chart-title">
+						<figure className="mtgb-calc__chart">
+							<figcaption className="mtgb-calc__chart-title">
 								{ __(
 									'Balance Over Time',
-									'mortgage-calculator-block'
+									'mt-gutenberg-blocks'
 								) }
 							</figcaption>
 							<div
-								className="mcb-calc__chart-body"
+								className="mtgb-calc__chart-body"
 								ref={ lineRef }
 							/>
 							<figcaption
-								className="mcb-calc__legend"
+								className="mtgb-calc__legend"
 								ref={ lineLegendRef }
 							/>
 						</figure>
@@ -436,32 +436,32 @@ export default function Preview( {
 			) }
 
 			{ showAmortization && (
-				<div className="mcb-calc__schedule">
-					<table className="mcb-calc__table">
+				<div className="mtgb-calc__schedule">
+					<table className="mtgb-calc__table">
 						<thead>
 							<tr>
 								<th scope="col">
 									{ __(
 										'Year',
-										'mortgage-calculator-block'
+										'mt-gutenberg-blocks'
 									) }
 								</th>
 								<th scope="col">
 									{ __(
 										'Principal Paid',
-										'mortgage-calculator-block'
+										'mt-gutenberg-blocks'
 									) }
 								</th>
 								<th scope="col">
 									{ __(
 										'Interest Paid',
-										'mortgage-calculator-block'
+										'mt-gutenberg-blocks'
 									) }
 								</th>
 								<th scope="col">
 									{ __(
 										'Remaining Balance',
-										'mortgage-calculator-block'
+										'mt-gutenberg-blocks'
 									) }
 								</th>
 							</tr>

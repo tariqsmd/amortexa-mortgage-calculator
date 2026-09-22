@@ -1,6 +1,6 @@
 <?php
 /**
- * Cross-language math parity test for the Mortgage Calculator block.
+ * Cross-language math parity test for the MT Mortgage Calculator block.
  *
  * WordPress-independent: stubs the few core functions the pure math helpers
  * call, computes the same matrix of cases in both PHP (includes/helpers.php)
@@ -42,7 +42,7 @@ if ( ! function_exists( 'absint' ) ) {
  *
  * @return int Number of failures encountered.
  */
-function mcb_test_parity() {
+function mtgb_test_parity() {
 	$cases = array(
 		array( 200000, 6.0, 30 ),
 		array( 250000, 0.0, 30 ),
@@ -59,8 +59,8 @@ function mcb_test_parity() {
 	foreach ( $cases as $case ) {
 		list( $principal, $rate, $years ) = $case;
 
-		$php_monthly[] = mcb_calculate_monthly_payment( $principal, $rate, $years );
-		$php_schedules[] = mcb_calculate_amortization_schedule( $principal, $rate, $years );
+		$php_monthly[] = mtgb_calculate_monthly_payment( $principal, $rate, $years );
+		$php_schedules[] = mtgb_calculate_amortization_schedule( $principal, $rate, $years );
 	}
 
 	// Locate the repo root and the JS driver, then run it.
@@ -167,7 +167,7 @@ function mcb_test_parity() {
 	return $failures;
 }
 
-$exit = mcb_test_parity();
+$exit = mtgb_test_parity();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

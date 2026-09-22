@@ -1,10 +1,10 @@
-# Mortgage Calculator Block
+# MT Gutenberg Blocks
 
 A native WordPress Gutenberg block that adds an interactive mortgage calculator anywhere in the block editor — with live monthly payment results, down-payment support, an annual amortization schedule, light/dark themes, a REST calculation endpoint, and full server-side rendering that works without JavaScript.
 
-- **Plugin name:** Mortgage Calculator Block
-- **Slug:** `mortgage-calculator-block`
-- **Text domain:** `mortgage-calculator-block`
+- **Plugin name:** MT Gutenberg Blocks
+- **Slug:** `mt-gutenberg-blocks`
+- **Text domain:** `mt-gutenberg-blocks`
 - **License:** GPLv2 or later
 - **Requires at least:** WordPress 6.4 / PHP 7.4
 
@@ -21,17 +21,17 @@ A native WordPress Gutenberg block that adds an interactive mortgage calculator 
 | Typography | Per-block payment font size and weight overrides. |
 | Amortization schedule | Annual rows (principal / interest / remaining balance) aggregated from month-by-month math. |
 | No-JS support | The block is fully server-rendered; JavaScript is progressive enhancement only. |
-| Settings page | Site-wide defaults for currency symbol, interest rate, decimal precision, and amortization visibility (Settings → Mortgage Calculator). |
-| REST endpoint | `POST /wp-json/mcb/v1/calculate` for headless/third-party use, nonce-protected. |
+| Settings page | Site-wide defaults for currency symbol, interest rate, decimal precision, and amortization visibility (Settings → MT Mortgage Calculator). |
+| REST endpoint | `POST /wp-json/mtgb/v1/calculate` for headless/third-party use, nonce-protected. |
 | Extensible | Actions and filters around rendering, defaults, results, currency, and assets. |
 | Standards | WPCS-ready (`phpcs.xml.dist`), fully translatable, escaped output, sanitized input. |
 
 ## Installation
 
-1. Copy the `mortgage-calculator-block` folder into `wp-content/plugins/` (or upload the zip via **Plugins → Add New → Upload Plugin**).
+1. Copy the `mt-gutenberg-blocks` folder into `wp-content/plugins/` (or upload the zip via **Plugins → Add New → Upload Plugin**).
 2. Activate the plugin on the **Plugins** screen.
-3. Insert the **Mortgage Calculator** block from the inserter (category: *Mortgage Tools*).
-4. Optional: configure defaults under **Settings → Mortgage Calculator**.
+3. Insert the **MT Mortgage Calculator** block from the inserter (category: *MT Gutenberg Blocks*).
+4. Optional: configure defaults under **Settings → MT Mortgage Calculator**.
 
 The repository ships a compiled `build/` directory, so no build step is required to run it.
 
@@ -62,11 +62,11 @@ src/render.php          Server-rendered template (escaped output)
 src/view.js             Front-end enhancement (live recalc + schedule rebuild)
 src/utils/calculator.js JS mirror of the PHP math (single source of truth: PHP)
 includes/helpers.php    Pure, unit-testable mortgage math + attribute sanitizing
-includes/class-mcb-block-registration.php  register_block_type + render pipeline
-includes/class-mcb-assets.php              Conditional enqueue (has_block + widgets)
-includes/class-mcb-rest-api.php            POST mcb/v1/calculate
-includes/class-mcb-settings.php            Settings API screen
-includes/class-mcb-i18n.php                Text domain loading
+includes/class-mtgb-block-registration.php  register_block_type + render pipeline
+includes/class-mtgb-assets.php              Conditional enqueue (has_block + widgets)
+includes/class-mtgb-rest-api.php            POST mtgb/v1/calculate
+includes/class-mtgb-settings.php            Settings API screen
+includes/class-mtgb-i18n.php                Text domain loading
 ```
 
 ### Hooks reference
@@ -75,19 +75,19 @@ includes/class-mcb-i18n.php                Text domain loading
 
 | Hook | Purpose |
 | --- | --- |
-| `mcb_default_attributes` | Override default loan amount, rate, term, etc. |
-| `mcb_calculation_result` | Modify computed results before output (e.g., currency conversion). |
-| `mcb_currency_symbol` | Replace the currency symbol per render. |
-| `mcb_enqueue_assets` | Return `false` to disable plugin CSS/JS and bundle your own. |
-| `mcb_default_settings` | Override admin setting defaults. |
+| `mtgb_default_attributes` | Override default loan amount, rate, term, etc. |
+| `mtgb_calculation_result` | Modify computed results before output (e.g., currency conversion). |
+| `mtgb_currency_symbol` | Replace the currency symbol per render. |
+| `mtgb_enqueue_assets` | Return `false` to disable plugin CSS/JS and bundle your own. |
+| `mtgb_default_settings` | Override admin setting defaults. |
 
 **Actions**
 
 | Hook | Purpose |
 | --- | --- |
-| `mcb_before_calculator_render` | Fires before block HTML is generated. |
-| `mcb_after_calculator_render` | Fires after block HTML is generated. |
-| `mcb_settings_saved` | Fires after admin settings are sanitized and saved. |
+| `mtgb_before_calculator_render` | Fires before block HTML is generated. |
+| `mtgb_after_calculator_render` | Fires after block HTML is generated. |
+| `mtgb_settings_saved` | Fires after admin settings are sanitized and saved. |
 
 ---
 
@@ -104,8 +104,8 @@ WordPress.org reviews plugins against the [Plugin Developer Guidelines](https://
 - [x] **Escaped output / sanitized input everywhere** (`esc_html__`, `esc_attr`, `wp_json_encode`, `sanitize_text_field`, clamped numerics).
 - [x] **Nonces verified** for state-changing routes (`X-WP-Nonce` on the REST endpoint; Settings API handles the options form).
 - [x] **Capability checks** (`manage_options` for settings, `edit_posts` fallback for editor REST calls).
-- [x] **Unique prefixes** — functions/classes/options/hooks are prefixed `mcb_` / `MCB_` / `MortgageCalculatorBlock`.
-- [x] **Translation-ready** — every string uses `MCB_TEXT_DOMAIN`; `languages/mortgage-calculator-block.pot` included.
+- [x] **Unique prefixes** — functions/classes/options/hooks are prefixed `mtgb_` / `mtgb_` / `MortgageCalculatorBlock`.
+- [x] **Translation-ready** — every string uses `mtgb_TEXT_DOMAIN`; `languages/mt-gutenberg-blocks.pot` included.
 - [x] **`readme.txt`** follows the standard format (Tested up to, Stable tag, Changelog, FAQ).
 - [ ] **Run final QA**: `npm run build && npm run lint:js && npm run lint:css` pass; activate on a clean WordPress install and insert the block once.
 - [ ] **Bump versions together** if releasing (see *Versioning a release* below).
@@ -123,7 +123,7 @@ The review system accepts either a zip upload or a public download link. Build a
 
 ```powershell
 # From the repository root (PowerShell)
-git archive --format=zip --prefix=mortgage-calculator-block/ -o ../mortgage-calculator-block.zip HEAD
+git archive --format=zip --prefix=mt-gutenberg-blocks/ -o ../mt-gutenberg-blocks.zip HEAD
 ```
 
 `git archive` respects `.gitignore`, so `node_modules/` never leaks into the package while the compiled `build/` directory does ship.
@@ -131,8 +131,8 @@ git archive --format=zip --prefix=mortgage-calculator-block/ -o ../mortgage-calc
 Double-check the zip contains, at minimum:
 
 ```
-mortgage-calculator-block/
-├── mortgage-calculator-block.php   ← valid plugin header
+mt-gutenberg-blocks/
+├── mt-gutenberg-blocks.php   ← valid plugin header
 ├── includes/, src/, build/, languages/, assets/
 ├── uninstall.php
 └── readme.txt
@@ -141,17 +141,17 @@ mortgage-calculator-block/
 ## 3. Submit for review
 
 1. Log in to [WordPress.org](https://wordpress.org/plugins/developers/add/) with your account.
-2. Paste the plugin **name** exactly as in the header: `Mortgage Calculator Block`.
+2. Paste the plugin **name** exactly as in the header: `MT Gutenberg Blocks`.
 3. Provide the zip (or link) from step 2 and a short description.
 4. Accept the guidelines agreement and submit.
 
 **What happens next**
 
-- You'll get an automated email confirming the plugin slug reservation (usually within minutes–hours). The slug should come out as `mortgage-calculator-block`.
+- You'll get an automated email confirming the plugin slug reservation (usually within minutes–hours). The slug should come out as `mt-gutenberg-blocks`.
 - A human reviewer examines the code. Queues vary from a few days to several weeks — do not resubmit duplicates while waiting.
 - If changes are requested, reply to the review email, fix the code, and re-upload through the same thread.
 - On approval you receive your SVN repository:
-  `https://plugins.svn.wordpress.org/mortgage-calculator-block`
+  `https://plugins.svn.wordpress.org/mt-gutenberg-blocks`
   with `trunk/`, `tags/`, and `assets/` directories (10 MB commit limit per commit).
 
 ## 4. Push the first release to SVN
@@ -160,18 +160,18 @@ Once approved, publish `trunk` and tag it. Example using TortoiseSVN's bundled C
 
 ```bash
 # 1. Check out the (empty) repository
-svn co https://plugins.svn.wordpress.org/mortgage-calculator-block mcb-svn
-cd mcb-svn
+svn co https://plugins.svn.wordpress.org/mt-gutenberg-blocks mtgb-svn
+cd mtgb-svn
 
 # 2. Copy plugin files into trunk/ (exclude repo-only files)
-robocopy ..\mortgage-calculator-block trunk /E /XD node_modules .git .github /XF README.md composer.lock phpunit.xml.dist
+robocopy ..\mt-gutenberg-blocks trunk /E /XD node_modules .git .github /XF README.md composer.lock phpunit.xml.dist
 
 # 3. Stage everything new
 svn add --force .
 svn add --force assets     # assets/ holds listing artwork, not code
 
 # 4. Commit trunk
-svn ci -m "Initial release of Mortgage Calculator Block 1.0.0"
+svn ci -m "Initial release of MT Gutenberg Blocks 1.0.0"
 
 # 5. Tag the release so users can pin to it
 svn cp trunk tags/1.0.0 -m "Tag 1.0.0"
@@ -199,7 +199,7 @@ Every release updates these four places **in lockstep**, then re-runs the build:
 
 | Location | Field |
 | --- | --- |
-| `mortgage-calculator-block.php` | `Version:` header **and** `MCB_VERSION` constant |
+| `mt-gutenberg-blocks.php` | `Version:` header **and** `mtgb_VERSION` constant |
 | `src/block.json` (+ rebuilt `build/block.json`) | `"version"` |
 | `readme.txt` | `Stable tag:` **and** a new `== Changelog ==` entry |
 | `package.json` / `composer.json` | `"version"` (optional but tidy) |
@@ -211,8 +211,8 @@ npm run build                      # refresh build/ artifacts
 git commit -am "Release 1.0.1"     # repo history
 git tag 1.0.1 && git push --tags   # repo tagging
 
-cd mcb-svn
-robocopy ..\mortgage-calculator-block trunk /E /XD node_modules .git
+cd mtgb-svn
+robocopy ..\mt-gutenberg-blocks trunk /E /XD node_modules .git
 svn ci -m "Update to 1.0.1"
 svn cp trunk tags/1.0.1 -m "Tag 1.0.1"
 ```
@@ -221,7 +221,7 @@ svn cp trunk tags/1.0.1 -m "Tag 1.0.1"
 
 - **Tested up to** — update `readme.txt` when major WordPress versions land; the directory flags stale listings.
 - **Security reports** — monitor the [Patchstack](https://patchstack.com/wordpress-plugins/) channel tied to your slug; respond within the disclosed timeline.
-- **Support forum** — watch `wordpress.org/support/plugin/mortgage-calculator-block/`; responsiveness affects listing quality signals.
+- **Support forum** — watch `wordpress.org/support/plugin/mt-gutenberg-blocks/`; responsiveness affects listing quality signals.
 - **Translations** — strings become available on translate.wordpress.org automatically after release; keep the POT current when adding UI text.
 - **Never edit published tags** — always cut a new tag; treat them as immutable.
 
@@ -237,4 +237,4 @@ svn cp trunk tags/1.0.1 -m "Tag 1.0.1"
 
 ## License
 
-Mortgage Calculator Block is released under the [GPL v2 or later](https://www.gnu.org/licenses/gpl-2.0.html).
+MT Gutenberg Blocks is released under the [GPL v2 or later](https://www.gnu.org/licenses/gpl-2.0.html).

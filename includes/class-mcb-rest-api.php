@@ -11,17 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Registers the mcb/v1/calculate route.
+ * Registers the mtgb/v1/calculate route.
  *
  * The endpoint mirrors the PHP calculation used by render.php, enabling
  * headless clients and third-party integrations to reuse the same logic.
  */
-class MCB_REST_API {
+class mtgb_REST_API {
 
 	/**
 	 * REST namespace for all plugin routes.
 	 */
-	const NAMESPACE_V1 = 'mcb/v1';
+	const NAMESPACE_V1 = 'mtgb/v1';
 
 	/**
 	 * Registers the hooks this component responds to.
@@ -47,7 +47,7 @@ class MCB_REST_API {
 						'minimum'           => 0,
 						'maximum'           => 999999999999,
 						'required'          => true,
-						'sanitize_callback' => 'mcb_clamp_float',
+						'sanitize_callback' => 'mtgb_clamp_float',
 					),
 					'down_payment'  => array(
 						'type'              => 'number',
@@ -55,7 +55,7 @@ class MCB_REST_API {
 						'maximum'           => 999999999999,
 						'required'          => false,
 						'default'           => 0,
-						'sanitize_callback' => 'mcb_clamp_float',
+						'sanitize_callback' => 'mtgb_clamp_float',
 					),
 					'interest_rate' => array(
 						'type'              => 'number',
@@ -63,7 +63,7 @@ class MCB_REST_API {
 						'maximum'           => 100,
 						'required'          => false,
 						'default'           => 0,
-						'sanitize_callback' => 'mcb_clamp_float',
+						'sanitize_callback' => 'mtgb_clamp_float',
 					),
 					'term_years'    => array(
 						'type'              => 'integer',
@@ -93,7 +93,7 @@ class MCB_REST_API {
 	 * installs require it.
 	 *
 	 * The callback is kept for transparency and as an override point via the
-	 * `mcb/v1/calculate` route registration; a nonce check is no longer applied
+	 * `mtgb/v1/calculate` route registration; a nonce check is no longer applied
 	 * because it provided no real protection (any unauthenticated visitor can
 	 * already compute the same result with a calculator).
 	 *
@@ -109,15 +109,15 @@ class MCB_REST_API {
 		 * @param bool                    $allowed Whether the request is allowed.
 		 * @param WP_REST_Request<string> $request Current request.
 		 */
-		$allowed = apply_filters( 'mcb_rest_calculate_allowed', true, $request );
+		$allowed = apply_filters( 'mtgb_rest_calculate_allowed', true, $request );
 
 		if ( true === $allowed ) {
 			return true;
 		}
 
 		return rest_ensure_response( new WP_Error(
-			'mcb_rest_forbidden',
-			esc_html__( 'Calculation requests are not permitted.', MCB_TEXT_DOMAIN ),
+			'mtgb_rest_forbidden',
+			esc_html__( 'Calculation requests are not permitted.', mtgb_TEXT_DOMAIN ),
 			array( 'status' => rest_authorization_required_code() )
 		) );
 	}
@@ -125,7 +125,7 @@ class MCB_REST_API {
 	/**
 	 * Handles a calculation request.
 	 *
-	 * Reuses mcb_calculate() so the `mcb_calculation_result` filter applies to
+	 * Reuses mtgb_calculate() so the `mtgb_calculation_result` filter applies to
 	 * REST responses exactly as it does to rendered output.
 	 *
 	 * @param WP_REST_Request<array<string,mixed>> $request Current request.
@@ -140,6 +140,6 @@ class MCB_REST_API {
 			'showAmortization' => ! empty( $request['with_schedule'] ),
 		);
 
-		return rest_ensure_response( mcb_calculate( $attributes ) );
+		return rest_ensure_response( mtgb_calculate( $attributes ) );
 	}
 }

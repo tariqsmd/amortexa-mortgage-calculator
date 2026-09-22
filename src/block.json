@@ -1,14 +1,14 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mcb/mortgage-calculator",
+	"name": "mtgb/mortgage-calculator",
 	"version": "1.2.0",
-	"title": "Mortgage Calculator",
-	"category": "mcb",
+	"title": "MT Mortgage Calculator",
+	"category": "mtgb",
 	"icon": "calculator",
 	"description": "Interactive mortgage calculator with monthly payments and amortization schedule.",
 	"keywords": [ "mortgage", "loan", "calculator", "payment", "amortization" ],
-	"textdomain": "mortgage-calculator-block",
+	"textdomain": "mt-gutenberg-blocks",
 	"attributes": {
 		"loanAmount": {
 			"type": "number",
@@ -125,6 +125,6 @@
 			"margin": true
 		}
 	},
-	"editorScript": "mcb-editor-script",
-	"editorStyle": "mcb-editor-style"
+	"editorScript": "mtgb-editor-script",
+	"editorStyle": "mtgb-editor-style"
 }

@@ -1,5 +1,5 @@
 /**
- * Registers the Mortgage Calculator block.
+ * Registers the MT Mortgage Calculator block.
  *
  * @package
  */
@@ -14,15 +14,15 @@ import save from './save';
 
 registerBlockType( metadata.name, {
 	...metadata,
-	title: __( 'Mortgage Calculator', 'mortgage-calculator-block' ),
+	title: __( 'MT Mortgage Calculator', 'mt-gutenberg-blocks' ),
 	description: __(
 		'Interactive mortgage calculator with monthly payments and amortization schedule.',
-		'mortgage-calculator-block'
+		'mt-gutenberg-blocks'
 	),
 	keywords: [
-		__( 'mortgage', 'mortgage-calculator-block' ),
-		__( 'loan', 'mortgage-calculator-block' ),
-		__( 'calculator', 'mortgage-calculator-block' ),
+		__( 'mortgage', 'mt-gutenberg-blocks' ),
+		__( 'loan', 'mt-gutenberg-blocks' ),
+		__( 'calculator', 'mt-gutenberg-blocks' ),
 	],
 	edit: Edit,
 	save,

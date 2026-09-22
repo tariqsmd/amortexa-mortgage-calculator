@@ -73,7 +73,7 @@ export function createDonutChart( items, opts ) {
 	const svg = svgEl( 'svg', {
 		viewBox: `0 0 ${ size } ${ size }`,
 		role: 'img',
-		class: 'mcb-chart mcb-chart--donut',
+		class: 'mtgb-chart mtgb-chart--donut',
 	} );
 
 	const group = svgEl( 'g', {
@@ -117,7 +117,7 @@ export function createDonutChart( items, opts ) {
 			x: center,
 			y: center - 6,
 			'text-anchor': 'middle',
-			class: 'mcb-chart__center-title',
+			class: 'mtgb-chart__center-title',
 		} );
 		title.textContent = opts.centerTitle;
 		svg.appendChild( title );
@@ -128,7 +128,7 @@ export function createDonutChart( items, opts ) {
 			x: center,
 			y: center + 14,
 			'text-anchor': 'middle',
-			class: 'mcb-chart__center-value',
+			class: 'mtgb-chart__center-value',
 		} );
 		value.textContent = opts.centerValue;
 		svg.appendChild( value );
@@ -175,7 +175,7 @@ export function createLineChart( series, opts ) {
 	const svg = svgEl( 'svg', {
 		viewBox: `0 0 ${ width } ${ height }`,
 		role: 'img',
-		class: 'mcb-chart mcb-chart--line',
+		class: 'mtgb-chart mtgb-chart--line',
 	} );
 
 	for ( let tick = 0; tick <= 4; tick++ ) {
@@ -188,7 +188,7 @@ export function createLineChart( series, opts ) {
 				x2: width - pad.right,
 				y1: y,
 				y2: y,
-				class: 'mcb-chart__gridline',
+				class: 'mtgb-chart__gridline',
 			} )
 		);
 
@@ -196,7 +196,7 @@ export function createLineChart( series, opts ) {
 			x: pad.left - 8,
 			y: y + 3,
 			'text-anchor': 'end',
-			class: 'mcb-chart__axis',
+			class: 'mtgb-chart__axis',
 		} );
 		label.textContent = opts.formatY
 			? opts.formatY( value )
@@ -256,7 +256,7 @@ export function createLineChart( series, opts ) {
 			x: xAt( tick.at ),
 			y: height - 8,
 			'text-anchor': 'middle',
-			class: 'mcb-chart__axis',
+			class: 'mtgb-chart__axis',
 		} );
 		label.textContent = tick.text;
 		svg.appendChild( label );

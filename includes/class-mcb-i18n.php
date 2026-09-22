@@ -14,9 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Loads the plugin text domain so PHP strings are translatable.
  *
  * JavaScript strings are made translatable separately via
- * wp_set_script_translations() in MCB_Assets.
+ * wp_set_script_translations() in mtgb_Assets.
  */
-class MCB_I18n {
+class mtgb_I18n {
 
 	/**
 	 * Registers the hooks this component responds to.
@@ -30,9 +30,9 @@ class MCB_I18n {
 	 */
 	public function load_textdomain() {
 		load_plugin_textdomain(
-			MCB_TEXT_DOMAIN,
+			mtgb_TEXT_DOMAIN,
 			false,
-			dirname( plugin_basename( MCB_PLUGIN_FILE ) ) . '/languages'
+			dirname( plugin_basename( mtgb_PLUGIN_FILE ) ) . '/languages'
 		);
 	}
 }

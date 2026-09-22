@@ -1,4 +1,4 @@
-=== Mortgage Calculator Block ===
+=== MT Gutenberg Blocks ===
 Contributors: tariq
 Tags: block, mortgage, calculator, finance, gutenberg
 Requires at least: 6.4
@@ -12,7 +12,7 @@ A native Gutenberg block that adds an interactive mortgage calculator with live 
 
 == Description ==
 
-Mortgage Calculator Block registers a dynamic Gutenberg block that renders an interactive mortgage calculator anywhere on your site.
+MT Gutenberg Blocks registers a dynamic Gutenberg block that renders an interactive mortgage calculator anywhere on your site.
 
 Features:
 
@@ -25,7 +25,7 @@ Features:
 * Annual amortization schedule (principal vs. interest vs. remaining balance per year).
 * Fully server-rendered output: results display correctly even without JavaScript (charts are progressive enhancement).
 * All calculation math lives in pure PHP helpers and is mirrored client-side for instant feedback.
-* REST endpoint (`/wp-json/mcb/v1/calculate`) for headless or third-party use.
+* REST endpoint (`/wp-json/mtgb/v1/calculate`) for headless or third-party use.
 * Developer friendly: actions and filters to modify defaults, results, currency, and assets.
 
 The plugin follows WordPress Coding Standards, escapes all output, sanitizes all input, and is fully translatable.
@@ -36,10 +36,10 @@ Not yet — the block is the single supported insertion method. The calculation 
 
 == Installation ==
 
-1. Upload the `mortgage-calculator-block` folder to `/wp-content/plugins/`, or install the zip via Plugins → Add New → Upload Plugin.
+1. Upload the `mt-gutenberg-blocks` folder to `/wp-content/plugins/`, or install the zip via Plugins → Add New → Upload Plugin.
 2. Activate the plugin through the Plugins screen.
-3. Edit any post or page, open the block inserter, and search for "Mortgage Calculator".
-4. Optional: configure site-wide defaults under Settings → Mortgage Calculator.
+3. Edit any post or page, open the block inserter, and search for "MT Mortgage Calculator".
+4. Optional: configure site-wide defaults under Settings → MT Mortgage Calculator.
 5. Run `npm install` and `npm run build` inside the plugin folder when developing.
 
 == Frequently Asked Questions ==
@@ -54,25 +54,25 @@ A 30-year loan would produce 360 table rows on every page load. Rows are aggrega
 
 = Can I change the currency symbol? =
 
-Yes — per block via its "Currency symbol" setting, site-wide via Settings → Mortgage Calculator, or programmatically with the `mcb_currency_symbol` filter. Each block can also place the symbol before or after amounts via its "Currency position" setting.
+Yes — per block via its "Currency symbol" setting, site-wide via Settings → MT Mortgage Calculator, or programmatically with the `mtgb_currency_symbol` filter. Each block can also place the symbol before or after amounts via its "Currency position" setting.
 
 = Is there a REST API? =
 
-Yes. POST to `/wp-json/mcb/v1/calculate` with JSON body `{ "amount": 300000, "interest_rate": 6.5, "term_years": 30, "down_payment": 60000 }`. Requests must include the standard `X-WP-Nonce` header.
+Yes. POST to `/wp-json/mtgb/v1/calculate` with JSON body `{ "amount": 300000, "interest_rate": 6.5, "term_years": 30, "down_payment": 60000 }`. Requests must include the standard `X-WP-Nonce` header.
 
 = Which filters and actions are available? =
 
-* Filter `mcb_default_attributes` — change default loan amount, rate, term, etc.
-* Filter `mcb_calculation_result` — modify computed results before output.
-* Filter `mcb_currency_symbol` — override the currency symbol.
-* Filter `mcb_enqueue_assets` — return false to disable front-end CSS/JS and bundle your own.
-* Action `mcb_before_calculator_render` / `mcb_after_calculator_render` — wrap block output.
-* Action `mcb_settings_saved` — fired after admin settings are updated.
+* Filter `mtgb_default_attributes` — change default loan amount, rate, term, etc.
+* Filter `mtgb_calculation_result` — modify computed results before output.
+* Filter `mtgb_currency_symbol` — override the currency symbol.
+* Filter `mtgb_enqueue_assets` — return false to disable front-end CSS/JS and bundle your own.
+* Action `mtgb_before_calculator_render` / `mtgb_after_calculator_render` — wrap block output.
+* Action `mtgb_settings_saved` — fired after admin settings are updated.
 
 == Changelog ==
 
 = 1.2.0 =
-* New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type under Settings → Mortgage Calculator.
+* New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type under Settings → MT Mortgage Calculator.
 * New: per-block toggles to show/hide the results summary and the range sliders.
 * New: currency symbol position option per block — before the amount ($99) or after (99 €).
 * New: seven additional design skins — Midnight Violet, Rose Quartz, Minimal Slate, Royal Grape, Aqua Fresh, Mocha Cream, and Cyber Neon (twelve in total).
@@ -88,7 +88,7 @@ Yes. POST to `/wp-json/mcb/v1/calculate` with JSON body `{ "amount": 300000, "in
 * New: block sidebar settings to show/hide charts, choose chart type (donut, line, or both), toggle the amortization table, and override payment font size and weight.
 
 = 1.0.0 =
-* Initial release: Mortgage Calculator block, settings page, REST endpoint, amortization schedule.
+* Initial release: MT Mortgage Calculator block, settings page, REST endpoint, amortization schedule.
 
 == Upgrade Notice ==
 

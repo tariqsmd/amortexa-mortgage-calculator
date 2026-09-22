@@ -1,5 +1,5 @@
 {
-	"name": "tariq/mortgage-calculator-block",
+	"name": "tariq/mt-gutenberg-blocks",
 	"description": "A native Gutenberg block providing an interactive mortgage calculator.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",

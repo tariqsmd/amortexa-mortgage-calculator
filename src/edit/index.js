@@ -1,5 +1,5 @@
 /**
- * Edit entry point for the Mortgage Calculator block.
+ * Edit entry point for the MT Mortgage Calculator block.
  *
  * Computes the calculation up front and composes the inspector Controls and
  * the live Preview, attaching the block wrapper props/className/style.
@@ -98,7 +98,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	const rootRef = useRef( null );
 
 	const blockProps = useBlockProps( {
-		className: `mcb-calc mcb-theme-${
+		className: `mtgb-calc mtgb-theme-${
 			SKINS.some( ( skin ) => skin.value === theme ) ? theme : 'light'
 		}`,
 		style: getPaletteOverrides( attributes, fontFamily ),

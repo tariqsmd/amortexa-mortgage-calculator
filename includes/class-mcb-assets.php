@@ -18,12 +18,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * assets are NOT declared in block.json; they are enqueued manually only when
  * the block is actually present, avoiding site-wide CSS/JS weight.
  */
-class MCB_Assets {
+class mtgb_Assets {
 
-	const HANDLE_EDITOR_SCRIPT = 'mcb-editor-script';
-	const HANDLE_EDITOR_STYLE  = 'mcb-editor-style';
-	const HANDLE_STYLE         = 'mcb-style';
-	const HANDLE_VIEW          = 'mcb-view';
+	const HANDLE_EDITOR_SCRIPT = 'mtgb-editor-script';
+	const HANDLE_EDITOR_STYLE  = 'mtgb-editor-style';
+	const HANDLE_STYLE         = 'mtgb-style';
+	const HANDLE_VIEW          = 'mtgb-view';
 
 	/**
 	 * Tracks whether the front-end bundle has been enqueued on this request.
@@ -47,7 +47,7 @@ class MCB_Assets {
 	 * build/*.asset.php manifests (the standard wp-scripts pattern) so the
 	 * dependency list can never drift from what the bundle actually imports,
 	 * and so cache busting follows content hashes. CSS has no manifest and
-	 * keeps MCB_VERSION.
+	 * keeps mtgb_VERSION.
 	 */
 	public function register_assets() {
 		$editor_asset = self::get_build_asset(
@@ -57,7 +57,7 @@ class MCB_Assets {
 
 		wp_register_script(
 			self::HANDLE_EDITOR_SCRIPT,
-			MCB_PLUGIN_URL . 'build/index.js',
+			mtgb_PLUGIN_URL . 'build/index.js',
 			$editor_asset['dependencies'],
 			$editor_asset['version'],
 			true
@@ -65,33 +65,33 @@ class MCB_Assets {
 
 		wp_register_style(
 			self::HANDLE_EDITOR_STYLE,
-			MCB_PLUGIN_URL . 'build/index.css',
+			mtgb_PLUGIN_URL . 'build/index.css',
 			array( 'wp-edit-blocks' ),
-			MCB_VERSION
+			mtgb_VERSION
 		);
 
-		if ( file_exists( MCB_PLUGIN_DIR . 'build/style-index.css' ) ) {
+		if ( file_exists( mtgb_PLUGIN_DIR . 'build/style-index.css' ) ) {
 			wp_register_style(
 				self::HANDLE_STYLE,
-				MCB_PLUGIN_URL . 'build/style-index.css',
+				mtgb_PLUGIN_URL . 'build/style-index.css',
 				array(),
-				MCB_VERSION
+				mtgb_VERSION
 			);
 		}
 
-		if ( file_exists( MCB_PLUGIN_DIR . 'build/view.js' ) ) {
+		if ( file_exists( mtgb_PLUGIN_DIR . 'build/view.js' ) ) {
 			$view_asset = self::get_build_asset( 'view', array() );
 
 			wp_register_script(
 				self::HANDLE_VIEW,
-				MCB_PLUGIN_URL . 'build/view.js',
+				mtgb_PLUGIN_URL . 'build/view.js',
 				$view_asset['dependencies'],
 				$view_asset['version'],
 				true
 			);
 		}
 
-		wp_set_script_translations( self::HANDLE_EDITOR_SCRIPT, MCB_TEXT_DOMAIN );
+		wp_set_script_translations( self::HANDLE_EDITOR_SCRIPT, mtgb_TEXT_DOMAIN );
 	}
 
 	/**
@@ -103,7 +103,7 @@ class MCB_Assets {
 	 * @return array{dependencies: array<string>, version: string} Asset data.
 	 */
 	private static function get_build_asset( $entry, $fallback_deps = array() ) {
-		$path  = MCB_PLUGIN_DIR . 'build/' . $entry . '.asset.php';
+		$path  = mtgb_PLUGIN_DIR . 'build/' . $entry . '.asset.php';
 		$asset = file_exists( $path ) ? include $path : array();
 
 		$deps = ( isset( $asset['dependencies'] ) && is_array( $asset['dependencies'] ) )
@@ -112,7 +112,7 @@ class MCB_Assets {
 
 		$version = ( isset( $asset['version'] ) && is_string( $asset['version'] ) )
 			? $asset['version']
-			: MCB_VERSION;
+			: mtgb_VERSION;
 
 		return array(
 			'dependencies' => $deps,
@@ -151,7 +151,7 @@ class MCB_Assets {
 	/**
 	 * Whether third parties allow this plugin to load its own assets.
 	 *
-	 * @return bool True unless the `mcb_enqueue_assets` filter returns false.
+	 * @return bool True unless the `mtgb_enqueue_assets` filter returns false.
 	 */
 	private static function should_enqueue_assets() {
 		/**
@@ -161,7 +161,7 @@ class MCB_Assets {
 		 *
 		 * @param bool $should_enqueue True by default.
 		 */
-		return apply_filters( 'mcb_enqueue_assets', true );
+		return apply_filters( 'mtgb_enqueue_assets', true );
 	}
 
 	/**
@@ -170,7 +170,7 @@ class MCB_Assets {
 	 * @return bool True if the block appears somewhere on the page.
 	 */
 	private static function page_has_block() {
-		$block_name = MCB_Block_Registration::BLOCK_NAME;
+		$block_name = mtgb_Block_Registration::BLOCK_NAME;
 
 		if ( is_singular() && has_block( $block_name ) ) {
 			return true;
@@ -200,9 +200,9 @@ class MCB_Assets {
 
 		wp_localize_script(
 			self::HANDLE_VIEW,
-			'mcbGlobal',
+			'mtgbGlobal',
 			array(
-				'restRoot'  => esc_url_raw( rest_url( 'mcb/v1' ) ),
+				'restRoot'  => esc_url_raw( rest_url( 'mtgb/v1' ) ),
 				'restNonce' => wp_create_nonce( 'wp_rest' ),
 			)
 		);
