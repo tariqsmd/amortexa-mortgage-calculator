@@ -100,6 +100,19 @@ export function getChartTypes() {
 		{ value: 'both', label: 'both' },
 		{ value: 'donut', label: 'donut' },
 		{ value: 'line', label: 'line' },
+		{ value: 'bar', label: 'bar' },
+	] );
+}
+
+/**
+ * Returns the layout options.
+ *
+ * @return {Array<{value: string, label: string}>} Layout options.
+ */
+export function getLayouts() {
+	return toOptions( getData().layouts, [
+		{ value: 'stacked', label: 'stacked' },
+		{ value: 'split', label: 'split' },
 	] );
 }
 

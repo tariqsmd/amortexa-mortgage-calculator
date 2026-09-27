@@ -39,6 +39,7 @@ require_once CALCFORGE_PLUGIN_DIR . 'includes/class-assets.php';
 require_once CALCFORGE_PLUGIN_DIR . 'includes/class-blocks.php';
 require_once CALCFORGE_PLUGIN_DIR . 'includes/class-rest.php';
 require_once CALCFORGE_PLUGIN_DIR . 'includes/class-settings.php';
+require_once CALCFORGE_PLUGIN_DIR . 'includes/class-shortcode.php';
 require_once CALCFORGE_PLUGIN_DIR . 'includes/class-plugin.php';
 
 register_activation_hook( __FILE__, array( 'CalcForge_Plugin', 'activate' ) );

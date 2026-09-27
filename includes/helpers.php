@@ -82,6 +82,23 @@ function calcforge_get_chart_types() {
 		'both'  => __( 'Both charts', CALCFORGE_TEXT_DOMAIN ),
 		'donut' => __( 'Donut only', CALCFORGE_TEXT_DOMAIN ),
 		'line'  => __( 'Line only', CALCFORGE_TEXT_DOMAIN ),
+		'bar'   => __( 'Bar only', CALCFORGE_TEXT_DOMAIN ),
+	);
+}
+
+/**
+ * Returns the selectable calculator layouts.
+ *
+ * Layouts are purely presentational: the markup order never changes, only the
+ * CSS grid on `.calcforge-calc__grid`, so a layout can be switched on an
+ * existing block without invalidating anything.
+ *
+ * @return array<string,string> Layout key => label.
+ */
+function calcforge_get_layouts() {
+	return array(
+		'stacked' => __( 'Stacked (single column)', CALCFORGE_TEXT_DOMAIN ),
+		'split'   => __( 'Two column split', CALCFORGE_TEXT_DOMAIN ),
 	);
 }
 
@@ -164,6 +181,7 @@ function calcforge_get_default_settings() {
 		'default_loan_term'     => 30,
 		'default_theme'         => 'light',
 		'default_chart_type'    => 'both',
+		'default_layout'        => 'split',
 	);
 
 	/*
@@ -250,6 +268,13 @@ function calcforge_sanitize_settings( $settings ) {
 			: 'both';
 	}
 
+	$layout = isset( $raw['default_layout'] ) ? (string) $raw['default_layout'] : (string) $defaults['default_layout'];
+	if ( ! array_key_exists( $layout, calcforge_get_layouts() ) ) {
+		$layout = array_key_exists( (string) $defaults['default_layout'], calcforge_get_layouts() )
+			? (string) $defaults['default_layout']
+			: 'split';
+	}
+
 	return array(
 		'currency_symbol'       => wp_html_excerpt( $symbol, 8, '' ),
 		'default_interest_rate' => $rate,
@@ -260,6 +285,7 @@ function calcforge_sanitize_settings( $settings ) {
 		'default_loan_term'     => $loan_term,
 		'default_theme'         => $theme,
 		'default_chart_type'    => $chart_type,
+		'default_layout'        => $layout,
 	);
 }
 
@@ -281,6 +307,7 @@ function calcforge_get_settings_attribute_map() {
 		'enable_amortization'   => 'showAmortization',
 		'default_theme'         => 'theme',
 		'default_chart_type'    => 'chartType',
+		'default_layout'        => 'layout',
 	);
 }
 
@@ -305,6 +332,7 @@ function calcforge_get_default_attributes() {
 		'showAmortization'     => (bool) $settings['enable_amortization'],
 		'showCharts'           => true,
 		'chartType'            => (string) $settings['default_chart_type'],
+		'layout'               => (string) $settings['default_layout'],
 		'theme'                => (string) $settings['default_theme'],
 		'showSliders'          => true,
 		'showResults'          => true,
@@ -478,6 +506,17 @@ function calcforge_sanitize_attributes( $attributes ) {
 		}
 	}
 
+	$layouts = array_keys( calcforge_get_layouts() );
+
+	if ( isset( $raw['layout'] ) && in_array( $raw['layout'], $layouts, true ) ) {
+		$layout = (string) $raw['layout'];
+	} else {
+		$layout = (string) $defaults['layout'];
+		if ( ! in_array( $layout, $layouts, true ) ) {
+			$layout = 'split';
+		}
+	}
+
 	$payment_font_size = array_key_exists( 'paymentFontSize', $raw )
 		? calcforge_clamp_float( $raw['paymentFontSize'], 0, 120 )
 		: (float) $defaults['paymentFontSize'];
@@ -527,6 +566,7 @@ function calcforge_sanitize_attributes( $attributes ) {
 			? (bool) $raw['showCharts']
 			: (bool) $defaults['showCharts'],
 		'chartType'        => $chart_type,
+		'layout'           => $layout,
 		'paymentFontSize'  => $payment_font_size,
 		'paymentFontWeight' => $payment_font_weight,
 		'theme'            => $theme,
@@ -749,6 +789,7 @@ function calcforge_get_editor_data() {
 	return array(
 		'skins'           => $skins,
 		'chartTypes'      => calcforge_get_chart_types(),
+		'layouts'         => calcforge_get_layouts(),
 		'fontFamilies'    => calcforge_get_font_families(),
 		'fontWeights'     => calcforge_get_font_weights(),
 		'currencyPosition' => calcforge_get_currency_positions(),

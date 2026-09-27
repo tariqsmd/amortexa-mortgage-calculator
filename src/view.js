@@ -14,7 +14,11 @@ import {
 	buildAmortizationSchedule,
 	calculateMortgage,
 } from './utils/calculator';
-import { createDonutChart, createLineChart } from './utils/charts';
+import {
+	createBarChart,
+	createDonutChart,
+	createLineChart,
+} from './utils/charts';
 
 const CHART_WIDTH = 520;
 const CHART_HEIGHT = 250;
@@ -245,8 +249,9 @@ function renderLegend( host, items ) {
 function renderCharts( root, values, config, result ) {
 	const donutHost = root.querySelector( '[data-calcforge-chart="donut"]' );
 	const lineHost = root.querySelector( '[data-calcforge-chart="line"]' );
+	const barHost = root.querySelector( '[data-calcforge-chart="bar"]' );
 
-	if ( ! donutHost && ! lineHost ) {
+	if ( ! donutHost && ! lineHost && ! barHost ) {
 		return;
 	}
 
@@ -314,6 +319,44 @@ function renderCharts( root, values, config, result ) {
 		renderLegend( root.querySelector( '[data-calcforge-legend="line"]' ), [
 			{ label: labels.balance, color: palette.accent },
 			{ label: labels.cumInt, color: palette.accent2 },
+		] );
+	}
+
+	if ( barHost ) {
+		const principalPaid = schedule.map( ( row ) =>
+			Math.round( row.principal )
+		);
+		const interestPaid = schedule.map( ( row ) =>
+			Math.round( row.interest )
+		);
+
+		barHost.replaceChildren(
+			createBarChart(
+				[
+					{
+						points: principalPaid,
+						color: palette.accent,
+						label: labels.prinPaid,
+					},
+					{
+						points: interestPaid,
+						color: palette.accent2,
+						label: labels.intPaid,
+					},
+				],
+				{
+					width: CHART_WIDTH,
+					height: CHART_HEIGHT,
+					formatY: ( value ) =>
+						formatAmount( value, { ...config, decimals: 0 } ),
+					xLabels: buildXTicks( schedule ),
+				}
+			)
+		);
+
+		renderLegend( root.querySelector( '[data-calcforge-legend="bar"]' ), [
+			{ label: labels.prinPaid, color: palette.accent },
+			{ label: labels.intPaid, color: palette.accent2 },
 		] );
 	}
 }

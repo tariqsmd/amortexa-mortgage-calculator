@@ -26,6 +26,7 @@ import {
 	getFontFamilies,
 	getFontStacks,
 	getFontWeights,
+	getLayouts,
 	getSiteDefaults,
 	getSkins,
 } from '../utils/editor-data';
@@ -190,6 +191,24 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 					}
 					options={ getChartTypes() }
 					onChange={ setSelect( 'chartType' ) }
+				/>
+
+				<SelectControl
+					__nextHasNoMarginBottom
+					label={ __( 'Layout', 'calcforge' ) }
+					help={ __(
+						'Two column split places the inputs beside the results on wide screens.',
+						'calcforge'
+					) }
+					value={
+						getLayouts().some(
+							( option ) => option.value === attributes.layout
+						)
+							? attributes.layout
+							: 'stacked'
+					}
+					options={ getLayouts() }
+					onChange={ setSelect( 'layout' ) }
 				/>
 
 				<ToggleControl

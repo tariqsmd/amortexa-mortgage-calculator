@@ -264,3 +264,127 @@ export function createLineChart( series, opts ) {
 
 	return svg;
 }
+
+/**
+ * Builds a grouped bar chart over the same yearly data points as the line chart.
+ *
+ * One group per year, one bar per series, so principal-versus-interest per year
+ * reads the same way the line chart does. Bars are centred in their group and
+ * share the axis and label conventions of createLineChart.
+ *
+ * @param {Array<{points: Array<number>, color: string, label?: string}>} series
+ *                                                                               One entry per bar group; points are indexed per year starting at year 1.
+ * @param {Object}                                                        opts   { width, height, pad, xLabels: Array<{at, text}>, formatY }.
+ * @return {SVGSVGElement} Rendered bar chart.
+ */
+export function createBarChart( series, opts ) {
+	const width = opts.width || 520;
+	const height = opts.height || 260;
+	const pad = {
+		top: 18,
+		right: 16,
+		bottom: 30,
+		left: 56,
+		...( opts.pad || {} ),
+	};
+
+	const active = series.filter( ( group ) => group.points.length );
+	const count = Math.max(
+		...active.map( ( group ) => group.points.length ),
+		2
+	);
+
+	const rawMax = Math.max(
+		...active.flatMap( ( group ) => group.points ),
+		1
+	);
+	const yMax = niceCeil( rawMax );
+
+	const innerW = width - pad.left - pad.right;
+	const innerH = height - pad.top - pad.bottom;
+	const baseline = pad.top + innerH;
+
+	const slot = innerW / count;
+	const groupPad = Math.min( slot * 0.18, 10 );
+	const barW = Math.max(
+		( slot - groupPad * 2 ) / Math.max( active.length, 1 ),
+		1
+	);
+
+	const svg = svgEl( 'svg', {
+		viewBox: `0 0 ${ width } ${ height }`,
+		role: 'img',
+		class: 'calcforge-chart calcforge-chart--bar',
+	} );
+
+	for ( let tick = 0; tick <= 4; tick++ ) {
+		const value = ( yMax / 4 ) * tick;
+		const y = baseline - ( value / yMax ) * innerH;
+
+		svg.appendChild(
+			svgEl( 'line', {
+				x1: pad.left,
+				x2: width - pad.right,
+				y1: y,
+				y2: y,
+				class: 'calcforge-chart__gridline',
+			} )
+		);
+
+		const label = svgEl( 'text', {
+			x: pad.left - 8,
+			y: y + 3,
+			'text-anchor': 'end',
+			class: 'calcforge-chart__axis',
+		} );
+		label.textContent = opts.formatY
+			? opts.formatY( value )
+			: String( Math.round( value ) );
+		svg.appendChild( label );
+	}
+
+	active.forEach( ( group, seriesIndex ) => {
+		group.points.forEach( ( value, index ) => {
+			if ( index >= count ) {
+				return;
+			}
+
+			const barH = Math.max( ( value / yMax ) * innerH, 0 );
+			const groupLeft = pad.left + slot * index;
+			const x =
+				groupLeft +
+				groupPad +
+				barW * seriesIndex +
+				( slot - groupPad * 2 - barW * active.length ) / 2;
+
+			svg.appendChild(
+				svgEl( 'rect', {
+					x: x.toFixed( 1 ),
+					y: ( baseline - barH ).toFixed( 1 ),
+					width: barW.toFixed( 1 ),
+					height: barH.toFixed( 1 ),
+					fill: group.color,
+					rx: 2,
+					class: 'calcforge-chart__bar',
+				} )
+			);
+		} );
+	} );
+
+	( opts.xLabels || [] ).forEach( ( tick ) => {
+		if ( tick.at < 0 || tick.at > count - 1 ) {
+			return;
+		}
+
+		const label = svgEl( 'text', {
+			x: pad.left + slot * tick.at + slot / 2,
+			y: height - 8,
+			'text-anchor': 'middle',
+			class: 'calcforge-chart__axis',
+		} );
+		label.textContent = tick.text;
+		svg.appendChild( label );
+	} );
+
+	return svg;
+}

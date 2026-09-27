@@ -32,6 +32,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		loanTerm,
 		downPayment,
 		theme,
+		layout,
 		fontFamily,
 		paymentFontSize,
 		paymentFontWeight,
@@ -66,7 +67,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	const { ref: blockRef, ...restBlockProps } = useBlockProps( {
 		className: `calcforge-calc calcforge-theme-${
 			getSkinSlugs().includes( theme ) ? theme : 'light'
-		}`,
+		} calcforge-calc--layout-${ layout === 'split' ? 'split' : 'stacked' }`,
 		style: getPaletteOverrides( attributes, fontFamily ),
 	} );
 

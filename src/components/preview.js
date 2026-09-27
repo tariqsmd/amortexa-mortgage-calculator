@@ -9,7 +9,11 @@
 
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from '@wordpress/element';
-import { createDonutChart, createLineChart } from '../utils/charts';
+import {
+	createBarChart,
+	createDonutChart,
+	createLineChart,
+} from '../utils/charts';
 import { NUMERIC_FIELDS } from '../utils/field-definitions';
 
 /**
@@ -113,12 +117,15 @@ export default function Preview( {
 		showSliders,
 		showResults,
 		chartType,
+		layout,
 	} = attributes;
 
 	const donutRef = useRef( null );
 	const legendRef = useRef( null );
 	const lineRef = useRef( null );
 	const lineLegendRef = useRef( null );
+	const barRef = useRef( null );
+	const barLegendRef = useRef( null );
 
 	useEffect( () => {
 		if ( ! rootRef.current ) {
@@ -189,6 +196,37 @@ export default function Preview( {
 			);
 		}
 
+		if ( barRef.current ) {
+			barRef.current.replaceChildren(
+				createBarChart(
+					[
+						{
+							points: chartSchedule.map( ( row ) =>
+								Math.round( row.principal )
+							),
+							color: palette.accent,
+						},
+						{
+							points: chartSchedule.map( ( row ) =>
+								Math.round( row.interest )
+							),
+							color: palette.accent2,
+						},
+					],
+					{
+						width: 520,
+						height: 250,
+						formatY: ( value ) =>
+							formatAmount( value, '', currencyPosition ).replace(
+								/\B(?=(\d{3})+(?!\d))/g,
+								','
+							),
+						xLabels: buildXTicks( chartSchedule ),
+					}
+				)
+			);
+		}
+
 		renderLegendInto( legendRef.current, [
 			{
 				label: __( 'Financed Principal', 'calcforge' ),
@@ -206,6 +244,16 @@ export default function Preview( {
 			},
 			{
 				label: __( 'Cumulative Interest', 'calcforge' ),
+				color: palette.accent2,
+			},
+		] );
+		renderLegendInto( barLegendRef.current, [
+			{
+				label: __( 'Principal Paid', 'calcforge' ),
+				color: palette.accent,
+			},
+			{
+				label: __( 'Interest Paid', 'calcforge' ),
 				color: palette.accent2,
 			},
 		] );
@@ -263,9 +311,9 @@ export default function Preview( {
 				) }
 			</p>
 			<div
-				className={ `calcforge-calc__grid${
-					showResults ? '' : ' calcforge-calc__grid--form-only'
-				}` }
+				className={ `calcforge-calc__grid calcforge-calc__grid--${
+					layout === 'split' ? 'split' : 'stacked'
+				}${ showResults ? '' : ' calcforge-calc__grid--form-only' }` }
 			>
 				<form
 					className="calcforge-calc__form"
@@ -409,6 +457,25 @@ export default function Preview( {
 							<figcaption
 								className="calcforge-calc__legend"
 								ref={ lineLegendRef }
+							/>
+						</figure>
+					) }
+
+					{ chartType === 'bar' && (
+						<figure className="calcforge-calc__chart">
+							<figcaption className="calcforge-calc__chart-title">
+								{ __(
+									'Principal vs Interest by Year',
+									'calcforge'
+								) }
+							</figcaption>
+							<div
+								className="calcforge-calc__chart-body"
+								ref={ barRef }
+							/>
+							<figcaption
+								className="calcforge-calc__legend"
+								ref={ barLegendRef }
 							/>
 						</figure>
 					) }

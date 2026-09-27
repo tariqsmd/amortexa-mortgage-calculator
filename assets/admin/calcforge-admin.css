@@ -11,6 +11,43 @@
 }
 
 /*
+ * Two-column shell: the settings form keeps a comfortable reading width on the
+ * left, and the shortcode reference sticks beside it so it stays reachable while
+ * scrolling a long form. Collapses to a single column below 1100px.
+ */
+.calcforge-settings .calcforge-settings__layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 320px;
+	gap: 24px;
+	align-items: start;
+	margin-top: 8px;
+}
+
+.calcforge-settings .calcforge-settings__main {
+	min-width: 0;
+}
+
+.calcforge-settings .calcforge-settings__sidebar {
+	position: sticky;
+	top: 46px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 0;
+}
+
+@media screen and (max-width: 1100px) {
+
+	.calcforge-settings .calcforge-settings__layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.calcforge-settings .calcforge-settings__sidebar {
+		position: static;
+	}
+}
+
+/*
  * Each section is a card so the three groups read as separate tasks rather than
  * one long wall of fields.
  */
@@ -52,4 +89,79 @@
 .calcforge-settings .form-table .description {
 	margin-top: 6px;
 	max-width: 40em;
+}
+
+/*
+ * Sidebar cards.
+ */
+.calcforge-settings .calcforge-settings__card {
+	padding: 16px 18px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.calcforge-settings .calcforge-settings__card-title {
+	margin: 0 0 10px;
+	padding: 0;
+	border: 0;
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.calcforge-settings .calcforge-settings__card-text {
+	margin: 0 0 10px;
+	font-size: 13px;
+	line-height: 1.6;
+	color: #50575e;
+}
+
+.calcforge-settings .calcforge-settings__card-text:last-child {
+	margin-bottom: 0;
+}
+
+/* Shortcode samples wrap rather than widening the card on narrow screens. */
+.calcforge-settings .calcforge-settings__code {
+	display: block;
+	padding: 8px 10px;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	font-size: 12px;
+	line-height: 1.5;
+	word-break: break-word;
+	overflow-wrap: anywhere;
+}
+
+.calcforge-settings .calcforge-settings__card-text .calcforge-settings__code {
+	margin: 0;
+}
+
+/*
+ * Attribute reference: a tight two-column definition list. Inline code in the
+ * term keeps the attribute name on one line next to its description.
+ */
+.calcforge-settings .calcforge-settings__attrs {
+	margin: 0;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.calcforge-settings .calcforge-settings__attrs dt {
+	margin-top: 8px;
+}
+
+.calcforge-settings .calcforge-settings__attrs dt:first-child {
+	margin-top: 0;
+}
+
+.calcforge-settings .calcforge-settings__attrs dt .calcforge-settings__code {
+	display: inline;
+	padding: 1px 5px;
+}
+
+.calcforge-settings .calcforge-settings__attrs dd {
+	margin: 2px 0 0;
+	color: #50575e;
 }

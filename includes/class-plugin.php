@@ -54,6 +54,7 @@ final class CalcForge_Plugin {
 			'CalcForge_Assets',
 			'CalcForge_Blocks',
 			'CalcForge_REST',
+			'CalcForge_Shortcode',
 		);
 
 		foreach ( $components as $class ) {

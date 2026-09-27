@@ -38,7 +38,12 @@
 		"chartType": {
 			"type": "string",
 			"default": "both",
-			"enum": [ "donut", "line", "both" ]
+			"enum": [ "donut", "line", "bar", "both" ]
+		},
+		"layout": {
+			"type": "string",
+			"default": "split",
+			"enum": [ "stacked", "split" ]
 		},
 		"theme": {
 			"type": "string",
@@ -127,7 +132,6 @@
 	},
 	"example": {
 		"attributes": {
-			"mode": "preview",
 			"loanAmount": 350000,
 			"downPayment": 70000,
 			"interestRate": 5.5,

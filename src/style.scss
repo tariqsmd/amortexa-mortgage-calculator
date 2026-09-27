@@ -48,11 +48,20 @@
 	}
 }
 
+/*
+ * Layout is driven entirely by the `layout` attribute:
+ *   --stacked  inputs above results, one column
+ *   --split    inputs beside results, collapsing to one column when narrow
+ */
 .calcforge-calc__grid {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	grid-template-columns: minmax(0, 1fr);
 	gap: 24px;
 	align-items: start;
+}
+
+.calcforge-calc__grid--split {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
 /* Single-column variant used when the results summary is disabled. */
@@ -64,7 +73,8 @@
 
 	/* Viewport fallback for browsers without container query support;
 	   the @container rules below are the primary breakpoints. */
-	.calcforge-calc__grid {
+	.calcforge-calc__grid,
+	.calcforge-calc__grid--split {
 		grid-template-columns: 1fr;
 	}
 }
@@ -239,7 +249,8 @@
 
 @container calcforge-calc (max-width: 640px) {
 
-	.calcforge-calc__grid {
+	.calcforge-calc__grid,
+	.calcforge-calc__grid--split {
 		grid-template-columns: minmax(0, 1fr);
 	}
 }
@@ -599,6 +610,16 @@
 	.calcforge-chart__gridline {
 		stroke: var(--calcforge-border);
 		stroke-width: 1;
+	}
+
+	/* Grouped bars carry a hairline gap so adjacent series stay legible when a
+	   long term packs thirty years of columns into the plot area. */
+	.calcforge-chart__bar {
+		transition: opacity 0.15s ease;
+
+		&:hover {
+			opacity: 0.82;
+		}
 	}
 }
 

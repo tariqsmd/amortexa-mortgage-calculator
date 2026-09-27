@@ -49,16 +49,16 @@ $config = array(
 	'showCharts'       => ! empty( $attrs['showCharts'] ),
 	'chartType'        => (string) $attrs['chartType'],
 	'labels'           => array(
-		'monthly'  => esc_html__( 'Monthly Payment', CALCFORGE_TEXT_DOMAIN ),
-		'principal'=> esc_html__( 'Financed Principal', CALCFORGE_TEXT_DOMAIN ),
-		'totalInt' => esc_html__( 'Total Interest', CALCFORGE_TEXT_DOMAIN ),
-		'totalPaid'=> esc_html__( 'Total Paid', CALCFORGE_TEXT_DOMAIN ),
-		'toggle'   => esc_html__( 'Collapse schedule', CALCFORGE_TEXT_DOMAIN ),
-		'year'     => esc_html__( 'Year', CALCFORGE_TEXT_DOMAIN ),
-		'prinPaid' => esc_html__( 'Principal Paid', CALCFORGE_TEXT_DOMAIN ),
-		'intPaid'  => esc_html__( 'Interest Paid', CALCFORGE_TEXT_DOMAIN ),
-		'balance'  => esc_html__( 'Remaining Balance', CALCFORGE_TEXT_DOMAIN ),
-		'cumInt'   => esc_html__( 'Cumulative Interest', CALCFORGE_TEXT_DOMAIN ),
+		'monthly'  => __( 'Monthly Payment', CALCFORGE_TEXT_DOMAIN ),
+		'principal'=> __( 'Financed Principal', CALCFORGE_TEXT_DOMAIN ),
+		'totalInt' => __( 'Total Interest', CALCFORGE_TEXT_DOMAIN ),
+		'totalPaid'=> __( 'Total Paid', CALCFORGE_TEXT_DOMAIN ),
+		'toggle'   => __( 'Collapse schedule', CALCFORGE_TEXT_DOMAIN ),
+		'year'     => __( 'Year', CALCFORGE_TEXT_DOMAIN ),
+		'prinPaid' => __( 'Principal Paid', CALCFORGE_TEXT_DOMAIN ),
+		'intPaid'  => __( 'Interest Paid', CALCFORGE_TEXT_DOMAIN ),
+		'balance'  => __( 'Remaining Balance', CALCFORGE_TEXT_DOMAIN ),
+		'cumInt'   => __( 'Cumulative Interest', CALCFORGE_TEXT_DOMAIN ),
 	),
 );
 
@@ -71,7 +71,7 @@ $fields = array(
 	array(
 		'id'    => $uid . '-amount',
 		'name'  => 'loanAmount',
-		'label' => esc_html__( 'Loan Amount', CALCFORGE_TEXT_DOMAIN ),
+		'label' => __( 'Loan Amount', CALCFORGE_TEXT_DOMAIN ),
 		'value' => (string) $attrs['loanAmount'],
 		'step'  => 'any',
 		'min'   => '0',
@@ -83,7 +83,7 @@ $fields = array(
 	array(
 		'id'    => $uid . '-down',
 		'name'  => 'downPayment',
-		'label' => esc_html__( 'Down Payment', CALCFORGE_TEXT_DOMAIN ),
+		'label' => __( 'Down Payment', CALCFORGE_TEXT_DOMAIN ),
 		'value' => (string) $attrs['downPayment'],
 		'step'  => 'any',
 		'min'   => '0',
@@ -95,7 +95,7 @@ $fields = array(
 	array(
 		'id'    => $uid . '-rate',
 		'name'  => 'interestRate',
-		'label' => esc_html__( 'Interest Rate (%)', CALCFORGE_TEXT_DOMAIN ),
+		'label' => __( 'Interest Rate (%)', CALCFORGE_TEXT_DOMAIN ),
 		'value' => (string) $attrs['interestRate'],
 		'step'  => '0.01',
 		'min'   => '0',
@@ -107,7 +107,7 @@ $fields = array(
 	array(
 		'id'    => $uid . '-term',
 		'name'  => 'loanTerm',
-		'label' => esc_html__( 'Term (Years)', CALCFORGE_TEXT_DOMAIN ),
+		'label' => __( 'Term (Years)', CALCFORGE_TEXT_DOMAIN ),
 		'value' => (string) $attrs['loanTerm'],
 		'step'  => '1',
 		'min'   => '1',
@@ -163,7 +163,7 @@ if ( '' !== $font_stack ) {
 }
 
 $wrapper_args = array(
-	'class' => 'calcforge-calc calcforge-theme-' . esc_attr( $attrs['theme'] ),
+	'class' => 'calcforge-calc calcforge-theme-' . esc_attr( $attrs['theme'] ) . ' calcforge-calc--layout-' . esc_attr( $attrs['layout'] ),
 );
 
 if ( ! empty( $style_vars ) ) {
@@ -174,7 +174,7 @@ if ( ! empty( $style_vars ) ) {
 	<?php echo get_block_wrapper_attributes( $wrapper_args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() escapes internally. ?>
 	data-calcforge-config="<?php echo esc_attr( wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) ); ?>"
 >
-	<div class="calcforge-calc__grid<?php echo empty( $attrs['showResults'] ) ? ' calcforge-calc__grid--form-only' : ''; ?>">
+	<div class="calcforge-calc__grid calcforge-calc__grid--<?php echo esc_attr( $attrs['layout'] ); ?><?php echo empty( $attrs['showResults'] ) ? ' calcforge-calc__grid--form-only' : ''; ?>">
 		<form class="calcforge-calc__form" autocomplete="off">
 			<?php foreach ( $fields as $field ) : ?>
 				<div class="calcforge-calc__control">
@@ -269,6 +269,16 @@ if ( ! empty( $style_vars ) ) {
 					</figcaption>
 					<div class="calcforge-calc__chart-body" data-calcforge-chart="line"></div>
 					<figcaption class="calcforge-calc__legend" data-calcforge-legend="line"></figcaption>
+				</figure>
+			<?php endif; ?>
+
+			<?php if ( 'bar' === $attrs['chartType'] ) : ?>
+				<figure class="calcforge-calc__chart">
+					<figcaption class="calcforge-calc__chart-title">
+						<?php echo esc_html__( 'Principal vs Interest by Year', CALCFORGE_TEXT_DOMAIN ); ?>
+					</figcaption>
+					<div class="calcforge-calc__chart-body" data-calcforge-chart="bar"></div>
+					<figcaption class="calcforge-calc__legend" data-calcforge-legend="bar"></figcaption>
 				</figure>
 			<?php endif; ?>
 		</div>

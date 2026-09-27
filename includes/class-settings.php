@@ -160,6 +160,13 @@ class CalcForge_Settings {
 				'description' => __( 'Which charts new calculators start with.', CALCFORGE_TEXT_DOMAIN ),
 				'options'     => 'calcforge_get_chart_types',
 			),
+			'default_layout'        => array(
+				'section'     => 'calcforge_appearance',
+				'type'        => 'select',
+				'label'       => __( 'Layout', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Split places the inputs beside the results on wide screens and stacks them on narrow ones.', CALCFORGE_TEXT_DOMAIN ),
+				'options'     => 'calcforge_get_layouts',
+			),
 		);
 	}
 
@@ -354,6 +361,10 @@ class CalcForge_Settings {
 
 	/**
 	 * Renders the settings page shell.
+	 *
+	 * The form sits in a wide main column with a sticky help sidebar beside it,
+	 * so the shortcode reference stays reachable while scrolling a long form
+	 * without turning the Settings API tables into a second, hand-written form.
 	 */
 	public function render_page() {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
@@ -367,14 +378,68 @@ class CalcForge_Settings {
 				<?php esc_html_e( 'These values are the site-wide defaults. Every new Mortgage Calculator block starts with them, and each block can then be adjusted on its own without affecting the others.', CALCFORGE_TEXT_DOMAIN ); ?>
 			</p>
 
-			<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
-				<?php
-				settings_fields( self::OPTION_GROUP );
-				do_settings_sections( self::PAGE_SLUG );
-				submit_button();
-				?>
-			</form>
+			<div class="calcforge-settings__layout">
+				<div class="calcforge-settings__main">
+					<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
+						<?php
+						settings_fields( self::OPTION_GROUP );
+						do_settings_sections( self::PAGE_SLUG );
+						submit_button();
+						?>
+					</form>
+				</div>
+
+				<?php $this->render_sidebar(); ?>
+			</div>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Renders the help and shortcode reference sidebar.
+	 */
+	private function render_sidebar() {
+		?>
+		<aside class="calcforge-settings__sidebar">
+			<div class="calcforge-settings__card calcforge-settings__card--shortcode">
+				<h2 class="calcforge-settings__card-title">
+					<?php esc_html_e( 'Shortcode', CALCFORGE_TEXT_DOMAIN ); ?>
+				</h2>
+				<p class="calcforge-settings__card-text">
+					<?php esc_html_e( 'Paste the calculator into any post, page, or widget area:', CALCFORGE_TEXT_DOMAIN ); ?>
+				</p>
+				<p class="calcforge-settings__card-text">
+					<code class="calcforge-settings__code">[calcforge]</code>
+				</p>
+				<p class="calcforge-settings__card-text">
+					<?php esc_html_e( 'Add attributes to override the defaults, then add it as a block to keep changing it visually:', CALCFORGE_TEXT_DOMAIN ); ?>
+				</p>
+				<p class="calcforge-settings__card-text">
+					<code class="calcforge-settings__code">[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]</code>
+				</p>
+				<p class="calcforge-settings__card-text">
+					<?php esc_html_e( 'Attribute names are lowercase. Wrap the value in quotes. Attributes accept:', CALCFORGE_TEXT_DOMAIN ); ?>
+				</p>
+				<dl class="calcforge-settings__attrs">
+					<?php foreach ( CalcForge_Shortcode::get_documented_attributes() as $attr => $spec ) : ?>
+						<dt><code class="calcforge-settings__code"><?php echo esc_html( $attr ); ?></code></dt>
+						<dd><?php echo esc_html( $spec['description'] ); ?></dd>
+					<?php endforeach; ?>
+				</dl>
+			</div>
+
+			<div class="calcforge-settings__card calcforge-settings__card--help">
+				<h2 class="calcforge-settings__card-title">
+					<?php esc_html_e( 'Help', CALCFORGE_TEXT_DOMAIN ); ?>
+				</h2>
+				<p class="calcforge-settings__card-text">
+					<?php esc_html_e( 'Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on.', CALCFORGE_TEXT_DOMAIN ); ?>
+				</p>
+				<p class="calcforge-settings__card-text">
+					<?php esc_html_e( 'Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar.', CALCFORGE_TEXT_DOMAIN ); ?>
+				</p>
+			</div>
+		</aside>
 		<?php
 	}
 
