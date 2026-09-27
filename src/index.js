@@ -1,29 +1,22 @@
 /**
- * Registers the MT Mortgage Calculator block.
+ * Registers the Mortgage Calculator block.
+ *
+ * Title, description, keywords, and category all come from block.json, which
+ * WordPress translates through the block's `textdomain` field. Keeping them out
+ * of this file means there is a single definition of the block's identity.
  *
  * @package
  */
 
-import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
-import './style.scss';
-import './editor.scss';
 import metadata from './block.json';
 import Edit from './edit';
 import save from './save';
+import './style.scss';
+import './index.css';
 
 registerBlockType( metadata.name, {
 	...metadata,
-	title: __( 'MT Mortgage Calculator', 'mt-gutenberg-blocks' ),
-	description: __(
-		'Interactive mortgage calculator with monthly payments and amortization schedule.',
-		'mt-gutenberg-blocks'
-	),
-	keywords: [
-		__( 'mortgage', 'mt-gutenberg-blocks' ),
-		__( 'loan', 'mt-gutenberg-blocks' ),
-		__( 'calculator', 'mt-gutenberg-blocks' ),
-	],
 	edit: Edit,
 	save,
 } );

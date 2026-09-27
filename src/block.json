@@ -1,18 +1,22 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mtgb/mortgage-calculator",
+	"name": "calcforge/mortgage-calculator",
 	"version": "1.2.0",
-	"title": "MT Mortgage Calculator",
-	"category": "mtgb",
+	"title": "Mortgage Calculator",
+	"category": "calcforge",
 	"icon": "calculator",
-	"description": "Interactive mortgage calculator with monthly payments and amortization schedule.",
+	"description": "Interactive mortgage calculator with monthly payments, charts, and an amortization schedule.",
 	"keywords": [ "mortgage", "loan", "calculator", "payment", "amortization" ],
-	"textdomain": "mt-gutenberg-blocks",
+	"textdomain": "calcforge",
 	"attributes": {
 		"loanAmount": {
 			"type": "number",
 			"default": 300000
+		},
+		"downPayment": {
+			"type": "number",
+			"default": 0
 		},
 		"interestRate": {
 			"type": "number",
@@ -22,10 +26,6 @@
 			"type": "number",
 			"default": 30
 		},
-		"downPayment": {
-			"type": "number",
-			"default": 60000
-		},
 		"currencySymbol": {
 			"type": "string",
 			"default": "$"
@@ -34,6 +34,41 @@
 			"type": "string",
 			"default": "prefix",
 			"enum": [ "prefix", "suffix" ]
+		},
+		"chartType": {
+			"type": "string",
+			"default": "both",
+			"enum": [ "donut", "line", "both" ]
+		},
+		"theme": {
+			"type": "string",
+			"default": "light",
+			"enum": [
+				"light",
+				"dark",
+				"ocean",
+				"sunset",
+				"forest",
+				"midnight",
+				"rose",
+				"slate",
+				"grape",
+				"aqua",
+				"mocha",
+				"cyber",
+				"emerald",
+				"crimson",
+				"charcoal",
+				"copper",
+				"royal",
+				"amber",
+				"cobalt",
+				"fuchsia",
+				"mint",
+				"sand",
+				"lemon",
+				"steel"
+			]
 		},
 		"showSliders": {
 			"type": "boolean",
@@ -51,36 +86,19 @@
 			"type": "boolean",
 			"default": true
 		},
-		"chartType": {
-			"type": "string",
-			"default": "both",
-			"enum": [ "donut", "line", "both" ]
-		},
 		"paymentFontSize": {
 			"type": "number",
 			"default": 0
 		},
 		"paymentFontWeight": {
 			"type": "string",
-			"default": ""
+			"default": "",
+			"enum": [ "", "300", "400", "500", "600", "700", "800" ]
 		},
-		"theme": {
+		"fontFamily": {
 			"type": "string",
-			"default": "light",
-			"enum": [
-				"light",
-				"dark",
-				"ocean",
-				"sunset",
-				"forest",
-				"midnight",
-				"rose",
-				"slate",
-				"grape",
-				"aqua",
-				"mocha",
-				"cyber"
-			]
+			"default": "inherit",
+			"enum": [ "inherit", "sans", "serif", "mono" ]
 		},
 		"accentColor": {
 			"type": "string",
@@ -105,11 +123,15 @@
 		"fieldBorderColor": {
 			"type": "string",
 			"default": ""
-		},
-		"fontFamily": {
-			"type": "string",
-			"default": "inherit",
-			"enum": [ "inherit", "sans", "serif", "mono" ]
+		}
+	},
+	"example": {
+		"attributes": {
+			"mode": "preview",
+			"loanAmount": 350000,
+			"downPayment": 70000,
+			"interestRate": 5.5,
+			"loanTerm": 30
 		}
 	},
 	"supports": {
@@ -125,6 +147,9 @@
 			"margin": true
 		}
 	},
-	"editorScript": "mtgb-editor-script",
-	"editorStyle": "mtgb-editor-style"
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./render.php"
 }

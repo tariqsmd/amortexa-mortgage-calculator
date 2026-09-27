@@ -1,53 +1,33 @@
-# Wordpress - ignore core, configuration, examples, uploads and logs.
-# https://github.com/github/gitignore/blob/main/WordPress.gitignore
-
-# Core
-#
-# Note: if you want to stage/commit WP core files
-# you can delete this whole section/until Configuration.
-/wp-admin/
-/wp-content/index.php
-/wp-content/languages
-/wp-content/plugins/index.php
-/wp-content/themes/index.php
-/wp-includes/
-/index.php
-/license.txt
-/readme.html
-/wp-*.php
-/xmlrpc.php
-
-# Configuration
-wp-config.php
-
-# Example themes
-/wp-content/themes/twenty*/
-
-# Example plugin
-/wp-content/plugins/hello.php
-
-# Uploads
-/wp-content/uploads/
-
-# Log files
-*.log
-
-# htaccess
-/.htaccess
-
-# All plugins
-#
-# Note: If you wish to whitelist plugins,
-# uncomment the next line
-#/wp-content/plugins
-
-# All themes
-#
-# Note: If you wish to whitelist plugins,
-# uncomment the next line
-#/wp-content/themes
-
-# Plugin development artifacts
+# Dependencies
 node_modules/
 vendor/
+
+# Build and release output
+/dist/
+*.zip
+*.tar.gz
+
+# Tooling caches and local config
 .wp-env.json
+.wp-env.override.json
+.phpunit.result.cache
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Source maps are not committed; the compiled build/ folder is.
+*.map
+
+# Lock files for dev tooling
+composer.lock
+
+# Note: LICENSE and readme.txt are intentionally NOT ignored. The WordPress.org
+# guidelines require the license to be shipped with the plugin, so never add
+# them here.
+
+# The rendered icon/banner PNGs under .wordpress-org/assets/ ARE committed.
+# They are the files uploaded to the WordPress.org listing, so they must be
+# versioned even though they are generated from the adjacent .svg sources by
+# `npm run render-assets`.

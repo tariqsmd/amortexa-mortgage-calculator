@@ -1,58 +1,21 @@
 /**
- * Edit entry point for the MT Mortgage Calculator block.
+ * Edit entry point for the Mortgage Calculator block.
  *
- * Computes the calculation up front and composes the inspector Controls and
- * the live Preview, attaching the block wrapper props/className/style.
+ * Computes the calculation up front and composes the inspector controls and the
+ * live preview, attaching the block wrapper props/className/style.
  */
 
 import { useBlockProps } from '@wordpress/block-editor';
-import { useMemo, useRef } from '@wordpress/element';
-import './../style.scss';
-import './../editor.scss';
+import { useCallback, useMemo, useRef } from '@wordpress/element';
 import {
 	buildAmortizationSchedule,
 	calculateMortgage,
-} from '../utils/calculator';
-import Controls, {
-	COLOR_CONTROLS,
-	FONT_FAMILIES,
-	FONT_STACKS,
-	SKINS,
-} from './controls';
-import Preview from './preview';
-
-/**
- * Builds inline CSS custom property overrides from the per-block color and
- * font settings so they beat any skin in both specificity orders.
- *
- * @param {Object} attributes Current attribute values.
- * @param {string} fontFamily Active font-family attribute.
- * @return {Object|undefined} React style object with CSS variables.
- */
-function getPaletteOverrides( attributes, fontFamily ) {
-	const overrides = {};
-
-	COLOR_CONTROLS.forEach( ( control ) => {
-		const value = attributes[ control.key ];
-
-		if ( value ) {
-			overrides[ control.cssVar ] = value;
-		}
-	} );
-
-	const stack =
-		FONT_STACKS[
-			FONT_FAMILIES.some( ( f ) => f.value === fontFamily )
-				? fontFamily
-				: 'inherit'
-		];
-
-	if ( stack ) {
-		overrides.fontFamily = stack;
-	}
-
-	return Object.keys( overrides ).length ? overrides : undefined;
-}
+} from './utils/calculator';
+import { getSkinSlugs } from './utils/editor-data';
+import InspectorControls, {
+	getPaletteOverrides,
+} from './components/inspector-controls';
+import Preview from './components/preview';
 
 /**
  * Renders the block edit UI.
@@ -97,12 +60,28 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const rootRef = useRef( null );
 
-	const blockProps = useBlockProps( {
-		className: `mtgb-calc mtgb-theme-${
-			SKINS.some( ( skin ) => skin.value === theme ) ? theme : 'light'
+	// useBlockProps() hands back its own ref, which the editor uses to locate the
+	// block node. Spreading the props and then adding `ref={ rootRef }` would
+	// silently drop that ref, so the two are merged instead.
+	const { ref: blockRef, ...restBlockProps } = useBlockProps( {
+		className: `calcforge-calc calcforge-theme-${
+			getSkinSlugs().includes( theme ) ? theme : 'light'
 		}`,
 		style: getPaletteOverrides( attributes, fontFamily ),
 	} );
+
+	const setBlockRef = useCallback(
+		( node ) => {
+			rootRef.current = node;
+
+			if ( typeof blockRef === 'function' ) {
+				blockRef( node );
+			} else if ( blockRef ) {
+				blockRef.current = node;
+			}
+		},
+		[ blockRef ]
+	);
 
 	const paymentTypography = {};
 
@@ -116,11 +95,11 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	return (
 		<>
-			<Controls
+			<InspectorControls
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>
-			<div { ...blockProps } ref={ rootRef }>
+			<div { ...restBlockProps } ref={ setBlockRef }>
 				<Preview
 					attributes={ attributes }
 					setAttributes={ setAttributes }

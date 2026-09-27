@@ -1,0 +1,40 @@
+# Files excluded from a WordPress.org release.
+#
+# `npm run dist` (tools/build-dist.cjs) uses an explicit allowlist and is the
+# canonical way to build a release. This file is a second safety net for anyone
+# who builds with `wp dist-archive` from the 10up/wp-cli-dist-archive package
+# instead, so that the two methods cannot disagree about what ships.
+
+# Dependencies and tooling
+node_modules
+vendor
+composer.json
+composer.lock
+package.json
+package-lock.json
+webpack.config.js
+phpcs.xml.dist
+
+# Development sources and tooling
+src/**/*.js
+src/edit
+src/utils
+src/*.scss
+tools
+tests
+includes
+
+# Repository documentation (readme.txt and LICENSE always ship)
+README.md
+.gitignore
+.distignore
+.github
+.git
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+*.log
+*.map
+*.zip
+dist

@@ -3,7 +3,7 @@
  * front-end view script.
  *
  * This module mirrors the authoritative PHP helpers in includes/helpers.php
- * (mtgb_calculate_monthly_payment / mtgb_calculate_amortization_schedule) so the
+ * (calcforge_calculate_monthly_payment / calcforge_calculate_amortization_schedule) so the
  * editor and browser previews agree with server-rendered output.
  */
 

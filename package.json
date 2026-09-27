@@ -1,8 +1,8 @@
 {
-	"name": "mt-gutenberg-blocks",
+	"name": "calcforge",
 	"version": "1.2.0",
-	"description": "A native Gutenberg block providing an interactive mortgage calculator with amortization schedule.",
-	"author": "Tariq",
+	"description": "An interactive mortgage calculator block for the block editor, with live monthly payments, charts and an amortization schedule.",
+	"author": "Muhammad Tariq",
 	"license": "GPL-2.0-or-later",
 	"keywords": [
 		"wordpress",
@@ -11,30 +11,48 @@
 		"mortgage",
 		"calculator"
 	],
+	"homepage": "https://wordpress.org/plugins/calcforge/",
+	"repository": {
+		"type": "git",
+		"url": "https://wordpress.org/plugins/calcforge/"
+	},
+	"bugs": {
+		"url": "https://wordpress.org/support/plugin/calcforge/"
+	},
 	"files": [
+		"calcforge.php",
+		"uninstall.php",
+		"readme.txt",
+		"LICENSE",
+		"plugin.json",
 		"build",
-		"includes",
 		"languages",
 		"assets",
-		"src",
-		"mt-gutenberg-blocks.php",
-		"uninstall.php",
-		"readme.txt"
+		"includes"
 	],
+	"devDependencies": {
+		"@babel/parser": "^7.29.9",
+		"@babel/runtime": "^7.29.7",
+		"@babel/traverse": "^7.29.8",
+		"@wordpress/scripts": "^28.5.0",
+		"adm-zip": "^0.6.1",
+		"typescript": "~5.5.4",
+		"wp-pot": "^2.0.0"
+	},
 	"scripts": {
 		"build": "wp-scripts build",
 		"start": "wp-scripts start",
 		"dev": "wp-scripts start",
-		"lint:js": "wp-scripts lint-js src",
-		"lint:css": "wp-scripts lint-style src/**/*.scss",
+		"lint:js": "wp-scripts lint-js src webpack.config.js",
+		"lint:css": "wp-scripts lint-style \"src/**/*.scss\" \"src/**/*.css\"",
 		"lint:pkg-json": "wp-scripts lint-pkg-json .",
+		"lint:md": "wp-scripts lint-md-docs README.md",
 		"packages-update": "wp-scripts packages-update",
-		"test": "php tests/parity.php"
-	},
-	"devDependencies": {
-		"@babel/runtime": "^7.29.7",
-		"@wordpress/scripts": "^28.5.0",
-		"typescript": "~5.5.4"
+		"make-pot": "node tools/make-pot.cjs",
+		"render-assets": "node tools/render-assets.cjs",
+		"test": "php tests/parity.php",
+		"dist": "node tools/build-dist.cjs",
+		"release": "npm run build && npm run make-pot && npm run render-assets && npm run dist"
 	},
 	"browserslist": [
 		"extends @wordpress/browserslist-config"

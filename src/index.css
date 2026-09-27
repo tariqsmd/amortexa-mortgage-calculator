@@ -1,0 +1,40 @@
+/**
+ * Editor-only styles for the Mortgage Calculator block.
+ *
+ * The block preview intentionally reuses the exact same stylesheet as the
+ * front end (style.scss) so what editors see matches rendered output. This
+ * file only adds editor-specific affordances on top of it.
+ */
+
+/* Identifies the interactive preview inside the editor canvas. */
+.calcforge-calc__editor-note,
+.editor-styles-wrapper .calcforge-calc__editor-note {
+	display: block;
+	margin: 0 0 14px;
+	padding: 8px 12px;
+	font-size: 12px;
+	color: #1e1e2f;
+	background-color: #f0f0f5;
+	border-left: 3px solid #3858e9;
+	border-radius: 4px;
+}
+
+/*
+ * Inert preview controls. Without this, clicking the block focuses a nested
+ * input/slider, which swallows Backspace/Delete and makes the block feel
+ * impossible to remove. Values are edited via the Settings sidebar instead;
+ * the front end stays fully interactive.
+ */
+.calcforge-calc__slider,
+.calcforge-calc__field {
+	pointer-events: none;
+}
+
+/* Helper copy inside inspector panels, e.g. the site-defaults explainer. */
+.calcforge-inspector__note {
+	margin: 0 0 12px;
+	font-size: 12px;
+	line-height: 1.5;
+	color: #50575e;
+	font-style: italic;
+}

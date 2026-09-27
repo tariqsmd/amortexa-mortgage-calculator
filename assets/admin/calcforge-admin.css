@@ -1,0 +1,55 @@
+/*
+ * Styles for the Settings -> CalcForge screen.
+ */
+
+.calcforge-settings .calcforge-settings__intro {
+	max-width: 60em;
+	margin: 0 0 20px;
+	font-size: 14px;
+	line-height: 1.6;
+	color: #50575e;
+}
+
+/*
+ * Each section is a card so the three groups read as separate tasks rather than
+ * one long wall of fields.
+ */
+.calcforge-settings .calcforge-settings__section-description {
+	max-width: 60em;
+	margin: -4px 0 12px;
+}
+
+.calcforge-settings h2 {
+	margin-top: 32px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.calcforge-settings .form-table th {
+	width: 220px;
+	padding-left: 0;
+}
+
+.calcforge-settings .form-table td {
+	padding-left: 0;
+}
+
+.calcforge-settings .calcforge-settings__suffix {
+	color: #50575e;
+	font-style: italic;
+}
+
+/*
+ * The loan section mixes a few wide number inputs with narrow ones; keeping the
+ * suffix inline with the input stops the columns drifting apart.
+ */
+.calcforge-settings .form-table input[type="number"],
+.calcforge-settings .form-table input[type="text"],
+.calcforge-settings .form-table select {
+	margin-bottom: 0;
+}
+
+.calcforge-settings .form-table .description {
+	margin-top: 6px;
+	max-width: 40em;
+}

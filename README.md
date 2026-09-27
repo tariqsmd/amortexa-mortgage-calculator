@@ -1,10 +1,11 @@
-# MT Gutenberg Blocks
+# CalcForge
 
-A native WordPress Gutenberg block that adds an interactive mortgage calculator anywhere in the block editor — with live monthly payment results, down-payment support, an annual amortization schedule, light/dark themes, a REST calculation endpoint, and full server-side rendering that works without JavaScript.
+A native WordPress block that adds an interactive mortgage calculator to any post or page — with live monthly payment results, down-payment support, an amortization schedule, twenty-four design skins, dependency-free SVG charts, and full server-side rendering that works without JavaScript.
 
-- **Plugin name:** MT Gutenberg Blocks
-- **Slug:** `mt-gutenberg-blocks`
-- **Text domain:** `mt-gutenberg-blocks`
+- **Plugin name:** CalcForge
+- **Slug:** `calcforge`
+- **Block:** `calcforge/mortgage-calculator` (category: *calcforge*)
+- **Text domain:** `calcforge`
 - **License:** GPLv2 or later
 - **Requires at least:** WordPress 6.4 / PHP 7.4
 
@@ -16,225 +17,203 @@ A native WordPress Gutenberg block that adds an interactive mortgage calculator 
 | --- | --- |
 | Live calculations | Monthly payment, financed principal, total interest, and total paid update as visitors type. |
 | Sliders | Every input is paired with a range slider (loan amount, down payment, rate, term), kept in sync both ways. |
-| Twelve skins | Classic Light, Elegant Dark, Ocean Blue, Sunset Warm, Forest Green, Midnight Violet, Rose Quartz, Minimal Slate, Royal Grape, Aqua Fresh, Mocha Cream, Cyber Neon — selectable per block. |
+| Twenty-four skins | Twelve light (Classic Light, Ocean Blue, Sunset Warm, Forest Green, Rose Quartz, Minimal Slate, Royal Grape, Aqua Fresh, Mocha Cream, Amber Gold, Cobalt Blue, Fuchsia Bloom, Mint Fresh, Sandstone, Lemon Zest, Steel Blue) and the dark set (Elegant Dark, Midnight Violet, Cyber Neon, Emerald Nights, Crimson Dusk, Graphite, Copper Forge, Royal Sapphire) — selectable per block. |
 | Charts | Dependency-free SVG charts: payment-composition donut and balance-over-time line chart with cumulative interest; show/hide and pick the chart type per block. |
-| Typography | Per-block payment font size and weight overrides. |
+| Per-block styling | Colors panel to override accent, secondary accent, label text, and field text/background/border. Payment font family, size, and weight overrides. |
+| Responsive layout | Columns stack, sliders wrap, charts reflow, and the amortization table scrolls inside narrow containers. |
 | Amortization schedule | Annual rows (principal / interest / remaining balance) aggregated from month-by-month math. |
 | No-JS support | The block is fully server-rendered; JavaScript is progressive enhancement only. |
-| Settings page | Site-wide defaults for currency symbol, interest rate, decimal precision, and amortization visibility (Settings → MT Mortgage Calculator). |
-| REST endpoint | `POST /wp-json/mtgb/v1/calculate` for headless/third-party use, nonce-protected. |
+| Settings page | Site-wide defaults for currency symbol, interest rate, decimal precision, amortization visibility, and starting values (Settings → CalcForge). |
+| REST endpoint | `POST /wp-json/calcforge/v1/calculate` for headless/third-party use, nonce-protected. |
 | Extensible | Actions and filters around rendering, defaults, results, currency, and assets. |
-| Standards | WPCS-ready (`phpcs.xml.dist`), fully translatable, escaped output, sanitized input. |
+| Standards | WPCS-clean (`phpcs.xml.dist`), fully translatable, escaped output, sanitized input, multisite-aware uninstall. |
 
 ## Installation
 
-1. Copy the `mt-gutenberg-blocks` folder into `wp-content/plugins/` (or upload the zip via **Plugins → Add New → Upload Plugin**).
+1. Copy the `calcforge` folder into `wp-content/plugins/` (or upload the zip via **Plugins → Add New → Upload Plugin**).
 2. Activate the plugin on the **Plugins** screen.
-3. Insert the **MT Mortgage Calculator** block from the inserter (category: *MT Gutenberg Blocks*).
-4. Optional: configure defaults under **Settings → MT Mortgage Calculator**.
+3. Insert the **Mortgage Calculator** block from the inserter (category: *calcforge*).
+4. Optional: configure site-wide defaults under **Settings → CalcForge**.
 
-The repository ships a compiled `build/` directory, so no build step is required to run it.
+The distributed plugin ships a compiled `build/` directory, so no build step is required to run it.
 
 ## Development
 
 ```bash
-npm install        # install dependencies (@wordpress/scripts)
-npm run start      # development build with watch
-npm run build      # production build → build/
-npm run lint:js    # ESLint (WordPress config)
-npm run lint:css   # Stylelint (WordPress config)
-npm test           # cross-language PHP/JS math parity test
-composer install   # dev tooling
-composer lint      # WPCS phpcs against phpcs.xml.dist
-composer test      # alias of npm test (php tests/parity.php)
+npm install             # install dependencies (@wordpress/scripts)
+npm start               # development build with watch
+npm run build           # production build -> build/
+npm run lint:js         # ESLint (WordPress config)
+npm run lint:css        # Stylelint (WordPress config)
+npm run lint:pkg-json   # package.json lint
+npm run lint:md         # Markdown lint
+npm test                # cross-language PHP/JS math parity test
+npm run make-pot        # regenerate languages/calcforge.pot
+npm run render-assets   # rasterise .wordpress-org/assets into wp.org PNGs
+npm run dist            # build dist/trunk, dist/tags/<version> and the release zip
+npm run release         # build + make-pot + render-assets + dist
+composer install        # PHPCS / WPCS dev tooling
+composer lint           # WPCS phpcs against phpcs.xml.dist
 ```
-
-Source lives in `src/`; webpack extends the default `@wordpress/scripts` config only to compile the extra front-end `view.js` entry.
 
 ### Architecture overview
 
+Runtime PHP lives in a single file on purpose — WordPress.org reviewers can audit the whole plugin without chasing `require` statements. Only `src/render.php` is loaded separately, because it is the block's server-side template.
+
+```text
+calcforge.php  Everything: header, helpers, block registration,
+                                render pipeline, assets, REST, settings, i18n,
+                                activation/deactivation, option migration
+uninstall.php                   Multisite-aware data deletion
+src/block.json                  Block metadata (API v3) - editor script/style handles
+src/index.js                    Registration + i18n wrapper
+src/save.js                     Returns null (dynamic block)
+src/render.php                  Server-rendered template (escaped output)
+src/view.js                     Front-end enhancement (live recalc + schedule rebuild)
+src/edit/index.js               Editor entry: inspector controls + live preview
+src/edit/controls.js            Sidebar panels
+src/edit/preview.js             Editor preview (mirrors front-end markup)
+src/utils/calculator.js         JS mirror of the PHP math (source of truth: PHP)
+src/utils/charts.js             SVG chart builders
+src/editor.scss, src/style.scss Block editor and front-end styles
+
+includes/helpers.php            Development copy of the math, used by tests/parity.php
+tests/parity.php                Asserts the PHP and JS implementations agree
+tests/js/calc.mjs               JavaScript side of the parity test
+tools/make-pot.cjs              POT generator (PHP + JS + block.json)
+tools/render-assets.cjs         SVG to PNG rasteriser for the directory listing
+tools/build-dist.cjs            Release packaging (trunk / tags / zip)
+.wordpress-org/assets/          Vector icon + banner sources for WordPress.org
 ```
-src/block.json          Block metadata (API v3) — editor script/style handles
-src/index.js            Registration + i18n wrapper
-src/edit.js             Inspector controls + live preview (mirrors front-end markup)
-src/save.js             Returns null (dynamic block)
-src/render.php          Server-rendered template (escaped output)
-src/view.js             Front-end enhancement (live recalc + schedule rebuild)
-src/utils/calculator.js JS mirror of the PHP math (single source of truth: PHP)
-includes/helpers.php    Pure, unit-testable mortgage math + attribute sanitizing
-includes/class-mtgb-block-registration.php  register_block_type + render pipeline
-includes/class-mtgb-assets.php              Conditional enqueue (has_block + widgets)
-includes/class-mtgb-rest-api.php            POST mtgb/v1/calculate
-includes/class-mtgb-settings.php            Settings API screen
-includes/class-mtgb-i18n.php                Text domain loading
-```
+
+`includes/helpers.php` is **not** shipped. It exists so the parity test can load the math in isolation; at runtime the main plugin file provides the same functions.
 
 ### Hooks reference
 
-**Filters**
+#### Filters
 
 | Hook | Purpose |
 | --- | --- |
-| `mtgb_default_attributes` | Override default loan amount, rate, term, etc. |
-| `mtgb_calculation_result` | Modify computed results before output (e.g., currency conversion). |
-| `mtgb_currency_symbol` | Replace the currency symbol per render. |
-| `mtgb_enqueue_assets` | Return `false` to disable plugin CSS/JS and bundle your own. |
-| `mtgb_default_settings` | Override admin setting defaults. |
+| `calcforge_default_attributes` | Override default loan amount, rate, term, etc. |
+| `calcforge_calculation_result` | Modify computed results before output (e.g., currency conversion). |
+| `calcforge_currency_symbol` | Replace the currency symbol per render. |
+| `calcforge_enqueue_assets` | Return `false` to disable plugin CSS/JS and bundle your own. |
+| `calcforge_default_settings` | Override admin setting defaults. |
 
-**Actions**
+#### Actions
 
 | Hook | Purpose |
 | --- | --- |
-| `mtgb_before_calculator_render` | Fires before block HTML is generated. |
-| `mtgb_after_calculator_render` | Fires after block HTML is generated. |
-| `mtgb_settings_saved` | Fires after admin settings are sanitized and saved. |
+| `calcforge_before_calculator_render` | Fires before block HTML is generated. |
+| `calcforge_after_calculator_render` | Fires after block HTML is generated. |
+| `calcforge_settings_saved` | Fires after admin settings are sanitized and saved. |
 
 ---
 
-# Publishing this plugin to WordPress.org
+## Publishing this plugin to WordPress.org
 
-This section is the complete submission playbook: what to prepare, how to submit for review, and how to push releases to the WordPress.org SVN repository once approved.
+### 1. Compliance checklist
 
-## 1. Before you submit — compliance checklist
-
-WordPress.org reviews plugins against the [Plugin Developer Guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/) and automated checks. This plugin is already aligned, but verify before submitting:
-
-- [x] **GPLv2 or later** license, declared in the plugin header, `readme.txt`, and `composer.json`.
+- [x] **GPLv2 or later** license, declared in the plugin header, `readme.txt`, `composer.json`, and shipped as `LICENSE`.
 - [x] **No obfuscated code**, no phone-home tracking, no external service calls without disclosure.
-- [x] **Escaped output / sanitized input everywhere** (`esc_html__`, `esc_attr`, `wp_json_encode`, `sanitize_text_field`, clamped numerics).
+- [x] **Escaped output / sanitized input** everywhere (`esc_html`, `esc_attr`, `wp_json_encode`, `sanitize_text_field`, clamped numerics).
 - [x] **Nonces verified** for state-changing routes (`X-WP-Nonce` on the REST endpoint; Settings API handles the options form).
-- [x] **Capability checks** (`manage_options` for settings, `edit_posts` fallback for editor REST calls).
-- [x] **Unique prefixes** — functions/classes/options/hooks are prefixed `mtgb_` / `mtgb_` / `MortgageCalculatorBlock`.
-- [x] **Translation-ready** — every string uses `mtgb_TEXT_DOMAIN`; `languages/mt-gutenberg-blocks.pot` included.
-- [x] **`readme.txt`** follows the standard format (Tested up to, Stable tag, Changelog, FAQ).
-- [ ] **Run final QA**: `npm run build && npm run lint:js && npm run lint:css` pass; activate on a clean WordPress install and insert the block once.
-- [ ] **Bump versions together** if releasing (see *Versioning a release* below).
+- [x] **Capability checks** — `manage_options` for settings, `activate_plugins` for activation.
+- [x] **Unique prefixes** — functions, classes, options, hooks, and handles are all prefixed `calcforge_` / `CalcForge_` / `CALCFORGE_`.
+- [x] **No development files shipped** — `npm run dist` uses an explicit allowlist, so `tests/` (which calls `shell_exec()`), `tools/`, and `node_modules/` can never reach a public release.
+- [x] **Translation-ready** — every string goes through the `calcforge` text domain; the POT is generated from PHP, JS, and `block.json`.
+- [x] **Multisite-aware uninstall** — deletes the settings option on every site in the network.
+- [x] **Listing assets** — icon and banners generated from versioned vector sources.
+- [ ] **Add screenshots** — the `== Screenshots ==` section is intentionally omitted for now, so the listing has no images yet. Add `screenshot-1.png` … `screenshot-N.png` to `.wordpress-org/assets/` and restore the section in `readme.txt` before the listing is live.
+- [ ] **Run final QA** — `npm run release` passes, then activate on a clean install and insert the block.
+- [ ] **Verify the slug** is still free at <https://wordpress.org/plugins/calcforge/> before submitting.
 
-Also validate the readme locally:
+### 2. Build the submission package
 
 ```bash
-npm install -g wp-readme-parser   # or any validator
-# WordPress.org also runs its own parser during review.
+npm run release
 ```
 
-## 2. Create the submission package
+This produces:
 
-The review system accepts either a zip upload or a public download link. Build a clean zip:
-
-```powershell
-# From the repository root (PowerShell)
-git archive --format=zip --prefix=mt-gutenberg-blocks/ -o ../mt-gutenberg-blocks.zip HEAD
+```text
+dist/
+├── assets/                        listing artwork (sibling of trunk in SVN, NOT in the zip)
+│   ├── icon.svg, icon-128x128.png, icon-256x256.png
+│   └── banner-772x250.png, banner-1544x500.png
+├── trunk/                         the plugin exactly as users install it
+├── tags/1.2.0/                    immutable copy of the same tree
+└── calcforge.zip <- upload this for review
 ```
 
-`git archive` respects `.gitignore`, so `node_modules/` never leaks into the package while the compiled `build/` directory does ship.
+> Do **not** use `wp-scripts plugin-zip`. It uses a hardcoded allowlist that omits `src/render.php`, which the render callback `include`s — the resulting plugin would fatal on the front end.
 
-Double-check the zip contains, at minimum:
+### 3. Submit for review
 
-```
-mt-gutenberg-blocks/
-├── mt-gutenberg-blocks.php   ← valid plugin header
-├── includes/, src/, build/, languages/, assets/
-├── uninstall.php
-└── readme.txt
-```
-
-## 3. Submit for review
-
-1. Log in to [WordPress.org](https://wordpress.org/plugins/developers/add/) with your account.
-2. Paste the plugin **name** exactly as in the header: `MT Gutenberg Blocks`.
-3. Provide the zip (or link) from step 2 and a short description.
+1. Log in to [WordPress.org](https://wordpress.org/plugins/developers/add/).
+2. Paste the plugin **name** exactly as in the header: `CalcForge`.
+3. Upload `dist/calcforge.zip`.
 4. Accept the guidelines agreement and submit.
 
-**What happens next**
+#### What happens next
 
-- You'll get an automated email confirming the plugin slug reservation (usually within minutes–hours). The slug should come out as `mt-gutenberg-blocks`.
-- A human reviewer examines the code. Queues vary from a few days to several weeks — do not resubmit duplicates while waiting.
-- If changes are requested, reply to the review email, fix the code, and re-upload through the same thread.
-- On approval you receive your SVN repository:
-  `https://plugins.svn.wordpress.org/mt-gutenberg-blocks`
-  with `trunk/`, `tags/`, and `assets/` directories (10 MB commit limit per commit).
+- You get an automated email confirming the slug reservation. The slug should come out as `calcforge`.
+- A human reviewer examines the code. Queues range from a few days to several weeks — do not resubmit duplicates while waiting.
+- If changes are requested, reply in the same email thread with a new zip.
+- On approval you receive `https://plugins.svn.wordpress.org/calcforge` with `trunk/`, `tags/`, and `assets/`.
 
-## 4. Push the first release to SVN
+### 4. Push releases to SVN
 
-Once approved, publish `trunk` and tag it. Example using TortoiseSVN's bundled CLI or SlikSVN on Windows:
+`npm run dist` already produces the exact SVN layout, so the commit is a copy.
 
 ```bash
-# 1. Check out the (empty) repository
-svn co https://plugins.svn.wordpress.org/mt-gutenberg-blocks mtgb-svn
-cd mtgb-svn
+svn co https://plugins.svn.wordpress.org/calcforge calcforge-svn
 
-# 2. Copy plugin files into trunk/ (exclude repo-only files)
-robocopy ..\mt-gutenberg-blocks trunk /E /XD node_modules .git .github /XF README.md composer.lock phpunit.xml.dist
+robocopy dist\trunk    calcforge-svn\trunk  /MIR
+robocopy dist\assets   calcforge-svn\assets /MIR
+robocopy dist\tags\1.2.0 calcforge-svn\tags\1.2.0 /MIR
 
-# 3. Stage everything new
-svn add --force .
-svn add --force assets     # assets/ holds listing artwork, not code
-
-# 4. Commit trunk
-svn ci -m "Initial release of MT Gutenberg Blocks 1.0.0"
-
-# 5. Tag the release so users can pin to it
-svn cp trunk tags/1.0.0 -m "Tag 1.0.0"
+svn ci -m "CalcForge 1.2.0"
 ```
 
-WordPress.org serves the **highest numeric tag** whose version matches the `Stable tag` in `trunk/readme.txt`. Keep both in sync.
+The two `assets` directories are different things and must not be confused:
 
-### Listing assets (`assets/` directory)
+- `dist/assets/` — a **sibling of `trunk/`**. WordPress.org reads the icon, banners, and screenshots from here.
+- `trunk/assets/` — CSS shipped **inside** the plugin. Never put listing artwork here.
 
-These files power the plugin directory page and are **never** loaded by sites:
+WordPress.org serves the **highest numeric tag** matching `Stable tag` in `trunk/readme.txt`. Keep both in sync.
 
-| File | Purpose |
-| --- | --- |
-| `assets/banner-772x250.(png\|jpg)` | Standard banner |
-| `assets/banner-1544x500.(png\|jpg)` | Retina banner |
-| `assets/icon-256x256.(png\|svg)` | Icon (also 128x128 / svg) |
-| `assets/screenshot-1.png` | The calculator inserted in a page |
-| `assets/screenshot-2.png` | Editor controls / settings screen |
+### 5. Versioning a release
 
-Screenshots map to the `== Screenshots ==` section order if you add one to `readme.txt`.
-
-## 5. Versioning a release
-
-Every release updates these four places **in lockstep**, then re-runs the build:
+Update these in lockstep, then re-run `npm run release`:
 
 | Location | Field |
 | --- | --- |
-| `mt-gutenberg-blocks.php` | `Version:` header **and** `mtgb_VERSION` constant |
-| `src/block.json` (+ rebuilt `build/block.json`) | `"version"` |
+| `calcforge.php` | `Version:` header **and** `CALCFORGE_VERSION` constant |
+| `src/block.json` (and the rebuilt `build/block.json`) | `"version"` |
 | `readme.txt` | `Stable tag:` **and** a new `== Changelog ==` entry |
-| `package.json` / `composer.json` | `"version"` (optional but tidy) |
+| `package.json` / `composer.json` | `"version"` |
 
-Release flow:
+`tools/build-dist.cjs` reads the version from the plugin header, so `dist/tags/` always matches it.
 
-```bash
-npm run build                      # refresh build/ artifacts
-git commit -am "Release 1.0.1"     # repo history
-git tag 1.0.1 && git push --tags   # repo tagging
-
-cd mtgb-svn
-robocopy ..\mt-gutenberg-blocks trunk /E /XD node_modules .git
-svn ci -m "Update to 1.0.1"
-svn cp trunk tags/1.0.1 -m "Tag 1.0.1"
-```
-
-## 6. Keeping the listing healthy
+### 6. Keeping the listing healthy
 
 - **Tested up to** — update `readme.txt` when major WordPress versions land; the directory flags stale listings.
-- **Security reports** — monitor the [Patchstack](https://patchstack.com/wordpress-plugins/) channel tied to your slug; respond within the disclosed timeline.
-- **Support forum** — watch `wordpress.org/support/plugin/mt-gutenberg-blocks/`; responsiveness affects listing quality signals.
-- **Translations** — strings become available on translate.wordpress.org automatically after release; keep the POT current when adding UI text.
+- **Security reports** — monitor the Patchstack channel tied to your slug.
+- **Support forum** — watch `wordpress.org/support/plugin/calcforge/`.
+- **Translations** — become available on translate.wordpress.org automatically after release; re-run `npm run make-pot` whenever you add UI text.
 - **Never edit published tags** — always cut a new tag; treat them as immutable.
 
-## 7. Useful links
+### 7. Useful links
 
-- Submission form: https://wordpress.org/plugins/developers/add/
-- Detailed plugin guidelines: https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/
-- SVN access & etiquette: https://developer.wordpress.org/plugins/wordpress-org/manage-your-svn-repository/
-- readme.txt spec: https://wordpress.org/plugins/readme.txt
-- Assets guide: https://developer.wordpress.org/plugins/wordpress-org/plugin-assets/
+- Submission form: <https://wordpress.org/plugins/developers/add/>
+- Detailed plugin guidelines: <https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/>
+- SVN access and etiquette: <https://developer.wordpress.org/plugins/wordpress-org/manage-your-svn-repository/>
+- readme.txt spec: <https://wordpress.org/plugins/readme.txt>
+- Plugin assets guide: <https://developer.wordpress.org/plugins/wordpress-org/plugin-assets/>
 
 ---
 
 ## License
 
-MT Gutenberg Blocks is released under the [GPL v2 or later](https://www.gnu.org/licenses/gpl-2.0.html).
+CalcForge is released under the [GPL v2 or later](https://www.gnu.org/licenses/gpl-2.0.html).

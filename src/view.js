@@ -1,5 +1,5 @@
 /**
- * Front-end behavior for the MT Mortgage Calculator block.
+ * Front-end behavior for the Mortgage Calculator block.
  *
  * Progressive enhancement only: results, sliders, and the amortization table
  * are already usable without JavaScript. This script adds slider/number
@@ -54,7 +54,7 @@ function buildXTicks( schedule ) {
  * symbol position.
  *
  * @param {number} amount Amount to format.
- * @param {Object} config Block config parsed from data-mtgb-config.
+ * @param {Object} config Block config parsed from data-calcforge-config.
  * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 €".
  */
 function formatAmount( amount, config ) {
@@ -77,7 +77,9 @@ function formatAmount( amount, config ) {
  */
 function readValues( root ) {
 	const read = ( name ) => {
-		const input = root.querySelector( `[data-mtgb-field="${ name }"]` );
+		const input = root.querySelector(
+			`[data-calcforge-field="${ name }"]`
+		);
 		return input ? parseFloat( input.value ) : NaN;
 	};
 
@@ -96,18 +98,18 @@ function readValues( root ) {
  * @param {HTMLElement} root Calculator container element.
  */
 function syncSliders( root ) {
-	root.querySelectorAll( '[data-mtgb-field]' ).forEach( ( field ) => {
+	root.querySelectorAll( '[data-calcforge-field]' ).forEach( ( field ) => {
 		const slider = root.querySelector(
-			`[data-mtgb-slider="${ field.dataset.mtgbField }"]`
+			`[data-calcforge-slider="${ field.dataset.calcforgeField }"]`
 		);
 
 		if ( ! slider || slider.value === field.value ) {
 			return;
 		}
 
-		if ( field.dataset.mtgbField === 'downPayment' ) {
+		if ( field.dataset.calcforgeField === 'downPayment' ) {
 			const amount = root.querySelector(
-				'[data-mtgb-field="loanAmount"]'
+				'[data-calcforge-field="loanAmount"]'
 			);
 			slider.max = String(
 				Math.max( parseFloat( amount ? amount.value : '0' ), 1 )
@@ -126,7 +128,7 @@ function syncSliders( root ) {
  * @param {Object}        config   Block config.
  */
 function renderSchedule( root, schedule, config ) {
-	const tbody = root.querySelector( '[data-mtgb-schedule]' );
+	const tbody = root.querySelector( '[data-calcforge-schedule]' );
 
 	if ( ! tbody ) {
 		return;
@@ -170,7 +172,7 @@ function renderResults( root, result, config ) {
 	};
 
 	Object.entries( bindings ).forEach( ( [ key, value ] ) => {
-		const node = root.querySelector( `[data-mtgb-bind="${ key }"]` );
+		const node = root.querySelector( `[data-calcforge-bind="${ key }"]` );
 
 		if ( node ) {
 			node.textContent = formatAmount( value, config );
@@ -192,8 +194,8 @@ function readPalette( root ) {
 		( styles.getPropertyValue( name ) || fallback ).trim();
 
 	return {
-		accent: read( '--mtgb-accent', '#1a6f4b' ),
-		accent2: read( '--mtgb-accent-2', '#d97706' ),
+		accent: read( '--calcforge-accent', '#1a6f4b' ),
+		accent2: read( '--calcforge-accent-2', '#d97706' ),
 	};
 }
 
@@ -212,10 +214,10 @@ function renderLegend( host, items ) {
 
 	items.forEach( ( item ) => {
 		const entry = document.createElement( 'span' );
-		entry.className = 'mtgb-calc__legend-item';
+		entry.className = 'calcforge-calc__legend-item';
 
 		const dot = document.createElement( 'span' );
-		dot.className = 'mtgb-calc__legend-dot';
+		dot.className = 'calcforge-calc__legend-dot';
 		dot.style.backgroundColor = item.color;
 
 		const label = document.createElement( 'span' );
@@ -241,8 +243,8 @@ function renderLegend( host, items ) {
  * @param {Object}      result Result from calculateMortgage().
  */
 function renderCharts( root, values, config, result ) {
-	const donutHost = root.querySelector( '[data-mtgb-chart="donut"]' );
-	const lineHost = root.querySelector( '[data-mtgb-chart="line"]' );
+	const donutHost = root.querySelector( '[data-calcforge-chart="donut"]' );
+	const lineHost = root.querySelector( '[data-calcforge-chart="line"]' );
 
 	if ( ! donutHost && ! lineHost ) {
 		return;
@@ -272,7 +274,7 @@ function renderCharts( root, values, config, result ) {
 			)
 		);
 
-		renderLegend( root.querySelector( '[data-mtgb-legend="donut"]' ), [
+		renderLegend( root.querySelector( '[data-calcforge-legend="donut"]' ), [
 			{ label: labels.principal, color: palette.accent },
 			{ label: labels.totalInt, color: palette.accent2 },
 		] );
@@ -309,7 +311,7 @@ function renderCharts( root, values, config, result ) {
 			)
 		);
 
-		renderLegend( root.querySelector( '[data-mtgb-legend="line"]' ), [
+		renderLegend( root.querySelector( '[data-calcforge-legend="line"]' ), [
 			{ label: labels.balance, color: palette.accent },
 			{ label: labels.cumInt, color: palette.accent2 },
 		] );
@@ -325,7 +327,7 @@ function initializeCalculator( root ) {
 	let config;
 
 	try {
-		config = JSON.parse( root.dataset.mtgbConfig || '{}' );
+		config = JSON.parse( root.dataset.calcforgeConfig || '{}' );
 	} catch ( error ) {
 		config = {};
 	}
@@ -350,27 +352,27 @@ function initializeCalculator( root ) {
 		}
 	};
 
-	const form = root.querySelector( '.mtgb-calc__form' );
+	const form = root.querySelector( '.calcforge-calc__form' );
 
-	if ( form && ! form.dataset.mtgbBound ) {
+	if ( form && ! form.dataset.calcforgeBound ) {
 		form.addEventListener( 'input', ( event ) => {
 			const target = event.target;
 
-			if ( target.matches( '[data-mtgb-slider]' ) ) {
+			if ( target.matches( '[data-calcforge-slider]' ) ) {
 				const field = root.querySelector(
-					`[data-mtgb-field="${ target.dataset.mtgbSlider }"]`
+					`[data-calcforge-field="${ target.dataset.calcforgeSlider }"]`
 				);
 
 				if ( field ) {
 					field.value = target.value;
 				}
 
-				if ( target.dataset.mtgbSlider === 'loanAmount' ) {
+				if ( target.dataset.calcforgeSlider === 'loanAmount' ) {
 					const downSlider = root.querySelector(
-						'[data-mtgb-slider="downPayment"]'
+						'[data-calcforge-slider="downPayment"]'
 					);
 					const downField = root.querySelector(
-						'[data-mtgb-field="downPayment"]'
+						'[data-calcforge-field="downPayment"]'
 					);
 
 					if ( downSlider && downField ) {
@@ -392,14 +394,14 @@ function initializeCalculator( root ) {
 			recalc();
 		} );
 
-		form.dataset.mtgbBound = 'true';
+		form.dataset.calcforgeBound = 'true';
 
 		syncSliders( root );
 		recalc();
 	}
 
-	const toggle = root.querySelector( '.mtgb-calc__toggle' );
-	const scheduleWrap = root.querySelector( '.mtgb-calc__schedule' );
+	const toggle = root.querySelector( '.calcforge-calc__toggle' );
+	const scheduleWrap = root.querySelector( '.calcforge-calc__schedule' );
 
 	if ( toggle && scheduleWrap ) {
 		toggle.style.display = '';
@@ -413,5 +415,5 @@ function initializeCalculator( root ) {
 }
 
 document
-	.querySelectorAll( '.mtgb-calc[data-mtgb-config]' )
+	.querySelectorAll( '.calcforge-calc[data-calcforge-config]' )
 	.forEach( initializeCalculator );

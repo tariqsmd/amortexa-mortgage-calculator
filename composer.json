@@ -1,12 +1,12 @@
 {
-	"name": "tariq/mt-gutenberg-blocks",
-	"description": "A native Gutenberg block providing an interactive mortgage calculator.",
+	"name": "calcforge/calcforge",
+	"description": "An interactive mortgage calculator block for the block editor, with live monthly payments, charts and an amortization schedule.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"authors": [
 		{
-			"name": "Tariq",
-			"homepage": "https://example.com/"
+			"name": "Muhammad Tariq",
+			"homepage": "https://profiles.wordpress.org/mtariqsmd/"
 		}
 	],
 	"require": {

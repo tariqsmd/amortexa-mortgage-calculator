@@ -50,7 +50,9 @@ function extendPartial( partial ) {
 function addViewEntry( config ) {
 	const configs = Array.isArray( config ) ? config : [ config ];
 	const extended = configs.map( ( partial ) =>
-		partial && typeof partial === 'object' ? extendPartial( partial ) : partial
+		partial && typeof partial === 'object'
+			? extendPartial( partial )
+			: partial
 	);
 
 	return Array.isArray( config ) ? extended : extended[ 0 ];

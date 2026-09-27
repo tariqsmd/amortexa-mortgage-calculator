@@ -2,26 +2,25 @@
 /**
  * REST API endpoint for server-side mortgage calculations.
  *
- * @package MortgageCalculatorBlock
+ * @package CalcForge
  */
 
-// Abort if this file is called directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Registers the mtgb/v1/calculate route.
+ * Registers the calcforge/v1/calculate route.
  *
- * The endpoint mirrors the PHP calculation used by render.php, enabling
- * headless clients and third-party integrations to reuse the same logic.
+ * The endpoint mirrors the PHP calculation used by the block render template,
+ * which lets headless clients and third-party integrations reuse the same logic.
  */
-class mtgb_REST_API {
+class CalcForge_REST {
 
 	/**
 	 * REST namespace for all plugin routes.
 	 */
-	const NAMESPACE_V1 = 'mtgb/v1';
+	const NAMESPACE_V1 = 'calcforge/v1';
 
 	/**
 	 * Registers the hooks this component responds to.
@@ -47,7 +46,7 @@ class mtgb_REST_API {
 						'minimum'           => 0,
 						'maximum'           => 999999999999,
 						'required'          => true,
-						'sanitize_callback' => 'mtgb_clamp_float',
+						'sanitize_callback' => self::clamp_to( 0, 999999999999 ),
 					),
 					'down_payment'  => array(
 						'type'              => 'number',
@@ -55,7 +54,7 @@ class mtgb_REST_API {
 						'maximum'           => 999999999999,
 						'required'          => false,
 						'default'           => 0,
-						'sanitize_callback' => 'mtgb_clamp_float',
+						'sanitize_callback' => self::clamp_to( 0, 999999999999 ),
 					),
 					'interest_rate' => array(
 						'type'              => 'number',
@@ -63,7 +62,7 @@ class mtgb_REST_API {
 						'maximum'           => 100,
 						'required'          => false,
 						'default'           => 0,
-						'sanitize_callback' => 'mtgb_clamp_float',
+						'sanitize_callback' => self::clamp_to( 0, 100 ),
 					),
 					'term_years'    => array(
 						'type'              => 'integer',
@@ -84,49 +83,62 @@ class mtgb_REST_API {
 	}
 
 	/**
+	 * Builds a REST sanitize callback that clamps a value between two bounds.
+	 *
+	 * `calcforge_clamp_float()` cannot be registered directly as a
+	 * `sanitize_callback`: WordPress invokes those as
+	 * `callback( $value, $request, $param )`, so the request object would land in
+	 * the `$minimum` argument and the bounds would be garbage. Wrapping it in a
+	 * closure pins the bounds and ignores the extra arguments.
+	 *
+	 * @param float $minimum Lower bound.
+	 * @param float $maximum Upper bound.
+	 * @return callable Sanitize callback.
+	 */
+	public static function clamp_to( $minimum, $maximum ) {
+		return static function ( $value ) use ( $minimum, $maximum ) {
+			return calcforge_clamp_float( $value, $minimum, $maximum );
+		};
+	}
+
+	/**
 	 * Permission callback for the calculation endpoint.
 	 *
 	 * The endpoint is intentionally open: it is a stateless, read-only helper
 	 * that exposes only public mortgage arithmetic and returns no private data,
-	 * so it does not require authentication, nonces, or the REST nonce. It is
-	 * bounded by Web-accessible rate limiting at the server/proxy layer when
-	 * installs require it.
-	 *
-	 * The callback is kept for transparency and as an override point via the
-	 * `mtgb/v1/calculate` route registration; a nonce check is no longer applied
-	 * because it provided no real protection (any unauthenticated visitor can
-	 * already compute the same result with a calculator).
+	 * so it does not require authentication or a nonce. The callback is kept as
+	 * an override point: returning a WP_Error here blocks unauthenticated access.
 	 *
 	 * @param WP_REST_Request<array<string,mixed>> $request Current request.
-	 * @return true Always allowed.
+	 * @return true|WP_REST_Response True when allowed, an error response otherwise.
 	 */
 	public function check_permissions( $request ) {
 		/**
 		 * Filters whether the calculation endpoint requires authentication.
 		 *
-		 * Returning a WP_Error or false here blocks unauthenticated access.
-		 *
 		 * @param bool                    $allowed Whether the request is allowed.
 		 * @param WP_REST_Request<string> $request Current request.
 		 */
-		$allowed = apply_filters( 'mtgb_rest_calculate_allowed', true, $request );
+		$allowed = apply_filters( 'calcforge_rest_calculate_allowed', true, $request );
 
 		if ( true === $allowed ) {
 			return true;
 		}
 
-		return rest_ensure_response( new WP_Error(
-			'mtgb_rest_forbidden',
-			esc_html__( 'Calculation requests are not permitted.', mtgb_TEXT_DOMAIN ),
-			array( 'status' => rest_authorization_required_code() )
-		) );
+		return rest_ensure_response(
+			new WP_Error(
+				'calcforge_rest_forbidden',
+				esc_html__( 'Calculation requests are not permitted.', CALCFORGE_TEXT_DOMAIN ),
+				array( 'status' => rest_authorization_required_code() )
+			)
+		);
 	}
 
 	/**
 	 * Handles a calculation request.
 	 *
-	 * Reuses mtgb_calculate() so the `mtgb_calculation_result` filter applies to
-	 * REST responses exactly as it does to rendered output.
+	 * Reuses calcforge_calculate() so the `calcforge_calculation_result` filter
+	 * applies to REST responses exactly as it does to rendered output.
 	 *
 	 * @param WP_REST_Request<array<string,mixed>> $request Current request.
 	 * @return WP_REST_Response Calculation result.
@@ -140,6 +152,6 @@ class mtgb_REST_API {
 			'showAmortization' => ! empty( $request['with_schedule'] ),
 		);
 
-		return rest_ensure_response( mtgb_calculate( $attributes ) );
+		return rest_ensure_response( calcforge_calculate( $attributes ) );
 	}
 }

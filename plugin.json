@@ -1,0 +1,15 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/plugin.json",
+	"name": "CalcForge",
+	"version": "1.2.0",
+	"description": "An interactive mortgage calculator block for the block editor, with live monthly payment results, down payment support, charts, and an amortization schedule.",
+	"author": "Muhammad Tariq",
+	"authorUrl": "https://profiles.wordpress.org/mtariqsmd/",
+	"homepage": "https://wordpress.org/plugins/calcforge/",
+	"repository": "https://wordpress.org/plugins/calcforge/",
+	"license": "GPL-2.0-or-later",
+	"textdomain": "calcforge",
+	"requires": "6.4",
+	"requiresPhp": "7.4",
+	"textDomains": [ "calcforge", "calcforge-gutenberg-blocks" ]
+}

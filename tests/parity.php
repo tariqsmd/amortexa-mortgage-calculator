@@ -1,6 +1,6 @@
 <?php
 /**
- * Cross-language math parity test for the MT Mortgage Calculator block.
+ * Cross-language math parity test for the Mortgage Calculator block.
  *
  * WordPress-independent: stubs the few core functions the pure math helpers
  * call, computes the same matrix of cases in both PHP (includes/helpers.php)
@@ -11,7 +11,7 @@
  * Usage: php tests/parity.php
  * Exit code 0 on parity, 1 on mismatch or error.
  *
- * @package MortgageCalculatorBlock
+ * @package CalcForge
  */
 
 error_reporting( E_ALL );
@@ -42,7 +42,7 @@ if ( ! function_exists( 'absint' ) ) {
  *
  * @return int Number of failures encountered.
  */
-function mtgb_test_parity() {
+function calcforge_test_parity() {
 	$cases = array(
 		array( 200000, 6.0, 30 ),
 		array( 250000, 0.0, 30 ),
@@ -59,8 +59,8 @@ function mtgb_test_parity() {
 	foreach ( $cases as $case ) {
 		list( $principal, $rate, $years ) = $case;
 
-		$php_monthly[] = mtgb_calculate_monthly_payment( $principal, $rate, $years );
-		$php_schedules[] = mtgb_calculate_amortization_schedule( $principal, $rate, $years );
+		$php_monthly[] = calcforge_calculate_monthly_payment( $principal, $rate, $years );
+		$php_schedules[] = calcforge_calculate_amortization_schedule( $principal, $rate, $years );
 	}
 
 	// Locate the repo root and the JS driver, then run it.
@@ -167,7 +167,7 @@ function mtgb_test_parity() {
 	return $failures;
 }
 
-$exit = mtgb_test_parity();
+$exit = calcforge_test_parity();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

@@ -1,5 +1,5 @@
 /**
- * Live preview for the MT Mortgage Calculator block.
+ * Live preview for the Mortgage Calculator block.
  *
  * Renders the same structure/classes as the server-side template so editors
  * see a faithful representation, reusing the shared calculation and chart
@@ -10,7 +10,7 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from '@wordpress/element';
 import { createDonutChart, createLineChart } from '../utils/charts';
-import { NUMERIC_FIELDS } from './controls';
+import { NUMERIC_FIELDS } from '../utils/field-definitions';
 
 /**
  * Formats an amount with a currency symbol placed before or after it.
@@ -75,9 +75,9 @@ function renderLegendInto( host, items ) {
 		...items.map( ( item ) => {
 			const span = document.createElement( 'span' );
 			const dot = document.createElement( 'span' );
-			dot.className = 'mtgb-calc__legend-dot';
+			dot.className = 'calcforge-calc__legend-dot';
 			dot.style.backgroundColor = item.color;
-			span.className = 'mtgb-calc__legend-item';
+			span.className = 'calcforge-calc__legend-item';
 			span.appendChild( dot );
 			span.appendChild( document.createTextNode( item.label ) );
 			return span;
@@ -128,9 +128,11 @@ export default function Preview( {
 		const styles = window.getComputedStyle( rootRef.current );
 		const palette = {
 			accent:
-				styles.getPropertyValue( '--mtgb-accent' ).trim() || '#1a6f4b',
+				styles.getPropertyValue( '--calcforge-accent' ).trim() ||
+				'#1a6f4b',
 			accent2:
-				styles.getPropertyValue( '--mtgb-accent-2' ).trim() || '#d97706',
+				styles.getPropertyValue( '--calcforge-accent-2' ).trim() ||
+				'#d97706',
 		};
 
 		if ( donutRef.current ) {
@@ -143,10 +145,7 @@ export default function Preview( {
 					{
 						size: 190,
 						thickness: 26,
-						centerTitle: __(
-							'Monthly Payment',
-							'mt-gutenberg-blocks'
-						),
+						centerTitle: __( 'Monthly Payment', 'calcforge' ),
 						centerValue: formatAmount(
 							result.monthlyPayment,
 							currencySymbol,
@@ -192,21 +191,21 @@ export default function Preview( {
 
 		renderLegendInto( legendRef.current, [
 			{
-				label: __( 'Financed Principal', 'mt-gutenberg-blocks' ),
+				label: __( 'Financed Principal', 'calcforge' ),
 				color: palette.accent,
 			},
 			{
-				label: __( 'Total Interest', 'mt-gutenberg-blocks' ),
+				label: __( 'Total Interest', 'calcforge' ),
 				color: palette.accent2,
 			},
 		] );
 		renderLegendInto( lineLegendRef.current, [
 			{
-				label: __( 'Remaining Balance', 'mt-gutenberg-blocks' ),
+				label: __( 'Remaining Balance', 'calcforge' ),
 				color: palette.accent,
 			},
 			{
-				label: __( 'Cumulative Interest', 'mt-gutenberg-blocks' ),
+				label: __( 'Cumulative Interest', 'calcforge' ),
 				color: palette.accent2,
 			},
 		] );
@@ -257,34 +256,37 @@ export default function Preview( {
 
 	return (
 		<>
-			<p className="mtgb-calc__editor-note">
+			<p className="calcforge-calc__editor-note">
 				{ __(
 					'Live preview — edit values in the Settings sidebar. Visitors get a fully interactive calculator.',
-					'mt-gutenberg-blocks'
+					'calcforge'
 				) }
 			</p>
 			<div
-				className={ `mtgb-calc__grid${
-					showResults ? '' : ' mtgb-calc__grid--form-only'
+				className={ `calcforge-calc__grid${
+					showResults ? '' : ' calcforge-calc__grid--form-only'
 				}` }
 			>
 				<form
-					className="mtgb-calc__form"
+					className="calcforge-calc__form"
 					onSubmit={ ( event ) => event.preventDefault() }
 				>
 					{ NUMERIC_FIELDS.map( ( field ) => (
-						<div key={ field.key } className="mtgb-calc__control">
+						<div
+							key={ field.key }
+							className="calcforge-calc__control"
+						>
 							<label
-								className="mtgb-calc__label"
-								htmlFor={ `mtgb-edit-${ field.key }` }
+								className="calcforge-calc__label"
+								htmlFor={ `calcforge-edit-${ field.key }` }
 							>
 								{ field.label }
 							</label>
-							<div className="mtgb-calc__control-row">
+							<div className="calcforge-calc__control-row">
 								{ showSliders && (
 									<input
 										type="range"
-										className="mtgb-calc__slider"
+										className="calcforge-calc__slider"
 										value={ Number(
 											attributes[ field.key ]
 										) }
@@ -303,8 +305,8 @@ export default function Preview( {
 								) }
 								<input
 									type="number"
-									id={ `mtgb-edit-${ field.key }` }
-									className="mtgb-calc__field"
+									id={ `calcforge-edit-${ field.key }` }
+									className="calcforge-calc__field"
 									value={ String(
 										attributes[ field.key ] ?? ''
 									) }
@@ -325,15 +327,12 @@ export default function Preview( {
 				</form>
 
 				{ showResults && (
-					<div className="mtgb-calc__results">
-						<p className="mtgb-calc__result-label">
-							{ __(
-								'Monthly Payment',
-								'mt-gutenberg-blocks'
-							) }
+					<div className="calcforge-calc__results">
+						<p className="calcforge-calc__result-label">
+							{ __( 'Monthly Payment', 'calcforge' ) }
 						</p>
 						<p
-							className="mtgb-calc__result-primary"
+							className="calcforge-calc__result-primary"
 							style={ paymentTypography }
 						>
 							{ formatAmount(
@@ -342,13 +341,10 @@ export default function Preview( {
 								currencyPosition
 							) }
 						</p>
-						<dl className="mtgb-calc__result-list">
-							<div className="mtgb-calc__result-row">
+						<dl className="calcforge-calc__result-list">
+							<div className="calcforge-calc__result-row">
 								<dt>
-									{ __(
-										'Financed Principal',
-										'mt-gutenberg-blocks'
-									) }
+									{ __( 'Financed Principal', 'calcforge' ) }
 								</dt>
 								<dd>
 									{ formatAmount(
@@ -358,13 +354,8 @@ export default function Preview( {
 									) }
 								</dd>
 							</div>
-							<div className="mtgb-calc__result-row">
-								<dt>
-									{ __(
-										'Total Interest',
-										'mt-gutenberg-blocks'
-									) }
-								</dt>
+							<div className="calcforge-calc__result-row">
+								<dt>{ __( 'Total Interest', 'calcforge' ) }</dt>
 								<dd>
 									{ formatAmount(
 										result.totalInterest,
@@ -373,13 +364,8 @@ export default function Preview( {
 									) }
 								</dd>
 							</div>
-							<div className="mtgb-calc__result-row">
-								<dt>
-									{ __(
-										'Total Paid',
-										'mt-gutenberg-blocks'
-									) }
-								</dt>
+							<div className="calcforge-calc__result-row">
+								<dt>{ __( 'Total Paid', 'calcforge' ) }</dt>
 								<dd>
 									{ formatAmount(
 										result.totalPaid,
@@ -394,40 +380,34 @@ export default function Preview( {
 			</div>
 
 			{ showCharts && (
-				<div className="mtgb-calc__charts">
+				<div className="calcforge-calc__charts">
 					{ [ 'donut', 'both' ].includes( chartType ) && (
-						<figure className="mtgb-calc__chart">
-							<figcaption className="mtgb-calc__chart-title">
-								{ __(
-									'Payment Composition',
-									'mt-gutenberg-blocks'
-								) }
+						<figure className="calcforge-calc__chart">
+							<figcaption className="calcforge-calc__chart-title">
+								{ __( 'Payment Composition', 'calcforge' ) }
 							</figcaption>
 							<div
-								className="mtgb-calc__chart-body"
+								className="calcforge-calc__chart-body"
 								ref={ donutRef }
 							/>
 							<figcaption
-								className="mtgb-calc__legend"
+								className="calcforge-calc__legend"
 								ref={ legendRef }
 							/>
 						</figure>
 					) }
 
 					{ [ 'line', 'both' ].includes( chartType ) && (
-						<figure className="mtgb-calc__chart">
-							<figcaption className="mtgb-calc__chart-title">
-								{ __(
-									'Balance Over Time',
-									'mt-gutenberg-blocks'
-								) }
+						<figure className="calcforge-calc__chart">
+							<figcaption className="calcforge-calc__chart-title">
+								{ __( 'Balance Over Time', 'calcforge' ) }
 							</figcaption>
 							<div
-								className="mtgb-calc__chart-body"
+								className="calcforge-calc__chart-body"
 								ref={ lineRef }
 							/>
 							<figcaption
-								className="mtgb-calc__legend"
+								className="calcforge-calc__legend"
 								ref={ lineLegendRef }
 							/>
 						</figure>
@@ -436,33 +416,21 @@ export default function Preview( {
 			) }
 
 			{ showAmortization && (
-				<div className="mtgb-calc__schedule">
-					<table className="mtgb-calc__table">
+				<div className="calcforge-calc__schedule">
+					<table className="calcforge-calc__table">
 						<thead>
 							<tr>
 								<th scope="col">
-									{ __(
-										'Year',
-										'mt-gutenberg-blocks'
-									) }
+									{ __( 'Year', 'calcforge' ) }
 								</th>
 								<th scope="col">
-									{ __(
-										'Principal Paid',
-										'mt-gutenberg-blocks'
-									) }
+									{ __( 'Principal Paid', 'calcforge' ) }
 								</th>
 								<th scope="col">
-									{ __(
-										'Interest Paid',
-										'mt-gutenberg-blocks'
-									) }
+									{ __( 'Interest Paid', 'calcforge' ) }
 								</th>
 								<th scope="col">
-									{ __(
-										'Remaining Balance',
-										'mt-gutenberg-blocks'
-									) }
+									{ __( 'Remaining Balance', 'calcforge' ) }
 								</th>
 							</tr>
 						</thead>
