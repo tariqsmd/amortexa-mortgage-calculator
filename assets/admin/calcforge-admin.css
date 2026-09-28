@@ -328,7 +328,7 @@
 
 .calcforge-settings .form-table {
 	margin: 0;
-	padding: 8px 28px 20px;
+	padding: 0;
 	width: 100%;
 }
 
@@ -341,8 +341,8 @@
 }
 
 .calcforge-settings .form-table th {
-	width: 220px;
-	padding: 18px 16px 18px 0;
+	width: 200px;
+	padding: 18px 16px 18px 28px;
 	font-size: 13.5px;
 	font-weight: 600;
 	color: var(--calcforge-admin-slate-800);
@@ -350,7 +350,7 @@
 }
 
 .calcforge-settings .form-table td {
-	padding: 16px 0;
+	padding: 16px 28px 16px 0;
 	vertical-align: top;
 }
 
@@ -674,7 +674,7 @@
 
 .calcforge-settings__attrs {
 	margin: 0;
-	max-height: 380px;
+	max-height: 200px;
 	overflow-y: auto;
 	padding-right: 6px;
 }
@@ -798,11 +798,6 @@
 		padding: 18px 20px;
 	}
 
-	.calcforge-settings .form-table {
-		padding-left: 20px;
-		padding-right: 20px;
-	}
-
 	.calcforge-settings__panel-header {
 		padding: 16px 20px 12px;
 	}
@@ -818,11 +813,12 @@
 	.calcforge-settings .form-table td {
 		display: block;
 		width: 100%;
-		padding: 8px 0;
+		padding: 8px 20px;
 	}
 
 	.calcforge-settings .form-table th {
 		padding-top: 14px;
+		padding-bottom: 4px;
 	}
 
 	.calcforge-settings .regular-text,
