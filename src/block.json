@@ -52,10 +52,10 @@
 		},
 		"panelOrder": {
 			"type": "array",
-			"default": [ "results", "charts", "schedule" ],
+			"default": [ "form", "results", "charts", "schedule" ],
 			"items": {
 				"type": "string",
-				"enum": [ "results", "charts", "schedule" ]
+				"enum": [ "form", "results", "charts", "schedule" ]
 			}
 		},
 		"theme": {

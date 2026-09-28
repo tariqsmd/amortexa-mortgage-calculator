@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Server-side render template for the Mortgage Calculator block.
  *
@@ -164,10 +164,11 @@ if ( '' !== $font_stack ) {
 }
 
 /*
- * Which panels are on, and in what order. The form is always first and is not
- * part of the reorderable set, so it is rendered outside the loop below.
+ * Which panels are on, and in what order. Every panel including the form is
+ * reorderable, so the form is rendered by the loop below rather than pinned
+ * ahead of it.
  */
-$visible_panels = array();
+$visible_panels = array( 'form' );
 
 if ( ! empty( $attrs['showResults'] ) ) {
 	$visible_panels[] = 'results';
@@ -181,7 +182,7 @@ if ( ! empty( $attrs['showAmortization'] ) && ! empty( $result['schedule'] ) ) {
 	$visible_panels[] = 'schedule';
 }
 
-$panel_order = calcforge_resolve_panel_order( $attrs['panelOrder'], $attrs['layout'], $visible_panels );
+$panel_order = calcforge_resolve_panel_order( $attrs['panelOrder'], $visible_panels );
 
 $wrapper_args = array(
 	'class' => 'calcforge-calc calcforge-theme-' . esc_attr( $attrs['theme'] ) . ' calcforge-calc--layout-' . esc_attr( $attrs['layout'] ) . ' calcforge-calc--form-columns-' . esc_attr( $attrs['formColumns'] ),
@@ -196,6 +197,8 @@ if ( ! empty( $style_vars ) ) {
 	data-calcforge-config="<?php echo esc_attr( wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) ); ?>"
 >
 	<div class="calcforge-calc__grid calcforge-calc__grid--<?php echo esc_attr( $attrs['layout'] ); ?><?php echo in_array( 'results', $visible_panels, true ) ? '' : ' calcforge-calc__grid--form-only'; ?>">
+		<?php foreach ( $panel_order as $panel ) : ?>
+			<?php if ( 'form' === $panel ) : ?>
 		<form class="calcforge-calc__form" autocomplete="off">
 			<?php foreach ( $fields as $field ) : ?>
 				<div class="calcforge-calc__control">
@@ -232,9 +235,7 @@ if ( ! empty( $style_vars ) ) {
 				</div>
 			<?php endforeach; ?>
 		</form>
-
-		<?php foreach ( $panel_order as $panel ) : ?>
-			<?php if ( 'results' === $panel ) : ?>
+			<?php elseif ( 'results' === $panel ) : ?>
 			<div class="calcforge-calc__results">
 				<p class="calcforge-calc__result-label" data-calcforge-label="monthly">
 					<?php echo esc_html( $config['labels']['monthly'] ); ?>

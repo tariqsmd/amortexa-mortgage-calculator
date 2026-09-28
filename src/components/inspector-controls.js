@@ -18,6 +18,7 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState } from '@wordpress/element';
 import {
 	getChartTypes,
 	getColorControls,
@@ -32,7 +33,7 @@ import {
 	getSkins,
 } from '../utils/editor-data';
 import { NUMERIC_FIELDS } from '../utils/field-definitions';
-import { PANEL_KEYS } from '../utils/panel-order';
+import { PANEL_KEYS, movePanel, resolvePanelOrder } from '../utils/panel-order';
 
 /**
  * Display names for the reorderable panels.
@@ -41,6 +42,7 @@ import { PANEL_KEYS } from '../utils/panel-order';
  * translator in the editor bundle like every other inspector string.
  */
 const PANEL_LABELS = {
+	form: __( 'Inputs', 'calcforge' ),
 	results: __( 'Results', 'calcforge' ),
 	charts: __( 'Charts', 'calcforge' ),
 	schedule: __( 'Schedule', 'calcforge' ),
@@ -117,27 +119,54 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 	const skinOptions = getSkins();
 	const skinValues = skinOptions.map( ( skin ) => skin.value );
 
-	// A block saved before panel ordering existed, or one whose attribute was
-	// stripped, still needs a complete list to render the controls.
-	const panelOrder = PANEL_KEYS.filter( ( panel ) =>
-		( Array.isArray( attributes.panelOrder )
-			? attributes.panelOrder
-			: []
-		).includes( panel )
-	);
+	// The saved order, with any missing or hand-edited key repaired by the same
+	// resolver the preview and PHP render use. Passing every panel as visible
+	// keeps hidden panels in the list so reordering stays predictable when a
+	// panel is toggled back on.
+	const panelOrder = resolvePanelOrder( attributes.panelOrder, PANEL_KEYS );
 
-	const movePanel = ( index, offset ) => {
-		const target = index + offset;
+	// Drag state, kept separate from the saved order so an abandoned drag
+	// cannot leave the attribute half-moved.
+	const [ dragIndex, setDragIndex ] = useState( null );
+	const [ overIndex, setOverIndex ] = useState( null );
 
-		if ( target < 0 || target >= panelOrder.length ) {
-			return;
+	const moveTo = ( from, to ) => {
+		setAttributes( { panelOrder: movePanel( panelOrder, from, to ) } );
+	};
+
+	const onDragStart = ( event, index ) => {
+		setDragIndex( index );
+		setOverIndex( index );
+
+		// Firefox refuses to start a drag unless some data is set.
+		event.dataTransfer.effectAllowed = 'move';
+		event.dataTransfer.setData( 'text/plain', panelOrder[ index ] );
+	};
+
+	const onDragOver = ( event, index ) => {
+		// Without preventDefault the element is not a valid drop target.
+		event.preventDefault();
+		event.dataTransfer.dropEffect = 'move';
+
+		if ( overIndex !== index ) {
+			setOverIndex( index );
+		}
+	};
+
+	const onDrop = ( event, index ) => {
+		event.preventDefault();
+
+		if ( null !== dragIndex ) {
+			moveTo( dragIndex, index );
 		}
 
-		const next = [ ...panelOrder ];
-		const [ moved ] = next.splice( index, 1 );
+		setDragIndex( null );
+		setOverIndex( null );
+	};
 
-		next.splice( target, 0, moved );
-		setAttributes( { panelOrder: next } );
+	const onDragEnd = () => {
+		setDragIndex( null );
+		setOverIndex( null );
 	};
 
 	return (
@@ -306,16 +335,41 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 					id="calcforge-panel-order"
 					label={ __( 'Panel Order', 'calcforge' ) }
 					help={ __(
-						'Reorder the sections beneath the inputs. The form always stays first, and the two column split keeps the results beside it.',
+						'Drag a section to move it, or use the up and down buttons. Every section can go anywhere, including the inputs.',
 						'calcforge'
 					) }
 				>
-					<div className="calcforge-reorder">
+					<ul className="calcforge-reorder">
 						{ panelOrder.map( ( panel, index ) => (
-							<div
+							<li
 								key={ panel }
-								className="calcforge-reorder__row"
+								className={ `calcforge-reorder__row${
+									dragIndex === index
+										? ' calcforge-reorder__row--dragging'
+										: ''
+								}${
+									null !== overIndex &&
+									overIndex === index &&
+									dragIndex !== index
+										? ' calcforge-reorder__row--over'
+										: ''
+								}` }
+								draggable
+								onDragStart={ ( event ) =>
+									onDragStart( event, index )
+								}
+								onDragOver={ ( event ) =>
+									onDragOver( event, index )
+								}
+								onDrop={ ( event ) => onDrop( event, index ) }
+								onDragEnd={ onDragEnd }
 							>
+								<span
+									className="calcforge-reorder__handle"
+									aria-hidden="true"
+								>
+									&#8942;&#8942;
+								</span>
 								<span className="calcforge-reorder__name">
 									{ panelLabel( panel ) }
 								</span>
@@ -323,7 +377,7 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 									className="calcforge-reorder__button"
 									variant="tertiary"
 									disabled={ 0 === index }
-									onClick={ () => movePanel( index, -1 ) }
+									onClick={ () => moveTo( index, index - 1 ) }
 									label={ sprintf(
 										/* translators: %s: panel name, e.g. "Results". */
 										__( 'Move %s up', 'calcforge' ),
@@ -336,7 +390,7 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 									className="calcforge-reorder__button"
 									variant="tertiary"
 									disabled={ panelOrder.length - 1 === index }
-									onClick={ () => movePanel( index, 1 ) }
+									onClick={ () => moveTo( index, index + 1 ) }
 									label={ sprintf(
 										/* translators: %s: panel name, e.g. "Results". */
 										__( 'Move %s down', 'calcforge' ),
@@ -345,9 +399,9 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 								>
 									{ __( 'Down', 'calcforge' ) }
 								</Button>
-							</div>
+							</li>
 						) ) }
-					</div>
+					</ul>
 				</BaseControl>
 			</PanelBody>
 

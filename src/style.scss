@@ -594,9 +594,9 @@
  * underneath. Each control ends up two rows tall, but the form is markedly
  * shorter than the full width treatment in the split layout.
  *
- * Declared after the stacked rule because an explicit choice should win over the
- * stacked default: picking compact keeps the two column grid even when the
- * calculator is configured single column.
+ * Declared after the stacked rule because an explicit choice should win
+ * over the stacked default: picking compact keeps the two column grid even
+ * when the calculator is configured single column.
  */
 .calcforge-calc--form-columns-compact {
 
@@ -745,18 +745,58 @@
 /*
  * Panel reordering inside the block inspector. Kept in this file so the editor
  * and the front end ship from one stylesheet.
+ *
+ * The rows are draggable with the native HTML5 drag and drop API, so the list
+ * needs a reset plus explicit feedback for the three states a row can be in.
+ * Keyboard and click users are served by the up/down buttons in each row, which
+ * is why the rows themselves are not focusable: reordering is never
+ * mouse-only.
  */
 .calcforge-reorder {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
 .calcforge-reorder__row {
 	display: flex;
 	align-items: center;
 	gap: 4px;
-	padding: 4px 0;
+	padding: 6px 8px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	background: #fff;
+	cursor: grab;
+	transition: border-color 0.1s ease, background-color 0.1s ease, opacity 0.1s ease;
+}
+
+.calcforge-reorder__row:hover {
+	border-color: #ddd;
+}
+
+/* The row being dragged: lifted out of the list and dimmed. */
+.calcforge-reorder__row--dragging {
+	opacity: 0.4;
+	cursor: grabbing;
+}
+
+/* The row the dragged row would land on. */
+.calcforge-reorder__row--over {
+	border-color: var(--wp-admin-theme-color, #3858e9);
+	background: #f0f0f1;
+}
+
+.calcforge-reorder__handle {
+	flex: 0 0 auto;
+	color: #757575;
+	font-size: 13px;
+	line-height: 1;
+	letter-spacing: -2px;
+	cursor: grab;
+	user-select: none;
 }
 
 .calcforge-reorder__name {

@@ -74,6 +74,7 @@
     "panelOrder": {
       "type": "array",
       "default": [
+        "form",
         "results",
         "charts",
         "schedule"
@@ -81,6 +82,7 @@
       "items": {
         "type": "string",
         "enum": [
+          "form",
           "results",
           "charts",
           "schedule"

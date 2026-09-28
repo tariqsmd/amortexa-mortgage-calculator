@@ -366,8 +366,9 @@ export default function Preview( {
 	) );
 
 	// Which panels render, and in what order, so the preview matches the front
-	// end exactly. The form is always first and is not reorderable.
-	const visiblePanels = [];
+	// end exactly. The form is part of the reorderable set, so it appears in
+	// the ordered list rather than being pinned first.
+	const visiblePanels = [ 'form' ];
 
 	if ( showResults ) {
 		visiblePanels.push( 'results' );
@@ -381,11 +382,7 @@ export default function Preview( {
 		visiblePanels.push( 'schedule' );
 	}
 
-	const orderedPanels = resolvePanelOrder(
-		panelOrder,
-		layout,
-		visiblePanels
-	);
+	const orderedPanels = resolvePanelOrder( panelOrder, visiblePanels );
 
 	return (
 		<>
@@ -400,66 +397,74 @@ export default function Preview( {
 					layout === 'split' ? 'split' : 'stacked'
 				}${ showResults ? '' : ' calcforge-calc__grid--form-only' }` }
 			>
-				<form
-					className="calcforge-calc__form"
-					onSubmit={ ( event ) => event.preventDefault() }
-				>
-					{ NUMERIC_FIELDS.map( ( field ) => (
-						<div
-							key={ field.key }
-							className="calcforge-calc__control"
-						>
-							<label
-								className="calcforge-calc__label"
-								htmlFor={ `calcforge-edit-${ field.key }` }
-							>
-								{ field.label }
-							</label>
-							<div className="calcforge-calc__control-row">
-								{ showSliders && (
-									<input
-										type="range"
-										className="calcforge-calc__slider"
-										value={ Number(
-											attributes[ field.key ]
-										) }
-										min={ field.sliderMin }
-										max={ sliderMaxFor( field ) }
-										step={ field.sliderStep }
-										tabIndex={ -1 }
-										aria-label={ field.label }
-										onChange={ ( event ) =>
-											setNumericAttribute(
-												field.key,
-												event.target.value
-											)
-										}
-									/>
-								) }
-								<input
-									type="number"
-									id={ `calcforge-edit-${ field.key }` }
-									className="calcforge-calc__field"
-									value={ String(
-										attributes[ field.key ] ?? ''
-									) }
-									min={ field.min }
-									max={ field.max }
-									step={ field.step }
-									tabIndex={ -1 }
-									onChange={ ( event ) =>
-										setNumericAttribute(
-											field.key,
-											event.target.value
-										)
-									}
-								/>
-							</div>
-						</div>
-					) ) }
-				</form>
-
 				{ orderedPanels.map( ( panel ) => {
+					if ( 'form' === panel ) {
+						return (
+							<form
+								key="form"
+								className="calcforge-calc__form"
+								onSubmit={ ( event ) => event.preventDefault() }
+							>
+								{ NUMERIC_FIELDS.map( ( field ) => (
+									<div
+										key={ field.key }
+										className="calcforge-calc__control"
+									>
+										<label
+											className="calcforge-calc__label"
+											htmlFor={ `calcforge-edit-${ field.key }` }
+										>
+											{ field.label }
+										</label>
+										<div className="calcforge-calc__control-row">
+											{ showSliders && (
+												<input
+													type="range"
+													className="calcforge-calc__slider"
+													value={ Number(
+														attributes[ field.key ]
+													) }
+													min={ field.sliderMin }
+													max={ sliderMaxFor(
+														field
+													) }
+													step={ field.sliderStep }
+													tabIndex={ -1 }
+													aria-label={ field.label }
+													onChange={ ( event ) =>
+														setNumericAttribute(
+															field.key,
+															event.target.value
+														)
+													}
+												/>
+											) }
+											<input
+												type="number"
+												id={ `calcforge-edit-${ field.key }` }
+												className="calcforge-calc__field"
+												value={ String(
+													attributes[ field.key ] ??
+														''
+												) }
+												min={ field.min }
+												max={ field.max }
+												step={ field.step }
+												tabIndex={ -1 }
+												onChange={ ( event ) =>
+													setNumericAttribute(
+														field.key,
+														event.target.value
+													)
+												}
+											/>
+										</div>
+									</div>
+								) ) }
+							</form>
+						);
+					}
+
 					if ( 'results' === panel ) {
 						return (
 							<div

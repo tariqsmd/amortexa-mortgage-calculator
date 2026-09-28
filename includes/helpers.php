@@ -90,34 +90,37 @@ function calcforge_get_chart_types() {
 /**
  * Returns the reorderable calculator panels, in their default vertical order.
  *
- * The form is not listed: it is always the first panel, because a calculator
- * whose inputs appear below its own results reads as broken.
+ * The form is part of the set: every panel can be dragged anywhere, including
+ * below its own results.
  *
  * @return array<int,string> Panel keys.
  */
 function calcforge_get_panel_keys() {
-	return array( 'results', 'charts', 'schedule' );
+	return array( 'form', 'results', 'charts', 'schedule' );
 }
 
 /**
- * Resolves the panel order to render, given the saved order, the layout, and
- * which panels are visible.
+ * Resolves the panel order to render, given the saved order and which panels
+ * are visible.
  *
- * Two rules apply:
+ * Unknown keys are dropped, duplicates collapse, and any visible panel missing
+ * from the saved order is appended, so a hand-edited post or a block saved by
+ * an older version still renders every visible panel.
  *
- * 1. Unknown keys are dropped and any visible panel missing from the saved
- *    order is appended, so a hand-edited post or a block saved by an older
- *    version still renders every visible panel.
- * 2. In the two column split the results sit in the column beside the form, so
- *    they are pulled back to the front. A full width panel placed between the
- *    form and the results would push the results into a column of their own.
+ * A block saved before the form became reorderable has no 'form' key at all.
+ * Those keep the form first, so upgrading never drops the inputs to the
+ * bottom of existing content. Once a form key is present the saved order is
+ * honoured exactly, wherever the author dragged it.
+ *
+ * The grid places panels in DOM order, so in the two column split a full width
+ * panel ahead of the form takes the first row on its own and the form and
+ * results share the next one.
  *
  * @param array<int,string> $order   Saved panel order.
- * @param string             $layout  Active layout, "stacked" or "split".
- * @param array<int,string>  $visible Panel keys that should render.
+ * @param array<int,string> $visible Panel keys that should render.
  * @return array<int,string> Ordered, de-duplicated panel keys.
  */
-function calcforge_resolve_panel_order( $order, $layout, $visible ) {
+function calcforge_resolve_panel_order( $order, $visible ) {
 	$allowed = array_flip( calcforge_get_panel_keys() );
 	$resolved = array();
 
@@ -129,15 +132,14 @@ function calcforge_resolve_panel_order( $order, $layout, $visible ) {
 		}
 	}
 
+	if ( ! in_array( 'form', $resolved, true ) && in_array( 'form', $visible, true ) ) {
+		array_unshift( $resolved, 'form' );
+	}
+
 	foreach ( $visible as $key ) {
 		if ( ! in_array( $key, $resolved, true ) ) {
 			$resolved[] = $key;
 		}
-	}
-
-	if ( 'split' === $layout && in_array( 'results', $resolved, true ) ) {
-		$resolved = array_values( array_diff( $resolved, array( 'results' ) ) );
-		array_unshift( $resolved, 'results' );
 	}
 
 	return $resolved;
@@ -610,9 +612,9 @@ function calcforge_sanitize_attributes( $attributes ) {
 	 * Panel order is stored as an array of panel keys. It is normalized through
 	 * calcforge_resolve_panel_order() with every panel treated as visible, so an
 	 * unknown or duplicated key cannot survive into the rendered markup.
-	 */	$panel_order = calcforge_resolve_panel_order(
+	 */
+	$panel_order = calcforge_resolve_panel_order(
 		isset( $raw['panelOrder'] ) ? (array) $raw['panelOrder'] : array(),
-		$layout,
 		calcforge_get_panel_keys()
 	);
 

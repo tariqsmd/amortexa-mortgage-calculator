@@ -40,7 +40,7 @@
 		"wp-pot": "^2.0.0"
 	},
 	"scripts": {
-		"build": "wp-scripts build",
+		"build": "wp-scripts build && node tools/strip-bom.cjs",
 		"start": "wp-scripts start",
 		"dev": "wp-scripts start",
 		"lint:js": "wp-scripts lint-js src webpack.config.js",
