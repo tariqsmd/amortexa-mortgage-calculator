@@ -280,7 +280,11 @@ class CalcForge_Settings {
 		switch ( $field['type'] ) {
 			case 'checkbox':
 				printf(
-					'<label for="%1$s"><input type="checkbox" id="%1$s" name="%2$s" value="1" %3$s /> %4$s</label>',
+					'<label class="calcforge-switch" for="%1$s">
+						<input type="checkbox" id="%1$s" name="%2$s" value="1" %3$s />
+						<span class="calcforge-switch__slider" aria-hidden="true"></span>
+						<span class="calcforge-switch__label">%4$s</span>
+					</label>',
 					esc_attr( $id ),
 					esc_attr( $name ),
 					checked( ! empty( $value ), true, false ),
@@ -302,10 +306,12 @@ class CalcForge_Settings {
 				break;
 
 			case 'number':
+				echo '<div class="calcforge-settings__input-group">';
 				printf( '<input type="number" id="%1$s" name="%2$s" value="%3$s" %4$s />', esc_attr( $id ), esc_attr( $name ), esc_attr( (string) $value ), $this->build_input_attributes( $field ) );
 				if ( ! empty( $field['suffix'] ) ) {
-					printf( ' <span class="calcforge-settings__suffix">%s</span>', esc_html( $field['suffix'] ) );
+					printf( '<span class="calcforge-settings__suffix-badge">%s</span>', esc_html( $field['suffix'] ) );
 				}
+				echo '</div>';
 				break;
 
 			default:
@@ -314,7 +320,7 @@ class CalcForge_Settings {
 		}
 
 		if ( ! empty( $field['description'] ) ) {
-			printf( '<p class="description">%s</p>', esc_html( $field['description'] ) );
+			printf( '<p class="description calcforge-settings__field-desc">%s</p>', esc_html( $field['description'] ) );
 		}
 	}
 
@@ -349,7 +355,7 @@ class CalcForge_Settings {
 	}
 
 	/**
-	 * Enqueues the admin stylesheet on this screen only.
+	 * Enqueues the admin stylesheet and script on this screen only.
 	 *
 	 * @param string $hook_suffix Current admin page hook suffix.
 	 */
@@ -364,14 +370,65 @@ class CalcForge_Settings {
 			array(),
 			CALCFORGE_VERSION
 		);
+
+		wp_enqueue_script(
+			'calcforge-admin-script',
+			CALCFORGE_PLUGIN_URL . 'assets/admin/calcforge-admin.js',
+			array(),
+			CALCFORGE_VERSION,
+			true
+		);
+	}
+
+	/**
+	 * Renders an inline SVG icon for a settings section.
+	 *
+	 * @param string $section_id Section identifier.
+	 */
+	private function render_section_icon( $section_id ) {
+		switch ( $section_id ) {
+			case 'calcforge_currency':
+				?>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<circle cx="12" cy="12" r="9"></circle>
+					<path d="M14.5 9a2.5 2.5 0 0 0-5 0v6a2.5 2.5 0 0 0 5 0"></path>
+					<path d="M8 12h8"></path>
+				</svg>
+				<?php
+				break;
+
+			case 'calcforge_loan':
+				?>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
+					<line x1="8" y1="9" x2="16" y2="9"></line>
+					<line x1="8" y1="13" x2="12" y2="13"></line>
+					<line x1="8" y1="17" x2="10" y2="17"></line>
+					<line x1="15" y1="13" x2="15" y2="17"></line>
+					<line x1="17" y1="15" x2="13" y2="15"></line>
+				</svg>
+				<?php
+				break;
+
+			case 'calcforge_appearance':
+				?>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+					<circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+					<circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+					<circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+					<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C21.437 6.082 17.207 2 12 2z"></path>
+				</svg>
+				<?php
+				break;
+		}
 	}
 
 	/**
 	 * Renders the settings page shell.
 	 *
-	 * The form sits in a wide main column with a sticky help sidebar beside it,
-	 * so the shortcode reference stays reachable while scrolling a long form
-	 * without turning the Settings API tables into a second, hand-written form.
+	 * Uses a modern card-based layout with a dedicated sidebar for shortcode
+	 * documentation and tips.
 	 */
 	public function render_page() {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
@@ -379,20 +436,75 @@ class CalcForge_Settings {
 		}
 		?>
 		<div class="wrap calcforge-settings">
-			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-
-			<p class="calcforge-settings__intro">
-				<?php esc_html_e( 'These values are the site-wide defaults. Every new Mortgage Calculator block starts with them, and each block can then be adjusted on its own without affecting the others.', CALCFORGE_TEXT_DOMAIN ); ?>
-			</p>
+			<div class="calcforge-settings__header">
+				<div class="calcforge-settings__header-brand">
+					<div class="calcforge-settings__logo-badge">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<rect x="4" y="2" width="16" height="20" rx="3"></rect>
+							<line x1="8" y1="6" x2="16" y2="6"></line>
+							<line x1="16" y1="14" x2="16" y2="18"></line>
+							<path d="M16 10h.01"></path>
+							<path d="M12 10h.01"></path>
+							<path d="M8 10h.01"></path>
+							<path d="M12 14h.01"></path>
+							<path d="M8 14h.01"></path>
+							<path d="M12 18h.01"></path>
+							<path d="M8 18h.01"></path>
+						</svg>
+					</div>
+					<div>
+						<div class="calcforge-settings__title-row">
+							<h1 class="calcforge-settings__title"><?php echo esc_html( get_admin_page_title() ); ?></h1>
+							<span class="calcforge-settings__version-badge"><?php echo esc_html( 'v' . CALCFORGE_VERSION ); ?></span>
+						</div>
+						<p class="calcforge-settings__intro">
+							<?php esc_html_e( 'These values are the site-wide defaults. Every new Mortgage Calculator block starts with them, and each block can then be adjusted on its own without affecting the others.', CALCFORGE_TEXT_DOMAIN ); ?>
+						</p>
+					</div>
+				</div>
+				<div class="calcforge-settings__status-pills">
+					<span class="calcforge-pill calcforge-pill--success">
+						<span class="calcforge-pill__dot"></span>
+						<?php esc_html_e( 'Block Active', CALCFORGE_TEXT_DOMAIN ); ?>
+					</span>
+					<span class="calcforge-pill calcforge-pill--info">
+						<span class="calcforge-pill__dot"></span>
+						<?php esc_html_e( 'REST API Ready', CALCFORGE_TEXT_DOMAIN ); ?>
+					</span>
+				</div>
+			</div>
 
 			<div class="calcforge-settings__layout">
 				<div class="calcforge-settings__main">
 					<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
 						<?php
 						settings_fields( self::OPTION_GROUP );
-						do_settings_sections( self::PAGE_SLUG );
-						submit_button();
-						?>
+
+						$sections = $this->get_sections();
+						foreach ( $sections as $section_id => $section ) :
+							?>
+							<div class="calcforge-settings__card calcforge-settings__card--section" id="section-<?php echo esc_attr( $section_id ); ?>">
+								<div class="calcforge-settings__section-header">
+									<div class="calcforge-settings__section-icon calcforge-settings__section-icon--<?php echo esc_attr( $section_id ); ?>">
+										<?php $this->render_section_icon( $section_id ); ?>
+									</div>
+									<div class="calcforge-settings__section-heading">
+										<h2 class="calcforge-settings__section-title"><?php echo esc_html( $section['title'] ); ?></h2>
+										<p class="calcforge-settings__section-description"><?php echo esc_html( $section['description'] ); ?></p>
+									</div>
+								</div>
+								<table class="form-table" role="presentation">
+									<?php do_settings_fields( self::PAGE_SLUG, $section_id ); ?>
+								</table>
+							</div>
+						<?php endforeach; ?>
+
+						<div class="calcforge-settings__save-bar">
+							<?php submit_button( __( 'Save Changes', CALCFORGE_TEXT_DOMAIN ), 'primary', 'submit', false ); ?>
+							<span class="calcforge-settings__save-note">
+								<?php esc_html_e( 'Saved defaults immediately apply to all newly inserted calculators.', CALCFORGE_TEXT_DOMAIN ); ?>
+							</span>
+						</div>
 					</form>
 				</div>
 
@@ -409,42 +521,101 @@ class CalcForge_Settings {
 		?>
 		<aside class="calcforge-settings__sidebar">
 			<div class="calcforge-settings__card calcforge-settings__card--shortcode">
-				<h2 class="calcforge-settings__card-title">
-					<?php esc_html_e( 'Shortcode', CALCFORGE_TEXT_DOMAIN ); ?>
-				</h2>
+				<div class="calcforge-settings__card-header">
+					<span class="calcforge-settings__card-badge-icon">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<polyline points="16 18 22 12 16 6"></polyline>
+							<polyline points="8 6 2 12 8 18"></polyline>
+						</svg>
+					</span>
+					<h2 class="calcforge-settings__card-title">
+						<?php esc_html_e( 'Shortcode', CALCFORGE_TEXT_DOMAIN ); ?>
+					</h2>
+				</div>
+
 				<p class="calcforge-settings__card-text">
 					<?php esc_html_e( 'Paste the calculator into any post, page, or widget area:', CALCFORGE_TEXT_DOMAIN ); ?>
 				</p>
-				<p class="calcforge-settings__card-text">
+				<div class="calcforge-settings__code-box">
 					<code class="calcforge-settings__code">[calcforge]</code>
-				</p>
+					<button type="button" class="calcforge-copy-btn" data-clipboard-text="[calcforge]" title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+							<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+							<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+						</svg>
+						<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
+					</button>
+				</div>
+
 				<p class="calcforge-settings__card-text">
 					<?php esc_html_e( 'Add attributes to override the defaults, then add it as a block to keep changing it visually:', CALCFORGE_TEXT_DOMAIN ); ?>
 				</p>
-				<p class="calcforge-settings__card-text">
+				<div class="calcforge-settings__code-box">
 					<code class="calcforge-settings__code">[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]</code>
-				</p>
-				<p class="calcforge-settings__card-text">
+					<button type="button" class="calcforge-copy-btn" data-clipboard-text='[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]' title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+							<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+							<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+						</svg>
+						<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
+					</button>
+				</div>
+
+				<h3 class="calcforge-settings__subheading">
 					<?php esc_html_e( 'Attribute names are lowercase. Wrap the value in quotes. Attributes accept:', CALCFORGE_TEXT_DOMAIN ); ?>
-				</p>
+				</h3>
 				<dl class="calcforge-settings__attrs">
 					<?php foreach ( CalcForge_Shortcode::get_documented_attributes() as $attr => $spec ) : ?>
-						<dt><code class="calcforge-settings__code"><?php echo esc_html( $attr ); ?></code></dt>
+						<dt>
+							<code class="calcforge-settings__code"><?php echo esc_html( $attr ); ?></code>
+							<span class="calcforge-settings__attr-type"><?php echo esc_html( $spec['type'] ); ?></span>
+						</dt>
 						<dd><?php echo esc_html( $spec['description'] ); ?></dd>
 					<?php endforeach; ?>
 				</dl>
 			</div>
 
 			<div class="calcforge-settings__card calcforge-settings__card--help">
-				<h2 class="calcforge-settings__card-title">
-					<?php esc_html_e( 'Help', CALCFORGE_TEXT_DOMAIN ); ?>
-				</h2>
+				<div class="calcforge-settings__card-header">
+					<span class="calcforge-settings__card-badge-icon calcforge-settings__card-badge-icon--amber">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<circle cx="12" cy="12" r="10"></circle>
+							<line x1="12" y1="16" x2="12" y2="12"></line>
+							<line x1="12" y1="8" x2="12.01" y2="8"></line>
+						</svg>
+					</span>
+					<h2 class="calcforge-settings__card-title">
+						<?php esc_html_e( 'Help', CALCFORGE_TEXT_DOMAIN ); ?>
+					</h2>
+				</div>
+				<ul class="calcforge-settings__tips-list">
+					<li>
+						<?php esc_html_e( 'Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on.', CALCFORGE_TEXT_DOMAIN ); ?>
+					</li>
+					<li>
+						<?php esc_html_e( 'Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar.', CALCFORGE_TEXT_DOMAIN ); ?>
+					</li>
+				</ul>
+			</div>
+
+			<div class="calcforge-settings__card calcforge-settings__card--api">
+				<div class="calcforge-settings__card-header">
+					<span class="calcforge-settings__card-badge-icon calcforge-settings__card-badge-icon--blue">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+							<rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+							<line x1="6" y1="6" x2="6.01" y2="6"></line>
+							<line x1="6" y1="18" x2="6.01" y2="18"></line>
+						</svg>
+					</span>
+					<h2 class="calcforge-settings__card-title">
+						<?php esc_html_e( 'Developer API', CALCFORGE_TEXT_DOMAIN ); ?>
+					</h2>
+				</div>
 				<p class="calcforge-settings__card-text">
-					<?php esc_html_e( 'Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on.', CALCFORGE_TEXT_DOMAIN ); ?>
+					<?php esc_html_e( 'Stateless calculation endpoint available for headless and external apps:', CALCFORGE_TEXT_DOMAIN ); ?>
 				</p>
-				<p class="calcforge-settings__card-text">
-					<?php esc_html_e( 'Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar.', CALCFORGE_TEXT_DOMAIN ); ?>
-				</p>
+				<code class="calcforge-settings__code--block">POST /wp-json/calcforge/v1/calculate</code>
 			</div>
 		</aside>
 		<?php
