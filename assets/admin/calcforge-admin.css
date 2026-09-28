@@ -251,6 +251,11 @@
 	color: #1d4ed8;
 }
 
+.calcforge-settings__tab-btn[aria-selected="true"] .calcforge-settings__tab-icon--api {
+	background: #ecfdf5;
+	color: #047857;
+}
+
 /* ==========================================================================
    Tab Panels
    ========================================================================== */
@@ -311,6 +316,12 @@
 	background: #eff6ff;
 	color: #1d4ed8;
 	border: 1px solid #bfdbfe;
+}
+
+.calcforge-settings__panel-icon--calcforge_api {
+	background: #ecfdf5;
+	color: #047857;
+	border: 1px solid #a7f3d0;
 }
 
 .calcforge-settings__panel-heading {
@@ -665,6 +676,19 @@
 	word-break: break-all;
 }
 
+/*
+ * Multi-line samples such as the curl command and the JSON response have to
+ * keep their own line breaks, so whitespace is preserved and the block scrolls
+ * sideways rather than wrapping mid-token.
+ */
+.calcforge-settings__code-box .calcforge-settings__code--pre {
+	flex: 1;
+	min-width: 0;
+	white-space: pre;
+	overflow-x: auto;
+	word-break: normal;
+}
+
 .calcforge-settings__code--block {
 	display: block;
 	padding: 8px 12px;
@@ -765,6 +789,37 @@
 	background: var(--calcforge-admin-slate-200);
 	color: var(--calcforge-admin-slate-700);
 	border-radius: 3px;
+}
+
+/*
+ * Required/optional and default-value note shown beside a parameter's type.
+ */
+.calcforge-settings__attr-note {
+	font-size: 11px;
+	color: var(--calcforge-admin-slate-500);
+}
+
+/*
+ * Reference panels are wider than the old sidebar column, so the parameter
+ * list and the JSON samples can breathe instead of scrolling.
+ */
+.calcforge-settings__reference .calcforge-settings__attrs--flat {
+	columns: 2;
+	column-gap: 32px;
+}
+
+.calcforge-settings__reference .calcforge-settings__attrs--flat dt {
+	break-inside: avoid;
+}
+
+.calcforge-settings__reference .calcforge-settings__code-box {
+	margin-top: 8px;
+}
+
+@media screen and (max-width: 782px) {
+	.calcforge-settings__reference .calcforge-settings__attrs--flat {
+		columns: 1;
+	}
 }
 
 .calcforge-settings__attrs dd {

@@ -202,9 +202,9 @@ class CalcForge_Settings {
 	/**
 	 * Returns the settings screen tabs.
 	 *
-	 * Every settings section gets a tab, plus a final reference-only tab for the
-	 * shortcode documentation. That tab owns no options, so it is marked as
-	 * having no fields and is rendered outside the settings form.
+	 * Every settings section gets a tab, followed by the reference-only tabs.
+	 * Reference tabs own no options, so they are marked with an empty `section`
+	 * and are rendered outside the settings form, away from the Save button.
 	 *
 	 * @return array<string,array<string,mixed>> Tab definitions keyed by tab id.
 	 */
@@ -213,19 +213,40 @@ class CalcForge_Settings {
 
 		foreach ( $this->get_sections() as $id => $section ) {
 			$tabs[ $id ] = array(
-				'title'  => $section['title'],
-				'icon'   => str_replace( 'calcforge_', '', $id ),
+				'title'   => $section['title'],
+				'icon'    => str_replace( 'calcforge_', '', $id ),
 				'section' => $id,
 			);
 		}
 
-		$tabs['calcforge_shortcode'] = array(
-			'title'  => __( 'Shortcode', CALCFORGE_TEXT_DOMAIN ),
-			'icon'   => 'shortcode',
-			'section' => '',
-		);
+		return array_merge( $tabs, $this->get_reference_tabs() );
+	}
 
-		return $tabs;
+	/**
+	 * Returns the reference-only tabs, keyed by tab id.
+	 *
+	 * Each entry names the method that renders its panel, so adding another
+	 * reference tab means adding one entry and one render method.
+	 *
+	 * @return array<string,array<string,mixed>> Reference tab definitions.
+	 */
+	private function get_reference_tabs() {
+		return array(
+			'calcforge_shortcode' => array(
+				'title'        => __( 'Shortcode', CALCFORGE_TEXT_DOMAIN ),
+				'description'  => __( 'Add the calculator to any post, page, or widget area without using the block editor.', CALCFORGE_TEXT_DOMAIN ),
+				'icon'         => 'shortcode',
+				'section'      => '',
+				'render'       => 'render_shortcode_reference',
+			),
+			'calcforge_api'       => array(
+				'title'        => __( 'Developer API', CALCFORGE_TEXT_DOMAIN ),
+				'description'  => __( 'Run the same mortgage arithmetic from your own theme, plugin, or headless front end.', CALCFORGE_TEXT_DOMAIN ),
+				'icon'         => 'api',
+				'section'      => '',
+				'render'       => 'render_api_reference',
+			),
+		);
 	}
 
 	/**
@@ -459,6 +480,17 @@ class CalcForge_Settings {
 				</svg>
 				<?php
 				break;
+
+			case 'calcforge_api':
+				?>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+					<rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+					<line x1="6" y1="6" x2="6.01" y2="6"></line>
+					<line x1="6" y1="18" x2="6.01" y2="18"></line>
+				</svg>
+				<?php
+				break;
 		}
 	}
 
@@ -575,29 +607,35 @@ class CalcForge_Settings {
 
 						<?php
 						/*
-						 * The shortcode tab is reference only. It sits outside the
-						 * settings form so the Save button does not appear on a tab
-						 * that has nothing to save.
+						 * Reference tabs own no options, so they sit outside the
+						 * settings form and never show the Save button.
 						 */
-						?>
-						<div
-							class="calcforge-settings__tab-panel"
-							id="calcforge_shortcode"
-							role="tabpanel"
-							aria-hidden="true"
-						>
-							<div class="calcforge-settings__panel-header">
-								<div class="calcforge-settings__panel-icon calcforge-settings__panel-icon--calcforge_shortcode">
-									<?php $this->render_section_icon( 'calcforge_shortcode' ); ?>
+						foreach ( $this->get_reference_tabs() as $ref_id => $ref ) :
+							?>
+							<div
+								class="calcforge-settings__tab-panel"
+								id="<?php echo esc_attr( $ref_id ); ?>"
+								role="tabpanel"
+								aria-hidden="true"
+							>
+								<div class="calcforge-settings__panel-header">
+									<div class="calcforge-settings__panel-icon calcforge-settings__panel-icon--<?php echo esc_attr( $ref_id ); ?>">
+										<?php $this->render_section_icon( $ref_id ); ?>
+									</div>
+									<div class="calcforge-settings__panel-heading">
+										<h2 class="calcforge-settings__panel-title"><?php echo esc_html( $ref['title'] ); ?></h2>
+										<p class="calcforge-settings__panel-description"><?php echo esc_html( $ref['description'] ); ?></p>
+									</div>
 								</div>
-								<div class="calcforge-settings__panel-heading">
-									<h2 class="calcforge-settings__panel-title"><?php esc_html_e( 'Shortcode', CALCFORGE_TEXT_DOMAIN ); ?></h2>
-									<p class="calcforge-settings__panel-description"><?php esc_html_e( 'Add the calculator to any post, page, or widget area without using the block editor.', CALCFORGE_TEXT_DOMAIN ); ?></p>
-								</div>
-							</div>
 
-							<?php $this->render_shortcode_reference(); ?>
-						</div>
+								<?php
+								$render = $ref['render'];
+								$this->$render();
+								?>
+							</div>
+							<?php
+						endforeach;
+						?>
 					</div>
 				</div>
 
@@ -610,8 +648,7 @@ class CalcForge_Settings {
 	/**
 	 * Renders the shortcode reference shown on the Shortcode tab.
 	 */
-	private function render_shortcode_reference() {
-		?>
+	private function render_shortcode_reference() {		?>
 		<div class="calcforge-settings__reference">
 			<p class="calcforge-settings__card-text">
 				<?php esc_html_e( 'Paste the calculator into any post, page, or widget area:', CALCFORGE_TEXT_DOMAIN ); ?>
@@ -658,6 +695,97 @@ class CalcForge_Settings {
 	}
 
 	/**
+	 * Renders the REST endpoint reference shown on the Developer API tab.
+	 */
+	private function render_api_reference() {
+		$endpoint = rest_url( CalcForge_REST::NAMESPACE_V1 . '/calculate' );
+		$params   = array(
+			'amount'          => array(
+				'type'    => __( 'number', CALCFORGE_TEXT_DOMAIN ),
+				'meta'    => __( 'required', CALCFORGE_TEXT_DOMAIN ),
+				'summary' => __( 'Total amount being financed.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'down_payment'    => array(
+				'type'    => __( 'number', CALCFORGE_TEXT_DOMAIN ),
+				'meta'    => __( 'optional, default 0', CALCFORGE_TEXT_DOMAIN ),
+				'summary' => __( 'Paid up front. Interest is charged on the remainder.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'interest_rate'   => array(
+				'type'    => __( 'number', CALCFORGE_TEXT_DOMAIN ),
+				'meta'    => __( 'optional, default 0', CALCFORGE_TEXT_DOMAIN ),
+				'summary' => __( 'Annual rate as a percentage, up to 100.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'term_years'      => array(
+				'type'    => __( 'integer', CALCFORGE_TEXT_DOMAIN ),
+				'meta'    => __( 'optional, default 30', CALCFORGE_TEXT_DOMAIN ),
+				'summary' => __( 'Length of the loan in years, from 1 to 60.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'with_schedule'   => array(
+				'type'    => __( 'boolean', CALCFORGE_TEXT_DOMAIN ),
+				'meta'    => __( 'optional, default false', CALCFORGE_TEXT_DOMAIN ),
+				'summary' => __( 'Return the year-by-year amortization schedule alongside the totals.', CALCFORGE_TEXT_DOMAIN ),
+			),
+		);
+		?>
+		<div class="calcforge-settings__reference">
+			<p class="calcforge-settings__card-text">
+				<?php esc_html_e( 'A stateless endpoint that runs the same arithmetic as the calculator. It stores nothing and returns no private data, so it needs no authentication or nonce.', CALCFORGE_TEXT_DOMAIN ); ?>
+			</p>
+			<div class="calcforge-settings__code-box">
+				<code class="calcforge-settings__code">POST <?php echo esc_html( $endpoint ); ?></code>
+				<button type="button" class="calcforge-copy-btn" data-clipboard-text="<?php echo esc_attr( 'POST ' . $endpoint ); ?>" title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+						<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+						<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+					</svg>
+					<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
+				</button>
+			</div>
+
+			<h3 class="calcforge-settings__subheading">
+				<?php esc_html_e( 'Parameters', CALCFORGE_TEXT_DOMAIN ); ?>
+			</h3>
+			<dl class="calcforge-settings__attrs calcforge-settings__attrs--flat">
+				<?php foreach ( $params as $param => $spec ) : ?>
+					<dt>
+						<code class="calcforge-settings__code"><?php echo esc_html( $param ); ?></code>
+						<span class="calcforge-settings__attr-type"><?php echo esc_html( $spec['type'] ); ?></span>
+						<span class="calcforge-settings__attr-note"><?php echo esc_html( $spec['meta'] ); ?></span>
+					</dt>
+					<dd><?php echo esc_html( $spec['summary'] ); ?></dd>
+				<?php endforeach; ?>
+			</dl>
+
+			<h3 class="calcforge-settings__subheading">
+				<?php esc_html_e( 'Example request', CALCFORGE_TEXT_DOMAIN ); ?>
+			</h3>
+			<div class="calcforge-settings__code-box">
+				<code class="calcforge-settings__code calcforge-settings__code--pre">curl -X POST <?php echo esc_html( $endpoint ); ?> \
+	-H 'Content-Type: application/json' \
+	-d '{"amount":350000,"down_payment":70000,"interest_rate":4.75,"term_years":30}'</code>
+			</div>
+
+			<h3 class="calcforge-settings__subheading">
+				<?php esc_html_e( 'Example response', CALCFORGE_TEXT_DOMAIN ); ?>
+			</h3>
+			<div class="calcforge-settings__code-box">
+				<code class="calcforge-settings__code calcforge-settings__code--pre">{
+	"principal": 280000,
+	"monthly_payment": 1460.61,
+	"total_paid": 525819.6,
+	"total_interest": 245819.6,
+	"months": 360,
+	"schedule": []
+}</code>
+			</div>
+			<p class="calcforge-settings__card-text">
+				<?php esc_html_e( 'The schedule is empty unless you pass with_schedule. It runs the same calculations as the block, so the calcforge_calculation_result filter applies to responses too. Return false from the calcforge_rest_calculate_allowed filter to require authentication.', CALCFORGE_TEXT_DOMAIN ); ?>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Renders the help and developer reference sidebar.
 	 */
 	private function render_sidebar() {
@@ -684,26 +812,6 @@ class CalcForge_Settings {
 						<?php esc_html_e( 'Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar.', CALCFORGE_TEXT_DOMAIN ); ?>
 					</li>
 				</ul>
-			</div>
-
-			<div class="calcforge-settings__card calcforge-settings__card--api">
-				<div class="calcforge-settings__card-header">
-					<span class="calcforge-settings__card-badge-icon calcforge-settings__card-badge-icon--blue">
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-							<rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-							<line x1="6" y1="6" x2="6.01" y2="6"></line>
-							<line x1="6" y1="18" x2="6.01" y2="18"></line>
-						</svg>
-					</span>
-					<h2 class="calcforge-settings__card-title">
-						<?php esc_html_e( 'Developer API', CALCFORGE_TEXT_DOMAIN ); ?>
-					</h2>
-				</div>
-				<p class="calcforge-settings__card-text">
-					<?php esc_html_e( 'Stateless calculation endpoint available for headless and external apps:', CALCFORGE_TEXT_DOMAIN ); ?>
-				</p>
-				<code class="calcforge-settings__code--block">POST /wp-json/calcforge/v1/calculate</code>
 			</div>
 		</aside>
 		<?php
