@@ -320,7 +320,23 @@ export default function Preview( {
 				} ) )
 			);
 		}
-	}, [ result, chartSchedule, currencySymbol, currencyPosition, rootRef ] );
+		// chartType and showCharts are dependencies because they mount and
+		// unmount the chart <figure> elements: changing the chart type, or
+		// hiding the charts panel and bringing it back, attaches a fresh, empty
+		// chart body that nothing repaints unless this effect re-runs. result
+		// and chartSchedule are memoised on the loan inputs, so they hold their
+		// identity across a chart type change and cannot stand in for it.
+		// rootRef is a ref, so its identity is stable: listing it satisfies
+		// react-hooks/exhaustive-deps without ever forcing a re-run.
+	}, [
+		result,
+		chartSchedule,
+		currencySymbol,
+		currencyPosition,
+		chartType,
+		showCharts,
+		rootRef,
+	] );
 
 	const setNumericAttribute = ( key, raw ) => {
 		setAttributes( {
