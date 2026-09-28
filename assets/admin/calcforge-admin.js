@@ -122,5 +122,95 @@
 
 			document.body.removeChild( textarea );
 		}
+
+		// ---------------------------------------------------------------
+		// Developer API sample request builder
+		// ---------------------------------------------------------------
+		const apiRoot = document.querySelector( '[data-calcforge-api]' );
+
+		if ( apiRoot ) {
+			const endpoint = apiRoot.getAttribute( 'data-endpoint' );
+			const output = apiRoot.querySelector( '[data-api-request]' );
+			const copyButton = apiRoot.querySelector( '.calcforge-settings__code-box .calcforge-copy-btn' );
+			const warning = apiRoot.querySelector( '.calcforge-settings__api-warning' );
+			const inputs = apiRoot.querySelectorAll( '[data-api-param]' );
+
+			/*
+			 * Builds the JSON body in the same parameter order the docs list, so
+			 * the copied command reads the way the reference is written.
+			 * JSON.stringify preserves insertion order for string keys, and
+			 * querySelectorAll returns document order.
+			 */
+			const buildRequest = function () {
+				const body = {};
+
+				inputs.forEach( function ( input ) {
+					const name = input.getAttribute( 'data-api-param' );
+
+					if ( input.type === 'checkbox' ) {
+						// Only sent when enabled, matching the API default of false.
+						if ( input.checked ) {
+							body[ name ] = true;
+						}
+						return;
+					}
+
+					const value = input.valueAsNumber;
+
+					if ( ! isFinite( value ) ) {
+						return;
+					}
+
+					body[ name ] = 'true' === input.getAttribute( 'data-api-integer' ) ? Math.round( value ) : value;
+				} );
+
+				// amount is the only required parameter, so refuse to emit a
+				// command that the endpoint would reject.
+				const valid = Object.prototype.hasOwnProperty.call( body, 'amount' );
+
+				if ( ! valid ) {
+					if ( output ) {
+						output.textContent = '';
+					}
+					if ( copyButton ) {
+						copyButton.setAttribute( 'data-clipboard-text', '' );
+						copyButton.disabled = true;
+					}
+					if ( warning ) {
+						warning.hidden = false;
+					}
+					return;
+				}
+
+				if ( warning ) {
+					warning.hidden = true;
+				}
+				if ( copyButton ) {
+					copyButton.disabled = false;
+				}
+
+				/*
+				 * The body is wrapped in double quotes, so its own quotes are
+				 * escaped. Escaped double quotes work in cmd.exe and POSIX
+				 * shells alike; single quotes would survive cmd.exe and be sent
+				 * as literal characters, which the endpoint rejects.
+				 */
+				const json = JSON.stringify( body ).replace( /"/g, '\\"' );
+				const command = 'curl -X POST ' + endpoint
+					+ ' -H "Content-Type: application/json"'
+					+ ' -d "' + json + '"';
+
+				if ( output ) {
+					output.textContent = command;
+				}
+				if ( copyButton ) {
+					copyButton.setAttribute( 'data-clipboard-text', command );
+				}
+			};
+
+			apiRoot.addEventListener( 'input', buildRequest );
+			apiRoot.addEventListener( 'change', buildRequest );
+			buildRequest();
+		}
 	} );
 } )();

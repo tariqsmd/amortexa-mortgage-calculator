@@ -28,8 +28,12 @@ msgstr ""
 msgid "Unserializing CalcForge_Plugin is not allowed."
 msgstr ""
 
-#: includes/class-rest.php:131
+#: includes/class-rest.php:132
 msgid "Calculation requests are not permitted."
+msgstr ""
+
+#: includes/class-rest.php:162
+msgid "Too many calculation requests. Please retry shortly."
 msgstr ""
 
 #: includes/class-settings.php:76
@@ -208,83 +212,96 @@ msgstr ""
 msgid "Attribute names are lowercase. Wrap the value in quotes. Attributes accept:"
 msgstr ""
 
-#: includes/class-settings.php:714, includes/class-settings.php:719, includes/class-settings.php:724
+#: includes/class-settings.php:719, includes/class-settings.php:728, includes/class-settings.php:737
 msgid "number"
 msgstr ""
 
-#: includes/class-settings.php:715
+#: includes/class-settings.php:720
 msgid "required"
 msgstr ""
 
-#: includes/class-settings.php:716, src/utils/field-definitions.js:23
+#: includes/class-settings.php:721, src/utils/field-definitions.js:23
 msgid "Total amount being financed."
 msgstr ""
 
-#: includes/class-settings.php:720, includes/class-settings.php:725
+#: includes/class-settings.php:729, includes/class-settings.php:738
 msgid "optional, default 0"
 msgstr ""
 
-#: includes/class-settings.php:721, src/utils/field-definitions.js:33
+#: includes/class-settings.php:730, src/utils/field-definitions.js:33
 msgid "Paid up front. Interest is charged on the remainder."
 msgstr ""
 
-#: includes/class-settings.php:726
+#: includes/class-settings.php:739
 msgid "Annual rate as a percentage, up to 100."
 msgstr ""
 
-#: includes/class-settings.php:729
+#: includes/class-settings.php:747
 msgid "integer"
 msgstr ""
 
-#: includes/class-settings.php:730
+#: includes/class-settings.php:748
 msgid "optional, default 30"
 msgstr ""
 
-#: includes/class-settings.php:731
+#: includes/class-settings.php:749
 msgid "Length of the loan in years, from 1 to 60."
 msgstr ""
 
-#: includes/class-settings.php:734
+#: includes/class-settings.php:758
 msgid "boolean"
 msgstr ""
 
-#: includes/class-settings.php:735
+#: includes/class-settings.php:759
 msgid "optional, default false"
 msgstr ""
 
-#: includes/class-settings.php:736
+#: includes/class-settings.php:760
 msgid "Return the year-by-year amortization schedule alongside the totals."
 msgstr ""
 
-#: includes/class-settings.php:753
+#: includes/class-settings.php:771
 msgid "A stateless endpoint that runs the same arithmetic as the calculator. It stores nothing and returns no private data, so it needs no authentication or nonce."
 msgstr ""
 
-#: includes/class-settings.php:761
+#: includes/class-settings.php:779
 msgid "Parameters"
 msgstr ""
 
-#: includes/class-settings.php:775
-msgid "Example request"
+#: includes/class-settings.php:782
+msgid "Change any value to rebuild the sample request below."
 msgstr ""
 
-#: includes/class-settings.php:783
-msgid "Example response"
+#: includes/class-settings.php:807
+msgid "Include the schedule"
 msgstr ""
 
-#: includes/class-settings.php:790
-msgid "The schedule is empty unless you pass with_schedule. It runs the same calculations as the block, so the calcforge_calculation_result filter applies to responses too. Return false from the calcforge_rest_calculate_allowed filter to require authentication."
+#: includes/class-settings.php:831
+msgid "Sample request"
 msgstr ""
 
-#: includes/class-settings.php:812
+#: includes/class-settings.php:838
+msgid "Enter a loan amount to build a request. It is the only required parameter."
+msgstr ""
+
+#: includes/class-settings.php:843
+msgid "The response carries principal, monthly_payment, total_paid, total_interest, months, and schedule. The schedule stays empty unless with_schedule is passed. It runs the same calculations as the block, so the calcforge_calculation_result filter applies to responses too."
+msgstr ""
+
+#. translators: %d: Requests allowed per minute.
+#: includes/class-settings.php:849
+msgid "Calls are rate limited to %d per minute per client address, after which the endpoint answers 429 with a Retry-After header. Change that with the calcforge_rest_calculate_rate_limit and calcforge_rest_calculate_rate_window filters, or return 0 from the first to switch throttling off. Buckets use the remote address alone, so behind a proxy or CDN supply a trusted client address through the calcforge_rate_limit_client_key filter. Return false from calcforge_rest_calculate_allowed to require authentication instead."
+msgstr ""
+
+#: includes/class-settings.php:874
 msgid "Help"
 msgstr ""
 
-#: includes/class-settings.php:817
+#: includes/class-settings.php:879
 msgid "Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on."
 msgstr ""
 
-#: includes/class-settings.php:820
+#: includes/class-settings.php:882
 msgid "Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar."
 msgstr ""
 

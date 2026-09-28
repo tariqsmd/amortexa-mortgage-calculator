@@ -707,46 +707,64 @@ class CalcForge_Settings {
 
 	/**
 	 * Renders the REST endpoint reference shown on the Developer API tab.
+	 *
+	 * The parameters double as inputs: editing them rebuilds a sample request,
+	 * which is more useful than a canned request and a response that only ever
+	 * describes one fixed loan.
 	 */
 	private function render_api_reference() {
 		$endpoint = rest_url( CalcForge_REST::NAMESPACE_V1 . '/calculate' );
-		$params   = array(			'amount'          => array(
+		$params   = array(
+			'amount'        => array(
 				'type'    => __( 'number', CALCFORGE_TEXT_DOMAIN ),
 				'meta'    => __( 'required', CALCFORGE_TEXT_DOMAIN ),
 				'summary' => __( 'Total amount being financed.', CALCFORGE_TEXT_DOMAIN ),
+				'input'   => array(
+					'value' => 350000,
+					'min'   => 0,
+				),
 			),
-			'down_payment'    => array(
+			'down_payment'  => array(
 				'type'    => __( 'number', CALCFORGE_TEXT_DOMAIN ),
 				'meta'    => __( 'optional, default 0', CALCFORGE_TEXT_DOMAIN ),
 				'summary' => __( 'Paid up front. Interest is charged on the remainder.', CALCFORGE_TEXT_DOMAIN ),
+				'input'   => array(
+					'value' => 0,
+					'min'   => 0,
+				),
 			),
-			'interest_rate'   => array(
+			'interest_rate' => array(
 				'type'    => __( 'number', CALCFORGE_TEXT_DOMAIN ),
 				'meta'    => __( 'optional, default 0', CALCFORGE_TEXT_DOMAIN ),
 				'summary' => __( 'Annual rate as a percentage, up to 100.', CALCFORGE_TEXT_DOMAIN ),
+				'input'   => array(
+					'value' => 0,
+					'min'   => 0,
+					'max'   => 100,
+				),
 			),
-			'term_years'      => array(
+			'term_years'    => array(
 				'type'    => __( 'integer', CALCFORGE_TEXT_DOMAIN ),
 				'meta'    => __( 'optional, default 30', CALCFORGE_TEXT_DOMAIN ),
 				'summary' => __( 'Length of the loan in years, from 1 to 60.', CALCFORGE_TEXT_DOMAIN ),
+				'input'   => array(
+					'value'  => 30,
+					'min'    => 1,
+					'max'    => 60,
+					'integer' => true,
+				),
 			),
-			'with_schedule'   => array(
+			'with_schedule' => array(
 				'type'    => __( 'boolean', CALCFORGE_TEXT_DOMAIN ),
 				'meta'    => __( 'optional, default false', CALCFORGE_TEXT_DOMAIN ),
 				'summary' => __( 'Return the year-by-year amortization schedule alongside the totals.', CALCFORGE_TEXT_DOMAIN ),
+				'input'   => array(
+					'checkbox' => true,
+				),
 			),
 		);
 
 		$endpoint_label = 'POST ' . $endpoint;
-		/*
-		 * Kept on one line so a copied command pastes straight into a terminal.
-		 * The body uses escaped double quotes rather than single quotes: cmd.exe
-		 * does not strip single quotes, so a single-quoted body arrives as
-		 * literal quotes and the endpoint rejects it as malformed JSON. Escaped
-		 * double quotes work in both cmd.exe and POSIX shells.
-		 */
-		$request  = 'curl -X POST ' . $endpoint . ' -H "Content-Type: application/json" -d "{\"amount\":350000,\"down_payment\":70000,\"interest_rate\":4.75,\"term_years\":30}"';
-		$response = '{"principal":280000,"monthly_payment":1460.61,"total_paid":525819.6,"total_interest":245819.6,"months":360,"schedule":[]}';
 		?>
 		<div class="calcforge-settings__reference">
 			<p class="calcforge-settings__card-text">
@@ -760,34 +778,78 @@ class CalcForge_Settings {
 			<h3 class="calcforge-settings__subheading">
 				<?php esc_html_e( 'Parameters', CALCFORGE_TEXT_DOMAIN ); ?>
 			</h3>
-			<dl class="calcforge-settings__attrs calcforge-settings__attrs--flat">
-				<?php foreach ( $params as $param => $spec ) : ?>
-					<dt>
-						<code class="calcforge-settings__code"><?php echo esc_html( $param ); ?></code>
-						<span class="calcforge-settings__attr-type"><?php echo esc_html( $spec['type'] ); ?></span>
-						<span class="calcforge-settings__attr-note"><?php echo esc_html( $spec['meta'] ); ?></span>
-					</dt>
-					<dd><?php echo esc_html( $spec['summary'] ); ?></dd>
-				<?php endforeach; ?>
-			</dl>
-
-			<h3 class="calcforge-settings__subheading">
-				<?php esc_html_e( 'Example request', CALCFORGE_TEXT_DOMAIN ); ?>
-			</h3>
-			<div class="calcforge-settings__code-box">
-				<code class="calcforge-settings__code calcforge-settings__code--pre"><?php echo esc_html( $request ); ?></code>
-				<?php $this->render_copy_button( $request ); ?>
-			</div>
-
-			<h3 class="calcforge-settings__subheading">
-				<?php esc_html_e( 'Example response', CALCFORGE_TEXT_DOMAIN ); ?>
-			</h3>
-			<div class="calcforge-settings__code-box">
-				<code class="calcforge-settings__code calcforge-settings__code--pre"><?php echo esc_html( $response ); ?></code>
-				<?php $this->render_copy_button( $response ); ?>
-			</div>
 			<p class="calcforge-settings__card-text">
-				<?php esc_html_e( 'The schedule is empty unless you pass with_schedule. It runs the same calculations as the block, so the calcforge_calculation_result filter applies to responses too. Return false from the calcforge_rest_calculate_allowed filter to require authentication.', CALCFORGE_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'Change any value to rebuild the sample request below.', CALCFORGE_TEXT_DOMAIN ); ?>
+			</p>
+
+			<div class="calcforge-settings__api" data-calcforge-api data-endpoint="<?php echo esc_attr( $endpoint ); ?>">
+				<div class="calcforge-settings__api-grid">
+					<?php foreach ( $params as $param => $spec ) : ?>
+						<?php
+						$field_id  = 'calcforge-api-' . str_replace( '_', '-', $param );
+						$is_check  = ! empty( $spec['input']['checkbox'] );
+						$is_int    = ! empty( $spec['input']['integer'] );
+						?>
+						<div class="calcforge-settings__api-field">
+							<label class="calcforge-settings__api-label" for="<?php echo esc_attr( $field_id ); ?>">
+								<code class="calcforge-settings__code"><?php echo esc_html( $param ); ?></code>
+								<span class="calcforge-settings__attr-type"><?php echo esc_html( $spec['type'] ); ?></span>
+							</label>
+
+							<?php if ( $is_check ) : ?>
+								<span class="calcforge-settings__api-check">
+									<input
+										type="checkbox"
+										id="<?php echo esc_attr( $field_id ); ?>"
+										data-api-param="<?php echo esc_attr( $param ); ?>"
+										data-api-boolean="true"
+									/>
+									<span><?php esc_html_e( 'Include the schedule', CALCFORGE_TEXT_DOMAIN ); ?></span>
+								</span>
+							<?php else : ?>
+								<input
+									type="number"
+									id="<?php echo esc_attr( $field_id ); ?>"
+									class="calcforge-settings__api-input"
+									data-api-param="<?php echo esc_attr( $param ); ?>"
+									<?php echo $is_int ? 'data-api-integer="true" ' : ''; ?>
+									value="<?php echo esc_attr( (string) $spec['input']['value'] ); ?>"
+									<?php if ( isset( $spec['input']['min'] ) ) { echo 'min="' . esc_attr( (string) $spec['input']['min'] ) . '" '; } ?>
+									<?php if ( isset( $spec['input']['max'] ) ) { echo 'max="' . esc_attr( (string) $spec['input']['max'] ) . '" '; } ?>
+									step="any"
+								/>
+							<?php endif; ?>
+
+							<p class="calcforge-settings__api-hint">
+								<?php echo esc_html( $spec['meta'] ); ?> &mdash; <?php echo esc_html( $spec['summary'] ); ?>
+							</p>
+						</div>
+					<?php endforeach; ?>
+				</div>
+
+				<h3 class="calcforge-settings__subheading">
+					<?php esc_html_e( 'Sample request', CALCFORGE_TEXT_DOMAIN ); ?>
+				</h3>
+				<div class="calcforge-settings__code-box">
+					<code class="calcforge-settings__code calcforge-settings__code--pre" data-api-request></code>
+					<?php $this->render_copy_button( '' ); ?>
+				</div>
+				<p class="calcforge-settings__api-warning" hidden>
+					<?php esc_html_e( 'Enter a loan amount to build a request. It is the only required parameter.', CALCFORGE_TEXT_DOMAIN ); ?>
+				</p>
+			</div>
+
+			<p class="calcforge-settings__card-text">
+				<?php esc_html_e( 'The response carries principal, monthly_payment, total_paid, total_interest, months, and schedule. The schedule stays empty unless with_schedule is passed. It runs the same calculations as the block, so the calcforge_calculation_result filter applies to responses too.', CALCFORGE_TEXT_DOMAIN ); ?>
+			</p>
+			<p class="calcforge-settings__card-text">
+				<?php
+				printf(
+					/* translators: %d: Requests allowed per minute. */
+					esc_html__( 'Calls are rate limited to %d per minute per client address, after which the endpoint answers 429 with a Retry-After header. Change that with the calcforge_rest_calculate_rate_limit and calcforge_rest_calculate_rate_window filters, or return 0 from the first to switch throttling off. Buckets use the remote address alone, so behind a proxy or CDN supply a trusted client address through the calcforge_rate_limit_client_key filter. Return false from calcforge_rest_calculate_allowed to require authentication instead.', CALCFORGE_TEXT_DOMAIN ),
+					(int) CALCFORGE_RATE_LIMIT_MAX
+				);
+				?>
 			</p>
 		</div>
 		<?php

@@ -708,6 +708,134 @@ function calcforge_sanitize_attributes( $attributes ) {
 }
 
 /**
+ * Default number of calculation requests allowed per client per window.
+ */
+const CALCFORGE_RATE_LIMIT_MAX = 30;
+
+/**
+ * Default length of the calculation rate limit window, in seconds.
+ */
+const CALCFORGE_RATE_LIMIT_WINDOW = MINUTE_IN_SECONDS;
+
+/**
+ * Resolves the identifier used to bucket rate limited requests.
+ *
+ * Only REMOTE_ADDR is trusted. Forwarded headers such as X-Forwarded-For are
+ * attacker controlled on a direct connection, so honouring them would let a
+ * caller mint a fresh bucket per request and defeat the limit entirely. Sites
+ * behind a proxy or CDN can supply the real client address through the filter,
+ * which is the only supported way to opt in.
+ *
+ * @return string Opaque bucket key for the current caller.
+ */
+function calcforge_rate_limit_client_key() {
+	$remote = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+
+	/**
+	 * Filters the identifier used to rate limit calculation requests.
+	 *
+	 * Return a trusted per-visitor value, such as a CDN supplied client IP, to
+	 * keep separate visitors in separate buckets behind a proxy.
+	 *
+	 * @param string $remote The remote address reported by the server.
+	 */
+	$key = apply_filters( 'calcforge_rate_limit_client_key', $remote );
+
+	// An empty or over-long key would collapse unrelated callers into one
+	// shared bucket, so fall back to a per-request value that cannot be
+	// shared when no address is available.
+	if ( ! is_string( $key ) || '' === $key || strlen( $key ) > 45 ) {
+		$key = 'unknown:' . wp_generate_uuid4();
+	}
+
+	return $key;
+}
+
+/**
+ * Reads the current rate limit window for a bucket without recording anything.
+ *
+ * Kept side-effect free so it is safe to call from a permission callback, which
+ * WordPress may invoke more than once for the same request.
+ *
+ * @param string $bucket Opaque bucket key, typically from calcforge_rate_limit_client_key().
+ * @return array{count:int,retry_after:int} Requests recorded in the live window, and seconds left in it.
+ */
+function calcforge_rate_limit_peek( $bucket ) {
+	$empty = array(
+		'count'       => 0,
+		'retry_after' => 0,
+	);
+
+	$stored = get_transient( 'calcforge_rl_' . md5( $bucket ) );
+
+	if ( ! is_array( $stored ) || ! isset( $stored['count'], $stored['expires'] ) ) {
+		return $empty;
+	}
+
+	$remaining = (int) $stored['expires'] - time();
+
+	if ( $remaining <= 0 ) {
+		return $empty;
+	}
+
+	return array(
+		'count'       => (int) $stored['count'],
+		'retry_after' => $remaining,
+	);
+}
+
+/**
+ * Records a hit against a fixed rate limit window and reports the outcome.
+ *
+ * The window is fixed rather than sliding: the expiry is stamped once when the
+ * bucket is created and is never extended, so sustained low-rate traffic still
+ * trips the limit. The remaining time is passed to set_transient() on every hit
+ * because a bare update with no expiry means "never expires" to a persistent
+ * object cache, which would lock out a caller permanently once tripped.
+ *
+ * This is a soft abuse guard, not a security boundary. The read-then-write is
+ * not atomic, so concurrent requests can overshoot the limit slightly; that is
+ * an acceptable trade for keeping the plugin free of direct database queries.
+ *
+ * @param string $bucket Opaque bucket key, typically from calcforge_rate_limit_client_key().
+ * @param int    $limit  Requests permitted per window. Values below 1 disable limiting.
+ * @param int    $window Window length in seconds.
+ * @return array{count:int,limit:int,exceeded:bool,retry_after:int} Outcome for this hit.
+ */
+function calcforge_rate_limit_hit( $bucket, $limit, $window ) {
+	$limit  = (int) $limit;
+	$window = (int) $window;
+
+	if ( $limit < 1 || $window < 1 ) {
+		return array(
+			'count'       => 0,
+			'limit'       => 0,
+			'exceeded'    => false,
+			'retry_after' => 0,
+		);
+	}
+
+	$now     = time();
+	$current = calcforge_rate_limit_peek( $bucket );
+	$live    = $current['retry_after'] > 0;
+
+	// A live window keeps the expiry it was created with, so it never slides.
+	$expires  = $live ? $now + $current['retry_after'] : $now + $window;
+	$count    = $live ? $current['count'] + 1 : 1;
+	$exceeded = $count > $limit;
+
+	$retry_after = max( 1, $expires - $now );
+	set_transient( 'calcforge_rl_' . md5( $bucket ), array( 'count' => $count, 'expires' => $expires ), $retry_after );
+
+	return array(
+		'count'       => $count,
+		'limit'       => $limit,
+		'exceeded'    => $exceeded,
+		'retry_after' => $exceeded ? $retry_after : 0,
+	);
+}
+
+/**
  * Calculates the monthly payment for an amortizing loan.
  *
  * Uses the standard annuity formula M = P * r / (1 - (1 + r)^-n). A zero

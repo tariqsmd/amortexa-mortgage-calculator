@@ -24,7 +24,7 @@ A native WordPress block that adds an interactive mortgage calculator to any pos
 | Amortization schedule | Annual rows (principal / interest / remaining balance) aggregated from month-by-month math. |
 | No-JS support | The block is fully server-rendered; JavaScript is progressive enhancement only. |
 | Settings page | Site-wide defaults for currency symbol, interest rate, decimal precision, amortization visibility, and starting values (Settings → CalcForge). |
-| REST endpoint | `POST /wp-json/calcforge/v1/calculate` for headless/third-party use, nonce-protected. |
+| REST endpoint | `POST /wp-json/calcforge/v1/calculate` for headless/third-party use. Open by design, rate limited per client. |
 | Extensible | Actions and filters around rendering, defaults, results, currency, and assets. |
 | Standards | WPCS-clean (`phpcs.xml.dist`), fully translatable, escaped output, sanitized input, multisite-aware uninstall. |
 

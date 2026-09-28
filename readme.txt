@@ -64,6 +64,8 @@ Yes. Send a `POST` request to `/wp-json/calcforge/v1/calculate` with a JSON body
 
 The endpoint is a stateless calculator that returns only public arithmetic and no private data, so it is open to unauthenticated requests by design. If you need to require authentication, return `false` from the `calcforge_rest_calculate_allowed` filter.
 
+Calls are rate limited per client address: 30 requests per minute by default, after which the endpoint answers `429 Too Many Requests` with a `Retry-After` header. Adjust it with the `calcforge_rest_calculate_rate_limit` and `calcforge_rest_calculate_rate_window` filters, or return `0` from the first to switch throttling off. Buckets are keyed on the remote address only, because forwarded headers can be forged; behind a proxy or CDN, return a trusted client address from the `calcforge_rate_limit_client_key` filter so visitors are not grouped together.
+
 = Can I insert the calculator with a shortcode? =
 
 The block is the only supported insertion method. The underlying calculation functions are plain, reusable PHP, so you can register your own shortcode if you need one.
@@ -78,6 +80,9 @@ The block is the only supported insertion method. The underlying calculation fun
 * `calcforge_currency_symbol` — replace the resolved currency symbol.
 * `calcforge_enqueue_assets` — return `false` to disable the plugin's front-end CSS and JavaScript and bundle your own.
 * `calcforge_rest_calculate_allowed` — return `false` to require authentication for the REST calculation endpoint.
+* `calcforge_rest_calculate_rate_limit` — change how many calculation requests a client may make per window. Return `0` to disable rate limiting.
+* `calcforge_rest_calculate_rate_window` — change the rate limit window length in seconds.
+* `calcforge_rate_limit_client_key` — change the identifier used to bucket rate limited requests, for example to a CDN supplied client address.
 
 **Actions**
 

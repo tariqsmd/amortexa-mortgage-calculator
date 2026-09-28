@@ -27,8 +27,17 @@ if ( ! defined( 'CALCFORGE_TEXT_DOMAIN' ) ) {
 	define( 'CALCFORGE_TEXT_DOMAIN', 'calcforge' );
 }
 
+/*
+ * Defined before helpers.php loads because the rate limit defaults are file
+ * scope constants, evaluated the moment the file is included.
+ */
+if ( ! defined( 'MINUTE_IN_SECONDS' ) ) {
+	define( 'MINUTE_IN_SECONDS', 60 );
+}
+
 require_once dirname( __DIR__ ) . '/includes/helpers.php';
 require_once dirname( __DIR__ ) . '/includes/design-tokens.php';
+require_once dirname( __DIR__ ) . '/includes/class-rest.php';
 
 // Stub the only core function the pure math paths touch.
 if ( ! function_exists( 'absint' ) ) {
@@ -107,16 +116,55 @@ if ( ! function_exists( 'wp_parse_args' ) ) {
 	}
 }
 
-if ( ! function_exists( 'apply_filters' ) ) {
+if ( ! function_exists( 'add_filter' ) ) {
+	$GLOBALS['calcforge_test_filters'] = array();
+
 	/**
-	 * Emulates WP apply_filters() as a pass-through.
+	 * Emulates WP add_filter() for single callback slots.
+	 *
+	 * @param string   $hook_name Filter name.
+	 * @param callable $callback  Callback to run.
+	 * @return bool Always true.
+	 */
+	function add_filter( $hook_name, $callback ) {
+		$GLOBALS['calcforge_test_filters'][ $hook_name ] = $callback;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'remove_all_filters' ) ) {
+	/**
+	 * Emulates WP remove_all_filters() for a single hook.
+	 *
+	 * @param string $hook_name Filter name.
+	 * @return bool Always true.
+	 */
+	function remove_all_filters( $hook_name ) {
+		unset( $GLOBALS['calcforge_test_filters'][ $hook_name ] );
+		return true;
+	}
+}
+
+if ( ! function_exists( 'apply_filters' ) ) { // phpcs:ignore WordPress.NamingConventions.ValidHookName
+	/**
+	 * Emulates WP apply_filters(), running any registered callback.
+	 *
+	 * Extra arguments beyond the value are passed through, matching core.
 	 *
 	 * @param string $hook_name Filter name.
 	 * @param mixed  $value     Value being filtered.
-	 * @return mixed The unfiltered value.
+	 * @param mixed  ...$args   Additional context arguments.
+	 * @return mixed The filtered value.
 	 */
-	function apply_filters( $hook_name, $value ) { // phpcs:ignore WordPress.NamingConventions.ValidHookName
-		return $value;
+	function apply_filters( $hook_name, $value, ...$args ) {
+		if ( ! isset( $GLOBALS['calcforge_test_filters'][ $hook_name ] ) ) {
+			return $value;
+		}
+
+		return call_user_func_array(
+			$GLOBALS['calcforge_test_filters'][ $hook_name ],
+			array_merge( array( $value ), $args )
+		);
 	}
 }
 
@@ -158,6 +206,264 @@ if ( ! function_exists( '_doing_it_wrong' ) ) {
 	 */
 	function _doing_it_wrong( $function_name, $message, $version ) {
 		fwrite( STDERR, "NOTICE: {$function_name} {$message}\n" );
+	}
+}
+
+/*
+ * An in-memory transient store, so the rate limit window can be tested without a
+ * database. Deliberately backed by the real clock: the code under test stamps
+ * expiries with time(), so a stubbed clock would disagree with it and make
+ * assertions about window expiry meaningless. Tests age an entry out explicitly.
+ */
+$GLOBALS['calcforge_test_transients'] = array();
+
+if ( ! function_exists( 'get_transient' ) ) {
+	/**
+	 * Emulates WP get_transient() against the in-memory store.
+	 *
+	 * @param string $key Transient key.
+	 * @return mixed Stored value, or false when absent or expired.
+	 */
+	function get_transient( $key ) {
+		if ( ! isset( $GLOBALS['calcforge_test_transients'][ $key ] ) ) {
+			return false;
+		}
+
+		$entry = $GLOBALS['calcforge_test_transients'][ $key ];
+
+		if ( $entry['expires'] > 0 && $entry['expires'] <= time() ) {
+			unset( $GLOBALS['calcforge_test_transients'][ $key ] );
+			return false;
+		}
+
+		return $entry['value'];
+	}
+}
+
+if ( ! function_exists( 'set_transient' ) ) {
+	/**
+	 * Emulates WP set_transient() against the in-memory store.
+	 *
+	 * @param string $key        Transient key.
+	 * @param mixed  $value      Value to store.
+	 * @param int    $expiration Lifetime in seconds. 0 means no expiry.
+	 * @return bool Always true.
+	 */
+	function set_transient( $key, $value, $expiration = 0 ) {
+		$GLOBALS['calcforge_test_transients'][ $key ] = array(
+			'value'   => $value,
+			'expires' => $expiration > 0 ? time() + $expiration : 0,
+		);
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_unslash' ) ) {
+	/**
+	 * Emulates WP wp_unslash() for the scalar superglobal values read here.
+	 *
+	 * @param mixed $value Value to unslash.
+	 * @return mixed The unslashed value.
+	 */
+	function wp_unslash( $value ) {
+		return is_string( $value ) ? stripslashes( $value ) : $value;
+	}
+}
+
+if ( ! function_exists( 'esc_html__' ) ) {
+	/**
+	 * Emulates WP esc_html__().
+	 *
+	 * @param string $text   Text to escape.
+	 * @param string $domain Text domain.
+	 * @return string The escaped text.
+	 */
+	function esc_html__( $text, $domain = 'default' ) { // phpcs:ignore WordPress.NamingConventions.ValidHookName
+		return htmlspecialchars( $text, ENT_QUOTES );
+	}
+}
+
+if ( ! function_exists( 'rest_authorization_required_code' ) ) {
+	/**
+	 * Emulates WP rest_authorization_required_code().
+	 *
+	 * @return int Status code.
+	 */
+	function rest_authorization_required_code() {
+		return is_user_logged_in() ? 403 : 401;
+	}
+}
+
+if ( ! function_exists( 'is_user_logged_in' ) ) {
+	/**
+	 * Emulates WP is_user_logged_in() as logged out.
+	 *
+	 * @return bool Always false.
+	 */
+	function is_user_logged_in() {
+		return false;
+	}
+}
+
+if ( ! class_exists( 'WP_Error' ) ) {
+	/**
+	 * Minimal stand-in for the core WP_Error class.
+	 */
+	class WP_Error {
+
+		/**
+		 * Error code.
+		 *
+		 * @var string
+		 */
+		public $code;
+
+		/**
+		 * Error message.
+		 *
+		 * @var string
+		 */
+		public $message;
+
+		/**
+		 * Error data.
+		 *
+		 * @var mixed
+		 */
+		public $data;
+
+		/**
+		 * Constructor.
+		 *
+		 * @param string $code    Error code.
+		 * @param string $message Error message.
+		 * @param mixed  $data    Error data.
+		 */
+		public function __construct( $code = '', $message = '', $data = null ) {
+			$this->code    = $code;
+			$this->message = $message;
+			$this->data    = $data;
+		}
+
+		/**
+		 * Returns the error code.
+		 *
+		 * @return string Error code.
+		 */
+		public function get_error_code() {
+			return $this->code;
+		}
+
+		/**
+		 * Returns the error message.
+		 *
+		 * @return string Error message.
+		 */
+		public function get_error_message() {
+			return $this->message;
+		}
+
+		/**
+		 * Returns the error data.
+		 *
+		 * @return mixed Error data.
+		 */
+		public function get_error_data() {
+			return $this->data;
+		}
+	}
+}
+
+if ( ! class_exists( 'WP_REST_Response' ) ) {
+	/**
+	 * Minimal stand-in for the core WP_REST_Response class.
+	 */
+	class WP_REST_Response {
+
+		/**
+		 * Response body data.
+		 *
+		 * @var mixed
+		 */
+		protected $data;
+
+		/**
+		 * HTTP status.
+		 *
+		 * @var int
+		 */
+		protected $status;
+
+		/**
+		 * Response headers.
+		 *
+		 * @var array<string,string>
+		 */
+		protected $headers = array();
+
+		/**
+		 * Constructor.
+		 *
+		 * @param mixed $data   Body data.
+		 * @param int   $status HTTP status.
+		 */
+		public function __construct( $data = null, $status = 200 ) {
+			$this->data   = $data;
+			$this->status = $status;
+		}
+
+		/**
+		 * Returns the body data.
+		 *
+		 * @return mixed Body data.
+		 */
+		public function get_data() {
+			return $this->data;
+		}
+
+		/**
+		 * Returns the HTTP status.
+		 *
+		 * @return int HTTP status.
+		 */
+		public function get_status() {
+			return $this->status;
+		}
+
+		/**
+		 * Sets a response header.
+		 *
+		 * @param string $key   Header name.
+		 * @param string $value Header value.
+		 * @return WP_REST_Response The response.
+		 */
+		public function header( $key, $value ) {
+			$this->headers[ $key ] = $value;
+			return $this;
+		}
+
+		/**
+		 * Returns all response headers.
+		 *
+		 * @return array<string,string> Headers.
+		 */
+		public function get_headers() {
+			return $this->headers;
+		}
+	}
+}
+
+if ( ! function_exists( 'wp_generate_uuid4' ) ) {
+	/**
+	 * Emulates WP wp_generate_uuid4() with a predictable counter.
+	 *
+	 * @return string Pseudo unique identifier.
+	 */
+	function wp_generate_uuid4() {
+		static $n = 0;
+		++$n;
+		return sprintf( '00000000-0000-4000-8000-%012d', $n );
 	}
 }
 
@@ -882,7 +1188,230 @@ function calcforge_test_settings_and_shortcode() {
 	return $failures;
 }
 
-$exit = calcforge_test_parity() + calcforge_test_design_schema() + calcforge_test_settings_and_shortcode();
+/**
+ * Exercises the REST rate limit window.
+ *
+ * Covers the budget boundary, the fixed window (not sliding) behaviour, bucket
+ * isolation between callers, the no-address fallback, and the opt-out.
+ *
+ * @return int Number of failures.
+ */
+function calcforge_test_rate_limit() {
+	$failures = 0;
+	$report   = function ( $ok, $message ) use ( &$failures ) {
+		if ( $ok ) {
+			fwrite( STDOUT, "ok   $message\n" );
+		} else {
+			++$failures;
+			fwrite( STDOUT, "FAIL $message\n" );
+		}
+	};
+
+	$GLOBALS['calcforge_test_transients'] = array();
+
+	// The default budget must permit exactly N requests, then refuse.
+	$limit  = 5;
+	$window = 60;
+	$bucket = 'visitor-a';
+	$key    = 'calcforge_rl_' . md5( $bucket );
+
+	for ( $i = 1; $i <= $limit; $i++ ) {
+		$outcome = calcforge_rate_limit_hit( $bucket, $limit, $window );
+		$report(
+			! $outcome['exceeded'] && $outcome['count'] === $i,
+			"request $i of $limit is allowed"
+		);
+	}
+
+	$blocked = calcforge_rate_limit_hit( $bucket, $limit, $window );
+	$report( $blocked['exceeded'], 'the request past the budget is refused' );
+	$report( $blocked['retry_after'] > 0 && $blocked['retry_after'] <= $window, 'a refusal reports a usable Retry-After' );
+
+	// Still refused on the following attempt, and it must not reset the window.
+	$again = calcforge_rate_limit_hit( $bucket, $limit, $window );
+	$report( $again['exceeded'] && $again['count'] === $limit + 2, 'continued traffic stays refused' );
+
+	// A different caller must have its own budget.
+	$other = calcforge_rate_limit_hit( 'visitor-b', $limit, $window );
+	$report( ! $other['exceeded'] && $other['count'] === 1, 'a second visitor has an independent budget' );
+
+	// The window is fixed, so it must not be pushed forward by continued hits.
+	$before = get_transient( $key );
+	calcforge_rate_limit_hit( $bucket, $limit, $window );
+	$after = get_transient( $key );
+	$report(
+		$before['expires'] === $after['expires'],
+		'the window expiry is not extended by later hits'
+	);
+
+	/*
+	 * The expiry is always passed explicitly to set_transient(). A bare update
+	 * with no lifetime means "never expires" to a persistent object cache, which
+	 * would lock a caller out permanently once tripped.
+	 */
+	$report(
+		isset( $GLOBALS['calcforge_test_transients'][ $key ]['expires'] )
+			&& $GLOBALS['calcforge_test_transients'][ $key ]['expires'] > time(),
+		'a live window always carries a finite expiry'
+	);
+
+	// Age the window out, then confirm the caller is served again.
+	$GLOBALS['calcforge_test_transients'][ $key ]['expires'] = time() - 1;
+	$reset = calcforge_rate_limit_hit( $bucket, $limit, $window );
+	$report( ! $reset['exceeded'] && $reset['count'] === 1, 'the budget resets after the window lapses' );
+
+	// A non-positive limit disables limiting outright.
+	$off = calcforge_rate_limit_hit( 'visitor-c', 0, $window );
+	$report( ! $off['exceeded'] && 0 === $off['limit'], 'a limit below one disables throttling' );
+
+	// Client key: REMOTE_ADDR by default, and never the spoofable forwarded header.
+	unset( $_SERVER['REMOTE_ADDR'] );
+	$_SERVER['HTTP_X_FORWARDED_FOR'] = '203.0.113.9';
+	$spoofed = calcforge_rate_limit_client_key();
+	$report( 0 === strpos( $spoofed, 'unknown:' ), 'forwarded headers cannot be used as a bucket key' );
+
+	$_SERVER['REMOTE_ADDR'] = '198.51.100.7';
+	$report( '198.51.100.7' === calcforge_rate_limit_client_key(), 'the remote address is used when present' );
+
+	// An over-long key must not be collapsed into a shared bucket.
+	add_filter(
+		'calcforge_rate_limit_client_key',
+		function () {
+			return str_repeat( 'x', 46 );
+		}
+	);
+	$long = calcforge_rate_limit_client_key();
+	$report( 0 === strpos( $long, 'unknown:' ), 'an unusable client key falls back to a per-request bucket' );
+	$report( $long !== calcforge_rate_limit_client_key(), 'each fallback bucket is unique' );
+	remove_all_filters( 'calcforge_rate_limit_client_key' );
+
+	unset( $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_X_FORWARDED_FOR'] );
+	$GLOBALS['calcforge_test_transients'] = array();
+
+	/*
+	 * Enforcement has to be checked by calling the permission callback, not by
+	 * reading the source. The REST server only treats WP_Error, false and null as
+	 * a refusal; a WP_REST_Response return is truthy and the request is let
+	 * through, so a limiter that looks right can silently never apply.
+	 */
+	$rest = new CalcForge_REST();
+	$_SERVER['REMOTE_ADDR'] = '198.51.100.20';
+
+	// Use a small budget so the refusal is reachable without 30 round trips.
+	add_filter(
+		'calcforge_rest_calculate_rate_limit',
+		function () {
+			return 3;
+		}
+	);
+
+	/*
+	 * The REST server calls a permission callback more than once per request:
+	 * rest_send_allow_header() invokes it again for the Allow header. Charging
+	 * the budget from there would bill every caller twice and halve the real
+	 * allowance, so the callback must not record anything.
+	 */
+	for ( $i = 0; $i < 10; $i++ ) {
+		$rest->check_permissions( null );
+	}
+	$report( 0 === calcforge_rate_limit_peek( '198.51.100.20' )['count'], 'the permission callback records no hits of its own' );
+
+	// Serve requests the way the handler does, recording one hit each.
+	for ( $i = 0; $i < 3; $i++ ) {
+		calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+	}
+	$report( 3 === calcforge_rate_limit_peek( '198.51.100.20' )['count'], 'a served request costs exactly one unit' );
+
+	$refusal = $rest->check_permissions( null );
+	$report( $refusal instanceof WP_Error, 'an exhausted budget is refused with a WP_Error' );
+	$report(
+		$refusal instanceof WP_Error && 'calcforge_rest_rate_limited' === $refusal->get_error_code(),
+		'the refusal carries the rate limit error code'
+	);
+	$report(
+		$refusal instanceof WP_Error && isset( $refusal->get_error_data()['status'] ) && 429 === $refusal->get_error_data()['status'],
+		'the refusal is reported as HTTP 429'
+	);
+	$report(
+		$refusal instanceof WP_Error && ! empty( $refusal->get_error_data()['retry_after'] ),
+		'the refusal tells the caller when to come back'
+	);
+
+	// The last request inside the budget must still be served.
+	$GLOBALS['calcforge_test_transients'] = array();
+	for ( $i = 0; $i < 2; $i++ ) {
+		calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+		$report( true === $rest->check_permissions( null ), 'the final request inside the budget is still served' );
+	}
+	calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+	$report( $rest->check_permissions( null ) instanceof WP_Error, 'the request past the budget is refused' );
+
+	// The headers have to survive onto a real response object.
+	$response = new WP_REST_Response(
+		array(
+			'code'    => $refusal->get_error_code(),
+			'message' => $refusal->get_error_message(),
+			'data'    => $refusal->get_error_data(),
+		),
+		429
+	);
+	$rest->add_rate_limit_headers( $response );
+
+	$retry = $response->get_headers()['Retry-After'];
+	$report( ! empty( $retry ) && (int) $retry > 0, 'a refusal advertises Retry-After' );
+	$report( '3' === $response->get_headers()['X-RateLimit-Limit'], 'a refusal advertises the configured budget' );
+	$report( '0' === $response->get_headers()['X-RateLimit-Remaining'], 'a refusal advertises no remaining budget' );
+
+	// An unrelated response must be left untouched.
+	$other = new WP_REST_Response( array( 'ok' => true ), 200 );
+	$rest->add_rate_limit_headers( $other );
+	$report( ! isset( $other->get_headers()['Retry-After'] ), 'headers are not added to unrelated responses' );
+
+	// The auth filter still short-circuits ahead of the limiter.
+	add_filter(
+		'calcforge_rest_calculate_allowed',
+		function () {
+			return false;
+		}
+	);
+	$denied = $rest->check_permissions( null );
+	$report(
+		$denied instanceof WP_Error && 'calcforge_rest_forbidden' === $denied->get_error_code(),
+		'the authentication filter refuses ahead of the limiter'
+	);
+	remove_all_filters( 'calcforge_rest_calculate_allowed' );
+
+	// Once the window lapses the caller is served again.
+	$GLOBALS['calcforge_test_transients'][ 'calcforge_rl_' . md5( '198.51.100.20' ) ]['expires'] = time() - 1;
+	$report( true === $rest->check_permissions( null ), 'the caller is served again once the window lapses' );
+
+	// Lifting the budget serves the same caller without waiting.
+	calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+	calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+	calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+	calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+	$report( $rest->check_permissions( null ) instanceof WP_Error, 'the budget is exhausted again' );
+	remove_all_filters( 'calcforge_rest_calculate_rate_limit' );
+	add_filter(
+		'calcforge_rest_calculate_rate_limit',
+		function () {
+			return 0;
+		}
+	);
+	$report( true === $rest->check_permissions( null ), 'a limit of zero disables throttling' );
+	remove_all_filters( 'calcforge_rest_calculate_rate_limit' );
+
+	unset( $_SERVER['REMOTE_ADDR'] );
+	$GLOBALS['calcforge_test_transients'] = array();
+
+	if ( 0 === $failures ) {
+		fwrite( STDOUT, "ok   the REST endpoint enforces a per-client request budget\n" );
+	}
+
+	return $failures;
+}
+
+$exit = calcforge_test_parity() + calcforge_test_design_schema() + calcforge_test_settings_and_shortcode() + calcforge_test_rate_limit();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {
