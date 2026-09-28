@@ -17,12 +17,13 @@ import {
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	getChartTypes,
 	getColorControls,
 	getColorSwatches,
 	getCurrencyPositions,
+	getFormColumns,
 	getFontFamilies,
 	getFontStacks,
 	getFontWeights,
@@ -31,6 +32,29 @@ import {
 	getSkins,
 } from '../utils/editor-data';
 import { NUMERIC_FIELDS } from '../utils/field-definitions';
+import { PANEL_KEYS } from '../utils/panel-order';
+
+/**
+ * Display names for the reorderable panels.
+ *
+ * Kept here rather than in utils/panel-order so the labels pass through the
+ * translator in the editor bundle like every other inspector string.
+ */
+const PANEL_LABELS = {
+	results: __( 'Results', 'calcforge' ),
+	charts: __( 'Charts', 'calcforge' ),
+	schedule: __( 'Schedule', 'calcforge' ),
+};
+
+/**
+ * Returns a translated panel name, falling back to the raw key.
+ *
+ * @param {string} panel Panel key.
+ * @return {string} Panel name.
+ */
+function panelLabel( panel ) {
+	return PANEL_LABELS[ panel ] || panel;
+}
 
 /**
  * The numeric loan inputs.
@@ -92,6 +116,29 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 	const skinOptions = getSkins();
 	const skinValues = skinOptions.map( ( skin ) => skin.value );
+
+	// A block saved before panel ordering existed, or one whose attribute was
+	// stripped, still needs a complete list to render the controls.
+	const panelOrder = PANEL_KEYS.filter( ( panel ) =>
+		( Array.isArray( attributes.panelOrder )
+			? attributes.panelOrder
+			: []
+		).includes( panel )
+	);
+
+	const movePanel = ( index, offset ) => {
+		const target = index + offset;
+
+		if ( target < 0 || target >= panelOrder.length ) {
+			return;
+		}
+
+		const next = [ ...panelOrder ];
+		const [ moved ] = next.splice( index, 1 );
+
+		next.splice( target, 0, moved );
+		setAttributes( { panelOrder: next } );
+	};
 
 	return (
 		<InspectorControls>
@@ -220,6 +267,25 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 				<SelectControl
 					__nextHasNoMarginBottom
+					label={ __( 'Form Columns', 'calcforge' ) }
+					help={ __(
+						'Full width gives each control the whole row. Compact packs more controls per row and drops each input below its slider, which shortens a single column calculator but makes a two column split taller.',
+						'calcforge'
+					) }
+					value={
+						getFormColumns().some(
+							( option ) =>
+								option.value === attributes.formColumns
+						)
+							? attributes.formColumns
+							: 'wide'
+					}
+					options={ getFormColumns() }
+					onChange={ setSelect( 'formColumns' ) }
+				/>
+
+				<SelectControl
+					__nextHasNoMarginBottom
 					label={ __( 'Skin', 'calcforge' ) }
 					value={
 						skinValues.includes( attributes.theme )
@@ -229,6 +295,60 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 					options={ skinOptions }
 					onChange={ setSelect( 'theme' ) }
 				/>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Panel Order', 'calcforge' ) }
+				initialOpen={ false }
+			>
+				<BaseControl
+					__nextHasNoMarginBottom
+					id="calcforge-panel-order"
+					label={ __( 'Panel Order', 'calcforge' ) }
+					help={ __(
+						'Reorder the sections beneath the inputs. The form always stays first, and the two column split keeps the results beside it.',
+						'calcforge'
+					) }
+				>
+					<div className="calcforge-reorder">
+						{ panelOrder.map( ( panel, index ) => (
+							<div
+								key={ panel }
+								className="calcforge-reorder__row"
+							>
+								<span className="calcforge-reorder__name">
+									{ panelLabel( panel ) }
+								</span>
+								<Button
+									className="calcforge-reorder__button"
+									variant="tertiary"
+									disabled={ 0 === index }
+									onClick={ () => movePanel( index, -1 ) }
+									label={ sprintf(
+										/* translators: %s: panel name, e.g. "Results". */
+										__( 'Move %s up', 'calcforge' ),
+										panelLabel( panel )
+									) }
+								>
+									{ __( 'Up', 'calcforge' ) }
+								</Button>
+								<Button
+									className="calcforge-reorder__button"
+									variant="tertiary"
+									disabled={ panelOrder.length - 1 === index }
+									onClick={ () => movePanel( index, 1 ) }
+									label={ sprintf(
+										/* translators: %s: panel name, e.g. "Results". */
+										__( 'Move %s down', 'calcforge' ),
+										panelLabel( panel )
+									) }
+								>
+									{ __( 'Down', 'calcforge' ) }
+								</Button>
+							</div>
+						) ) }
+					</div>
+				</BaseControl>
 			</PanelBody>
 
 			<PanelBody

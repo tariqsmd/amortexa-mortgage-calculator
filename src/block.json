@@ -38,12 +38,25 @@
 		"chartType": {
 			"type": "string",
 			"default": "both",
-			"enum": [ "donut", "line", "bar", "both" ]
+			"enum": [ "donut", "line", "bar", "dots", "both" ]
 		},
 		"layout": {
 			"type": "string",
 			"default": "split",
 			"enum": [ "stacked", "split" ]
+		},
+		"formColumns": {
+			"type": "string",
+			"default": "wide",
+			"enum": [ "wide", "compact" ]
+		},
+		"panelOrder": {
+			"type": "array",
+			"default": [ "results", "charts", "schedule" ],
+			"items": {
+				"type": "string",
+				"enum": [ "results", "charts", "schedule" ]
+			}
 		},
 		"theme": {
 			"type": "string",

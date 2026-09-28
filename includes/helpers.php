@@ -83,7 +83,64 @@ function calcforge_get_chart_types() {
 		'donut' => __( 'Donut only', CALCFORGE_TEXT_DOMAIN ),
 		'line'  => __( 'Line only', CALCFORGE_TEXT_DOMAIN ),
 		'bar'   => __( 'Bar only', CALCFORGE_TEXT_DOMAIN ),
+		'dots'  => __( 'Dot comparison', CALCFORGE_TEXT_DOMAIN ),
 	);
+}
+
+/**
+ * Returns the reorderable calculator panels, in their default vertical order.
+ *
+ * The form is not listed: it is always the first panel, because a calculator
+ * whose inputs appear below its own results reads as broken.
+ *
+ * @return array<int,string> Panel keys.
+ */
+function calcforge_get_panel_keys() {
+	return array( 'results', 'charts', 'schedule' );
+}
+
+/**
+ * Resolves the panel order to render, given the saved order, the layout, and
+ * which panels are visible.
+ *
+ * Two rules apply:
+ *
+ * 1. Unknown keys are dropped and any visible panel missing from the saved
+ *    order is appended, so a hand-edited post or a block saved by an older
+ *    version still renders every visible panel.
+ * 2. In the two column split the results sit in the column beside the form, so
+ *    they are pulled back to the front. A full width panel placed between the
+ *    form and the results would push the results into a column of their own.
+ *
+ * @param array<int,string> $order   Saved panel order.
+ * @param string             $layout  Active layout, "stacked" or "split".
+ * @param array<int,string>  $visible Panel keys that should render.
+ * @return array<int,string> Ordered, de-duplicated panel keys.
+ */
+function calcforge_resolve_panel_order( $order, $layout, $visible ) {
+	$allowed = array_flip( calcforge_get_panel_keys() );
+	$resolved = array();
+
+	foreach ( (array) $order as $key ) {
+		$key = is_string( $key ) ? $key : '';
+
+		if ( isset( $allowed[ $key ] ) && in_array( $key, $visible, true ) && ! in_array( $key, $resolved, true ) ) {
+			$resolved[] = $key;
+		}
+	}
+
+	foreach ( $visible as $key ) {
+		if ( ! in_array( $key, $resolved, true ) ) {
+			$resolved[] = $key;
+		}
+	}
+
+	if ( 'split' === $layout && in_array( 'results', $resolved, true ) ) {
+		$resolved = array_values( array_diff( $resolved, array( 'results' ) ) );
+		array_unshift( $resolved, 'results' );
+	}
+
+	return $resolved;
 }
 
 /**
@@ -99,6 +156,25 @@ function calcforge_get_layouts() {
 	return array(
 		'stacked' => __( 'Stacked (single column)', CALCFORGE_TEXT_DOMAIN ),
 		'split'   => __( 'Two column split', CALCFORGE_TEXT_DOMAIN ),
+	);
+}
+
+/**
+ * Returns the selectable form column treatments.
+ *
+ * Each control is a slider paired with a number input, so the two have to share
+ * a row of a given width. `wide` gives every control the full width of the form
+ * and splits that row two to one in the slider's favour. `compact` lets the
+ * form pack more controls per row and moves each input underneath its slider,
+ * which keeps a single column calculator short but makes a two column split
+ * taller, because every control then takes two lines.
+ *
+ * @return array<string,string> Form column key => label.
+ */
+function calcforge_get_form_columns() {
+	return array(
+		'wide'    => __( 'Full width controls', CALCFORGE_TEXT_DOMAIN ),
+		'compact' => __( 'Compact rows, input below slider', CALCFORGE_TEXT_DOMAIN ),
 	);
 }
 
@@ -333,6 +409,8 @@ function calcforge_get_default_attributes() {
 		'showCharts'           => true,
 		'chartType'            => (string) $settings['default_chart_type'],
 		'layout'               => (string) $settings['default_layout'],
+		'formColumns'          => 'wide',
+		'panelOrder'           => calcforge_get_panel_keys(),
 		'theme'                => (string) $settings['default_theme'],
 		'showSliders'          => true,
 		'showResults'          => true,
@@ -517,6 +595,27 @@ function calcforge_sanitize_attributes( $attributes ) {
 		}
 	}
 
+	$form_columns = array_keys( calcforge_get_form_columns() );
+
+	if ( isset( $raw['formColumns'] ) && in_array( $raw['formColumns'], $form_columns, true ) ) {
+		$form_columns_key = (string) $raw['formColumns'];
+	} else {
+		$form_columns_key = (string) $defaults['formColumns'];
+		if ( ! in_array( $form_columns_key, $form_columns, true ) ) {
+			$form_columns_key = 'wide';
+		}
+	}
+
+	/*
+	 * Panel order is stored as an array of panel keys. It is normalized through
+	 * calcforge_resolve_panel_order() with every panel treated as visible, so an
+	 * unknown or duplicated key cannot survive into the rendered markup.
+	 */	$panel_order = calcforge_resolve_panel_order(
+		isset( $raw['panelOrder'] ) ? (array) $raw['panelOrder'] : array(),
+		$layout,
+		calcforge_get_panel_keys()
+	);
+
 	$payment_font_size = array_key_exists( 'paymentFontSize', $raw )
 		? calcforge_clamp_float( $raw['paymentFontSize'], 0, 120 )
 		: (float) $defaults['paymentFontSize'];
@@ -567,6 +666,8 @@ function calcforge_sanitize_attributes( $attributes ) {
 			: (bool) $defaults['showCharts'],
 		'chartType'        => $chart_type,
 		'layout'           => $layout,
+		'formColumns'      => $form_columns_key,
+		'panelOrder'       => $panel_order,
 		'paymentFontSize'  => $payment_font_size,
 		'paymentFontWeight' => $payment_font_weight,
 		'theme'            => $theme,
@@ -790,6 +891,7 @@ function calcforge_get_editor_data() {
 		'skins'           => $skins,
 		'chartTypes'      => calcforge_get_chart_types(),
 		'layouts'         => calcforge_get_layouts(),
+		'formColumns'     => calcforge_get_form_columns(),
 		'fontFamilies'    => calcforge_get_font_families(),
 		'fontWeights'     => calcforge_get_font_weights(),
 		'currencyPosition' => calcforge_get_currency_positions(),

@@ -33,6 +33,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		downPayment,
 		theme,
 		layout,
+		formColumns,
 		fontFamily,
 		paymentFontSize,
 		paymentFontWeight,
@@ -67,7 +68,11 @@ export default function Edit( { attributes, setAttributes } ) {
 	const { ref: blockRef, ...restBlockProps } = useBlockProps( {
 		className: `calcforge-calc calcforge-theme-${
 			getSkinSlugs().includes( theme ) ? theme : 'light'
-		} calcforge-calc--layout-${ layout === 'split' ? 'split' : 'stacked' }`,
+		} calcforge-calc--layout-${ layout === 'split' ? 'split' : 'stacked' }${
+			formColumns === 'compact'
+				? ' calcforge-calc--form-columns-compact'
+				: ''
+		}`,
 		style: getPaletteOverrides( attributes, fontFamily ),
 	} );
 

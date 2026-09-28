@@ -69,6 +69,20 @@
 	grid-template-columns: minmax(0, 1fr);
 }
 
+/*
+ * The results panel shares a row with the form in the split layout. The charts
+ * and the schedule are full width panels, so they span both columns; the grid
+ * gap supplies the vertical spacing, which is why they carry no margin.
+ *
+ * With the results panel hidden, calcforge-calc__grid--form-only already
+ * collapses the grid to one column, so the form spans the full width without
+ * needing its own override here.
+ */
+.calcforge-calc__charts,
+.calcforge-calc__schedule {
+	grid-column: 1 / -1;
+}
+
 @media (max-width: 600px) {
 
 	/* Viewport fallback for browsers without container query support;
@@ -81,7 +95,15 @@
 
 .calcforge-calc__form {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+
+	/*
+	 * A control is a slider paired with a number input, and the input holds a
+	 * fixed 110px in the split column, so a form column narrower than roughly
+	 * 240px would squeeze the slider down to a stub. Sizing the auto-fit track
+	 * above that threshold means the grid only creates a column when both
+	 * controls genuinely fit side by side.
+	 */
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 	gap: 16px;
 	margin: 0;
 	padding: 20px;
@@ -160,10 +182,9 @@
 }
 
 .calcforge-calc__schedule {
-	margin-top: 24px;
 
 	/* Keeps the schedule usable inside narrow columns instead of squeezing
-	   the cells â€” the table scrolls horizontally when space runs out. */
+	   the cells — the table scrolls horizontally when space runs out. */
 	overflow-x: auto;
 }
 
@@ -181,11 +202,11 @@
 	cursor: pointer;
 
 	&[aria-expanded="false"]::after {
-		content: " â–¸";
+		content: " ▸";
 	}
 
 	&[aria-expanded="true"]::after {
-		content: " â–¾";
+		content: " ▾";
 	}
 }
 
@@ -243,7 +264,7 @@
  * Container-based responsive layout
  * The block is a size container (container-type on .calcforge-calc), so
  * these breakpoints respond to the width of whatever column or box
- * the calculator is placed in â€” not the browser viewport. The
+ * the calculator is placed in — not the browser viewport. The
  * @media rules elsewhere remain as fallbacks for older browsers.
  * ---------------------------------------------------------------- */
 
@@ -339,7 +360,7 @@
 	--calcforge-border: #fecdd3;
 }
 
-/* Monochrome slate â€” quiet, minimal, editorial. */
+/* Monochrome slate — quiet, minimal, editorial. */
 .calcforge-calc.calcforge-theme-slate {
 	--calcforge-accent: #334155;
 	--calcforge-accent-2: #64748b;
@@ -413,7 +434,7 @@
 	--calcforge-border: #451925;
 }
 
-/* Neutral monochrome â€” no colour cast at all. */
+/* Neutral monochrome — no colour cast at all. */
 .calcforge-calc.calcforge-theme-charcoal {
 	--calcforge-accent: #d4d4d8;
 	--calcforge-accent-2: #a1a1aa;
@@ -485,7 +506,7 @@
 	--calcforge-border: #a7f3d0;
 }
 
-/* Warm neutral beige â€” quiet and editorial. */
+/* Warm neutral beige — quiet and editorial. */
 .calcforge-calc.calcforge-theme-sand {
 	--calcforge-accent: #92744a;
 	--calcforge-accent-2: #78716c;
@@ -542,6 +563,57 @@
 	width: 110px;
 }
 
+/*
+ * The form is an auto-fit grid so several controls sit side by side inside the
+ * narrow split column. In the single column stacked layout the form already has
+ * the full block width, so the controls drop to one column and each one spans
+ * it; the slider then keeps the larger share of that row and the number input
+ * grows into the rest instead of sitting at a fixed 110px.
+ */
+.calcforge-calc__grid--stacked {
+
+	.calcforge-calc__form {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.calcforge-calc__slider {
+		flex: 2 1 0;
+	}
+
+	.calcforge-calc__control-row .calcforge-calc__field {
+		flex: 1 1 110px;
+		width: auto;
+		min-width: 110px;
+	}
+}
+
+/*
+ * The compact form treatment. The form packs the controls into a two column
+ * grid again, and because a cell is then only about 140px wide there is no room
+ * for a slider and an input side by side, so the input moves onto its own line
+ * underneath. Each control ends up two rows tall, but the form is markedly
+ * shorter than the full width treatment in the split layout.
+ *
+ * Declared after the stacked rule because an explicit choice should win over the
+ * stacked default: picking compact keeps the two column grid even when the
+ * calculator is configured single column.
+ */
+.calcforge-calc--form-columns-compact {
+
+	.calcforge-calc__form {
+		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	}
+
+	.calcforge-calc__control-row {
+		flex-wrap: wrap;
+	}
+
+	.calcforge-calc__control-row .calcforge-calc__field {
+		flex: 1 1 100%;
+		width: 100%;
+	}
+}
+
 @media (max-width: 600px) {
 
 	.calcforge-calc__control-row {
@@ -561,7 +633,6 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 	gap: 24px;
-	margin-top: 24px;
 }
 
 .calcforge-calc__chart {
@@ -621,6 +692,32 @@
 			opacity: 0.82;
 		}
 	}
+
+	/* The single straight line every parameter in the dot comparison is
+	   measured against. */
+	.calcforge-chart__axis-line {
+		stroke: var(--calcforge-border);
+		stroke-width: 2;
+		stroke-linecap: round;
+	}
+
+	.calcforge-chart__dot-stem {
+		stroke: var(--calcforge-border);
+		stroke-width: 1;
+	}
+
+	/* A surface-coloured ring keeps neighbouring dots readable when two values
+	   land close together on the shared scale. */
+	.calcforge-chart__dot {
+		stroke: var(--calcforge-surface);
+		stroke-width: 2;
+	}
+
+	.calcforge-chart__dot-label {
+		fill: var(--calcforge-text);
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+	}
 }
 
 .calcforge-calc__legend {
@@ -643,4 +740,30 @@
 	height: 10px;
 	border-radius: 50%;
 	display: inline-block;
+}
+
+/*
+ * Panel reordering inside the block inspector. Kept in this file so the editor
+ * and the front end ship from one stylesheet.
+ */
+.calcforge-reorder {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.calcforge-reorder__row {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px 0;
+}
+
+.calcforge-reorder__name {
+	flex: 1 1 auto;
+	font-size: 13px;
+}
+
+.calcforge-reorder__button.components-button {
+	min-width: 0;
 }

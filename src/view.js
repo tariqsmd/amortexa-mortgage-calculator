@@ -16,8 +16,10 @@ import {
 } from './utils/calculator';
 import {
 	createBarChart,
+	createDotsChart,
 	createDonutChart,
 	createLineChart,
+	withAlpha,
 } from './utils/charts';
 
 const CHART_WIDTH = 520;
@@ -250,8 +252,9 @@ function renderCharts( root, values, config, result ) {
 	const donutHost = root.querySelector( '[data-calcforge-chart="donut"]' );
 	const lineHost = root.querySelector( '[data-calcforge-chart="line"]' );
 	const barHost = root.querySelector( '[data-calcforge-chart="bar"]' );
+	const dotsHost = root.querySelector( '[data-calcforge-chart="dots"]' );
 
-	if ( ! donutHost && ! lineHost && ! barHost ) {
+	if ( ! donutHost && ! lineHost && ! barHost && ! dotsHost ) {
 		return;
 	}
 
@@ -357,6 +360,59 @@ function renderCharts( root, values, config, result ) {
 		renderLegend( root.querySelector( '[data-calcforge-legend="bar"]' ), [
 			{ label: labels.prinPaid, color: palette.accent },
 			{ label: labels.intPaid, color: palette.accent2 },
+		] );
+	}
+
+	if ( dotsHost ) {
+		/*
+		 * Only loan level totals are plotted. The monthly payment is a rate
+		 * rather than a total, so on a shared linear scale it would collapse
+		 * onto zero and read as "nothing", which is misleading next to sums
+		 * that are thousands of times larger. The balance is read after the
+		 * first year, because at origination it would just repeat the
+		 * principal and the terminal balance is always zero.
+		 */
+		const yearOneBalance = schedule.length
+			? schedule[ 0 ].balance
+			: result.principal;
+
+		const series = [
+			{
+				value: result.principal,
+				color: palette.accent,
+				label: labels.principal,
+			},
+			{
+				value: yearOneBalance,
+				color: withAlpha( palette.accent, 0.5 ),
+				label: labels.balanceY1,
+			},
+			{
+				value: result.totalInterest,
+				color: palette.accent2,
+				label: labels.totalInt,
+			},
+			{
+				value: result.totalPaid,
+				color: withAlpha( palette.accent2, 0.5 ),
+				label: labels.totalPaid,
+			},
+		];
+
+		dotsHost.replaceChildren(
+			createDotsChart( series, {
+				width: CHART_WIDTH,
+				height: 190,
+				formatY: ( value ) =>
+					formatAmount( value, { ...config, decimals: 0 } ),
+			} )
+		);
+
+		renderLegend( root.querySelector( '[data-calcforge-legend="dots"]' ), [
+			{ label: labels.principal, color: series[ 0 ].color },
+			{ label: labels.balance, color: series[ 1 ].color },
+			{ label: labels.totalInt, color: series[ 2 ].color },
+			{ label: labels.totalPaid, color: series[ 3 ].color },
 		] );
 	}
 }

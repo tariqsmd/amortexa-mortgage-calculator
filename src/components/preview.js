@@ -11,10 +11,13 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from '@wordpress/element';
 import {
 	createBarChart,
+	createDotsChart,
 	createDonutChart,
 	createLineChart,
+	withAlpha,
 } from '../utils/charts';
 import { NUMERIC_FIELDS } from '../utils/field-definitions';
+import { resolvePanelOrder } from '../utils/panel-order';
 
 /**
  * Formats an amount with a currency symbol placed before or after it.
@@ -118,6 +121,7 @@ export default function Preview( {
 		showResults,
 		chartType,
 		layout,
+		panelOrder,
 	} = attributes;
 
 	const donutRef = useRef( null );
@@ -126,6 +130,8 @@ export default function Preview( {
 	const lineLegendRef = useRef( null );
 	const barRef = useRef( null );
 	const barLegendRef = useRef( null );
+	const dotsRef = useRef( null );
+	const dotsLegendRef = useRef( null );
 
 	useEffect( () => {
 		if ( ! rootRef.current ) {
@@ -257,6 +263,63 @@ export default function Preview( {
 				color: palette.accent2,
 			},
 		] );
+
+		if ( dotsRef.current ) {
+			/*
+			 * Only loan level totals are plotted. The monthly payment is a rate
+			 * rather than a total, so on a shared linear scale it would collapse
+			 * onto zero and read as "nothing", which is misleading next to sums
+			 * that are thousands of times larger. The balance is read after the
+			 * first year, because at origination it would just repeat the
+			 * principal and the terminal balance is always zero.
+			 */
+			const yearOneBalance = chartSchedule.length
+				? chartSchedule[ 0 ].balance
+				: result.principal;
+
+			const series = [
+				{
+					value: result.principal,
+					color: palette.accent,
+					label: __( 'Financed Principal', 'calcforge' ),
+				},
+				{
+					value: yearOneBalance,
+					color: withAlpha( palette.accent, 0.5 ),
+					label: __( 'Balance After Year 1', 'calcforge' ),
+				},
+				{
+					value: result.totalInterest,
+					color: palette.accent2,
+					label: __( 'Total Interest', 'calcforge' ),
+				},
+				{
+					value: result.totalPaid,
+					color: withAlpha( palette.accent2, 0.5 ),
+					label: __( 'Total Paid', 'calcforge' ),
+				},
+			];
+
+			dotsRef.current.replaceChildren(
+				createDotsChart( series, {
+					width: 520,
+					height: 190,
+					formatY: ( value ) =>
+						formatAmount( value, '', currencyPosition ).replace(
+							/\B(?=(\d{3})+(?!\d))/g,
+							','
+						),
+				} )
+			);
+
+			renderLegendInto(
+				dotsLegendRef.current,
+				series.map( ( item ) => ( {
+					label: item.label,
+					color: item.color,
+				} ) )
+			);
+		}
 	}, [ result, chartSchedule, currencySymbol, currencyPosition, rootRef ] );
 
 	const setNumericAttribute = ( key, raw ) => {
@@ -301,6 +364,28 @@ export default function Preview( {
 			</td>
 		</tr>
 	) );
+
+	// Which panels render, and in what order, so the preview matches the front
+	// end exactly. The form is always first and is not reorderable.
+	const visiblePanels = [];
+
+	if ( showResults ) {
+		visiblePanels.push( 'results' );
+	}
+
+	if ( showCharts ) {
+		visiblePanels.push( 'charts' );
+	}
+
+	if ( showAmortization ) {
+		visiblePanels.push( 'schedule' );
+	}
+
+	const orderedPanels = resolvePanelOrder(
+		panelOrder,
+		layout,
+		visiblePanels
+	);
 
 	return (
 		<>
@@ -374,137 +459,196 @@ export default function Preview( {
 					) ) }
 				</form>
 
-				{ showResults && (
-					<div className="calcforge-calc__results">
-						<p className="calcforge-calc__result-label">
-							{ __( 'Monthly Payment', 'calcforge' ) }
-						</p>
-						<p
-							className="calcforge-calc__result-primary"
-							style={ paymentTypography }
-						>
-							{ formatAmount(
-								result.monthlyPayment,
-								currencySymbol,
-								currencyPosition
-							) }
-						</p>
-						<dl className="calcforge-calc__result-list">
-							<div className="calcforge-calc__result-row">
-								<dt>
-									{ __( 'Financed Principal', 'calcforge' ) }
-								</dt>
-								<dd>
-									{ formatAmount(
-										result.principal,
-										currencySymbol,
-										currencyPosition
-									) }
-								</dd>
-							</div>
-							<div className="calcforge-calc__result-row">
-								<dt>{ __( 'Total Interest', 'calcforge' ) }</dt>
-								<dd>
-									{ formatAmount(
-										result.totalInterest,
-										currencySymbol,
-										currencyPosition
-									) }
-								</dd>
-							</div>
-							<div className="calcforge-calc__result-row">
-								<dt>{ __( 'Total Paid', 'calcforge' ) }</dt>
-								<dd>
-									{ formatAmount(
-										result.totalPaid,
-										currencySymbol,
-										currencyPosition
-									) }
-								</dd>
-							</div>
-						</dl>
-					</div>
-				) }
-			</div>
-
-			{ showCharts && (
-				<div className="calcforge-calc__charts">
-					{ [ 'donut', 'both' ].includes( chartType ) && (
-						<figure className="calcforge-calc__chart">
-							<figcaption className="calcforge-calc__chart-title">
-								{ __( 'Payment Composition', 'calcforge' ) }
-							</figcaption>
+				{ orderedPanels.map( ( panel ) => {
+					if ( 'results' === panel ) {
+						return (
 							<div
-								className="calcforge-calc__chart-body"
-								ref={ donutRef }
-							/>
-							<figcaption
-								className="calcforge-calc__legend"
-								ref={ legendRef }
-							/>
-						</figure>
-					) }
+								key="results"
+								className="calcforge-calc__results"
+							>
+								<p className="calcforge-calc__result-label">
+									{ __( 'Monthly Payment', 'calcforge' ) }
+								</p>
+								<p
+									className="calcforge-calc__result-primary"
+									style={ paymentTypography }
+								>
+									{ formatAmount(
+										result.monthlyPayment,
+										currencySymbol,
+										currencyPosition
+									) }
+								</p>
+								<dl className="calcforge-calc__result-list">
+									<div className="calcforge-calc__result-row">
+										<dt>
+											{ __(
+												'Financed Principal',
+												'calcforge'
+											) }
+										</dt>
+										<dd>
+											{ formatAmount(
+												result.principal,
+												currencySymbol,
+												currencyPosition
+											) }
+										</dd>
+									</div>
+									<div className="calcforge-calc__result-row">
+										<dt>
+											{ __(
+												'Total Interest',
+												'calcforge'
+											) }
+										</dt>
+										<dd>
+											{ formatAmount(
+												result.totalInterest,
+												currencySymbol,
+												currencyPosition
+											) }
+										</dd>
+									</div>
+									<div className="calcforge-calc__result-row">
+										<dt>
+											{ __( 'Total Paid', 'calcforge' ) }
+										</dt>
+										<dd>
+											{ formatAmount(
+												result.totalPaid,
+												currencySymbol,
+												currencyPosition
+											) }
+										</dd>
+									</div>
+								</dl>
+							</div>
+						);
+					}
 
-					{ [ 'line', 'both' ].includes( chartType ) && (
-						<figure className="calcforge-calc__chart">
-							<figcaption className="calcforge-calc__chart-title">
-								{ __( 'Balance Over Time', 'calcforge' ) }
-							</figcaption>
+					if ( 'charts' === panel ) {
+						return (
 							<div
-								className="calcforge-calc__chart-body"
-								ref={ lineRef }
-							/>
-							<figcaption
-								className="calcforge-calc__legend"
-								ref={ lineLegendRef }
-							/>
-						</figure>
-					) }
-
-					{ chartType === 'bar' && (
-						<figure className="calcforge-calc__chart">
-							<figcaption className="calcforge-calc__chart-title">
-								{ __(
-									'Principal vs Interest by Year',
-									'calcforge'
+								className="calcforge-calc__charts"
+								key="charts"
+							>
+								{ [ 'donut', 'both' ].includes( chartType ) && (
+									<figure className="calcforge-calc__chart">
+										<figcaption className="calcforge-calc__chart-title">
+											{ __(
+												'Payment Composition',
+												'calcforge'
+											) }
+										</figcaption>
+										<div
+											className="calcforge-calc__chart-body"
+											ref={ donutRef }
+										/>
+										<figcaption
+											className="calcforge-calc__legend"
+											ref={ legendRef }
+										/>
+									</figure>
 								) }
-							</figcaption>
-							<div
-								className="calcforge-calc__chart-body"
-								ref={ barRef }
-							/>
-							<figcaption
-								className="calcforge-calc__legend"
-								ref={ barLegendRef }
-							/>
-						</figure>
-					) }
-				</div>
-			) }
 
-			{ showAmortization && (
-				<div className="calcforge-calc__schedule">
-					<table className="calcforge-calc__table">
-						<thead>
-							<tr>
-								<th scope="col">
-									{ __( 'Year', 'calcforge' ) }
-								</th>
-								<th scope="col">
-									{ __( 'Principal Paid', 'calcforge' ) }
-								</th>
-								<th scope="col">
-									{ __( 'Interest Paid', 'calcforge' ) }
-								</th>
-								<th scope="col">
-									{ __( 'Remaining Balance', 'calcforge' ) }
-								</th>
-							</tr>
-						</thead>
-						<tbody>{ scheduleRows }</tbody>
-					</table>
-				</div>
-			) }
+								{ [ 'line', 'both' ].includes( chartType ) && (
+									<figure className="calcforge-calc__chart">
+										<figcaption className="calcforge-calc__chart-title">
+											{ __(
+												'Balance Over Time',
+												'calcforge'
+											) }
+										</figcaption>
+										<div
+											className="calcforge-calc__chart-body"
+											ref={ lineRef }
+										/>
+										<figcaption
+											className="calcforge-calc__legend"
+											ref={ lineLegendRef }
+										/>
+									</figure>
+								) }
+
+								{ chartType === 'bar' && (
+									<figure className="calcforge-calc__chart">
+										<figcaption className="calcforge-calc__chart-title">
+											{ __(
+												'Principal vs Interest by Year',
+												'calcforge'
+											) }
+										</figcaption>
+										<div
+											className="calcforge-calc__chart-body"
+											ref={ barRef }
+										/>
+										<figcaption
+											className="calcforge-calc__legend"
+											ref={ barLegendRef }
+										/>
+									</figure>
+								) }
+
+								{ chartType === 'dots' && (
+									<figure className="calcforge-calc__chart">
+										<figcaption className="calcforge-calc__chart-title">
+											{ __(
+												'Parameter Comparison',
+												'calcforge'
+											) }
+										</figcaption>
+										<div
+											className="calcforge-calc__chart-body"
+											ref={ dotsRef }
+										/>
+										<figcaption
+											className="calcforge-calc__legend"
+											ref={ dotsLegendRef }
+										/>
+									</figure>
+								) }
+							</div>
+						);
+					}
+
+					return (
+						<div
+							key="schedule"
+							className="calcforge-calc__schedule"
+						>
+							<table className="calcforge-calc__table">
+								<thead>
+									<tr>
+										<th scope="col">
+											{ __( 'Year', 'calcforge' ) }
+										</th>
+										<th scope="col">
+											{ __(
+												'Principal Paid',
+												'calcforge'
+											) }
+										</th>
+										<th scope="col">
+											{ __(
+												'Interest Paid',
+												'calcforge'
+											) }
+										</th>
+										<th scope="col">
+											{ __(
+												'Remaining Balance',
+												'calcforge'
+											) }
+										</th>
+									</tr>
+								</thead>
+								<tbody>{ scheduleRows }</tbody>
+							</table>
+						</div>
+					);
+				} ) }
+			</div>
 		</>
 	);
 }

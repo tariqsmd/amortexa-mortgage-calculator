@@ -56,6 +56,170 @@ function niceCeil( value ) {
 }
 
 /**
+ * Applies an alpha channel to a hex colour, falling back to the input when the
+ * value is not a plain hex colour (for example a CSS variable or rgba()).
+ *
+ * The skins only define two accent colours, so charts that need a third or
+ * fourth series derive them by fading the two accents against the surface
+ * rather than inventing colours that would clash with the skin.
+ *
+ * @param {string} color Hex colour such as "#1a6f4b" or "#abc".
+ * @param {number} alpha Opacity between 0 and 1.
+ * @return {string} rgba() colour, or the original when it cannot be parsed.
+ */
+export function withAlpha( color, alpha ) {
+	const match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(
+		String( color ).trim()
+	);
+
+	if ( ! match ) {
+		return color;
+	}
+
+	let hex = match[ 1 ];
+
+	if ( hex.length === 3 ) {
+		hex = hex
+			.split( '' )
+			.map( ( c ) => c + c )
+			.join( '' );
+	}
+
+	const r = parseInt( hex.slice( 0, 2 ), 16 );
+	const g = parseInt( hex.slice( 2, 4 ), 16 );
+	const b = parseInt( hex.slice( 4, 6 ), 16 );
+
+	return `rgba(${ r }, ${ g }, ${ b }, ${ alpha })`;
+}
+
+/**
+ * Builds a single-line comparison chart: one straight horizontal axis with a
+ * coloured dot per parameter, placed at that parameter's value.
+ *
+ * Every parameter shares one linear scale, so the dots read as relative
+ * magnitudes at a glance. When two values land close together their value
+ * labels are pushed onto a second tier so neither is hidden.
+ *
+ * @param {Array<{value: number, color: string, label?: string}>} items
+ *                                                                      One entry per parameter.
+ * @param {Object}                                                opts  { width, height, pad, formatY }.
+ * @return {SVGSVGElement} Rendered comparison chart.
+ */
+export function createDotsChart( items, opts ) {
+	const width = opts.width || 520;
+	const height = opts.height || 190;
+	const pad = {
+		top: 20,
+		right: 28,
+		bottom: 30,
+		left: 28,
+		...( opts.pad || {} ),
+	};
+
+	const usable = items.filter( ( item ) => Number.isFinite( item.value ) );
+
+	if ( ! usable.length ) {
+		return svgEl( 'svg', {
+			viewBox: `0 0 ${ width } ${ height }`,
+			role: 'img',
+			class: 'calcforge-chart calcforge-chart--dots',
+		} );
+	}
+
+	const innerW = width - pad.left - pad.right;
+	const axisY = height - pad.bottom;
+	const yMax = Math.max( ...usable.map( ( item ) => item.value ), 1 );
+
+	const svg = svgEl( 'svg', {
+		viewBox: `0 0 ${ width } ${ height }`,
+		role: 'img',
+		class: 'calcforge-chart calcforge-chart--dots',
+	} );
+
+	const toX = ( value ) =>
+		pad.left + Math.min( Math.max( value / yMax, 0 ), 1 ) * innerW;
+
+	// The one straight line every parameter is measured against.
+	svg.appendChild(
+		svgEl( 'line', {
+			x1: pad.left,
+			x2: width - pad.right,
+			y1: axisY,
+			y2: axisY,
+			class: 'calcforge-chart__axis-line',
+		} )
+	);
+
+	[ 0, yMax ].forEach( ( value ) => {
+		const label = svgEl( 'text', {
+			x: toX( value ),
+			y: axisY + 16,
+			'text-anchor': value === 0 ? 'start' : 'end',
+			class: 'calcforge-chart__axis',
+		} );
+		label.textContent = opts.formatY
+			? opts.formatY( value )
+			: String( Math.round( value ) );
+		svg.appendChild( label );
+	} );
+
+	// Value labels sit above the axis. Placing them in ascending value order and
+	// remembering the last x per tier keeps neighbours from overprinting.
+	const ordered = usable
+		.map( ( item ) => ( { ...item, x: toX( item.value ) } ) )
+		.sort( ( a, b ) => a.value - b.value );
+
+	const tiers = [];
+	const minGap = 74;
+
+	ordered.forEach( ( item ) => {
+		let tier = tiers.findIndex( ( lastX ) => item.x - lastX >= minGap );
+
+		if ( tier === -1 ) {
+			tiers.push( item.x );
+			tier = tiers.length - 1;
+		} else {
+			tiers[ tier ] = item.x;
+		}
+
+		const stemTop = axisY - 10 - tier * 17;
+
+		svg.appendChild(
+			svgEl( 'line', {
+				x1: item.x,
+				x2: item.x,
+				y1: axisY - 1,
+				y2: stemTop,
+				class: 'calcforge-chart__dot-stem',
+			} )
+		);
+
+		svg.appendChild(
+			svgEl( 'circle', {
+				cx: item.x,
+				cy: axisY,
+				r: 6,
+				fill: item.color,
+				class: 'calcforge-chart__dot',
+			} )
+		);
+
+		const label = svgEl( 'text', {
+			x: item.x,
+			y: stemTop - 4,
+			'text-anchor': 'middle',
+			class: 'calcforge-chart__dot-label',
+		} );
+		label.textContent = opts.formatY
+			? opts.formatY( item.value )
+			: String( Math.round( item.value ) );
+		svg.appendChild( label );
+	} );
+
+	return svg;
+}
+
+/**
  * Builds a donut (pie) chart showing the composition of total payments.
  *
  * @param {Array<{value: number, color: string}>} items Segments; colors come

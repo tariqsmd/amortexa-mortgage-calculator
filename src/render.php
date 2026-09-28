@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Server-side render template for the Mortgage Calculator block.
  *
@@ -49,16 +49,17 @@ $config = array(
 	'showCharts'       => ! empty( $attrs['showCharts'] ),
 	'chartType'        => (string) $attrs['chartType'],
 	'labels'           => array(
-		'monthly'  => __( 'Monthly Payment', CALCFORGE_TEXT_DOMAIN ),
-		'principal'=> __( 'Financed Principal', CALCFORGE_TEXT_DOMAIN ),
-		'totalInt' => __( 'Total Interest', CALCFORGE_TEXT_DOMAIN ),
-		'totalPaid'=> __( 'Total Paid', CALCFORGE_TEXT_DOMAIN ),
-		'toggle'   => __( 'Collapse schedule', CALCFORGE_TEXT_DOMAIN ),
-		'year'     => __( 'Year', CALCFORGE_TEXT_DOMAIN ),
-		'prinPaid' => __( 'Principal Paid', CALCFORGE_TEXT_DOMAIN ),
-		'intPaid'  => __( 'Interest Paid', CALCFORGE_TEXT_DOMAIN ),
-		'balance'  => __( 'Remaining Balance', CALCFORGE_TEXT_DOMAIN ),
-		'cumInt'   => __( 'Cumulative Interest', CALCFORGE_TEXT_DOMAIN ),
+		'monthly'   => __( 'Monthly Payment', CALCFORGE_TEXT_DOMAIN ),
+		'principal' => __( 'Financed Principal', CALCFORGE_TEXT_DOMAIN ),
+		'totalInt'  => __( 'Total Interest', CALCFORGE_TEXT_DOMAIN ),
+		'totalPaid' => __( 'Total Paid', CALCFORGE_TEXT_DOMAIN ),
+		'toggle'    => __( 'Collapse schedule', CALCFORGE_TEXT_DOMAIN ),
+		'year'      => __( 'Year', CALCFORGE_TEXT_DOMAIN ),
+		'prinPaid'  => __( 'Principal Paid', CALCFORGE_TEXT_DOMAIN ),
+		'intPaid'   => __( 'Interest Paid', CALCFORGE_TEXT_DOMAIN ),
+		'balance'   => __( 'Remaining Balance', CALCFORGE_TEXT_DOMAIN ),
+		'balanceY1' => __( 'Balance After Year 1', CALCFORGE_TEXT_DOMAIN ),
+		'cumInt'    => __( 'Cumulative Interest', CALCFORGE_TEXT_DOMAIN ),
 	),
 );
 
@@ -162,8 +163,28 @@ if ( '' !== $font_stack ) {
 	$style_vars[] = 'font-family:' . $font_stack;
 }
 
+/*
+ * Which panels are on, and in what order. The form is always first and is not
+ * part of the reorderable set, so it is rendered outside the loop below.
+ */
+$visible_panels = array();
+
+if ( ! empty( $attrs['showResults'] ) ) {
+	$visible_panels[] = 'results';
+}
+
+if ( ! empty( $attrs['showCharts'] ) ) {
+	$visible_panels[] = 'charts';
+}
+
+if ( ! empty( $attrs['showAmortization'] ) && ! empty( $result['schedule'] ) ) {
+	$visible_panels[] = 'schedule';
+}
+
+$panel_order = calcforge_resolve_panel_order( $attrs['panelOrder'], $attrs['layout'], $visible_panels );
+
 $wrapper_args = array(
-	'class' => 'calcforge-calc calcforge-theme-' . esc_attr( $attrs['theme'] ) . ' calcforge-calc--layout-' . esc_attr( $attrs['layout'] ),
+	'class' => 'calcforge-calc calcforge-theme-' . esc_attr( $attrs['theme'] ) . ' calcforge-calc--layout-' . esc_attr( $attrs['layout'] ) . ' calcforge-calc--form-columns-' . esc_attr( $attrs['formColumns'] ),
 );
 
 if ( ! empty( $style_vars ) ) {
@@ -174,7 +195,7 @@ if ( ! empty( $style_vars ) ) {
 	<?php echo get_block_wrapper_attributes( $wrapper_args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() escapes internally. ?>
 	data-calcforge-config="<?php echo esc_attr( wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) ); ?>"
 >
-	<div class="calcforge-calc__grid calcforge-calc__grid--<?php echo esc_attr( $attrs['layout'] ); ?><?php echo empty( $attrs['showResults'] ) ? ' calcforge-calc__grid--form-only' : ''; ?>">
+	<div class="calcforge-calc__grid calcforge-calc__grid--<?php echo esc_attr( $attrs['layout'] ); ?><?php echo in_array( 'results', $visible_panels, true ) ? '' : ' calcforge-calc__grid--form-only'; ?>">
 		<form class="calcforge-calc__form" autocomplete="off">
 			<?php foreach ( $fields as $field ) : ?>
 				<div class="calcforge-calc__control">
@@ -212,7 +233,8 @@ if ( ! empty( $style_vars ) ) {
 			<?php endforeach; ?>
 		</form>
 
-		<?php if ( ! empty( $attrs['showResults'] ) ) : ?>
+		<?php foreach ( $panel_order as $panel ) : ?>
+			<?php if ( 'results' === $panel ) : ?>
 			<div class="calcforge-calc__results">
 				<p class="calcforge-calc__result-label" data-calcforge-label="monthly">
 					<?php echo esc_html( $config['labels']['monthly'] ); ?>
@@ -247,73 +269,84 @@ if ( ! empty( $style_vars ) ) {
 					</div>
 				</dl>
 			</div>
-		<?php endif; ?>
-	</div>
-
-	<?php if ( ! empty( $attrs['showCharts'] ) ) : ?>
-		<div class="calcforge-calc__charts">
-			<?php if ( in_array( $attrs['chartType'], array( 'donut', 'both' ), true ) ) : ?>
-				<figure class="calcforge-calc__chart">
-					<figcaption class="calcforge-calc__chart-title">
-						<?php echo esc_html__( 'Payment Composition', CALCFORGE_TEXT_DOMAIN ); ?>
-					</figcaption>
-					<div class="calcforge-calc__chart-body" data-calcforge-chart="donut"></div>
-					<figcaption class="calcforge-calc__legend" data-calcforge-legend="donut"></figcaption>
-				</figure>
 			<?php endif; ?>
 
-			<?php if ( in_array( $attrs['chartType'], array( 'line', 'both' ), true ) ) : ?>
-				<figure class="calcforge-calc__chart">
-					<figcaption class="calcforge-calc__chart-title">
-						<?php echo esc_html__( 'Balance Over Time', CALCFORGE_TEXT_DOMAIN ); ?>
-					</figcaption>
-					<div class="calcforge-calc__chart-body" data-calcforge-chart="line"></div>
-					<figcaption class="calcforge-calc__legend" data-calcforge-legend="line"></figcaption>
-				</figure>
+			<?php if ( 'charts' === $panel ) : ?>
+			<div class="calcforge-calc__charts">
+				<?php if ( in_array( $attrs['chartType'], array( 'donut', 'both' ), true ) ) : ?>
+					<figure class="calcforge-calc__chart">
+						<figcaption class="calcforge-calc__chart-title">
+							<?php echo esc_html__( 'Payment Composition', CALCFORGE_TEXT_DOMAIN ); ?>
+						</figcaption>
+						<div class="calcforge-calc__chart-body" data-calcforge-chart="donut"></div>
+						<figcaption class="calcforge-calc__legend" data-calcforge-legend="donut"></figcaption>
+					</figure>
+				<?php endif; ?>
+
+				<?php if ( in_array( $attrs['chartType'], array( 'line', 'both' ), true ) ) : ?>
+					<figure class="calcforge-calc__chart">
+						<figcaption class="calcforge-calc__chart-title">
+							<?php echo esc_html__( 'Balance Over Time', CALCFORGE_TEXT_DOMAIN ); ?>
+						</figcaption>
+						<div class="calcforge-calc__chart-body" data-calcforge-chart="line"></div>
+						<figcaption class="calcforge-calc__legend" data-calcforge-legend="line"></figcaption>
+					</figure>
+				<?php endif; ?>
+
+				<?php if ( 'bar' === $attrs['chartType'] ) : ?>
+					<figure class="calcforge-calc__chart">
+						<figcaption class="calcforge-calc__chart-title">
+							<?php echo esc_html__( 'Principal vs Interest by Year', CALCFORGE_TEXT_DOMAIN ); ?>
+						</figcaption>
+						<div class="calcforge-calc__chart-body" data-calcforge-chart="bar"></div>
+						<figcaption class="calcforge-calc__legend" data-calcforge-legend="bar"></figcaption>
+					</figure>
+				<?php endif; ?>
+
+				<?php if ( 'dots' === $attrs['chartType'] ) : ?>
+					<figure class="calcforge-calc__chart">
+						<figcaption class="calcforge-calc__chart-title">
+							<?php echo esc_html__( 'Parameter Comparison', CALCFORGE_TEXT_DOMAIN ); ?>
+						</figcaption>
+						<div class="calcforge-calc__chart-body" data-calcforge-chart="dots"></div>
+						<figcaption class="calcforge-calc__legend" data-calcforge-legend="dots"></figcaption>
+					</figure>
+				<?php endif; ?>
+			</div>
 			<?php endif; ?>
 
-			<?php if ( 'bar' === $attrs['chartType'] ) : ?>
-				<figure class="calcforge-calc__chart">
-					<figcaption class="calcforge-calc__chart-title">
-						<?php echo esc_html__( 'Principal vs Interest by Year', CALCFORGE_TEXT_DOMAIN ); ?>
-					</figcaption>
-					<div class="calcforge-calc__chart-body" data-calcforge-chart="bar"></div>
-					<figcaption class="calcforge-calc__legend" data-calcforge-legend="bar"></figcaption>
-				</figure>
-			<?php endif; ?>
-		</div>
-	<?php endif; ?>
-
-	<?php if ( ! empty( $attrs['showAmortization'] ) && ! empty( $result['schedule'] ) ) : ?>
-		<div class="calcforge-calc__schedule">
-			<button type="button" class="calcforge-calc__toggle" aria-expanded="true">
-				<?php echo esc_html( $config['labels']['toggle'] ); ?>
-			</button>
-			<table class="calcforge-calc__table">
-				<caption class="screen-reader-text">
-					<?php echo esc_html__( 'Amortization Schedule', CALCFORGE_TEXT_DOMAIN ); ?>
-				</caption>
-				<thead>
-					<tr>
-						<th scope="col"><?php echo esc_html( $config['labels']['year'] ); ?></th>
-						<th scope="col"><?php echo esc_html( $config['labels']['prinPaid'] ); ?></th>
-						<th scope="col"><?php echo esc_html( $config['labels']['intPaid'] ); ?></th>
-						<th scope="col"><?php echo esc_html( $config['labels']['balance'] ); ?></th>
-					</tr>
-				</thead>
-				<tbody data-calcforge-schedule>
-					<?php foreach ( $result['schedule'] as $row ) : ?>
+			<?php if ( 'schedule' === $panel ) : ?>
+			<div class="calcforge-calc__schedule">
+				<button type="button" class="calcforge-calc__toggle" aria-expanded="true">
+					<?php echo esc_html( $config['labels']['toggle'] ); ?>
+				</button>
+				<table class="calcforge-calc__table">
+					<caption class="screen-reader-text">
+						<?php echo esc_html__( 'Amortization Schedule', CALCFORGE_TEXT_DOMAIN ); ?>
+					</caption>
+					<thead>
 						<tr>
-							<td><?php echo esc_html( (string) $row['year'] ); ?></td>
-							<td><?php echo esc_html( calcforge_format_amount( $row['principal'], $symbol, $decimals, $position ) ); ?></td>
-							<td><?php echo esc_html( calcforge_format_amount( $row['interest'], $symbol, $decimals, $position ) ); ?></td>
-							<td><?php echo esc_html( calcforge_format_amount( $row['balance'], $symbol, $decimals, $position ) ); ?></td>
+							<th scope="col"><?php echo esc_html( $config['labels']['year'] ); ?></th>
+							<th scope="col"><?php echo esc_html( $config['labels']['prinPaid'] ); ?></th>
+							<th scope="col"><?php echo esc_html( $config['labels']['intPaid'] ); ?></th>
+							<th scope="col"><?php echo esc_html( $config['labels']['balance'] ); ?></th>
 						</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-		</div>
-	<?php endif; ?>
+					</thead>
+					<tbody data-calcforge-schedule>
+						<?php foreach ( $result['schedule'] as $row ) : ?>
+							<tr>
+								<td><?php echo esc_html( (string) $row['year'] ); ?></td>
+								<td><?php echo esc_html( calcforge_format_amount( $row['principal'], $symbol, $decimals, $position ) ); ?></td>
+								<td><?php echo esc_html( calcforge_format_amount( $row['interest'], $symbol, $decimals, $position ) ); ?></td>
+								<td><?php echo esc_html( calcforge_format_amount( $row['balance'], $symbol, $decimals, $position ) ); ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+			<?php endif; ?>
+		<?php endforeach; ?>
+	</div>
 </div>
 <?php
 /**

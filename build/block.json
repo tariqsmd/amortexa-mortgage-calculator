@@ -51,6 +51,7 @@
         "donut",
         "line",
         "bar",
+        "dots",
         "both"
       ]
     },
@@ -61,6 +62,30 @@
         "stacked",
         "split"
       ]
+    },
+    "formColumns": {
+      "type": "string",
+      "default": "wide",
+      "enum": [
+        "wide",
+        "compact"
+      ]
+    },
+    "panelOrder": {
+      "type": "array",
+      "default": [
+        "results",
+        "charts",
+        "schedule"
+      ],
+      "items": {
+        "type": "string",
+        "enum": [
+          "results",
+          "charts",
+          "schedule"
+        ]
+      }
     },
     "theme": {
       "type": "string",

@@ -101,6 +101,7 @@ export function getChartTypes() {
 		{ value: 'donut', label: 'donut' },
 		{ value: 'line', label: 'line' },
 		{ value: 'bar', label: 'bar' },
+		{ value: 'dots', label: 'dots' },
 	] );
 }
 
@@ -113,6 +114,18 @@ export function getLayouts() {
 	return toOptions( getData().layouts, [
 		{ value: 'stacked', label: 'stacked' },
 		{ value: 'split', label: 'split' },
+	] );
+}
+
+/**
+ * Returns the form column treatment options.
+ *
+ * @return {Array<{value: string, label: string}>} Form column options.
+ */
+export function getFormColumns() {
+	return toOptions( getData().formColumns, [
+		{ value: 'wide', label: 'wide' },
+		{ value: 'compact', label: 'compact' },
 	] );
 }
 
