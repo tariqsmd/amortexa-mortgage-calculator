@@ -280,7 +280,9 @@
 	}
 }
 
-.calcforge-calc__schedule {
+/* Only the table scrolls, so the toggle above it stays put and never scrolls
+   out of reach. */
+.calcforge-calc__schedule-body {
 
 	/* Keeps the schedule usable inside narrow columns instead of squeezing
 	   the cells — the table scrolls horizontally when space runs out. */
@@ -341,6 +343,18 @@
 	th:first-child,
 	td:first-child {
 		text-align: left;
+
+		/* The table scrolls horizontally on narrow screens, so the Year column is
+		   pinned to keep the figures it labels in view. The cell backgrounds above
+		   are already opaque, so scrolled content does not show through it. */
+		position: sticky;
+		left: 0;
+		z-index: 1;
+	}
+
+	/* Sits above the body cells so the header corner is never covered. */
+	thead th:first-child {
+		z-index: 2;
 	}
 
 	/* Alternating shading, driven by the same token as the header surface so

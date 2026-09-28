@@ -1,7 +1,7 @@
 === CalcForge ===
 Contributors: mtariqsmd
 Tags: block, gutenberg, mortgage, calculator, finance, loans, real estate, amortization
-Requires at least: 6.4
+Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.2.0

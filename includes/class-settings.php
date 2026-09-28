@@ -80,6 +80,13 @@ class CalcForge_Settings {
 					'class'     => 'small-text',
 				),
 			),
+			'currency_position'     => array(
+				'section'     => 'calcforge_currency',
+				'type'        => 'select',
+				'label'       => __( 'Symbol position', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Which side of the amount the symbol sits on. Each block can change it later.', CALCFORGE_TEXT_DOMAIN ),
+				'options'     => 'calcforge_get_currency_positions',
+			),
 			'decimal_precision'     => array(
 				'section'     => 'calcforge_currency',
 				'type'        => 'number',

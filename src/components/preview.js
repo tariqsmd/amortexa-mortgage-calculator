@@ -421,7 +421,7 @@ export default function Preview( {
 		<>
 			<p className="calcforge-calc__editor-note">
 				{ __(
-					'Live preview â€” edit values in the Settings sidebar. Visitors get a fully interactive calculator.',
+					'Live Preview use Settings and Styles sidebar to change values.',
 					'calcforge'
 				) }
 			</p>

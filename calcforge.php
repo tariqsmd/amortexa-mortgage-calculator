@@ -12,7 +12,7 @@
  * Plugin URI:        https://wordpress.org/plugins/calcforge/
  * Description:       An interactive mortgage calculator block with live monthly payment results, down payment support, charts, and an amortization schedule.
  * Version:           1.2.0
- * Requires at least: 6.4
+ * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Muhammad Tariq
  * Author URI:        https://profiles.wordpress.org/mtariqsmd/

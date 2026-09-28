@@ -57,6 +57,7 @@ $config = array(
 		'totalInt'  => __( 'Total Interest', CALCFORGE_TEXT_DOMAIN ),
 		'totalPaid' => __( 'Total Paid', CALCFORGE_TEXT_DOMAIN ),
 		'toggle'    => __( 'Collapse schedule', CALCFORGE_TEXT_DOMAIN ),
+		'toggleOpen' => __( 'Expand schedule', CALCFORGE_TEXT_DOMAIN ),
 		'year'      => __( 'Year', CALCFORGE_TEXT_DOMAIN ),
 		'prinPaid'  => __( 'Principal Paid', CALCFORGE_TEXT_DOMAIN ),
 		'intPaid'   => __( 'Interest Paid', CALCFORGE_TEXT_DOMAIN ),
@@ -237,6 +238,8 @@ if ( ! empty( $style_vars ) ) {
 				<p
 					class="calcforge-calc__result-primary"
 					data-calcforge-bind="monthlyPayment"
+					aria-live="polite"
+					aria-atomic="true"
 					<?php if ( '' !== $typography_attr ) : ?>
 						style="<?php echo esc_attr( $typography_attr ); ?>"
 					<?php endif; ?>
@@ -312,10 +315,29 @@ if ( ! empty( $style_vars ) ) {
 
 			<?php if ( 'schedule' === $panel ) : ?>
 			<div class="calcforge-calc__schedule">
-				<button type="button" class="calcforge-calc__toggle" aria-expanded="true">
+				<button
+					type="button"
+					class="calcforge-calc__toggle"
+					aria-expanded="true"
+					aria-controls="<?php echo esc_attr( $uid . '-schedule' ); ?>"
+					data-calcforge-label-collapse="<?php echo esc_attr( $config['labels']['toggle'] ); ?>"
+					data-calcforge-label-expand="<?php echo esc_attr( $config['labels']['toggleOpen'] ); ?>"
+				>
 					<?php echo esc_html( $config['labels']['toggle'] ); ?>
 				</button>
-				<table class="calcforge-calc__table">
+				<?php
+				/*
+				 * The table sits in its own wrapper because the toggle hides only
+				 * this element. Hiding the whole schedule block would take the
+				 * button down with it and leave no way to expand the table again.
+				 */
+				?>
+				<div
+					class="calcforge-calc__schedule-body"
+					id="<?php echo esc_attr( $uid . '-schedule' ); ?>"
+					data-calcforge-schedule-body
+				>
+					<table class="calcforge-calc__table">
 					<caption class="screen-reader-text">
 						<?php echo esc_html__( 'Amortization Schedule', CALCFORGE_TEXT_DOMAIN ); ?>
 					</caption>
@@ -338,6 +360,7 @@ if ( ! empty( $style_vars ) ) {
 						<?php endforeach; ?>
 					</tbody>
 				</table>
+				</div>
 			</div>
 			<?php endif; ?>
 		<?php endforeach; ?>

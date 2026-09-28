@@ -251,6 +251,7 @@ function calcforge_get_font_stack( $key ) {
 function calcforge_get_default_settings() {
 	$defaults = array(
 		'currency_symbol'       => '$',
+		'currency_position'     => 'prefix',
 		'default_interest_rate' => 6.5,
 		'decimal_precision'     => 2,
 		'enable_amortization'   => true,
@@ -310,9 +311,27 @@ function calcforge_sanitize_settings( $settings ) {
 	$defaults = calcforge_get_default_settings();
 	$raw      = is_array( $settings ) ? $settings : array();
 
-	$symbol = isset( $raw['currency_symbol'] ) ? sanitize_text_field( (string) $raw['currency_symbol'] ) : '';
+	/*
+	 * Both values arrive straight from $_POST, so they can be arrays or objects
+	 * if the request is crafted. Only scalars are cast; anything else falls
+	 * through to the default rather than emitting an "array to string" warning
+	 * from inside a sanitizer.
+	 */
+	$symbol = isset( $raw['currency_symbol'] ) && is_scalar( $raw['currency_symbol'] )
+		? sanitize_text_field( (string) $raw['currency_symbol'] )
+		: '';
 	if ( '' === $symbol ) {
 		$symbol = $defaults['currency_symbol'];
+	}
+
+	$positions = calcforge_get_currency_positions();
+	$position  = isset( $raw['currency_position'] ) && is_scalar( $raw['currency_position'] )
+		? (string) $raw['currency_position']
+		: (string) $defaults['currency_position'];
+	if ( ! array_key_exists( $position, $positions ) ) {
+		$position = array_key_exists( (string) $defaults['currency_position'], $positions )
+			? (string) $defaults['currency_position']
+			: 'prefix';
 	}
 
 	$rate = isset( $raw['default_interest_rate'] ) ? (float) $raw['default_interest_rate'] : $defaults['default_interest_rate'];
@@ -355,6 +374,7 @@ function calcforge_sanitize_settings( $settings ) {
 
 	return array(
 		'currency_symbol'       => wp_html_excerpt( $symbol, 8, '' ),
+		'currency_position'     => $position,
 		'default_interest_rate' => $rate,
 		'decimal_precision'     => $precision,
 		'enable_amortization'   => ! empty( $raw['enable_amortization'] ),
@@ -382,6 +402,7 @@ function calcforge_get_settings_attribute_map() {
 		'default_loan_term'     => 'loanTerm',
 		'default_down_payment'  => 'downPayment',
 		'currency_symbol'       => 'currencySymbol',
+		'currency_position'     => 'currencyPosition',
 		'enable_amortization'   => 'showAmortization',
 		'default_theme'         => 'theme',
 		'default_chart_type'    => 'chartType',
@@ -406,7 +427,7 @@ function calcforge_get_default_attributes() {
 		'loanTerm'             => (int) $settings['default_loan_term'],
 		'downPayment'          => (float) $settings['default_down_payment'],
 		'currencySymbol'       => (string) $settings['currency_symbol'],
-		'currencyPosition'     => 'prefix',
+		'currencyPosition'     => (string) $settings['currency_position'],
 		'showAmortization'     => (bool) $settings['enable_amortization'],
 		'showCharts'           => true,
 		'chartType'            => (string) $settings['default_chart_type'],

@@ -753,7 +753,136 @@ function wp_json_encode_compat( $value ) {
 	return (string) json_encode( $value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES );
 }
 
-$exit = calcforge_test_parity() + calcforge_test_design_schema();
+/**
+ * Covers the global currency position setting and the shortcode list attribute.
+ *
+ * The symbol position used to be hardcoded to prefix for every block, and the
+ * shortcode had no way to express a form layout or panel order, so both were
+ * silent parity gaps between the block editor, the shortcode, and the settings
+ * screen.
+ *
+ * @return int Failure count.
+ */
+function calcforge_test_settings_and_shortcode() {
+	$failures = 0;
+	$valid    = calcforge_get_currency_positions();
+
+	// Every position the site offers must survive sanitization.
+	foreach ( array_keys( $valid ) as $position ) {
+		$clean = calcforge_sanitize_settings( array( 'currency_position' => $position ) );
+
+		if ( $position !== $clean['currency_position'] ) {
+			++$failures;
+			fwrite( STDOUT, sprintf( "FAIL currency_position '%s' was rewritten to '%s'\n", $position, $clean['currency_position'] ) );
+		}
+	}
+
+	// An unknown or missing value falls back to the default, never to raw input.
+	foreach ( array( 'nonsense', '', array( 'prefix' ) ) as $bad ) {
+		$clean = calcforge_sanitize_settings( array( 'currency_position' => $bad ) );
+
+		if ( 'prefix' !== $clean['currency_position'] ) {
+			++$failures;
+			fwrite( STDOUT, sprintf( "FAIL currency_position rejected '%s' but produced '%s'\n", wp_json_encode_compat( $bad ), $clean['currency_position'] ) );
+		}
+	}
+
+	// The setting has to be reachable from the settings screen and seed blocks.
+	$map = calcforge_get_settings_attribute_map();
+
+	if ( 'currencyPosition' !== ( $map['currency_position'] ?? null ) ) {
+		++$failures;
+		fwrite( STDOUT, "FAIL currency_position is not mapped onto the currencyPosition block attribute\n" );
+	}
+
+	$defaults = calcforge_get_default_attributes();
+
+	if ( 'prefix' !== $defaults['currencyPosition'] ) {
+		++$failures;
+		fwrite( STDOUT, sprintf( "FAIL default currencyPosition is '%s', expected the site setting\n", $defaults['currencyPosition'] ) );
+	}
+
+	fwrite( STDOUT, "ok   global currency position setting round-trips and seeds new blocks\n" );
+
+	require_once dirname( __DIR__ ) . '/includes/class-shortcode.php';
+
+	$shortcode = new CalcForge_Shortcode();
+	$method    = new ReflectionMethod( $shortcode, 'to_block_attributes' );
+
+	/*
+	 * Reflection can reach private methods without help from PHP 8.1 onwards, and
+	 * setAccessible() is deprecated from 8.5, so it is only called for the older
+	 * versions this plugin still supports.
+	 */
+	if ( PHP_VERSION_ID < 80100 ) {
+		$method->setAccessible( true );
+	}
+
+	$shortcode_map = $shortcode->get_documented_attributes();
+
+	// The two attributes the block supports but the shortcode did not expose.
+	foreach ( array( 'formcolumns' => 'formColumns', 'panelorder' => 'panelOrder' ) as $name => $attribute ) {
+		if ( ( $shortcode_map[ $name ]['attribute'] ?? null ) !== $attribute ) {
+			++$failures;
+			fwrite( STDOUT, sprintf( "FAIL shortcode is missing the '%s' attribute\n", $name ) );
+		}
+	}
+
+	// A comma separated string becomes a clean, ordered list of panel keys.
+	$list = $method->invoke(
+		$shortcode,
+		array_merge(
+			array_fill_keys( array_keys( $shortcode_map ), '' ),
+			array( 'panelorder' => ' schedule , form ,charts, results ' )
+		),
+		$shortcode_map
+	);
+
+	if ( array( 'schedule', 'form', 'charts', 'results' ) !== $list['panelOrder'] ) {
+		++$failures;
+		fwrite( STDOUT, sprintf( "FAIL panelorder parsed to %s\n", wp_json_encode_compat( $list['panelOrder'] ) ) );
+	}
+
+	// An empty or absent list must keep every panel, not collapse the block.
+	foreach ( array( '', '  ,  ', ' , ' ) as $blank ) {
+		$fallback = $method->invoke(
+			$shortcode,
+			array_merge(
+				array_fill_keys( array_keys( $shortcode_map ), '' ),
+				array( 'panelorder' => $blank )
+			),
+			$shortcode_map
+		);
+
+		if ( array() === $fallback['panelOrder'] ) {
+			++$failures;
+			fwrite( STDOUT, sprintf( "FAIL panelorder '%s' produced zero panels\n", $blank ) );
+		}
+	}
+
+	// The block sanitizer drops keys that are not real panels, so a shortcode
+	// cannot smuggle an unknown panel into the rendered markup.
+	$resolved = calcforge_resolve_panel_order( array( 'form', 'not-a-panel', 'results' ), calcforge_get_panel_keys() );
+
+	if ( in_array( 'not-a-panel', $resolved, true ) ) {
+		++$failures;
+		fwrite( STDOUT, "FAIL an unknown panel key survived panelOrder resolution\n" );
+	}
+
+	// formcolumns is a straight enum, so an unknown value falls back to wide.
+	$columns = calcforge_sanitize_attributes( array( 'formColumns' => 'nonsense' ) );
+
+	if ( 'wide' !== $columns['formColumns'] ) {
+		++$failures;
+		fwrite( STDOUT, sprintf( "FAIL formColumns rejected an unknown value but produced '%s'\n", $columns['formColumns'] ) );
+	}
+
+	fwrite( STDOUT, "ok   shortcode exposes form layout and panel order with safe list parsing\n" );
+
+	return $failures;
+}
+
+$exit = calcforge_test_parity() + calcforge_test_design_schema() + calcforge_test_settings_and_shortcode();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

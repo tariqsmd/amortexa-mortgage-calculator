@@ -79,7 +79,17 @@ final class CalcForge_Shortcode {
 			'charttype'        => array(
 				'attribute'   => 'chartType',
 				'type'        => 'text',
-				'description' => __( 'donut, line, bar, or both.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'donut, line, bar, dots, or both.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'formcolumns'      => array(
+				'attribute'   => 'formColumns',
+				'type'        => 'text',
+				'description' => __( 'wide or compact, deciding how the form fields are laid out.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'panelorder'       => array(
+				'attribute'   => 'panelOrder',
+				'type'        => 'list',
+				'description' => __( 'Comma separated panel order, for example form,results,charts,schedule.', CALCFORGE_TEXT_DOMAIN ),
 			),
 			'layout'           => array(
 				'attribute'   => 'layout',
@@ -196,6 +206,34 @@ final class CalcForge_Shortcode {
 					$typed[ $block_key ] = is_numeric( $value )
 						? $value + 0
 						: $defaults[ $block_key ];
+					break;
+
+				/*
+				 * A shortcode carries a flat string, so a list arrives as
+				 * "form,results". The seeded default is already an array, and a
+				 * value that splits to nothing falls back to it, so neither
+				 * panelorder="" nor an omitted attribute collapses the
+				 * calculator to zero panels. calcforge_resolve_panel_order()
+				 * drops any key that is not a real panel.
+				 */
+				case 'list':
+					$parts = is_array( $value )
+						? $value
+						: explode( ',', (string) $value );
+					$parts = array_values(
+						array_filter(
+							array_map(
+								'sanitize_text_field',
+								array_map( 'trim', $parts )
+							),
+							static function ( $part ) {
+								return '' !== $part;
+							}
+						)
+					);
+					$typed[ $block_key ] = $parts
+						? $parts
+						: (array) $defaults[ $block_key ];
 					break;
 
 				default:

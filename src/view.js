@@ -117,6 +117,38 @@ function readValues( root ) {
 }
 
 /**
+ * Clamps the down payment so it never exceeds the loan amount.
+ *
+ * The slider and the number input are two independent controls, so shrinking
+ * the loan amount has to correct both. Leaving this to syncSliders() alone
+ * desynchronises them, because the browser clamps the slider to its new max
+ * while the input keeps the stale, larger number.
+ *
+ * @param {HTMLElement}   root       Calculator container element.
+ * @param {string|number} loanAmount Current loan amount value.
+ */
+function clampDownPayment( root, loanAmount ) {
+	const downSlider = root.querySelector(
+		'[data-calcforge-slider="downPayment"]'
+	);
+	const downField = root.querySelector(
+		'[data-calcforge-field="downPayment"]'
+	);
+
+	if ( ! downSlider || ! downField ) {
+		return;
+	}
+
+	const max = Math.max( parseFloat( loanAmount ) || 0, 1 );
+
+	downSlider.max = String( max );
+
+	if ( ( parseFloat( downField.value ) || 0 ) > max ) {
+		downField.value = String( max );
+	}
+}
+
+/**
  * Keeps each range slider in sync with its number input and clamps the down
  * payment track to the current loan amount.
  *
@@ -447,6 +479,37 @@ function renderCharts( root, values, config, result ) {
 			{ label: labels.totalPaid, color: series[ 3 ].color },
 		] );
 	}
+
+	labelCharts( [ donutHost, lineHost, barHost, dotsHost ] );
+}
+
+/**
+ * Gives every drawn chart an accessible name.
+ *
+ * Each chart is marked role="img", which without a name makes assistive tech
+ * announce a bare "image". The visible caption beside the chart is already the
+ * human-readable title, so it is reused instead of duplicating the string.
+ *
+ * @param {Array<Element|null>} hosts Chart containers that were drawn into.
+ */
+function labelCharts( hosts ) {
+	hosts.forEach( ( host ) => {
+		const svg = host && host.querySelector( 'svg' );
+
+		if ( ! svg || svg.getAttribute( 'aria-label' ) ) {
+			return;
+		}
+
+		const figure = host.closest( 'figure' );
+		const caption = figure
+			? figure.querySelector( '.calcforge-calc__chart-title' )
+			: null;
+		const text = caption ? ( caption.textContent || '' ).trim() : '';
+
+		if ( text ) {
+			svg.setAttribute( 'aria-label', text );
+		}
+	} );
 }
 
 /**
@@ -497,28 +560,15 @@ function initializeCalculator( root ) {
 				if ( field ) {
 					field.value = target.value;
 				}
+			}
 
-				if ( target.dataset.calcforgeSlider === 'loanAmount' ) {
-					const downSlider = root.querySelector(
-						'[data-calcforge-slider="downPayment"]'
-					);
-					const downField = root.querySelector(
-						'[data-calcforge-field="downPayment"]'
-					);
-
-					if ( downSlider && downField ) {
-						downSlider.max = String(
-							Math.max( parseFloat( target.value ) || 0, 1 )
-						);
-
-						if (
-							( parseFloat( downField.value ) || 0 ) >
-							( parseFloat( downSlider.max ) || 0 )
-						) {
-							downField.value = downSlider.max;
-						}
-					}
-				}
+			// Clamp for both entry points: dragging the slider and typing into the
+			// loan amount input each change the value the other control depends on.
+			if (
+				target.dataset.calcforgeField === 'loanAmount' ||
+				target.dataset.calcforgeSlider === 'loanAmount'
+			) {
+				clampDownPayment( root, target.value );
 			}
 
 			syncSliders( root );
@@ -532,15 +582,35 @@ function initializeCalculator( root ) {
 	}
 
 	const toggle = root.querySelector( '.calcforge-calc__toggle' );
-	const scheduleWrap = root.querySelector( '.calcforge-calc__schedule' );
+	const scheduleBody = root.querySelector( '[data-calcforge-schedule-body]' );
 
-	if ( toggle && scheduleWrap ) {
-		toggle.style.display = '';
+	if ( toggle && scheduleBody ) {
+		/*
+		 * The button is display:none in CSS so it never appears without the
+		 * collapse behavior behind it. It has to be given an explicit value here:
+		 * clearing the inline style would just fall back to display:none and the
+		 * control would stay invisible.
+		 */
+		toggle.style.display = 'inline-block';
 
 		toggle.addEventListener( 'click', () => {
 			const expanded = toggle.getAttribute( 'aria-expanded' ) === 'true';
+			const collapse = toggle.dataset.calcforgeLabelCollapse;
+			const expand = toggle.dataset.calcforgeLabelExpand;
+
 			toggle.setAttribute( 'aria-expanded', expanded ? 'false' : 'true' );
-			scheduleWrap.hidden = expanded;
+			scheduleBody.hidden = expanded;
+
+			/*
+			 * The visible label names the action the button performs, so a
+			 * collapsed table has to read "Expand schedule" rather than
+			 * "Collapse schedule". A missing translation leaves the text alone.
+			 */
+			const next = expanded ? expand : collapse;
+
+			if ( next ) {
+				toggle.textContent = next;
+			}
 		} );
 	}
 }
