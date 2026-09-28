@@ -655,34 +655,40 @@ export default function Preview( {
 							key="schedule"
 							className="calcforge-calc__schedule"
 						>
-							<table className="calcforge-calc__table">
-								<thead>
-									<tr>
-										<th scope="col">
-											{ __( 'Year', 'calcforge' ) }
-										</th>
-										<th scope="col">
-											{ __(
-												'Principal Paid',
-												'calcforge'
-											) }
-										</th>
-										<th scope="col">
-											{ __(
-												'Interest Paid',
-												'calcforge'
-											) }
-										</th>
-										<th scope="col">
-											{ __(
-												'Remaining Balance',
-												'calcforge'
-											) }
-										</th>
-									</tr>
-								</thead>
-								<tbody>{ scheduleRows }</tbody>
-							</table>
+							{ /* Mirrors the schedule-body wrapper in render.php so
+							 * the table scrolls horizontally in a narrow
+							 * editor viewport, exactly as it does on the
+							 * frontend. */ }
+							<div className="calcforge-calc__schedule-body">
+								<table className="calcforge-calc__table">
+									<thead>
+										<tr>
+											<th scope="col">
+												{ __( 'Year', 'calcforge' ) }
+											</th>
+											<th scope="col">
+												{ __(
+													'Principal Paid',
+													'calcforge'
+												) }
+											</th>
+											<th scope="col">
+												{ __(
+													'Interest Paid',
+													'calcforge'
+												) }
+											</th>
+											<th scope="col">
+												{ __(
+													'Remaining Balance',
+													'calcforge'
+												) }
+											</th>
+										</tr>
+									</thead>
+									<tbody>{ scheduleRows }</tbody>
+								</table>
+							</div>
 						</div>
 					);
 				} ) }

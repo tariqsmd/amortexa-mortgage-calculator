@@ -124,24 +124,29 @@ function readValues( root ) {
  * desynchronises them, because the browser clamps the slider to its new max
  * while the input keeps the stale, larger number.
  *
+ * The slider is only present when the block renders sliders, so the input is
+ * clamped whether or not the slider exists.
+ *
  * @param {HTMLElement}   root       Calculator container element.
  * @param {string|number} loanAmount Current loan amount value.
  */
 function clampDownPayment( root, loanAmount ) {
-	const downSlider = root.querySelector(
-		'[data-calcforge-slider="downPayment"]'
-	);
 	const downField = root.querySelector(
 		'[data-calcforge-field="downPayment"]'
 	);
 
-	if ( ! downSlider || ! downField ) {
+	if ( ! downField ) {
 		return;
 	}
 
 	const max = Math.max( parseFloat( loanAmount ) || 0, 1 );
+	const downSlider = root.querySelector(
+		'[data-calcforge-slider="downPayment"]'
+	);
 
-	downSlider.max = String( max );
+	if ( downSlider ) {
+		downSlider.max = String( max );
+	}
 
 	if ( ( parseFloat( downField.value ) || 0 ) > max ) {
 		downField.value = String( max );

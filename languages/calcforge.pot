@@ -817,19 +817,19 @@ msgstr ""
 msgid "Expand schedule"
 msgstr ""
 
-#: src/render.php:61, src/components/preview.js:662
+#: src/render.php:61, src/components/preview.js:667
 msgid "Year"
 msgstr ""
 
-#: src/render.php:62, src/components/preview.js:271, src/components/preview.js:665
+#: src/render.php:62, src/components/preview.js:271, src/components/preview.js:670
 msgid "Principal Paid"
 msgstr ""
 
-#: src/render.php:63, src/components/preview.js:275, src/components/preview.js:671
+#: src/render.php:63, src/components/preview.js:275, src/components/preview.js:676
 msgid "Interest Paid"
 msgstr ""
 
-#: src/render.php:64, src/components/preview.js:261, src/components/preview.js:677
+#: src/render.php:64, src/components/preview.js:261, src/components/preview.js:682
 msgid "Remaining Balance"
 msgstr ""
 
