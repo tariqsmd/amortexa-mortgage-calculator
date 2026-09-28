@@ -1,12 +1,61 @@
 /**
  * Admin JavaScript for CalcForge settings page.
  *
- * Adds clipboard copy interactivity for shortcodes and code snippets.
+ * Handles tab switching and clipboard copy interactivity.
  */
 ( function () {
 	'use strict';
 
 	document.addEventListener( 'DOMContentLoaded', function () {
+
+		// ---------------------------------------------------------------
+		// Tab switching
+		// ---------------------------------------------------------------
+		const tabBtns = document.querySelectorAll( '.calcforge-settings__tab-btn' );
+		const tabPanels = document.querySelectorAll( '.calcforge-settings__tab-panel' );
+		const STORAGE_KEY = 'calcforge_active_tab';
+
+		function activateTab( targetId ) {
+			tabBtns.forEach( function ( btn ) {
+				const isActive = btn.getAttribute( 'data-tab' ) === targetId;
+				btn.setAttribute( 'aria-selected', isActive ? 'true' : 'false' );
+			} );
+
+			tabPanels.forEach( function ( panel ) {
+				const isActive = panel.getAttribute( 'id' ) === targetId;
+				panel.setAttribute( 'aria-hidden', isActive ? 'false' : 'true' );
+			} );
+
+			try {
+				sessionStorage.setItem( STORAGE_KEY, targetId );
+			} catch ( e ) {
+				// Storage unavailable; continue silently.
+			}
+		}
+
+		tabBtns.forEach( function ( btn ) {
+			btn.addEventListener( 'click', function () {
+				activateTab( btn.getAttribute( 'data-tab' ) );
+			} );
+		} );
+
+		// Restore last active tab, default to first.
+		if ( tabBtns.length > 0 ) {
+			let stored = null;
+			try {
+				stored = sessionStorage.getItem( STORAGE_KEY );
+			} catch ( e ) {
+				// Storage unavailable; continue silently.
+			}
+
+			const firstId = tabBtns[ 0 ].getAttribute( 'data-tab' );
+			const validId = stored && document.getElementById( stored ) ? stored : firstId;
+			activateTab( validId );
+		}
+
+		// ---------------------------------------------------------------
+		// Clipboard copy
+		// ---------------------------------------------------------------
 		const copyButtons = document.querySelectorAll( '.calcforge-copy-btn' );
 
 		copyButtons.forEach( function ( button ) {

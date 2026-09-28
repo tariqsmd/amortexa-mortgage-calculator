@@ -476,36 +476,70 @@ class CalcForge_Settings {
 
 			<div class="calcforge-settings__layout">
 				<div class="calcforge-settings__main">
-					<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
-						<?php
-						settings_fields( self::OPTION_GROUP );
+					<?php
+					$sections = $this->get_sections();
+					$section_ids = array_keys( $sections );
+					$tab_icons = array(
+						'calcforge_currency'   => 'currency',
+						'calcforge_loan'       => 'loan',
+						'calcforge_appearance' => 'appearance',
+					);
+					?>
 
-						$sections = $this->get_sections();
-						foreach ( $sections as $section_id => $section ) :
-							?>
-							<div class="calcforge-settings__card calcforge-settings__card--section" id="section-<?php echo esc_attr( $section_id ); ?>">
-								<div class="calcforge-settings__section-header">
-									<div class="calcforge-settings__section-icon calcforge-settings__section-icon--<?php echo esc_attr( $section_id ); ?>">
-										<?php $this->render_section_icon( $section_id ); ?>
-									</div>
-									<div class="calcforge-settings__section-heading">
-										<h2 class="calcforge-settings__section-title"><?php echo esc_html( $section['title'] ); ?></h2>
-										<p class="calcforge-settings__section-description"><?php echo esc_html( $section['description'] ); ?></p>
-									</div>
-								</div>
-								<table class="form-table" role="presentation">
-									<?php do_settings_fields( self::PAGE_SLUG, $section_id ); ?>
-								</table>
-							</div>
+					<!-- Tab navigation -->
+					<div class="calcforge-settings__tabs" role="tablist">
+						<?php foreach ( $sections as $section_id => $section ) : ?>
+							<button
+								type="button"
+								class="calcforge-settings__tab-btn"
+								role="tab"
+								data-tab="<?php echo esc_attr( $section_id ); ?>"
+								aria-controls="<?php echo esc_attr( $section_id ); ?>"
+								aria-selected="false"
+							>
+								<span class="calcforge-settings__tab-icon calcforge-settings__tab-icon--<?php echo esc_attr( $tab_icons[ $section_id ] ?? '' ); ?>">
+									<?php $this->render_section_icon( $section_id ); ?>
+								</span>
+								<?php echo esc_html( $section['title'] ); ?>
+							</button>
 						<?php endforeach; ?>
+					</div>
 
-						<div class="calcforge-settings__save-bar">
-							<?php submit_button( __( 'Save Changes', CALCFORGE_TEXT_DOMAIN ), 'primary', 'submit', false ); ?>
-							<span class="calcforge-settings__save-note">
-								<?php esc_html_e( 'Saved defaults immediately apply to all newly inserted calculators.', CALCFORGE_TEXT_DOMAIN ); ?>
-							</span>
-						</div>
-					</form>
+					<!-- Tab panels -->
+					<div class="calcforge-settings__tab-panels">
+						<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
+							<?php settings_fields( self::OPTION_GROUP ); ?>
+
+							<?php foreach ( $sections as $section_id => $section ) : ?>
+								<div
+									class="calcforge-settings__tab-panel"
+									id="<?php echo esc_attr( $section_id ); ?>"
+									role="tabpanel"
+									aria-hidden="true"
+								>
+									<div class="calcforge-settings__panel-header">
+										<div class="calcforge-settings__panel-icon calcforge-settings__panel-icon--<?php echo esc_attr( $section_id ); ?>">
+											<?php $this->render_section_icon( $section_id ); ?>
+										</div>
+										<div class="calcforge-settings__panel-heading">
+											<h2 class="calcforge-settings__panel-title"><?php echo esc_html( $section['title'] ); ?></h2>
+											<p class="calcforge-settings__panel-description"><?php echo esc_html( $section['description'] ); ?></p>
+										</div>
+									</div>
+									<table class="form-table" role="presentation">
+										<?php do_settings_fields( self::PAGE_SLUG, $section_id ); ?>
+									</table>
+								</div>
+							<?php endforeach; ?>
+
+							<div class="calcforge-settings__save-bar">
+								<?php submit_button( __( 'Save Changes', CALCFORGE_TEXT_DOMAIN ), 'primary', 'submit', false ); ?>
+								<span class="calcforge-settings__save-note">
+									<?php esc_html_e( 'Saved defaults immediately apply to all newly inserted calculators.', CALCFORGE_TEXT_DOMAIN ); ?>
+								</span>
+							</div>
+						</form>
+					</div>
 				</div>
 
 				<?php $this->render_sidebar(); ?>
