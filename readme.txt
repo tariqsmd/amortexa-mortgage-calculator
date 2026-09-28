@@ -4,7 +4,7 @@ Tags: block, gutenberg, mortgage, calculator, finance, loans, real estate, amort
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -102,35 +102,29 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 
 == Changelog ==
 
-= 1.2.0 =
+= 1.0.0 =
 * New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type under Settings → CalcForge.
 * New: per-block toggles to show/hide the results summary and the range sliders.
-* New: currency symbol position option per block — before the amount ($99) or after (99 €).
-* New: twelve additional design skins — Emerald Nights, Crimson Dusk, Graphite, Copper Forge, Royal Sapphire, Amber Gold, Cobalt Blue, Fuchsia Bloom, Mint Fresh, Sandstone, Lemon Zest, and Steel Blue (twenty-four in total).
-* New: seven additional design skins — Midnight Violet, Rose Quartz, Minimal Slate, Royal Grape, Aqua Fresh, Mocha Cream, and Cyber Neon (twelve in total).
-* New: per-block Colors panel to override accent, secondary accent, label text, and field text/background/border colors.
+* New: currency symbol position option globally and per block — before the amount ($99) or after (99 €).
+* New: shortcode attributes for form layout (`formcolumns`) and panel order (`panelorder`).
+* New: twenty-four visual skins across light, dark, and accent colourways.
+* New: per-element appearance controls in a dedicated Design tab, covering seventy design tokens grouped by calculator region.
 * New: font family selector for the calculator (theme default, modern sans, classic serif, monospace).
+* New: SVG charts — payment composition donut, balance over time line, annual bar, and dot comparison (no external libraries).
+* New: range sliders paired with every number input for quick value adjustments.
 * New: the front-end bundle is now also enqueued from the render callback, so assets load correctly in templates and block widgets where `has_block()` cannot detect the block.
-* Improved: layout now adapts to the block's container width — columns stack, sliders wrap, charts reflow, and the amortization table scrolls inside narrow columns.
+* Improved: layout adapts to the block's container width — columns stack, sliders wrap, charts reflow, and the amortization table scrolls inside narrow columns with a sticky first column.
+* Improved: the shortcode reference moved to its own tab on the settings screen, and the monthly payment announces changes to screen readers.
+* Fixed: the amortization schedule toggle no longer hides its own button, so the table can be collapsed and expanded again.
+* Fixed: the schedule toggle is revealed once the collapse behavior is active, instead of staying permanently hidden.
+* Fixed: the down payment can no longer exceed the loan amount, whether the amount is typed or dragged.
 * Fixed: editor script dependencies are now read from the generated asset manifest, preventing load-order issues in the block editor.
 * Fixed: the compiled block metadata is regenerated on every build so the registered block name, editor handles, and CSS class names can no longer drift from the source.
 * Fixed: font weight labels in the editor are now translatable.
 * Removed: an unused empty bootstrap method, and the duplicated calculation helpers are no longer loaded twice at runtime.
 * Removed: development-only files (tests, build tooling and the duplicated helper source) from the distributed plugin.
 
-= 1.1.0 =
-* New: five visual skins — Classic Light, Elegant Dark, Ocean Blue, Sunset Warm, Forest Green.
-* New: range sliders paired with every number input for quick value adjustments.
-* New: SVG charts — payment composition donut and balance over time line chart (no external libraries).
-* New: block sidebar settings to show/hide charts, choose the chart type (donut, line, or both), toggle the amortization table, and override the payment font size and weight.
-
-= 1.0.0 =
-* Initial release: Mortgage Calculator block, settings page, REST endpoint, and amortization schedule.
-
 == Upgrade Notice ==
 
-= 1.2.0 =
-Site-wide defaults for loan amount, down payment, loan term, skin, and chart type are now available under Settings → CalcForge.
-
 = 1.0.0 =
-Initial release.
+Site-wide defaults for loan amount, down payment, loan term, skin, and chart type are available under Settings → CalcForge.

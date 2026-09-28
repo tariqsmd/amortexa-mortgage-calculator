@@ -13,6 +13,7 @@
 		// ---------------------------------------------------------------
 		const tabBtns = document.querySelectorAll( '.calcforge-settings__tab-btn' );
 		const tabPanels = document.querySelectorAll( '.calcforge-settings__tab-panel' );
+		const saveBar = document.querySelector( '.calcforge-settings__save-bar' );
 		const STORAGE_KEY = 'calcforge_active_tab';
 
 		function activateTab( targetId ) {
@@ -25,6 +26,17 @@
 				const isActive = panel.getAttribute( 'id' ) === targetId;
 				panel.setAttribute( 'aria-hidden', isActive ? 'false' : 'true' );
 			} );
+
+			/*
+			 * The save bar belongs to the settings form, and reference-only tabs
+			 * render outside that form because they have nothing to save. Hide it
+			 * whenever the active panel is not one of the form's own panels.
+			 */
+			if ( saveBar ) {
+				const activePanel = document.getElementById( targetId );
+				const isFormTab = !! activePanel && !! activePanel.closest( 'form' );
+				saveBar.hidden = ! isFormTab;
+			}
 
 			try {
 				sessionStorage.setItem( STORAGE_KEY, targetId );

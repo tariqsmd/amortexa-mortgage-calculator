@@ -246,6 +246,11 @@
 	color: #7c3aed;
 }
 
+.calcforge-settings__tab-btn[aria-selected="true"] .calcforge-settings__tab-icon--shortcode {
+	background: #eff6ff;
+	color: #1d4ed8;
+}
+
 /* ==========================================================================
    Tab Panels
    ========================================================================== */
@@ -300,6 +305,12 @@
 	background: #faf5ff;
 	color: #7c3aed;
 	border: 1px solid #e9d5ff;
+}
+
+.calcforge-settings__panel-icon--calcforge_shortcode {
+	background: #eff6ff;
+	color: #1d4ed8;
+	border: 1px solid #bfdbfe;
 }
 
 .calcforge-settings__panel-heading {
@@ -386,6 +397,18 @@
 	padding-right: 36px;
 	min-width: 220px;
 	cursor: pointer;
+
+	/*
+	 * A fixed height plus the line-height admin styles inherit left the value
+	 * sitting low against the bottom border. Sizing from the line box and
+	 * centring the text keeps the label optically aligned with the labels
+	 * beside it. 8px of padding either side of a 20px line box keeps the
+	 * control at the same 38px height as the text and number inputs.
+	 */
+	height: auto;
+	line-height: 20px;
+	padding-top: 8px;
+	padding-bottom: 8px;
 }
 
 .calcforge-settings .regular-text {
@@ -498,6 +521,15 @@
 	background: var(--calcforge-admin-slate-50);
 	border-top: 1px solid var(--calcforge-admin-slate-200);
 	margin-top: 0;
+}
+
+/*
+ * `display: flex` above outranks the user-agent `[hidden]` rule, so the hidden
+ * state has to be restated for the save bar to actually collapse on
+ * reference-only tabs such as Shortcode.
+ */
+.calcforge-settings__save-bar[hidden] {
+	display: none;
 }
 
 .calcforge-settings__save-bar .button-primary {
@@ -670,6 +702,20 @@
 	background: #064e3b;
 	color: #34d399;
 	border-color: #059669;
+}
+
+/*
+ * The shortcode reference sits in a full-width tab panel rather than a
+ * sidebar card, so it carries its own spacing and is allowed to breathe
+ * instead of scrolling the attribute list in a narrow column.
+ */
+.calcforge-settings__reference {
+	padding: 20px 28px 28px;
+}
+
+.calcforge-settings__reference .calcforge-settings__attrs {
+	max-height: none;
+	overflow-y: visible;
 }
 
 .calcforge-settings__attrs {

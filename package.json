@@ -1,6 +1,6 @@
 {
 	"name": "calcforge",
-	"version": "1.2.0",
+	"version": "1.0.0",
 	"description": "An interactive mortgage calculator block for the block editor, with live monthly payments, charts and an amortization schedule.",
 	"author": "Muhammad Tariq",
 	"license": "GPL-2.0-or-later",

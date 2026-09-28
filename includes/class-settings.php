@@ -200,6 +200,35 @@ class CalcForge_Settings {
 	}
 
 	/**
+	 * Returns the settings screen tabs.
+	 *
+	 * Every settings section gets a tab, plus a final reference-only tab for the
+	 * shortcode documentation. That tab owns no options, so it is marked as
+	 * having no fields and is rendered outside the settings form.
+	 *
+	 * @return array<string,array<string,mixed>> Tab definitions keyed by tab id.
+	 */
+	private function get_tabs() {
+		$tabs = array();
+
+		foreach ( $this->get_sections() as $id => $section ) {
+			$tabs[ $id ] = array(
+				'title'  => $section['title'],
+				'icon'   => str_replace( 'calcforge_', '', $id ),
+				'section' => $id,
+			);
+		}
+
+		$tabs['calcforge_shortcode'] = array(
+			'title'  => __( 'Shortcode', CALCFORGE_TEXT_DOMAIN ),
+			'icon'   => 'shortcode',
+			'section' => '',
+		);
+
+		return $tabs;
+	}
+
+	/**
 	 * Registers the option, sections, and fields with the Settings API.
 	 */
 	public function register_settings() {
@@ -421,6 +450,15 @@ class CalcForge_Settings {
 				</svg>
 				<?php
 				break;
+
+			case 'calcforge_shortcode':
+				?>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<polyline points="16 18 22 12 16 6"></polyline>
+					<polyline points="8 6 2 12 8 18"></polyline>
+				</svg>
+				<?php
+				break;
 		}
 	}
 
@@ -477,30 +515,25 @@ class CalcForge_Settings {
 			<div class="calcforge-settings__layout">
 				<div class="calcforge-settings__main">
 					<?php
+					$tabs    = $this->get_tabs();
 					$sections = $this->get_sections();
-					$section_ids = array_keys( $sections );
-					$tab_icons = array(
-						'calcforge_currency'   => 'currency',
-						'calcforge_loan'       => 'loan',
-						'calcforge_appearance' => 'appearance',
-					);
 					?>
 
 					<!-- Tab navigation -->
 					<div class="calcforge-settings__tabs" role="tablist">
-						<?php foreach ( $sections as $section_id => $section ) : ?>
+						<?php foreach ( $tabs as $tab_id => $tab ) : ?>
 							<button
 								type="button"
 								class="calcforge-settings__tab-btn"
 								role="tab"
-								data-tab="<?php echo esc_attr( $section_id ); ?>"
-								aria-controls="<?php echo esc_attr( $section_id ); ?>"
+								data-tab="<?php echo esc_attr( $tab_id ); ?>"
+								aria-controls="<?php echo esc_attr( $tab_id ); ?>"
 								aria-selected="false"
 							>
-								<span class="calcforge-settings__tab-icon calcforge-settings__tab-icon--<?php echo esc_attr( $tab_icons[ $section_id ] ?? '' ); ?>">
-									<?php $this->render_section_icon( $section_id ); ?>
+								<span class="calcforge-settings__tab-icon calcforge-settings__tab-icon--<?php echo esc_attr( $tab['icon'] ); ?>">
+									<?php $this->render_section_icon( $tab_id ); ?>
 								</span>
-								<?php echo esc_html( $section['title'] ); ?>
+								<?php echo esc_html( $tab['title'] ); ?>
 							</button>
 						<?php endforeach; ?>
 					</div>
@@ -539,6 +572,32 @@ class CalcForge_Settings {
 								</span>
 							</div>
 						</form>
+
+						<?php
+						/*
+						 * The shortcode tab is reference only. It sits outside the
+						 * settings form so the Save button does not appear on a tab
+						 * that has nothing to save.
+						 */
+						?>
+						<div
+							class="calcforge-settings__tab-panel"
+							id="calcforge_shortcode"
+							role="tabpanel"
+							aria-hidden="true"
+						>
+							<div class="calcforge-settings__panel-header">
+								<div class="calcforge-settings__panel-icon calcforge-settings__panel-icon--calcforge_shortcode">
+									<?php $this->render_section_icon( 'calcforge_shortcode' ); ?>
+								</div>
+								<div class="calcforge-settings__panel-heading">
+									<h2 class="calcforge-settings__panel-title"><?php esc_html_e( 'Shortcode', CALCFORGE_TEXT_DOMAIN ); ?></h2>
+									<p class="calcforge-settings__panel-description"><?php esc_html_e( 'Add the calculator to any post, page, or widget area without using the block editor.', CALCFORGE_TEXT_DOMAIN ); ?></p>
+								</div>
+							</div>
+
+							<?php $this->render_shortcode_reference(); ?>
+						</div>
 					</div>
 				</div>
 
@@ -549,66 +608,61 @@ class CalcForge_Settings {
 	}
 
 	/**
-	 * Renders the help and shortcode reference sidebar.
+	 * Renders the shortcode reference shown on the Shortcode tab.
+	 */
+	private function render_shortcode_reference() {
+		?>
+		<div class="calcforge-settings__reference">
+			<p class="calcforge-settings__card-text">
+				<?php esc_html_e( 'Paste the calculator into any post, page, or widget area:', CALCFORGE_TEXT_DOMAIN ); ?>
+			</p>
+			<div class="calcforge-settings__code-box">
+				<code class="calcforge-settings__code">[calcforge]</code>
+				<button type="button" class="calcforge-copy-btn" data-clipboard-text="[calcforge]" title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+						<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+						<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+					</svg>
+					<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
+				</button>
+			</div>
+
+			<p class="calcforge-settings__card-text">
+				<?php esc_html_e( 'Add attributes to override the defaults, then add it as a block to keep changing it visually:', CALCFORGE_TEXT_DOMAIN ); ?>
+			</p>
+			<div class="calcforge-settings__code-box">
+				<code class="calcforge-settings__code">[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]</code>
+				<button type="button" class="calcforge-copy-btn" data-clipboard-text='[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]' title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+						<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+						<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+					</svg>
+					<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
+				</button>
+			</div>
+
+			<h3 class="calcforge-settings__subheading">
+				<?php esc_html_e( 'Attribute names are lowercase. Wrap the value in quotes. Attributes accept:', CALCFORGE_TEXT_DOMAIN ); ?>
+			</h3>
+			<dl class="calcforge-settings__attrs">
+				<?php foreach ( CalcForge_Shortcode::get_documented_attributes() as $attr => $spec ) : ?>
+					<dt>
+						<code class="calcforge-settings__code"><?php echo esc_html( $attr ); ?></code>
+						<span class="calcforge-settings__attr-type"><?php echo esc_html( $spec['type'] ); ?></span>
+					</dt>
+					<dd><?php echo esc_html( $spec['description'] ); ?></dd>
+				<?php endforeach; ?>
+			</dl>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Renders the help and developer reference sidebar.
 	 */
 	private function render_sidebar() {
 		?>
 		<aside class="calcforge-settings__sidebar">
-			<div class="calcforge-settings__card calcforge-settings__card--shortcode">
-				<div class="calcforge-settings__card-header">
-					<span class="calcforge-settings__card-badge-icon">
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<polyline points="16 18 22 12 16 6"></polyline>
-							<polyline points="8 6 2 12 8 18"></polyline>
-						</svg>
-					</span>
-					<h2 class="calcforge-settings__card-title">
-						<?php esc_html_e( 'Shortcode', CALCFORGE_TEXT_DOMAIN ); ?>
-					</h2>
-				</div>
-
-				<p class="calcforge-settings__card-text">
-					<?php esc_html_e( 'Paste the calculator into any post, page, or widget area:', CALCFORGE_TEXT_DOMAIN ); ?>
-				</p>
-				<div class="calcforge-settings__code-box">
-					<code class="calcforge-settings__code">[calcforge]</code>
-					<button type="button" class="calcforge-copy-btn" data-clipboard-text="[calcforge]" title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-							<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-							<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-						</svg>
-						<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
-					</button>
-				</div>
-
-				<p class="calcforge-settings__card-text">
-					<?php esc_html_e( 'Add attributes to override the defaults, then add it as a block to keep changing it visually:', CALCFORGE_TEXT_DOMAIN ); ?>
-				</p>
-				<div class="calcforge-settings__code-box">
-					<code class="calcforge-settings__code">[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]</code>
-					<button type="button" class="calcforge-copy-btn" data-clipboard-text='[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]' title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-							<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-							<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-						</svg>
-						<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
-					</button>
-				</div>
-
-				<h3 class="calcforge-settings__subheading">
-					<?php esc_html_e( 'Attribute names are lowercase. Wrap the value in quotes. Attributes accept:', CALCFORGE_TEXT_DOMAIN ); ?>
-				</h3>
-				<dl class="calcforge-settings__attrs">
-					<?php foreach ( CalcForge_Shortcode::get_documented_attributes() as $attr => $spec ) : ?>
-						<dt>
-							<code class="calcforge-settings__code"><?php echo esc_html( $attr ); ?></code>
-							<span class="calcforge-settings__attr-type"><?php echo esc_html( $spec['type'] ); ?></span>
-						</dt>
-						<dd><?php echo esc_html( $spec['description'] ); ?></dd>
-					<?php endforeach; ?>
-				</dl>
-			</div>
-
 			<div class="calcforge-settings__card calcforge-settings__card--help">
 				<div class="calcforge-settings__card-header">
 					<span class="calcforge-settings__card-badge-icon calcforge-settings__card-badge-icon--amber">

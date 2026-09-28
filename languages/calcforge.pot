@@ -1,8 +1,8 @@
-# Copyright (C) 2026 CalcForge 1.2.0
-# This file is distributed under the same license as the CalcForge 1.2.0 package.
+# Copyright (C) 2026 CalcForge 1.0.0
+# This file is distributed under the same license as the CalcForge 1.0.0 package.
 msgid ""
 msgstr ""
-"Project-Id-Version: CalcForge 1.2.0\n"
+"Project-Id-Version: CalcForge 1.0.0\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -152,67 +152,71 @@ msgstr ""
 msgid "Default skin and chart selection for new calculators."
 msgstr ""
 
-#: includes/class-settings.php:461
-msgid "These values are the site-wide defaults. Every new Mortgage Calculator block starts with them, and each block can then be adjusted on its own without affecting the others."
-msgstr ""
-
-#: includes/class-settings.php:468
-msgid "Block Active"
-msgstr ""
-
-#: includes/class-settings.php:472
-msgid "REST API Ready"
-msgstr ""
-
-#: includes/class-settings.php:503
-msgid "Save Changes"
-msgstr ""
-
-#: includes/class-settings.php:505
-msgid "Saved defaults immediately apply to all newly inserted calculators."
-msgstr ""
-
-#: includes/class-settings.php:532
+#: includes/class-settings.php:223, includes/class-settings.php:594
 msgid "Shortcode"
 msgstr ""
 
-#: includes/class-settings.php:537
+#: includes/class-settings.php:499
+msgid "These values are the site-wide defaults. Every new Mortgage Calculator block starts with them, and each block can then be adjusted on its own without affecting the others."
+msgstr ""
+
+#: includes/class-settings.php:506
+msgid "Block Active"
+msgstr ""
+
+#: includes/class-settings.php:510
+msgid "REST API Ready"
+msgstr ""
+
+#: includes/class-settings.php:569
+msgid "Save Changes"
+msgstr ""
+
+#: includes/class-settings.php:571
+msgid "Saved defaults immediately apply to all newly inserted calculators."
+msgstr ""
+
+#: includes/class-settings.php:595
+msgid "Add the calculator to any post, page, or widget area without using the block editor."
+msgstr ""
+
+#: includes/class-settings.php:617
 msgid "Paste the calculator into any post, page, or widget area:"
 msgstr ""
 
-#: includes/class-settings.php:541, includes/class-settings.php:555
+#: includes/class-settings.php:621, includes/class-settings.php:635
 msgid "Copy to clipboard"
 msgstr ""
 
-#: includes/class-settings.php:546, includes/class-settings.php:560
+#: includes/class-settings.php:626, includes/class-settings.php:640
 msgid "Copy"
 msgstr ""
 
-#: includes/class-settings.php:551
+#: includes/class-settings.php:631
 msgid "Add attributes to override the defaults, then add it as a block to keep changing it visually:"
 msgstr ""
 
-#: includes/class-settings.php:565
+#: includes/class-settings.php:645
 msgid "Attribute names are lowercase. Wrap the value in quotes. Attributes accept:"
 msgstr ""
 
-#: includes/class-settings.php:588
+#: includes/class-settings.php:676
 msgid "Help"
 msgstr ""
 
-#: includes/class-settings.php:593
+#: includes/class-settings.php:681
 msgid "Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on."
 msgstr ""
 
-#: includes/class-settings.php:596
+#: includes/class-settings.php:684
 msgid "Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar."
 msgstr ""
 
-#: includes/class-settings.php:612
+#: includes/class-settings.php:700
 msgid "Developer API"
 msgstr ""
 
-#: includes/class-settings.php:616
+#: includes/class-settings.php:704
 msgid "Stateless calculation endpoint available for headless and external apps:"
 msgstr ""
 
