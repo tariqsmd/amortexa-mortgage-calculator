@@ -646,36 +646,47 @@ class CalcForge_Settings {
 	}
 
 	/**
+	 * Renders a button that copies the given text to the clipboard.
+	 *
+	 * Shared by every reference tab so the icon markup lives in one place.
+	 *
+	 * @param string $text Text to place on the clipboard. Escaped with esc_attr(),
+	 *                    which keeps quotes and newlines valid in the attribute.
+	 */
+	private function render_copy_button( $text ) {
+		?>
+		<button type="button" class="calcforge-copy-btn" data-clipboard-text="<?php echo esc_attr( $text ); ?>" title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
+			<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+				<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+				<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+			</svg>
+			<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
+		</button>
+		<?php
+	}
+
+	/**
 	 * Renders the shortcode reference shown on the Shortcode tab.
 	 */
-	private function render_shortcode_reference() {		?>
+	private function render_shortcode_reference() {
+		$plain     = '[calcforge]';
+		$with_args = '[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]';
+		?>
 		<div class="calcforge-settings__reference">
 			<p class="calcforge-settings__card-text">
 				<?php esc_html_e( 'Paste the calculator into any post, page, or widget area:', CALCFORGE_TEXT_DOMAIN ); ?>
 			</p>
 			<div class="calcforge-settings__code-box">
-				<code class="calcforge-settings__code">[calcforge]</code>
-				<button type="button" class="calcforge-copy-btn" data-clipboard-text="[calcforge]" title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-						<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-						<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-					</svg>
-					<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
-				</button>
+				<code class="calcforge-settings__code"><?php echo esc_html( $plain ); ?></code>
+				<?php $this->render_copy_button( $plain ); ?>
 			</div>
 
 			<p class="calcforge-settings__card-text">
 				<?php esc_html_e( 'Add attributes to override the defaults, then add it as a block to keep changing it visually:', CALCFORGE_TEXT_DOMAIN ); ?>
 			</p>
 			<div class="calcforge-settings__code-box">
-				<code class="calcforge-settings__code">[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]</code>
-				<button type="button" class="calcforge-copy-btn" data-clipboard-text='[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]' title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-						<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-						<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-					</svg>
-					<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
-				</button>
+				<code class="calcforge-settings__code"><?php echo esc_html( $with_args ); ?></code>
+				<?php $this->render_copy_button( $with_args ); ?>
 			</div>
 
 			<h3 class="calcforge-settings__subheading">
@@ -699,8 +710,7 @@ class CalcForge_Settings {
 	 */
 	private function render_api_reference() {
 		$endpoint = rest_url( CalcForge_REST::NAMESPACE_V1 . '/calculate' );
-		$params   = array(
-			'amount'          => array(
+		$params   = array(			'amount'          => array(
 				'type'    => __( 'number', CALCFORGE_TEXT_DOMAIN ),
 				'meta'    => __( 'required', CALCFORGE_TEXT_DOMAIN ),
 				'summary' => __( 'Total amount being financed.', CALCFORGE_TEXT_DOMAIN ),
@@ -726,20 +736,25 @@ class CalcForge_Settings {
 				'summary' => __( 'Return the year-by-year amortization schedule alongside the totals.', CALCFORGE_TEXT_DOMAIN ),
 			),
 		);
+
+		$endpoint_label = 'POST ' . $endpoint;
+		/*
+		 * Kept on one line so a copied command pastes straight into a terminal.
+		 * The body uses escaped double quotes rather than single quotes: cmd.exe
+		 * does not strip single quotes, so a single-quoted body arrives as
+		 * literal quotes and the endpoint rejects it as malformed JSON. Escaped
+		 * double quotes work in both cmd.exe and POSIX shells.
+		 */
+		$request  = 'curl -X POST ' . $endpoint . ' -H "Content-Type: application/json" -d "{\"amount\":350000,\"down_payment\":70000,\"interest_rate\":4.75,\"term_years\":30}"';
+		$response = '{"principal":280000,"monthly_payment":1460.61,"total_paid":525819.6,"total_interest":245819.6,"months":360,"schedule":[]}';
 		?>
 		<div class="calcforge-settings__reference">
 			<p class="calcforge-settings__card-text">
 				<?php esc_html_e( 'A stateless endpoint that runs the same arithmetic as the calculator. It stores nothing and returns no private data, so it needs no authentication or nonce.', CALCFORGE_TEXT_DOMAIN ); ?>
 			</p>
 			<div class="calcforge-settings__code-box">
-				<code class="calcforge-settings__code">POST <?php echo esc_html( $endpoint ); ?></code>
-				<button type="button" class="calcforge-copy-btn" data-clipboard-text="<?php echo esc_attr( 'POST ' . $endpoint ); ?>" title="<?php esc_attr_e( 'Copy to clipboard', CALCFORGE_TEXT_DOMAIN ); ?>">
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-						<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-						<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-					</svg>
-					<span class="calcforge-copy-btn__text"><?php esc_html_e( 'Copy', CALCFORGE_TEXT_DOMAIN ); ?></span>
-				</button>
+				<code class="calcforge-settings__code"><?php echo esc_html( $endpoint_label ); ?></code>
+				<?php $this->render_copy_button( $endpoint_label ); ?>
 			</div>
 
 			<h3 class="calcforge-settings__subheading">
@@ -760,23 +775,16 @@ class CalcForge_Settings {
 				<?php esc_html_e( 'Example request', CALCFORGE_TEXT_DOMAIN ); ?>
 			</h3>
 			<div class="calcforge-settings__code-box">
-				<code class="calcforge-settings__code calcforge-settings__code--pre">curl -X POST <?php echo esc_html( $endpoint ); ?> \
-	-H 'Content-Type: application/json' \
-	-d '{"amount":350000,"down_payment":70000,"interest_rate":4.75,"term_years":30}'</code>
+				<code class="calcforge-settings__code calcforge-settings__code--pre"><?php echo esc_html( $request ); ?></code>
+				<?php $this->render_copy_button( $request ); ?>
 			</div>
 
 			<h3 class="calcforge-settings__subheading">
 				<?php esc_html_e( 'Example response', CALCFORGE_TEXT_DOMAIN ); ?>
 			</h3>
 			<div class="calcforge-settings__code-box">
-				<code class="calcforge-settings__code calcforge-settings__code--pre">{
-	"principal": 280000,
-	"monthly_payment": 1460.61,
-	"total_paid": 525819.6,
-	"total_interest": 245819.6,
-	"months": 360,
-	"schedule": []
-}</code>
+				<code class="calcforge-settings__code calcforge-settings__code--pre"><?php echo esc_html( $response ); ?></code>
+				<?php $this->render_copy_button( $response ); ?>
 			</div>
 			<p class="calcforge-settings__card-text">
 				<?php esc_html_e( 'The schedule is empty unless you pass with_schedule. It runs the same calculations as the block, so the calcforge_calculation_result filter applies to responses too. Return false from the calcforge_rest_calculate_allowed filter to require authentication.', CALCFORGE_TEXT_DOMAIN ); ?>

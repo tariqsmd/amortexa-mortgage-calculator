@@ -188,103 +188,103 @@ msgstr ""
 msgid "Saved defaults immediately apply to all newly inserted calculators."
 msgstr ""
 
-#: includes/class-settings.php:654
-msgid "Paste the calculator into any post, page, or widget area:"
-msgstr ""
-
-#: includes/class-settings.php:658, includes/class-settings.php:672, includes/class-settings.php:736
+#: includes/class-settings.php:658
 msgid "Copy to clipboard"
 msgstr ""
 
-#: includes/class-settings.php:663, includes/class-settings.php:677, includes/class-settings.php:741
+#: includes/class-settings.php:663
 msgid "Copy"
 msgstr ""
 
-#: includes/class-settings.php:668
+#: includes/class-settings.php:677
+msgid "Paste the calculator into any post, page, or widget area:"
+msgstr ""
+
+#: includes/class-settings.php:685
 msgid "Add attributes to override the defaults, then add it as a block to keep changing it visually:"
 msgstr ""
 
-#: includes/class-settings.php:682
+#: includes/class-settings.php:693
 msgid "Attribute names are lowercase. Wrap the value in quotes. Attributes accept:"
 msgstr ""
 
-#: includes/class-settings.php:704, includes/class-settings.php:709, includes/class-settings.php:714
+#: includes/class-settings.php:714, includes/class-settings.php:719, includes/class-settings.php:724
 msgid "number"
 msgstr ""
 
-#: includes/class-settings.php:705
+#: includes/class-settings.php:715
 msgid "required"
 msgstr ""
 
-#: includes/class-settings.php:706, src/utils/field-definitions.js:23
+#: includes/class-settings.php:716, src/utils/field-definitions.js:23
 msgid "Total amount being financed."
 msgstr ""
 
-#: includes/class-settings.php:710, includes/class-settings.php:715
+#: includes/class-settings.php:720, includes/class-settings.php:725
 msgid "optional, default 0"
 msgstr ""
 
-#: includes/class-settings.php:711, src/utils/field-definitions.js:33
+#: includes/class-settings.php:721, src/utils/field-definitions.js:33
 msgid "Paid up front. Interest is charged on the remainder."
 msgstr ""
 
-#: includes/class-settings.php:716
+#: includes/class-settings.php:726
 msgid "Annual rate as a percentage, up to 100."
 msgstr ""
 
-#: includes/class-settings.php:719
+#: includes/class-settings.php:729
 msgid "integer"
 msgstr ""
 
-#: includes/class-settings.php:720
+#: includes/class-settings.php:730
 msgid "optional, default 30"
 msgstr ""
 
-#: includes/class-settings.php:721
+#: includes/class-settings.php:731
 msgid "Length of the loan in years, from 1 to 60."
 msgstr ""
 
-#: includes/class-settings.php:724
+#: includes/class-settings.php:734
 msgid "boolean"
 msgstr ""
 
-#: includes/class-settings.php:725
+#: includes/class-settings.php:735
 msgid "optional, default false"
 msgstr ""
 
-#: includes/class-settings.php:726
+#: includes/class-settings.php:736
 msgid "Return the year-by-year amortization schedule alongside the totals."
 msgstr ""
 
-#: includes/class-settings.php:732
+#: includes/class-settings.php:753
 msgid "A stateless endpoint that runs the same arithmetic as the calculator. It stores nothing and returns no private data, so it needs no authentication or nonce."
 msgstr ""
 
-#: includes/class-settings.php:746
+#: includes/class-settings.php:761
 msgid "Parameters"
 msgstr ""
 
-#: includes/class-settings.php:760
+#: includes/class-settings.php:775
 msgid "Example request"
 msgstr ""
 
-#: includes/class-settings.php:769
+#: includes/class-settings.php:783
 msgid "Example response"
 msgstr ""
 
-#: includes/class-settings.php:782
+#: includes/class-settings.php:790
 msgid "The schedule is empty unless you pass with_schedule. It runs the same calculations as the block, so the calcforge_calculation_result filter applies to responses too. Return false from the calcforge_rest_calculate_allowed filter to require authentication."
 msgstr ""
 
-#: includes/class-settings.php:804
+#: includes/class-settings.php:812
 msgid "Help"
 msgstr ""
 
-#: includes/class-settings.php:809
+#: includes/class-settings.php:817
 msgid "Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on."
 msgstr ""
 
-#: includes/class-settings.php:812
+#: includes/class-settings.php:820
 msgid "Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar."
 msgstr ""
 
