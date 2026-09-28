@@ -22,11 +22,103 @@
 	--calcforge-field-text: var(--calcforge-text);
 	--calcforge-label-color: var(--calcforge-text-muted);
 
+	/* ----------------------------------------------------------------
+	 * Design token defaults.
+	 *
+	 * Every value the inspector can override is declared here so each rule
+	 * below can read a custom property instead of a hardcoded value. When a
+	 * token is unset the element falls back to this default, which is what
+	 * makes clearing a control a reset rather than a deletion.
+	 *
+	 * Colour defaults are expressed in terms of the palette variables above
+	 * rather than as literal colours, so a skin that redefines the palette
+	 * automatically flows through to every element. Literal hex values here
+	 * would pin light-theme values into the dark themes.
+	 * ---------------------------------------------------------------- */
+	--calcforge-radius: 12px;
+	--calcforge-padding: 24px;
+
+	--calcforge-panel-bg: var(--calcforge-surface);
+	--calcforge-panel-radius: 10px;
+	--calcforge-panel-padding: 20px;
+	--calcforge-panel-gap: 24px;
+
+	--calcforge-label-family: inherit;
+	--calcforge-label-size: 13px;
+	--calcforge-label-weight: 600;
+	--calcforge-label-transform: uppercase;
+	--calcforge-label-tracking: 0.04em;
+	--calcforge-label-margin: 0;
+
+	--calcforge-field-border-width: 1px;
+	--calcforge-field-radius: 8px;
+	--calcforge-field-padding: 10px 12px;
+	--calcforge-field-height: auto;
+	--calcforge-field-family: inherit;
+	--calcforge-field-size: 16px;
+	--calcforge-field-weight: 400;
+
+	--calcforge-slider-track: var(--calcforge-border);
+	--calcforge-slider-accent: var(--calcforge-accent);
+	--calcforge-slider-thumb-size: 18px;
+
+	--calcforge-toggle-bg: var(--calcforge-accent-soft);
+	--calcforge-toggle-text: var(--calcforge-accent);
+	--calcforge-toggle-border: transparent;
+	--calcforge-toggle-radius: 999px;
+	--calcforge-toggle-padding: 8px 14px;
+	--calcforge-toggle-family: inherit;
+	--calcforge-toggle-size: 14px;
+	--calcforge-toggle-weight: 600;
+
+	--calcforge-result-primary-color: var(--calcforge-accent);
+	--calcforge-result-primary-family: inherit;
+	--calcforge-result-primary-size: clamp(24px, 7cqw, 40px);
+	--calcforge-result-primary-weight: 700;
+	--calcforge-result-label-color: var(--calcforge-text-muted);
+	--calcforge-result-value-color: var(--calcforge-text);
+	--calcforge-result-size: 14px;
+	--calcforge-result-row-border: var(--calcforge-border);
+	--calcforge-result-row-padding: 10px 0;
+	--calcforge-result-margin: 4px 8px;
+
+	/* Read by the view script, which draws the charts as SVG and needs the
+	   height as a number rather than as a rendered CSS length. */
+	--calcforge-chart-height: 250px;
+	--calcforge-chart-axis: var(--calcforge-text-muted);
+	--calcforge-chart-title-color: var(--calcforge-text-muted);
+	--calcforge-chart-title-size: 13px;
+	--calcforge-chart-title-weight: 600;
+	--calcforge-chart-title-margin: 0 0 12px;
+
+	--calcforge-legend-text: var(--calcforge-text-muted);
+	--calcforge-legend-family: inherit;
+	--calcforge-legend-size: 13px;
+	--calcforge-legend-weight: 400;
+	--calcforge-legend-swatch-size: 10px;
+
+	/*
+	 * A single value, not "8px 16px": the gap control is one number, so the
+	 * default has to be reachable through it. The row gap is fixed below and
+	 * only the column gap is exposed.
+	 */
+	--calcforge-legend-gap: 16px;
+
+	--calcforge-table-head-bg: var(--calcforge-surface);
+	--calcforge-table-head-text: var(--calcforge-text-muted);
+	--calcforge-table-row-bg: transparent;
+	--calcforge-table-zebra-bg: var(--calcforge-surface);
+	--calcforge-table-border: var(--calcforge-border);
+	--calcforge-table-border-width: 1px;
+	--calcforge-table-cell-padding: 8px 12px;
+	--calcforge-table-size: 14px;
+	--calcforge-table-radius: 0;
+
 	background-color: var(--calcforge-bg);
 	color: var(--calcforge-text);
 	border: 1px solid var(--calcforge-border);
-	border-radius: 12px;
-	padding: 24px;
+	border-radius: var(--calcforge-radius);
+	padding: var(--calcforge-padding);
 	font-family: inherit;
 	line-height: 1.5;
 	max-width: 100%;
@@ -56,7 +148,7 @@
 .calcforge-calc__grid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: 24px;
+	gap: var(--calcforge-panel-gap);
 	align-items: start;
 }
 
@@ -106,9 +198,9 @@
 	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 	gap: 16px;
 	margin: 0;
-	padding: 20px;
-	background-color: var(--calcforge-surface);
-	border-radius: 10px;
+	padding: var(--calcforge-panel-padding);
+	background-color: var(--calcforge-panel-bg);
+	border-radius: var(--calcforge-panel-radius);
 }
 
 .calcforge-calc__control {
@@ -120,23 +212,27 @@
 
 .calcforge-calc__label,
 .calcforge-calc__result-label {
-	font-size: 13px;
-	font-weight: 600;
+	font-family: var(--calcforge-label-family);
+	font-size: var(--calcforge-label-size);
+	font-weight: var(--calcforge-label-weight);
 	color: var(--calcforge-label-color);
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	margin: 0;
+	text-transform: var(--calcforge-label-transform);
+	letter-spacing: var(--calcforge-label-tracking);
+	margin: var(--calcforge-label-margin);
 }
 
 .calcforge-calc__field {
 	width: 100%;
 	box-sizing: border-box;
-	padding: 10px 12px;
-	font-size: 16px;
+	min-height: var(--calcforge-field-height);
+	padding: var(--calcforge-field-padding);
+	font-family: var(--calcforge-field-family);
+	font-size: var(--calcforge-field-size);
+	font-weight: var(--calcforge-field-weight);
 	color: var(--calcforge-field-text);
 	background-color: var(--calcforge-field-bg);
-	border: 1px solid var(--calcforge-field-border);
-	border-radius: 8px;
+	border: var(--calcforge-field-border-width) solid var(--calcforge-field-border);
+	border-radius: var(--calcforge-field-radius);
 
 	&:focus-visible {
 		outline: 2px solid var(--calcforge-accent);
@@ -145,39 +241,42 @@
 }
 
 .calcforge-calc__results {
-	padding: 4px 8px;
+	padding: var(--calcforge-result-margin);
 }
 
 /* cqw scales with the block's own width (falls back to viewport units
    only when no ancestor container exists). */
 .calcforge-calc__result-primary {
-	font-size: clamp(24px, 7cqw, 40px);
-	font-weight: 700;
-	color: var(--calcforge-accent);
+	font-family: var(--calcforge-result-primary-family);
+	font-size: var(--calcforge-result-primary-size);
+	font-weight: var(--calcforge-result-primary-weight);
+	color: var(--calcforge-result-primary-color);
 	margin: 4px 0 18px;
 	line-height: 1.15;
 }
 
 .calcforge-calc__result-list {
 	margin: 0;
-	border-top: 1px solid var(--calcforge-border);
+	border-top: 1px solid var(--calcforge-result-row-border);
 }
 
 .calcforge-calc__result-row {
 	display: flex;
 	justify-content: space-between;
 	gap: 12px;
-	padding: 10px 0;
-	border-bottom: 1px solid var(--calcforge-border);
+	padding: var(--calcforge-result-row-padding);
+	border-bottom: 1px solid var(--calcforge-result-row-border);
+	font-size: var(--calcforge-result-size);
 
 	dt {
-		color: var(--calcforge-text-muted);
+		color: var(--calcforge-result-label-color);
 	}
 
 	dd {
 		margin: 0;
 		font-weight: 600;
 		font-variant-numeric: tabular-nums;
+		color: var(--calcforge-result-value-color);
 	}
 }
 
@@ -192,13 +291,14 @@
 .calcforge-calc__toggle {
 	display: none;
 	margin: 0 0 12px;
-	padding: 8px 14px;
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--calcforge-accent);
-	background-color: var(--calcforge-accent-soft);
-	border: 1px solid transparent;
-	border-radius: 999px;
+	padding: var(--calcforge-toggle-padding);
+	font-family: var(--calcforge-toggle-family);
+	font-size: var(--calcforge-toggle-size);
+	font-weight: var(--calcforge-toggle-weight);
+	color: var(--calcforge-toggle-text);
+	background-color: var(--calcforge-toggle-bg);
+	border: 1px solid var(--calcforge-toggle-border);
+	border-radius: var(--calcforge-toggle-radius);
 	cursor: pointer;
 
 	&[aria-expanded="false"]::after {
@@ -216,21 +316,25 @@
 	/* Pairs with the schedule wrapper's horizontal scroll. */
 	min-width: 440px;
 	border-collapse: collapse;
-	font-size: 14px;
+	font-size: var(--calcforge-table-size);
+	border-radius: var(--calcforge-table-radius);
+	overflow: hidden;
 
 	th,
 	td {
-		padding: 8px 12px;
+		padding: var(--calcforge-table-cell-padding);
 		text-align: right;
 		font-variant-numeric: tabular-nums;
-		border-bottom: 1px solid var(--calcforge-border);
+		border-bottom: var(--calcforge-table-border-width) solid var(--calcforge-table-border);
+		background-color: var(--calcforge-table-row-bg);
 	}
 
 	thead th {
 		font-weight: 600;
-		color: var(--calcforge-text-muted);
+		color: var(--calcforge-table-head-text);
+		background-color: var(--calcforge-table-head-bg);
 		text-transform: uppercase;
-		font-size: 12px;
+		font-size: calc(var(--calcforge-table-size) - 2px);
 		letter-spacing: 0.04em;
 	}
 
@@ -239,24 +343,33 @@
 		text-align: left;
 	}
 
+	/* Alternating shading, driven by the same token as the header surface so
+	   a custom table colour stays internally consistent. */
+	tbody tr:nth-child(even) td {
+		background-color: var(--calcforge-table-zebra-bg);
+	}
+
 	tbody tr:hover td {
 		background-color: var(--calcforge-accent-soft);
 	}
 }
 
+/*
+ * Narrow-width compaction is expressed by redefining the tokens on the root,
+ * never by restating padding on the descendant itself.
+ *
+ * That distinction matters: a rule on a descendant would win over the value
+ * inherited from the root, so an explicit padding set in the inspector would be
+ * silently discarded on phones. Redefining the variable on the root keeps the
+ * compaction for untouched tokens, while the inline custom property the block
+ * writes for a set token still wins at every width.
+ */
 @media (max-width: 600px) {
 
 	.calcforge-calc {
-		padding: 16px;
-	}
-
-	.calcforge-calc__table {
-
-		th,
-		td {
-			padding: 6px 8px;
-			font-size: 13px;
-		}
+		--calcforge-padding: 16px;
+		--calcforge-table-cell-padding: 6px 8px;
+		--calcforge-table-size: 13px;
 	}
 }
 
@@ -278,13 +391,13 @@
 
 @container calcforge-calc (max-width: 560px) {
 
-	.calcforge-calc__form {
-		padding: 16px;
+	.calcforge-calc {
+		--calcforge-panel-padding: 16px;
+		--calcforge-panel-gap: 16px;
 	}
 
 	.calcforge-calc__charts {
 		grid-template-columns: minmax(0, 1fr);
-		gap: 16px;
 	}
 }
 
@@ -297,15 +410,6 @@
 	.calcforge-calc__control-row .calcforge-calc__field {
 		flex: 1 1 100%;
 		width: 100%;
-	}
-
-	.calcforge-calc__table {
-
-		th,
-		td {
-			padding: 6px 8px;
-			font-size: 13px;
-		}
 	}
 }
 
@@ -535,7 +639,11 @@
 
 /* ----------------------------------------------------------------
  * Range sliders (paired with number inputs)
- * accent-color themes the track/thumb in all modern browsers.
+ *
+ * accent-color themes the filled part of the track and the thumb in all
+ * modern browsers, but it cannot reach the unfilled remainder of the track.
+ * The pseudo-element rules below do, which is what makes the track colour a
+ * real control rather than a token nothing reads.
  * ---------------------------------------------------------------- */
 
 .calcforge-calc__control-row {
@@ -547,10 +655,27 @@
 .calcforge-calc__slider {
 	flex: 1;
 	min-width: 0;
-	height: 18px;
+	height: var(--calcforge-slider-thumb-size);
 	margin: 0;
-	accent-color: var(--calcforge-accent);
+	accent-color: var(--calcforge-slider-accent);
 	cursor: pointer;
+
+	/* The unfilled remainder of the track. */
+	&::-webkit-slider-runnable-track {
+		height: 6px;
+		border-radius: 999px;
+		background: var(--calcforge-slider-track);
+	}
+
+	&::-moz-range-track {
+		height: 6px;
+		border-radius: 999px;
+		background: var(--calcforge-slider-track);
+	}
+
+	&::-webkit-slider-thumb {
+		margin-top: calc((6px - var(--calcforge-slider-thumb-size)) / 2);
+	}
 
 	&:focus-visible {
 		outline: 2px solid var(--calcforge-accent);
@@ -632,24 +757,24 @@
 .calcforge-calc__charts {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-	gap: 24px;
+	gap: var(--calcforge-panel-gap);
 }
 
 .calcforge-calc__chart {
 	margin: 0;
-	padding: 20px;
-	background-color: var(--calcforge-surface);
-	border-radius: 10px;
+	padding: var(--calcforge-panel-padding);
+	background-color: var(--calcforge-panel-bg);
+	border-radius: var(--calcforge-panel-radius);
 }
 
 .calcforge-calc__chart-title {
 	display: block;
-	font-size: 13px;
-	font-weight: 600;
-	color: var(--calcforge-text-muted);
+	font-size: var(--calcforge-chart-title-size);
+	font-weight: var(--calcforge-chart-title-weight);
+	color: var(--calcforge-chart-title-color);
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
-	margin-bottom: 12px;
+	margin: var(--calcforge-chart-title-margin);
 }
 
 .calcforge-calc__chart-body {
@@ -661,7 +786,7 @@
 	}
 
 	text {
-		fill: var(--calcforge-text-muted);
+		fill: var(--calcforge-chart-axis);
 		font-family: inherit;
 		font-size: 11px;
 	}
@@ -723,7 +848,9 @@
 .calcforge-calc__legend {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px 16px;
+
+	/* Row gap stays fixed; the control owns the gap between items in a row. */
+	gap: 8px var(--calcforge-legend-gap);
 	margin-top: 12px;
 }
 
@@ -731,13 +858,15 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	font-size: 13px;
-	color: var(--calcforge-text-muted);
+	font-family: var(--calcforge-legend-family);
+	font-size: var(--calcforge-legend-size);
+	font-weight: var(--calcforge-legend-weight);
+	color: var(--calcforge-legend-text);
 }
 
 .calcforge-calc__legend-dot {
-	width: 10px;
-	height: 10px;
+	width: var(--calcforge-legend-swatch-size);
+	height: var(--calcforge-legend-swatch-size);
 	border-radius: 50%;
 	display: inline-block;
 }

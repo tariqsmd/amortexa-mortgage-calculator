@@ -34,6 +34,7 @@ define( 'CALCFORGE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CALCFORGE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 require_once CALCFORGE_PLUGIN_DIR . 'includes/helpers.php';
+require_once CALCFORGE_PLUGIN_DIR . 'includes/design-tokens.php';
 require_once CALCFORGE_PLUGIN_DIR . 'includes/class-i18n.php';
 require_once CALCFORGE_PLUGIN_DIR . 'includes/class-assets.php';
 require_once CALCFORGE_PLUGIN_DIR . 'includes/class-blocks.php';

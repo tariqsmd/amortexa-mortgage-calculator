@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Live preview for the Mortgage Calculator block.
  *
  * Renders the same structure/classes as the server-side template so editors
@@ -9,6 +9,7 @@
 
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from '@wordpress/element';
+import { getChartHeight } from '../utils/design';
 import {
 	createBarChart,
 	createDotsChart,
@@ -25,7 +26,7 @@ import { resolvePanelOrder } from '../utils/panel-order';
  * @param {number} amount   Amount to format.
  * @param {string} symbol   Currency symbol.
  * @param {string} position Symbol placement: 'prefix' or 'suffix'.
- * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 €".
+ * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 â‚¬".
  */
 export function formatAmount( amount, symbol, position = 'prefix' ) {
 	const formatted = new Intl.NumberFormat( undefined, {
@@ -133,6 +134,15 @@ export default function Preview( {
 	const dotsRef = useRef( null );
 	const dotsLegendRef = useRef( null );
 
+	// Charts are SVG, so the height control cannot arrive as a custom property.
+	// Zero means the token is unset and the shared default applies, which keeps
+	// the preview identical to the front end for a block with no overrides.
+	const previewChartHeight = getChartHeight( attributes ) || 250;
+	const previewDonutSize = Math.min(
+		260,
+		Math.round( previewChartHeight * 0.76 )
+	);
+
 	useEffect( () => {
 		if ( ! rootRef.current ) {
 			return;
@@ -156,8 +166,11 @@ export default function Preview( {
 						{ value: result.totalInterest, color: palette.accent2 },
 					],
 					{
-						size: 190,
-						thickness: 26,
+						size: previewDonutSize,
+						thickness: Math.max(
+							12,
+							Math.round( previewDonutSize * 0.135 )
+						),
 						centerTitle: __( 'Monthly Payment', 'calcforge' ),
 						centerValue: formatAmount(
 							result.monthlyPayment,
@@ -190,7 +203,7 @@ export default function Preview( {
 					],
 					{
 						width: 520,
-						height: 250,
+						height: previewChartHeight,
 						formatY: ( value ) =>
 							formatAmount( value, '', currencyPosition ).replace(
 								/\B(?=(\d{3})+(?!\d))/g,
@@ -221,7 +234,7 @@ export default function Preview( {
 					],
 					{
 						width: 520,
-						height: 250,
+						height: previewChartHeight,
 						formatY: ( value ) =>
 							formatAmount( value, '', currencyPosition ).replace(
 								/\B(?=(\d{3})+(?!\d))/g,
@@ -303,7 +316,7 @@ export default function Preview( {
 			dotsRef.current.replaceChildren(
 				createDotsChart( series, {
 					width: 520,
-					height: 190,
+					height: Math.round( previewChartHeight * 0.76 ),
 					formatY: ( value ) =>
 						formatAmount( value, '', currencyPosition ).replace(
 							/\B(?=(\d{3})+(?!\d))/g,
@@ -326,6 +339,8 @@ export default function Preview( {
 		// chart body that nothing repaints unless this effect re-runs. result
 		// and chartSchedule are memoised on the loan inputs, so they hold their
 		// identity across a chart type change and cannot stand in for it.
+		// previewChartHeight likewise has to be listed, or resizing a chart
+		// from the Design tab would leave the old drawing in place.
 		// rootRef is a ref, so its identity is stable: listing it satisfies
 		// react-hooks/exhaustive-deps without ever forcing a re-run.
 	}, [
@@ -335,6 +350,8 @@ export default function Preview( {
 		currencyPosition,
 		chartType,
 		showCharts,
+		previewChartHeight,
+		previewDonutSize,
 		rootRef,
 	] );
 
@@ -404,7 +421,7 @@ export default function Preview( {
 		<>
 			<p className="calcforge-calc__editor-note">
 				{ __(
-					'Live preview — edit values in the Settings sidebar. Visitors get a fully interactive calculator.',
+					'Live preview â€” edit values in the Settings sidebar. Visitors get a fully interactive calculator.',
 					'calcforge'
 				) }
 			</p>

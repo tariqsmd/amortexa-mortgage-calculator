@@ -425,6 +425,7 @@ function calcforge_get_default_attributes() {
 		'fieldTextColor'       => '',
 		'fieldBackgroundColor' => '',
 		'fieldBorderColor'     => '',
+		'design'                => array(),
 	);
 
 	/**
@@ -436,46 +437,33 @@ function calcforge_get_default_attributes() {
 }
 
 /**
- * Returns the per-block color attribute keys and the CSS variable each feeds.
+ * Returns the legacy per-block colour attributes, derived from the token schema.
  *
- * The editor inspector builds its color pickers from this so the attribute
- * names, the labels, and the inline custom properties cannot drift apart.
+ * These six top-level attributes predate the design tab and are still honoured
+ * for blocks saved before it existed. They used to carry their own attribute =>
+ * CSS variable map, separate from the one in render.php, and the two disagreed
+ * about two variable names: the editor wrote names the stylesheet never read, so
+ * those overrides did nothing in the editor while working on the frontend.
+ * Deriving the list from the token schema removes the second map entirely.
  *
- * @return array<int,array<string,string>> Color control descriptors.
+ * @return array<int,array<string,string>> Colour control descriptors.
  */
 function calcforge_get_color_attributes() {
-	return array(
-		array(
-			'key'     => 'accentColor',
-			'label'   => __( 'Accent', CALCFORGE_TEXT_DOMAIN ),
-			'cssVar'  => '--calcforge-accent',
-		),
-		array(
-			'key'     => 'accentAltColor',
-			'label'   => __( 'Secondary accent (charts)', CALCFORGE_TEXT_DOMAIN ),
-			'cssVar'  => '--calcforge-accent-alt',
-		),
-		array(
-			'key'     => 'labelColor',
-			'label'   => __( 'Label text', CALCFORGE_TEXT_DOMAIN ),
-			'cssVar'  => '--calcforge-label',
-		),
-		array(
-			'key'     => 'fieldTextColor',
-			'label'   => __( 'Field text', CALCFORGE_TEXT_DOMAIN ),
-			'cssVar'  => '--calcforge-field-text',
-		),
-		array(
-			'key'     => 'fieldBackgroundColor',
-			'label'   => __( 'Field background', CALCFORGE_TEXT_DOMAIN ),
-			'cssVar'  => '--calcforge-field-bg',
-		),
-		array(
-			'key'     => 'fieldBorderColor',
-			'label'   => __( 'Field border', CALCFORGE_TEXT_DOMAIN ),
-			'cssVar'  => '--calcforge-field-border',
-		),
-	);
+	$controls = array();
+
+	foreach ( calcforge_get_design_token_map() as $token ) {
+		if ( empty( $token['legacy'] ) ) {
+			continue;
+		}
+
+		$controls[] = array(
+			'key'    => $token['legacy'],
+			'label'  => $token['label'],
+			'cssVar' => $token['var'],
+		);
+	}
+
+	return $controls;
 }
 
 /**
@@ -686,6 +674,15 @@ function calcforge_sanitize_attributes( $attributes ) {
 		$sanitized[ $key ] = $value;
 	}
 
+	/*
+	 * The design object holds every appearance override. It is stored as a flat
+	 * key => string map, validated against the token schema so only known keys
+	 * with legal values survive, which keeps arbitrary CSS out of post content.
+	 */
+	$sanitized['design'] = calcforge_sanitize_design(
+		isset( $raw['design'] ) ? $raw['design'] : array()
+	);
+
 	return $sanitized;
 }
 
@@ -889,6 +886,70 @@ function calcforge_get_editor_data() {
 		);
 	}
 
+	/*
+	 * The design schema travels to the editor so the Design tab, the sanitizer
+	 * and the render all read the same token list. Without it the inspector
+	 * would need its own copy, which is exactly the duplication that let the
+	 * editor and frontend disagree about two colour variables.
+	 */
+	$design_groups = array();
+
+	foreach ( calcforge_get_design_groups() as $group ) {
+		$tokens = array();
+
+		foreach ( $group['tokens'] as $token ) {
+			$entry = array(
+				'key'   => $token['key'],
+				'var'   => $token['var'],
+				'label' => $token['label'],
+				'type'  => $token['type'],
+			);
+
+			if ( 'length' === $token['type'] || 'spacing' === $token['type'] ) {
+				$entry['min']  = $token['min'];
+				$entry['max']  = $token['max'];
+				$entry['step'] = $token['step'];
+			}
+
+			if ( ! empty( $token['stack'] ) ) {
+				$entry['stack'] = true;
+			}
+
+			if ( 'select' === $token['type'] ) {
+				$lists        = calcforge_get_design_option_lists();
+				$name         = $token['options'];
+				$list         = isset( $lists[ $name ] ) ? $lists[ $name ] : array();
+				$entry['options'] = array();
+
+				/*
+				 * Shipped as ordered pairs, not a value => label object, because
+				 * JavaScript enumerates integer-like keys ahead of the rest, so
+				 * an object would silently reorder these lists in the editor and
+				 * put "Default" last instead of first.
+				 */
+				foreach ( $list as $value => $label ) {
+					$entry['options'][] = array(
+						'value' => (string) $value,
+						'label' => $label,
+					);
+				}
+			}
+
+			if ( ! empty( $token['legacy'] ) ) {
+				$entry['legacy'] = $token['legacy'];
+			}
+
+			$tokens[] = $entry;
+		}
+
+		$design_groups[] = array(
+			'key'     => $group['key'],
+			'label'   => $group['label'],
+			'summary' => $group['summary'],
+			'tokens'  => $tokens,
+		);
+	}
+
 	return array(
 		'skins'           => $skins,
 		'chartTypes'      => calcforge_get_chart_types(),
@@ -898,6 +959,7 @@ function calcforge_get_editor_data() {
 		'fontWeights'     => calcforge_get_font_weights(),
 		'currencyPosition' => calcforge_get_currency_positions(),
 		'colors'          => $colors,
+		'designGroups'    => $design_groups,
 		'colorSwatches'   => calcforge_get_color_swatches(),
 		'fontStacks'      => array(
 			'inherit' => '',

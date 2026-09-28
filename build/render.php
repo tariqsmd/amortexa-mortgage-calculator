@@ -48,6 +48,9 @@ $config = array(
 	'showAmortization' => ! empty( $attrs['showAmortization'] ),
 	'showCharts'       => ! empty( $attrs['showCharts'] ),
 	'chartType'        => (string) $attrs['chartType'],
+	// Charts are drawn as SVG in JS, so a chart height override cannot travel
+	// as a custom property the way colours do.
+	'chartHeight'      => (int) calcforge_get_design_chart_metrics( $attrs )['height'],
 	'labels'           => array(
 		'monthly'   => __( 'Monthly Payment', CALCFORGE_TEXT_DOMAIN ),
 		'principal' => __( 'Financed Principal', CALCFORGE_TEXT_DOMAIN ),
@@ -140,22 +143,13 @@ $typography_attr = implode( ';', $typography );
  * Empty attribute values mean "use the active skin" and are skipped, so
  * skins keep working until a user explicitly overrides a color.
  */
-$style_vars = array();
-
-$color_vars = array(
-	'accentColor'          => '--calcforge-accent',
-	'accentAltColor'       => '--calcforge-accent-2',
-	'labelColor'           => '--calcforge-label-color',
-	'fieldTextColor'       => '--calcforge-field-text',
-	'fieldBackgroundColor' => '--calcforge-field-bg',
-	'fieldBorderColor'     => '--calcforge-field-border',
-);
-
-foreach ( $color_vars as $attr_key => $css_var ) {
-	if ( ! empty( $attrs[ $attr_key ] ) ) {
-		$style_vars[] = $css_var . ':' . (string) $attrs[ $attr_key ];
-	}
-}
+/*
+ * Every appearance override, derived from the design token schema, so the
+ * frontend and the editor resolve identical values. Empty values mean "use the
+ * active skin" and are skipped, which is what keeps skins working until a value
+ * is explicitly set.
+ */
+$style_vars = calcforge_get_design_css( $attrs );
 
 $font_stack = calcforge_get_font_stack( isset( $attrs['fontFamily'] ) ? (string) $attrs['fontFamily'] : 'inherit' );
 

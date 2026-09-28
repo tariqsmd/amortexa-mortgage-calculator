@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Front-end behavior for the Mortgage Calculator block.
  *
  * Progressive enhancement only: results, sliders, and the amortization table
@@ -6,8 +6,8 @@
  * syncing, live recalculation while typing, dependency-free SVG charts, and
  * the schedule collapse toggle.
  *
- * All dynamic text is inserted via textContent/createElement — never
- * innerHTML — so user input can never inject markup.
+ * All dynamic text is inserted via textContent/createElement â€” never
+ * innerHTML â€” so user input can never inject markup.
  */
 
 import {
@@ -23,7 +23,26 @@ import {
 } from './utils/charts';
 
 const CHART_WIDTH = 520;
-const CHART_HEIGHT = 250;
+const DEFAULT_CHART_HEIGHT = 250;
+
+/**
+ * Resolves the chart height, honouring the inspector's chart height token.
+ *
+ * The charts are drawn as SVG rather than sized by CSS, so a height override
+ * arrives as a number in the config payload instead of as a custom property.
+ * A missing, zero or non-numeric value means the token is unset and the default
+ * applies, which is what keeps existing posts rendering exactly as before.
+ *
+ * @param {Object} config Block config parsed from data-calcforge-config.
+ * @return {number} Chart height in SVG user units.
+ */
+function chartHeight( config ) {
+	const value = Number( config.chartHeight );
+
+	return Number.isFinite( value ) && value >= 120 && value <= 560
+		? value
+		: DEFAULT_CHART_HEIGHT;
+}
 
 /**
  * Picks roughly six evenly spaced year labels for the line chart's X axis.
@@ -61,7 +80,7 @@ function buildXTicks( schedule ) {
  *
  * @param {number} amount Amount to format.
  * @param {Object} config Block config parsed from data-calcforge-config.
- * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 €".
+ * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 â‚¬".
  */
 function formatAmount( amount, config ) {
 	const decimals = Number.isFinite( config.decimals ) ? config.decimals : 2;
@@ -241,7 +260,7 @@ function renderLegend( host, items ) {
  * Draws the donut (payment composition) and line (balance over time) charts.
  *
  * The balance series is always computed for charts even when the schedule
- * table is disabled — the two features are independent.
+ * table is disabled â€” the two features are independent.
  *
  * @param {HTMLElement} root   Calculator container element.
  * @param {Object}      values Current input values.
@@ -274,8 +293,19 @@ function renderCharts( root, values, config, result ) {
 					{ value: result.totalInterest, color: palette.accent2 },
 				],
 				{
-					size: 190,
-					thickness: 26,
+					size: Math.min(
+						260,
+						Math.round( chartHeight( config ) * 0.76 )
+					),
+					thickness: Math.max(
+						12,
+						Math.round(
+							Math.min(
+								260,
+								Math.round( chartHeight( config ) * 0.76 )
+							) * 0.135
+						)
+					),
 					centerTitle: labels.monthly,
 					centerValue: formatAmount( result.monthlyPayment, config ),
 				}
@@ -311,7 +341,7 @@ function renderCharts( root, values, config, result ) {
 				],
 				{
 					width: CHART_WIDTH,
-					height: CHART_HEIGHT,
+					height: chartHeight( config ),
 					formatY: ( value ) =>
 						formatAmount( value, { ...config, decimals: 0 } ),
 					xLabels: buildXTicks( schedule ),
@@ -349,7 +379,7 @@ function renderCharts( root, values, config, result ) {
 				],
 				{
 					width: CHART_WIDTH,
-					height: CHART_HEIGHT,
+					height: chartHeight( config ),
 					formatY: ( value ) =>
 						formatAmount( value, { ...config, decimals: 0 } ),
 					xLabels: buildXTicks( schedule ),
@@ -402,7 +432,9 @@ function renderCharts( root, values, config, result ) {
 		dotsHost.replaceChildren(
 			createDotsChart( series, {
 				width: CHART_WIDTH,
-				height: 190,
+				// The dot plot is drawn shorter than the line and bar charts by
+				// design, so the height token scales it rather than replacing it.
+				height: Math.round( chartHeight( config ) * 0.76 ),
 				formatY: ( value ) =>
 					formatAmount( value, { ...config, decimals: 0 } ),
 			} )

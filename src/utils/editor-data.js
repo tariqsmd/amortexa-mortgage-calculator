@@ -38,9 +38,12 @@ const FALLBACK_SKINS = [
 /**
  * Returns the data object PHP printed before the editor script.
  *
+ * Exported so other utils can read parts of it, such as the design token
+ * schema, without each re-implementing the global lookup.
+ *
  * @return {Object} Editor data, or an empty object when unavailable.
  */
-function getData() {
+export function getData() {
 	if ( typeof window === 'undefined' ) {
 		return {};
 	}

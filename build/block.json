@@ -185,6 +185,11 @@
     "fieldBorderColor": {
       "type": "string",
       "default": ""
+    },
+    "design": {
+      "type": "object",
+      "default": {},
+      "description": "Per-element appearance overrides, keyed by design token. Validated against the token schema in calcforge_sanitize_design()."
     }
   },
   "example": {
