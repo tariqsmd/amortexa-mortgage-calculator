@@ -5,7 +5,10 @@
 
 	<!-- Scan all PHP files in the project root and includes/src directories. -->
 	<file>.</file>
+	<!-- /dist is build output: without this every file is scanned three times
+		once `npm run dist` has run (source, dist/trunk, dist/tags/<version>). -->
 	<exclude-pattern>/build/*</exclude-pattern>
+	<exclude-pattern>/dist/*</exclude-pattern>
 	<exclude-pattern>/node_modules/*</exclude-pattern>
 	<exclude-pattern>/vendor/*</exclude-pattern>
 

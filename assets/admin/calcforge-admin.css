@@ -43,7 +43,7 @@
 	flex-wrap: wrap;
 	gap: 20px;
 	padding: 24px 28px;
-	background: #ffffff;
+	background: #fff;
 	border: 1px solid var(--calcforge-admin-slate-200);
 	border-radius: var(--calcforge-admin-radius);
 	box-shadow: var(--calcforge-admin-shadow-sm);
@@ -64,7 +64,7 @@
 	width: 46px;
 	height: 46px;
 	background: linear-gradient(135deg, var(--calcforge-admin-primary) 0%, var(--calcforge-admin-accent) 100%);
-	color: #ffffff;
+	color: #fff;
 	border-radius: 10px;
 	box-shadow: 0 4px 10px rgba(26, 111, 75, 0.25);
 	flex-shrink: 0;
@@ -184,7 +184,7 @@
 .calcforge-settings__tabs {
 	display: flex;
 	align-items: stretch;
-	background: #ffffff;
+	background: var(--calcforge-admin-slate-100);
 	border: 1px solid var(--calcforge-admin-slate-200);
 	border-radius: var(--calcforge-admin-radius) var(--calcforge-admin-radius) 0 0;
 	border-bottom: none;
@@ -211,14 +211,14 @@
 
 .calcforge-settings__tab-btn:hover {
 	color: var(--calcforge-admin-slate-800);
-	background: var(--calcforge-admin-slate-50);
+	background: #fff;
 }
 
 .calcforge-settings__tab-btn[aria-selected="true"] {
 	color: var(--calcforge-admin-primary);
 	border-bottom-color: var(--calcforge-admin-primary);
 	font-weight: 600;
-	background: #ffffff;
+	background: #fff;
 }
 
 .calcforge-settings__tab-icon {
@@ -261,7 +261,7 @@
    ========================================================================== */
 
 .calcforge-settings__tab-panels {
-	background: #ffffff;
+	background: #fff;
 	border: 1px solid var(--calcforge-admin-slate-200);
 	border-top: none;
 	border-radius: 0 0 var(--calcforge-admin-radius) var(--calcforge-admin-radius);
@@ -323,7 +323,7 @@
 .calcforge-settings input[type="text"],
 .calcforge-settings input[type="number"],
 .calcforge-settings select {
-	background-color: #ffffff;
+	background-color: #fff;
 	border: 1px solid var(--calcforge-admin-slate-300);
 	border-radius: 8px;
 	padding: 7px 12px;
@@ -335,17 +335,9 @@
 	max-width: 100%;
 }
 
-.calcforge-settings input[type="text"]:focus,
-.calcforge-settings input[type="number"]:focus,
-.calcforge-settings select:focus {
-	border-color: var(--calcforge-admin-primary);
-	outline: none;
-	box-shadow: 0 0 0 3px rgba(26, 111, 75, 0.15);
-}
-
 .calcforge-settings select {
 	appearance: none;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+	background-image: url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20fill=%27none%27%20viewBox=%270%200%2020%2020%27%3E%3Cpath%20stroke=%27%2364748b%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%20stroke-width=%271.5%27%20d=%27M6%208l4%204%204-4%27/%3E%3C/svg%3E);
 	background-position: right 10px center;
 	background-repeat: no-repeat;
 	background-size: 16px 16px;
@@ -364,6 +356,14 @@
 	line-height: 20px;
 	padding-top: 8px;
 	padding-bottom: 8px;
+}
+
+.calcforge-settings input[type="text"]:focus,
+.calcforge-settings input[type="number"]:focus,
+.calcforge-settings select:focus {
+	border-color: var(--calcforge-admin-primary);
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(26, 111, 75, 0.15);
 }
 
 .calcforge-settings .regular-text {
@@ -440,7 +440,7 @@
 	left: 2px;
 	width: 20px;
 	height: 20px;
-	background-color: #ffffff;
+	background-color: #fff;
 	border-radius: 50%;
 	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
 	transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -456,12 +456,6 @@
 
 .calcforge-switch input:focus-visible + .calcforge-switch__slider {
 	box-shadow: 0 0 0 3px rgba(26, 111, 75, 0.25);
-}
-
-.calcforge-switch__label {
-	font-size: 13.5px;
-	font-weight: 500;
-	color: var(--calcforge-admin-slate-800);
 }
 
 /* ==========================================================================
@@ -490,7 +484,7 @@
 .calcforge-settings__save-bar .button-primary {
 	background: var(--calcforge-admin-primary) !important;
 	border-color: var(--calcforge-admin-primary) !important;
-	color: #ffffff !important;
+	color: #fff !important;
 	padding: 8px 22px !important;
 	height: auto !important;
 	font-size: 13.5px !important;
@@ -523,7 +517,7 @@
    ========================================================================== */
 
 .calcforge-settings__card {
-	background: #ffffff;
+	background: #fff;
 	border: 1px solid var(--calcforge-admin-slate-200);
 	border-radius: var(--calcforge-admin-radius);
 	box-shadow: var(--calcforge-admin-shadow-sm);
@@ -816,6 +810,7 @@
    ========================================================================== */
 
 @media screen and (max-width: 1080px) {
+
 	.calcforge-settings__layout {
 		grid-template-columns: minmax(0, 1fr);
 	}
@@ -826,6 +821,7 @@
 }
 
 @media screen and (max-width: 760px) {
+
 	.calcforge-settings__tabs {
 		flex-wrap: wrap;
 	}
@@ -839,6 +835,7 @@
 }
 
 @media screen and (max-width: 680px) {
+
 	.wrap.calcforge-settings {
 		margin-right: 12px;
 	}

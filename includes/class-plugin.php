@@ -62,6 +62,13 @@ final class CalcForge_Plugin {
 			$component->register_hooks();
 		}
 
+		/*
+		 * The widget is registered unconditionally, including on the widgets
+		 * admin screen and in the customizer, which are both admin requests but
+		 * still need the widget to exist.
+		 */
+		add_action( 'widgets_init', array( 'CalcForge_Widget', 'register' ) );
+
 		// The settings screen is admin-only, so it never loads on the front end.
 		if ( is_admin() ) {
 			$settings = new CalcForge_Settings();

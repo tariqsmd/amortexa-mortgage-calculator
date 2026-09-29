@@ -3,28 +3,48 @@
  *
  * Handles tab switching and clipboard copy interactivity.
  */
+
+/* global navigator, sessionStorage */
+
 ( function () {
 	'use strict';
 
 	document.addEventListener( 'DOMContentLoaded', function () {
-
 		// ---------------------------------------------------------------
 		// Tab switching
 		// ---------------------------------------------------------------
-		const tabBtns = document.querySelectorAll( '.calcforge-settings__tab-btn' );
-		const tabPanels = document.querySelectorAll( '.calcforge-settings__tab-panel' );
-		const saveBar = document.querySelector( '.calcforge-settings__save-bar' );
+		const tabBtns = document.querySelectorAll(
+			'.calcforge-settings__tab-btn'
+		);
+		const tabPanels = document.querySelectorAll(
+			'.calcforge-settings__tab-panel'
+		);
+		const saveBar = document.querySelector(
+			'.calcforge-settings__save-bar'
+		);
 		const STORAGE_KEY = 'calcforge_active_tab';
 
+		/*
+		 * A tablist is a single widget, so only the active tab stays in the
+		 * tab order; the rest are reached with the arrow keys. This keeps
+		 * keyboard users from tabbing through every dead-end tab.
+		 */
 		function activateTab( targetId ) {
 			tabBtns.forEach( function ( btn ) {
 				const isActive = btn.getAttribute( 'data-tab' ) === targetId;
-				btn.setAttribute( 'aria-selected', isActive ? 'true' : 'false' );
+				btn.setAttribute(
+					'aria-selected',
+					isActive ? 'true' : 'false'
+				);
+				btn.setAttribute( 'tabindex', isActive ? '0' : '-1' );
 			} );
 
 			tabPanels.forEach( function ( panel ) {
 				const isActive = panel.getAttribute( 'id' ) === targetId;
-				panel.setAttribute( 'aria-hidden', isActive ? 'false' : 'true' );
+				panel.setAttribute(
+					'aria-hidden',
+					isActive ? 'false' : 'true'
+				);
 			} );
 
 			/*
@@ -34,7 +54,8 @@
 			 */
 			if ( saveBar ) {
 				const activePanel = document.getElementById( targetId );
-				const isFormTab = !! activePanel && !! activePanel.closest( 'form' );
+				const isFormTab =
+					!! activePanel && !! activePanel.closest( 'form' );
 				saveBar.hidden = ! isFormTab;
 			}
 
@@ -49,6 +70,43 @@
 			btn.addEventListener( 'click', function () {
 				activateTab( btn.getAttribute( 'data-tab' ) );
 			} );
+
+			/*
+			 * Arrow keys move between tabs, Home/End jump to the ends, and the
+			 * tab is activated as focus arrives. Requiring Enter to activate
+			 * would break the "automatic activation" behaviour screen readers
+			 * announce for a tablist.
+			 */
+			btn.addEventListener( 'keydown', function ( event ) {
+				const tabs = Array.prototype.slice.call( tabBtns );
+				const current = tabs.indexOf( btn );
+				let next = null;
+
+				switch ( event.key ) {
+					case 'ArrowRight':
+					case 'ArrowDown':
+						next = ( current + 1 ) % tabs.length;
+						break;
+					case 'ArrowLeft':
+					case 'ArrowUp':
+						next = ( current - 1 + tabs.length ) % tabs.length;
+						break;
+					case 'Home':
+						next = 0;
+						break;
+					case 'End':
+						next = tabs.length - 1;
+						break;
+					default:
+						return;
+				}
+
+				event.preventDefault();
+
+				const target = tabs[ next ];
+				activateTab( target.getAttribute( 'data-tab' ) );
+				target.focus();
+			} );
 		} );
 
 		// Restore last active tab, default to first.
@@ -61,7 +119,8 @@
 			}
 
 			const firstId = tabBtns[ 0 ].getAttribute( 'data-tab' );
-			const validId = stored && document.getElementById( stored ) ? stored : firstId;
+			const validId =
+				stored && document.getElementById( stored ) ? stored : firstId;
 			activateTab( validId );
 		}
 
@@ -78,7 +137,9 @@
 					return;
 				}
 
-				const label = button.querySelector( '.calcforge-copy-btn__text' );
+				const label = button.querySelector(
+					'.calcforge-copy-btn__text'
+				);
 				const originalText = label ? label.textContent : '';
 
 				const setCopied = function () {
@@ -96,9 +157,12 @@
 				};
 
 				if ( navigator.clipboard && navigator.clipboard.writeText ) {
-					navigator.clipboard.writeText( text ).then( setCopied ).catch( function () {
-						fallbackCopy( text, setCopied );
-					} );
+					navigator.clipboard
+						.writeText( text )
+						.then( setCopied )
+						.catch( function () {
+							fallbackCopy( text, setCopied );
+						} );
 				} else {
 					fallbackCopy( text, setCopied );
 				}
@@ -131,8 +195,12 @@
 		if ( apiRoot ) {
 			const endpoint = apiRoot.getAttribute( 'data-endpoint' );
 			const output = apiRoot.querySelector( '[data-api-request]' );
-			const copyButton = apiRoot.querySelector( '.calcforge-settings__code-box .calcforge-copy-btn' );
-			const warning = apiRoot.querySelector( '.calcforge-settings__api-warning' );
+			const copyButton = apiRoot.querySelector(
+				'.calcforge-settings__code-box .calcforge-copy-btn'
+			);
+			const warning = apiRoot.querySelector(
+				'.calcforge-settings__api-warning'
+			);
 			const inputs = apiRoot.querySelectorAll( '[data-api-param]' );
 
 			/*
@@ -161,12 +229,18 @@
 						return;
 					}
 
-					body[ name ] = 'true' === input.getAttribute( 'data-api-integer' ) ? Math.round( value ) : value;
+					body[ name ] =
+						'true' === input.getAttribute( 'data-api-integer' )
+							? Math.round( value )
+							: value;
 				} );
 
 				// amount is the only required parameter, so refuse to emit a
 				// command that the endpoint would reject.
-				const valid = Object.prototype.hasOwnProperty.call( body, 'amount' );
+				const valid = Object.prototype.hasOwnProperty.call(
+					body,
+					'amount'
+				);
 
 				if ( ! valid ) {
 					if ( output ) {
@@ -196,9 +270,13 @@
 				 * as literal characters, which the endpoint rejects.
 				 */
 				const json = JSON.stringify( body ).replace( /"/g, '\\"' );
-				const command = 'curl -X POST ' + endpoint
-					+ ' -H "Content-Type: application/json"'
-					+ ' -d "' + json + '"';
+				const command =
+					'curl -X POST ' +
+					endpoint +
+					' -H "Content-Type: application/json"' +
+					' -d "' +
+					json +
+					'"';
 
 				if ( output ) {
 					output.textContent = command;
@@ -216,12 +294,31 @@
 		// ---------------------------------------------------------------
 		// Shortcode builder
 		// ---------------------------------------------------------------
-		const shortcodeRoot = document.querySelector( '[data-calcforge-shortcode]' );
+		const shortcodeRoot = document.querySelector(
+			'[data-calcforge-shortcode]'
+		);
 
 		if ( shortcodeRoot ) {
-			const output = shortcodeRoot.querySelector( '[data-shortcode-request]' );
-			const copyButton = shortcodeRoot.querySelector( '.calcforge-settings__code-box .calcforge-copy-btn' );
-			const controls = shortcodeRoot.querySelectorAll( '[data-shortcode-param]' );
+			const output = shortcodeRoot.querySelector(
+				'[data-shortcode-request]'
+			);
+			/*
+			 * This panel shows two snippets: the plain [calcforge] example and the
+			 * generated sample further down. The copy button has to be the one
+			 * sitting next to the sample, otherwise the plain example's button
+			 * would be rewritten with the sample and the sample's own button
+			 * would stay empty. Resolving it from the output element scopes it
+			 * to that code box.
+			 */
+			const sampleBox = output
+				? output.closest( '.calcforge-settings__code-box' )
+				: null;
+			const copyButton = sampleBox
+				? sampleBox.querySelector( '.calcforge-copy-btn' )
+				: null;
+			const controls = shortcodeRoot.querySelectorAll(
+				'[data-shortcode-param]'
+			);
 
 			/*
 			 * Builds the shortcode in the order the reference lists the
@@ -233,7 +330,6 @@
 				const attrs = [];
 
 				controls.forEach( function ( control ) {
-					const name = control.getAttribute( 'data-shortcode-param' );
 					let value;
 
 					// Number fields type as you go, so a half-typed value must
@@ -245,9 +341,11 @@
 							return;
 						}
 
-						value = 'true' === control.getAttribute( 'data-shortcode-integer' )
-							? String( Math.round( numeric ) )
-							: String( numeric );
+						value =
+							'true' ===
+							control.getAttribute( 'data-shortcode-integer' )
+								? String( Math.round( numeric ) )
+								: String( numeric );
 					} else {
 						value = control.value.trim();
 					}
@@ -256,15 +354,22 @@
 						return;
 					}
 
+					const name = control.getAttribute( 'data-shortcode-param' );
+
 					/*
 					 * A literal double quote would break shortcode_parse_atts(),
 					 * so swap it for a single quote rather than emit a snippet
 					 * that cannot be inserted.
 					 */
-					attrs.push( name + '="' + value.replace( /"/g, "'" ) + '"' );
+					attrs.push(
+						name + '="' + value.replace( /"/g, "'" ) + '"'
+					);
 				} );
 
-				const shortcode = '[calcforge' + ( attrs.length ? ' ' + attrs.join( ' ' ) : '' ) + ']';
+				const shortcode =
+					'[calcforge' +
+					( attrs.length ? ' ' + attrs.join( ' ' ) : '' ) +
+					']';
 
 				if ( output ) {
 					output.textContent = shortcode;

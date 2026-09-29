@@ -36,6 +36,7 @@
 		"@babel/traverse": "^7.29.8",
 		"@wordpress/scripts": "^28.5.0",
 		"adm-zip": "^0.6.1",
+		"jsdom": "^20.0.3",
 		"typescript": "~5.5.4",
 		"wp-pot": "^2.0.0"
 	},
@@ -43,16 +44,17 @@
 		"build": "wp-scripts build && node tools/strip-bom.cjs",
 		"start": "wp-scripts start",
 		"dev": "wp-scripts start",
-		"lint:js": "wp-scripts lint-js src webpack.config.js",
-		"lint:css": "wp-scripts lint-style \"src/**/*.scss\" \"src/**/*.css\"",
+		"lint:js": "wp-scripts lint-js src assets webpack.config.js",
+		"lint:css": "wp-scripts lint-style \"src/**/*.scss\" \"src/**/*.css\" \"assets/**/*.css\"",
 		"lint:pkg-json": "wp-scripts lint-pkg-json .",
 		"lint:md": "wp-scripts lint-md-docs README.md",
 		"packages-update": "wp-scripts packages-update",
 		"make-pot": "node tools/make-pot.cjs",
 		"render-assets": "node tools/render-assets.cjs",
-		"test": "php tests/parity.php",
+		"test": "php tests/parity.php && node tests/js/admin.mjs",
 		"dist": "node tools/build-dist.cjs",
-		"release": "npm run build && npm run make-pot && npm run render-assets && npm run dist"
+		"release": "npm run build && npm run make-pot && npm run render-assets && npm run dist",
+		"test:admin": "node tests/js/admin.mjs"
 	},
 	"browserslist": [
 		"extends @wordpress/browserslist-config"

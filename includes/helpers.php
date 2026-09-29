@@ -299,6 +299,45 @@ function calcforge_get_settings() {
 }
 
 /**
+ * Normalizes a loosely typed boolean into a real boolean.
+ *
+ * Settings arrive from $_POST and block attributes arrive straight from post
+ * meta, so a checkbox can show up as "1", "on", "true", "0", "false", or - if a
+ * request is crafted - as an array. A bare ! empty() cannot be trusted here: a
+ * non-empty array is truthy and the string "false" is a non-empty string, so
+ * both would resolve to true and flip a switch an administrator turned off.
+ *
+ * @param mixed $value   Raw value.
+ * @param bool  $fallback Value to use when $value carries no boolean meaning.
+ * @return bool Normalized boolean.
+ */
+function calcforge_sanitize_bool( $value, $fallback = false ) {
+	if ( is_bool( $value ) ) {
+		return $value;
+	}
+
+	/*
+	 * Nothing legitimately posts an array for a boolean - the settings form pairs
+	 * its checkbox with a hidden scalar - and reading the first entry out of one
+	 * would be guesswork. The caller's fallback wins instead, which matches the
+	 * "only scalars are cast" contract the settings sanitizer documents for every
+	 * other option.
+	 */
+	if ( is_array( $value ) || is_object( $value ) ) {
+		return (bool) $fallback;
+	}
+
+	if ( null === $value || '' === $value ) {
+		return (bool) $fallback;
+	}
+
+	$filtered = filter_var( $value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
+
+	// An unrecognized string is not a boolean, so the caller's fallback wins.
+	return null === $filtered ? (bool) $fallback : $filtered;
+}
+
+/**
  * Sanitizes a settings array against the known whitelist.
  *
  * Used both by the Settings API sanitize callback and defensively in
@@ -334,38 +373,50 @@ function calcforge_sanitize_settings( $settings ) {
 			: 'prefix';
 	}
 
-	$rate = isset( $raw['default_interest_rate'] ) ? (float) $raw['default_interest_rate'] : $defaults['default_interest_rate'];
+	$rate = isset( $raw['default_interest_rate'] ) && is_scalar( $raw['default_interest_rate'] )
+		? (float) $raw['default_interest_rate']
+		: (float) $defaults['default_interest_rate'];
 	$rate = calcforge_clamp_float( $rate, 0, 100 );
 
-	$precision = isset( $raw['decimal_precision'] ) ? absint( $raw['decimal_precision'] ) : $defaults['decimal_precision'];
+	$precision = isset( $raw['decimal_precision'] ) && is_scalar( $raw['decimal_precision'] )
+		? absint( $raw['decimal_precision'] )
+		: (int) $defaults['decimal_precision'];
 	$precision = min( max( $precision, 0 ), 4 );
 
-	$loan_amount = isset( $raw['default_loan_amount'] )
+	$loan_amount = isset( $raw['default_loan_amount'] ) && is_scalar( $raw['default_loan_amount'] )
 		? calcforge_clamp_float( $raw['default_loan_amount'], 0, 999999999999 )
 		: (float) $defaults['default_loan_amount'];
 
-	$down_payment = isset( $raw['default_down_payment'] )
+	$down_payment = isset( $raw['default_down_payment'] ) && is_scalar( $raw['default_down_payment'] )
 		? calcforge_clamp_float( $raw['default_down_payment'], 0, 999999999999 )
 		: (float) $defaults['default_down_payment'];
 
-	$loan_term = isset( $raw['default_loan_term'] ) ? absint( $raw['default_loan_term'] ) : (int) $defaults['default_loan_term'];
+	$loan_term = isset( $raw['default_loan_term'] ) && is_scalar( $raw['default_loan_term'] )
+		? absint( $raw['default_loan_term'] )
+		: (int) $defaults['default_loan_term'];
 	$loan_term = min( max( $loan_term, 1 ), 60 );
 
-	$theme = isset( $raw['default_theme'] ) ? (string) $raw['default_theme'] : (string) $defaults['default_theme'];
+	$theme = isset( $raw['default_theme'] ) && is_scalar( $raw['default_theme'] )
+		? (string) $raw['default_theme']
+		: (string) $defaults['default_theme'];
 	if ( ! array_key_exists( $theme, calcforge_get_skins() ) ) {
 		$theme = array_key_exists( (string) $defaults['default_theme'], calcforge_get_skins() )
 			? (string) $defaults['default_theme']
 			: 'light';
 	}
 
-	$chart_type = isset( $raw['default_chart_type'] ) ? (string) $raw['default_chart_type'] : (string) $defaults['default_chart_type'];
+	$chart_type = isset( $raw['default_chart_type'] ) && is_scalar( $raw['default_chart_type'] )
+		? (string) $raw['default_chart_type']
+		: (string) $defaults['default_chart_type'];
 	if ( ! array_key_exists( $chart_type, calcforge_get_chart_types() ) ) {
 		$chart_type = array_key_exists( (string) $defaults['default_chart_type'], calcforge_get_chart_types() )
 			? (string) $defaults['default_chart_type']
 			: 'both';
 	}
 
-	$layout = isset( $raw['default_layout'] ) ? (string) $raw['default_layout'] : (string) $defaults['default_layout'];
+	$layout = isset( $raw['default_layout'] ) && is_scalar( $raw['default_layout'] )
+		? (string) $raw['default_layout']
+		: (string) $defaults['default_layout'];
 	if ( ! array_key_exists( $layout, calcforge_get_layouts() ) ) {
 		$layout = array_key_exists( (string) $defaults['default_layout'], calcforge_get_layouts() )
 			? (string) $defaults['default_layout']
@@ -377,7 +428,9 @@ function calcforge_sanitize_settings( $settings ) {
 		'currency_position'     => $position,
 		'default_interest_rate' => $rate,
 		'decimal_precision'     => $precision,
-		'enable_amortization'   => ! empty( $raw['enable_amortization'] ),
+		'enable_amortization'   => calcforge_sanitize_bool(
+			isset( $raw['enable_amortization'] ) ? $raw['enable_amortization'] : $defaults['enable_amortization']
+		),
 		'default_loan_amount'   => $loan_amount,
 		'default_down_payment'  => $down_payment,
 		'default_loan_term'     => $loan_term,
@@ -569,19 +622,27 @@ function calcforge_sanitize_attributes( $attributes ) {
 	$down_payment = isset( $raw['downPayment'] ) ? calcforge_clamp_float( $raw['downPayment'], 0, 999999999999 ) : (float) $defaults['downPayment'];
 	$down_payment = min( $down_payment, $loan_amount );
 
-	$currency_symbol = isset( $raw['currencySymbol'] ) ? sanitize_text_field( (string) $raw['currencySymbol'] ) : '';
+	$currency_symbol = isset( $raw['currencySymbol'] ) && is_scalar( $raw['currencySymbol'] )
+		? sanitize_text_field( (string) $raw['currencySymbol'] )
+		: '';
 	if ( '' === $currency_symbol ) {
 		$currency_symbol = (string) $defaults['currencySymbol'];
 	}
 	$currency_symbol = wp_html_excerpt( $currency_symbol, 8, '' );
 
 	$skins = calcforge_get_skin_slugs();
-	$theme = 'light';
 
-	if ( isset( $raw['theme'] ) && in_array( $raw['theme'], $skins, true ) ) {
-		$theme = (string) $raw['theme'];
-	} elseif ( ! isset( $raw['theme'] ) && in_array( $defaults['theme'], $skins, true ) ) {
-		$theme = (string) $defaults['theme'];
+	/*
+	 * A skin that is present but unknown - a slug retired in a later version, or
+	 * a typo - falls back to the configured default like every other enum below,
+	 * rather than to a hardcoded skin that would ignore the site's own choice.
+	 */
+	$theme = isset( $raw['theme'] ) && is_scalar( $raw['theme'] ) && in_array( (string) $raw['theme'], $skins, true )
+		? (string) $raw['theme']
+		: (string) $defaults['theme'];
+
+	if ( ! in_array( $theme, $skins, true ) ) {
+		$theme = 'light';
 	}
 
 	$chart_types = array_keys( calcforge_get_chart_types() );
@@ -631,7 +692,9 @@ function calcforge_sanitize_attributes( $attributes ) {
 		? calcforge_clamp_float( $raw['paymentFontSize'], 0, 120 )
 		: (float) $defaults['paymentFontSize'];
 
-	$requested_weight  = isset( $raw['paymentFontWeight'] ) ? (string) $raw['paymentFontWeight'] : (string) $defaults['paymentFontWeight'];
+	$requested_weight  = isset( $raw['paymentFontWeight'] ) && is_scalar( $raw['paymentFontWeight'] )
+		? (string) $raw['paymentFontWeight']
+		: (string) $defaults['paymentFontWeight'];
 	$payment_font_weight = array_key_exists( $requested_weight, calcforge_get_font_weights() ) && '' !== $requested_weight
 		? $requested_weight
 		: '';
@@ -654,12 +717,21 @@ function calcforge_sanitize_attributes( $attributes ) {
 	$colors = array();
 
 	foreach ( calcforge_get_color_attributes() as $control ) {
-		$value              = isset( $raw[ $control['key'] ] ) ? sanitize_hex_color( (string) $raw[ $control['key'] ] ) : null;
-		$colors[ $control['key'] ] = $value ? $value : '';
+		$key = $control['key'];
+
+		if ( ! isset( $raw[ $key ] ) || ! is_scalar( $raw[ $key ] ) ) {
+			$colors[ $key ] = '';
+			continue;
+		}
+
+		$color          = sanitize_hex_color( (string) $raw[ $key ] );
+		$colors[ $key ] = $color ? $color : '';
 	}
 
 	$font_families = array_keys( calcforge_get_font_families() );
-	$requested_font = isset( $raw['fontFamily'] ) ? (string) $raw['fontFamily'] : (string) $defaults['fontFamily'];
+	$requested_font = isset( $raw['fontFamily'] ) && is_scalar( $raw['fontFamily'] )
+		? (string) $raw['fontFamily']
+		: (string) $defaults['fontFamily'];
 	$font_family    = in_array( $requested_font, $font_families, true ) ? $requested_font : 'inherit';
 
 	$sanitized = array(
@@ -669,12 +741,12 @@ function calcforge_sanitize_attributes( $attributes ) {
 		'downPayment'      => $down_payment,
 		'currencySymbol'   => $currency_symbol,
 		'currencyPosition' => $currency_position,
-		'showAmortization' => array_key_exists( 'showAmortization', $raw )
-			? (bool) $raw['showAmortization']
-			: (bool) $defaults['showAmortization'],
-		'showCharts'       => array_key_exists( 'showCharts', $raw )
-			? (bool) $raw['showCharts']
-			: (bool) $defaults['showCharts'],
+		'showAmortization' => calcforge_sanitize_bool(
+			isset( $raw['showAmortization'] ) ? $raw['showAmortization'] : $defaults['showAmortization']
+		),
+		'showCharts'       => calcforge_sanitize_bool(
+			isset( $raw['showCharts'] ) ? $raw['showCharts'] : $defaults['showCharts']
+		),
 		'chartType'        => $chart_type,
 		'layout'           => $layout,
 		'formColumns'      => $form_columns_key,
@@ -682,12 +754,12 @@ function calcforge_sanitize_attributes( $attributes ) {
 		'paymentFontSize'  => $payment_font_size,
 		'paymentFontWeight' => $payment_font_weight,
 		'theme'            => $theme,
-		'showSliders'      => array_key_exists( 'showSliders', $raw )
-			? (bool) $raw['showSliders']
-			: (bool) $defaults['showSliders'],
-		'showResults'      => array_key_exists( 'showResults', $raw )
-			? (bool) $raw['showResults']
-			: (bool) $defaults['showResults'],
+		'showSliders'      => calcforge_sanitize_bool(
+			isset( $raw['showSliders'] ) ? $raw['showSliders'] : $defaults['showSliders']
+		),
+		'showResults'      => calcforge_sanitize_bool(
+			isset( $raw['showResults'] ) ? $raw['showResults'] : $defaults['showResults']
+		),
 		'fontFamily'       => $font_family,
 	);
 

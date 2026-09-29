@@ -42,6 +42,11 @@ class CalcForge_Settings {
 	const CAPABILITY = 'manage_options';
 
 	/**
+	 * DOM id prefix for a tab button, so each tabpanel can name itself.
+	 */
+	const TAB_ID_PREFIX = 'calcforge-tab-';
+
+	/**
 	 * Registers the hooks this component responds to.
 	 */
 	public function register_hooks() {
@@ -329,16 +334,26 @@ class CalcForge_Settings {
 
 		switch ( $field['type'] ) {
 			case 'checkbox':
+				/*
+				 * A companion hidden field guarantees the key is always posted, so
+				 * an unchecked box submits an explicit 0 instead of vanishing and
+				 * becoming indistinguishable from a partial payload. PHP keeps the
+				 * last value for a repeated name, so checking the box still wins.
+				 *
+				 * do_settings_fields() already labels this control in the row
+				 * header, so the switch carries no text of its own and only exists
+				 * to give the slider a click target. A second copy of the label
+				 * would compete with the header's for the same control.
+				 */
 				printf(
-					'<label class="calcforge-switch" for="%1$s">
-						<input type="checkbox" id="%1$s" name="%2$s" value="1" %3$s />
+					'<input type="hidden" name="%1$s" value="0" />
+					<label class="calcforge-switch">
+						<input type="checkbox" id="%2$s" name="%1$s" value="1" %3$s />
 						<span class="calcforge-switch__slider" aria-hidden="true"></span>
-						<span class="calcforge-switch__label">%4$s</span>
 					</label>',
-					esc_attr( $id ),
 					esc_attr( $name ),
-					checked( ! empty( $value ), true, false ),
-					esc_html( $field['label'] )
+					esc_attr( $id ),
+					checked( ! empty( $value ), true, false )
 				);
 				break;
 
@@ -553,21 +568,35 @@ class CalcForge_Settings {
 
 					<!-- Tab navigation -->
 					<div class="calcforge-settings__tabs" role="tablist">
-						<?php foreach ( $tabs as $tab_id => $tab ) : ?>
+						<?php
+						/*
+						 * The first tab and its panel are marked active here rather
+						 * than in the script, so the page still shows a usable
+						 * settings form if the script fails to load. Without it every
+						 * panel would stay hidden and a Save would post nothing.
+						 */
+						$first_tab = true;
+						foreach ( $tabs as $tab_id => $tab ) :
+							?>
 							<button
 								type="button"
+								id="<?php echo esc_attr( self::TAB_ID_PREFIX . $tab_id ); ?>"
 								class="calcforge-settings__tab-btn"
 								role="tab"
 								data-tab="<?php echo esc_attr( $tab_id ); ?>"
 								aria-controls="<?php echo esc_attr( $tab_id ); ?>"
-								aria-selected="false"
+								aria-selected="<?php echo $first_tab ? 'true' : 'false'; ?>"
+								tabindex="<?php echo $first_tab ? '0' : '-1'; ?>"
 							>
 								<span class="calcforge-settings__tab-icon calcforge-settings__tab-icon--<?php echo esc_attr( $tab['icon'] ); ?>">
 									<?php $this->render_section_icon( $tab_id ); ?>
 								</span>
 								<?php echo esc_html( $tab['title'] ); ?>
 							</button>
-						<?php endforeach; ?>
+							<?php
+							$first_tab = false;
+						endforeach;
+						?>
 					</div>
 
 					<!-- Tab panels -->
@@ -575,12 +604,16 @@ class CalcForge_Settings {
 						<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
 							<?php settings_fields( self::OPTION_GROUP ); ?>
 
-							<?php foreach ( $sections as $section_id => $section ) : ?>
+							<?php
+							$first_panel = true;
+							foreach ( $sections as $section_id => $section ) :
+								?>
 								<div
 									class="calcforge-settings__tab-panel"
 									id="<?php echo esc_attr( $section_id ); ?>"
 									role="tabpanel"
-									aria-hidden="true"
+									aria-labelledby="<?php echo esc_attr( self::TAB_ID_PREFIX . $section_id ); ?>"
+									aria-hidden="<?php echo $first_panel ? 'false' : 'true'; ?>"
 								>
 									<div class="calcforge-settings__panel-header">
 										<p class="calcforge-settings__panel-description"><?php echo esc_html( $section['description'] ); ?></p>
@@ -589,9 +622,12 @@ class CalcForge_Settings {
 										<?php do_settings_fields( self::PAGE_SLUG, $section_id ); ?>
 									</table>
 								</div>
-							<?php endforeach; ?>
+								<?php
+									$first_panel = false;
+								endforeach;
+							?>
 
-							<div class="calcforge-settings__save-bar">
+								<div class="calcforge-settings__save-bar">
 								<?php submit_button( __( 'Save Changes', CALCFORGE_TEXT_DOMAIN ), 'primary', 'submit', false ); ?>
 								<span class="calcforge-settings__save-note">
 									<?php esc_html_e( 'Saved defaults immediately apply to all newly inserted calculators.', CALCFORGE_TEXT_DOMAIN ); ?>
@@ -610,6 +646,7 @@ class CalcForge_Settings {
 								class="calcforge-settings__tab-panel"
 								id="<?php echo esc_attr( $ref_id ); ?>"
 								role="tabpanel"
+								aria-labelledby="<?php echo esc_attr( self::TAB_ID_PREFIX . $ref_id ); ?>"
 								aria-hidden="true"
 							>
 								<div class="calcforge-settings__panel-header">

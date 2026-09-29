@@ -49,9 +49,21 @@ class CalcForge_Assets {
 		foreach ( (array) $block_type->editor_script_handles as $handle ) {
 			wp_set_script_translations( $handle, CALCFORGE_TEXT_DOMAIN );
 
+			/*
+			 * The payload carries filterable skin and currency labels, so it is
+			 * encoded with the hex flags rather than plain: without them a
+			 * "</script>" sequence inside a label would close the inline script
+			 * block and turn the rest of the value into markup. This mirrors how
+			 * the front end embeds the same data.
+			 */
+			$encoded = wp_json_encode(
+				calcforge_get_editor_data(),
+				JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+			);
+
 			wp_add_inline_script(
 				$handle,
-				'var ' . self::EDITOR_DATA . ' = ' . wp_json_encode( calcforge_get_editor_data() ) . ';',
+				'var ' . self::EDITOR_DATA . ' = ' . $encoded . ';',
 				'before'
 			);
 		}

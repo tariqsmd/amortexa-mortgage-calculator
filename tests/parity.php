@@ -1189,6 +1189,110 @@ function calcforge_test_settings_and_shortcode() {
 }
 
 /**
+ * Exercises the loose-typed input guards in both sanitizers.
+ *
+ * Settings arrive from $_POST and block attributes from post meta, so either can
+ * hand a sanitizer an array or a string that only looks like the expected type.
+ * The failure this covers is silent rather than loud: ! empty() reads a
+ * non-empty array and the string "false" as true, so a switch an administrator
+ * turned off could come back on, and casting an array to string renders the
+ * literal "Array" as a currency symbol.
+ *
+ * @return int Number of failures.
+ */
+function calcforge_test_input_guards() {
+	$failures = 0;
+	$report   = function ( $ok, $message ) use ( &$failures ) {
+		if ( $ok ) {
+			fwrite( STDOUT, "ok   $message\n" );
+		} else {
+			++$failures;
+			fwrite( STDOUT, "FAIL $message\n" );
+		}
+	};
+
+	// Boolean normalization.
+	$report( true === calcforge_sanitize_bool( true ), 'a real boolean true survives' );
+	$report( false === calcforge_sanitize_bool( false ), 'a real boolean false survives' );
+	$report( true === calcforge_sanitize_bool( '1' ), 'the string "1" reads as true' );
+	$report( true === calcforge_sanitize_bool( 'on' ), 'the string "on" reads as true' );
+	$report( false === calcforge_sanitize_bool( '0' ), 'the string "0" reads as false' );
+	$report( false === calcforge_sanitize_bool( 'false' ), 'the string "false" reads as false' );
+	$report( false === calcforge_sanitize_bool( 'off' ), 'the string "off" reads as false' );
+	$report( false === calcforge_sanitize_bool( array( '1' ) ), 'a non-empty array is rejected instead of reading as true' );
+	$report( true === calcforge_sanitize_bool( array( '0', '1' ), true ), 'a rejected array uses the caller default' );
+	$report( true === calcforge_sanitize_bool( null, true ), 'an absent value falls back to the default' );
+	$report( true === calcforge_sanitize_bool( 'nonsense', true ), 'an unrecognized string falls back to the default' );
+
+	// An array must never reach a string cast inside the settings sanitizer.
+	foreach ( array( 'default_interest_rate', 'decimal_precision', 'default_loan_amount', 'default_down_payment', 'default_loan_term', 'default_theme', 'default_chart_type', 'default_layout' ) as $key ) {
+		$defaults = calcforge_get_default_settings();
+		$clean    = calcforge_sanitize_settings( array( $key => array( '1' ) ) );
+
+		if ( ! array_key_exists( $key, $clean ) ) {
+			continue;
+		}
+
+		$report(
+			$clean[ $key ] === $defaults[ $key ],
+			sprintf( 'an array posted for %s falls back to the default', $key )
+		);
+	}
+
+	/*
+	 * The settings form posts the checkbox through a companion hidden field, so
+	 * the key is always present. An explicit 0 has to switch the table off
+	 * instead of being read as a truthy non-empty value.
+	 */
+	$settings = calcforge_sanitize_settings( array( 'enable_amortization' => '0' ) );
+	$report( false === $settings['enable_amortization'], 'an explicit 0 switches the amortization table off' );
+
+	$settings = calcforge_sanitize_settings( array( 'enable_amortization' => '1' ) );
+	$report( true === $settings['enable_amortization'], 'an explicit 1 switches the amortization table on' );
+
+	// An unknown skin must fall back to the site's own choice, not a hardcoded one.
+	$defaults = calcforge_get_default_attributes();
+	$skins    = calcforge_get_skin_slugs();
+	$site     = (string) $defaults['theme'];
+	$other    = in_array( 'ocean', $skins, true ) && 'ocean' !== $site ? 'ocean' : 'light';
+
+	$stale = calcforge_sanitize_attributes( array( 'theme' => 'a-skin-that-no-longer-exists' ) );
+	$report( $site === $stale['theme'], 'a retired skin slug falls back to the site default' );
+
+	$kept = calcforge_sanitize_attributes( array( 'theme' => $other ) );
+	$report( $other === $kept['theme'], 'a known skin is preserved' );
+
+	// An array must never become a visible "Array" on the front end.
+	$attrs = calcforge_sanitize_attributes( array( 'currencySymbol' => array( 'a' ) ) );
+	$report( '$' === $attrs['currencySymbol'], 'an array posted for the currency symbol falls back to the default' );
+
+	$attrs = calcforge_sanitize_attributes( array( 'fontFamily' => array( 'mono' ) ) );
+	$report( 'inherit' === $attrs['fontFamily'], 'an array posted for the font family falls back to inherit' );
+
+	$attrs = calcforge_sanitize_attributes( array( 'accentColor' => array( '#fff' ) ) );
+	$report( '' === $attrs['accentColor'], 'an array posted for a colour override falls back to the skin value' );
+
+	$attrs = calcforge_sanitize_attributes( array( 'paymentFontWeight' => array( '700' ) ) );
+	$report( '' === $attrs['paymentFontWeight'], 'an array posted for the font weight falls back to auto' );
+
+	// Block booleans stored as strings must not be read as truthy noise.
+	$attrs = calcforge_sanitize_attributes( array( 'showCharts' => 'false' ) );
+	$report( false === $attrs['showCharts'], 'a block showCharts stored as "false" renders as off' );
+
+	$attrs = calcforge_sanitize_attributes( array( 'showResults' => '0' ) );
+	$report( false === $attrs['showResults'], 'a block showResults stored as "0" renders as off' );
+
+	$attrs = calcforge_sanitize_attributes( array( 'showAmortization' => '1' ) );
+	$report( true === $attrs['showAmortization'], 'a block showAmortization stored as "1" renders as on' );
+
+	if ( 0 === $failures ) {
+		fwrite( STDOUT, "ok   sanitizers reject loosely typed settings and attributes\n" );
+	}
+
+	return $failures;
+}
+
+/**
  * Exercises the REST rate limit window.
  *
  * Covers the budget boundary, the fixed window (not sliding) behaviour, bucket
@@ -1411,7 +1515,7 @@ function calcforge_test_rate_limit() {
 	return $failures;
 }
 
-$exit = calcforge_test_parity() + calcforge_test_design_schema() + calcforge_test_settings_and_shortcode() + calcforge_test_rate_limit();
+$exit = calcforge_test_parity() + calcforge_test_design_schema() + calcforge_test_settings_and_shortcode() + calcforge_test_input_guards() + calcforge_test_rate_limit();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

@@ -25,6 +25,7 @@ A native WordPress block that adds an interactive mortgage calculator to any pos
 | No-JS support | The block is fully server-rendered; JavaScript is progressive enhancement only. |
 | Settings page | Site-wide defaults for currency symbol, interest rate, decimal precision, amortization visibility, and starting values (Settings → CalcForge). |
 | Shortcode | `[calcforge]` accepts every block attribute. Settings → Shortcode has an input per attribute and a live sample shortcode that rebuilds and copies as you change them. |
+| Widget | Appearance → Widgets has a Mortgage Calculator widget for any sidebar or footer, wrapping the same shortcode. Blank fields follow the site defaults. |
 | REST endpoint | `POST /wp-json/calcforge/v1/calculate` for headless/third-party use. Open by design, rate limited per client. |
 | Extensible | Actions and filters around rendering, defaults, results, currency, and assets. |
 | Standards | WPCS-clean (`phpcs.xml.dist`), fully translatable, escaped output, sanitized input, multisite-aware uninstall. |
@@ -48,7 +49,8 @@ npm run lint:js         # ESLint (WordPress config)
 npm run lint:css        # Stylelint (WordPress config)
 npm run lint:pkg-json   # package.json lint
 npm run lint:md         # Markdown lint
-npm test                # cross-language PHP/JS math parity test
+npm test                # parity test + jsdom checks for the settings UI
+npm run test:admin      # jsdom checks for the settings tabs and shortcode builder
 npm run make-pot        # regenerate languages/calcforge.pot
 npm run render-assets   # rasterise .wordpress-org/assets into wp.org PNGs
 npm run dist            # build dist/trunk, dist/tags/<version> and the release zip
@@ -78,9 +80,11 @@ src/utils/calculator.js         JS mirror of the PHP math (source of truth: PHP)
 src/utils/charts.js             SVG chart builders
 src/editor.scss, src/style.scss Block editor and front-end styles
 
-includes/helpers.php            Development copy of the math, used by tests/parity.php
+includes/class-widget.php        Classic widget wrapping the shortcode
+includes/helpers.php             Development copy of the math, used by tests/parity.php
 tests/parity.php                Asserts the PHP and JS implementations agree
 tests/js/calc.mjs               JavaScript side of the parity test
+tests/js/admin.mjs              jsdom checks for the settings tabs and shortcode builder
 tools/make-pot.cjs              POT generator (PHP + JS + block.json)
 tools/render-assets.cjs         SVG to PNG rasteriser for the directory listing
 tools/build-dist.cjs            Release packaging (trunk / tags / zip)
@@ -100,6 +104,11 @@ tools/build-dist.cjs            Release packaging (trunk / tags / zip)
 | `calcforge_currency_symbol` | Replace the currency symbol per render. |
 | `calcforge_enqueue_assets` | Return `false` to disable plugin CSS/JS and bundle your own. |
 | `calcforge_default_settings` | Override admin setting defaults. |
+| `calcforge_rest_calculate_allowed` | Return `false` to require authentication for the REST endpoint. |
+| `calcforge_rest_calculate_rate_limit` | Change the per-client request budget. Return `0` to disable. |
+| `calcforge_rest_calculate_rate_window` | Change the rate limit window in seconds. |
+| `calcforge_rate_limit_client_key` | Change the identifier used to bucket rate limited requests. |
+| `calcforge_widget_fields` | Add or remove fields on the calculator widget. |
 
 #### Actions
 

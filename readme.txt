@@ -74,6 +74,10 @@ The `[calcforge]` shortcode is supported alongside the block and accepts every b
 
 Attributes are lowercase and values are wrapped in double quotes. Clearing a field leaves that attribute out, so the other Settings tabs control it instead. Add the finished shortcode to any post, page, or widget area.
 
+= Can I add the calculator to a sidebar or widget area? =
+
+Yes. Under **Appearance → Widgets** you will find a **Mortgage Calculator** widget. Drag it into a sidebar, footer, or any other widget area and set a title. It is a small wrapper around the `[calcforge]` shortcode, so it renders the same calculator as the block and inherits your site-wide defaults. Only the loan amount, interest rate, loan term, layout, and skin can be overridden per widget, and any field left blank keeps the site default. The widget also appears in the block based widget editor, where you add it with the **Legacy Widget** block.
+
 = Which actions and filters are available? =
 
 **Filters**
@@ -87,6 +91,7 @@ Attributes are lowercase and values are wrapped in double quotes. Clearing a fie
 * `calcforge_rest_calculate_rate_limit` — change how many calculation requests a client may make per window. Return `0` to disable rate limiting.
 * `calcforge_rest_calculate_rate_window` — change the rate limit window length in seconds.
 * `calcforge_rate_limit_client_key` — change the identifier used to bucket rate limited requests, for example to a CDN supplied client address.
+* `calcforge_widget_fields` — add or remove fields on the calculator widget.
 
 **Actions**
 
@@ -112,6 +117,7 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 == Changelog ==
 
 = 1.0.0 =
+* New: a Mortgage Calculator widget for sidebars and any other widget area, with optional overrides for amount, rate, term, layout, and skin.
 * New: a shortcode builder on the Settings -> Shortcode screen. Every attribute gets an input and the sample shortcode rebuilds and copies as you change them.
 * New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type under Settings → CalcForge.
 * New: per-block toggles to show/hide the results summary and the range sliders.
@@ -125,6 +131,9 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 * New: the front-end bundle is now also enqueued from the render callback, so assets load correctly in templates and block widgets where `has_block()` cannot detect the block.
 * Improved: layout adapts to the block's container width — columns stack, sliders wrap, charts reflow, and the amortization table scrolls inside narrow columns with a sticky first column.
 * Improved: the shortcode reference moved to its own tab on the settings screen, and the monthly payment announces changes to screen readers.
+* Improved: the settings tabs follow the ARIA tabs pattern, so they can be reached with the arrow keys, Home, and End, and only the active tab is a tab stop.
+* Improved: settings fields are now labelled once instead of twice, and the first tab is still shown and submittable if the admin script fails to load.
+* Fixed: the generated sample shortcode's copy button now copies the sample instead of the plain example above it.
 * Fixed: the amortization schedule toggle no longer hides its own button, so the table can be collapsed and expanded again.
 * Fixed: the schedule toggle is revealed once the collapse behavior is active, instead of staying permanently hidden.
 * Fixed: the down payment can no longer exceed the loan amount, whether the amount is typed or dragged.
