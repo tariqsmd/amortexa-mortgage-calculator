@@ -291,19 +291,22 @@ check( scOutput.textContent === '[calcforge loanterm="30"]', 'clearing every fie
  * page - but other admin tooling on this site relocates it into the header,
  * between the title and the version badge. The header is a flex row, so the
  * notice gets squeezed into the gap instead of reading as a confirmation.
- * The admin script moves any such notice back to the top of the page, both for
- * a notice already present at load and one injected afterwards.
+ * The admin script moves any such notice back above the frame that holds the
+ * header and the layout, both for a notice already present at load and one
+ * injected afterwards.
  */
 function noticeMarkup( notice ) {
 	return `<!DOCTYPE html><html><body>
 		<div class="wrap calcforge-settings">
-			<div class="calcforge-settings__header">
-				<div class="calcforge-settings__header-brand">
-					<div>
-						<div class="calcforge-settings__title-row">
-							<h1 class="calcforge-settings__title">CalcForge</h1>
-							${ notice }
-							<span class="calcforge-settings__version-badge">v1.0.0</span>
+			<div class="calcforge-settings__frame">
+				<div class="calcforge-settings__header">
+					<div class="calcforge-settings__header-brand">
+						<div>
+							<div class="calcforge-settings__title-row">
+								<h1 class="calcforge-settings__title">CalcForge</h1>
+								${ notice }
+								<span class="calcforge-settings__version-badge">v1.0.0</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -333,9 +336,18 @@ check(
 	! presentDoc.querySelector( '.calcforge-settings__header .notice' ),
 	'a notice sitting in the header is moved out of it'
 );
+const presentPage = presentDoc.querySelector( '.wrap.calcforge-settings' );
 check(
-	presentDoc.querySelector( '.wrap.calcforge-settings' ).firstElementChild.classList.contains( 'notice' ),
-	'the relocated notice goes above the header, where a save confirmation belongs'
+	presentPage.firstElementChild.classList.contains( 'notice' ),
+	'the relocated notice becomes the first thing on the page, above the frame'
+);
+check(
+	! presentDoc.querySelector( '.calcforge-settings__frame .notice' ),
+	'the relocated notice is not left inside the frame'
+);
+check(
+	!! presentPage.querySelector( '.calcforge-settings__frame' ),
+	'the frame still holds the header after the notice moves out'
 );
 check(
 	presentDoc.querySelector( '.calcforge-settings__title-row' ).textContent.includes( 'CalcForge' ) &&
@@ -355,6 +367,10 @@ await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 check(
 	! lateDoc.querySelector( '.calcforge-settings__header .notice' ),
 	'a notice injected after load is moved out of the header too'
+);
+check(
+	lateDoc.querySelector( '.wrap.calcforge-settings' ).firstElementChild.classList.contains( 'notice' ),
+	'a late notice also ends up above the frame'
 );
 
 check(

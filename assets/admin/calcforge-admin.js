@@ -394,9 +394,10 @@
 		 * it lands inside the page header - squeezed between the title and
 		 * the version badge. This plugin never asks for the notice, so
 		 * rather than depend on which script moved it, any notice that ends
-		 * up inside the header is put back at the top of the page, which is
-		 * where a save confirmation belongs. The observer covers the case
-		 * where the other script runs after this one.
+		 * up inside the header is put back at the top of the page, above the
+		 * frame that holds the header and the layout, which is where a save
+		 * confirmation belongs. The observer covers the case where the other
+		 * script runs after this one.
 		 */
 		const settingsHeader = document.querySelector(
 			'.calcforge-settings__header'
@@ -410,11 +411,21 @@
 				return;
 			}
 
-			settingsHeader
-				.querySelectorAll( '.notice' )
-				.forEach( ( notice ) => {
-					settingsPage.insertBefore( notice, settingsHeader );
-				} );
+			const strays = [ ...settingsHeader.querySelectorAll( '.notice' ) ];
+
+			if ( ! strays.length ) {
+				return;
+			}
+
+			/*
+			 * Anchored to the page's first child so the notice lands above
+			 * the frame rather than inside it, and inserting each one
+			 * before the same anchor keeps their original order.
+			 */
+			const anchor = settingsPage.firstChild;
+			strays.forEach( ( notice ) => {
+				settingsPage.insertBefore( notice, anchor );
+			} );
 		}
 
 		relocateStrayNotices();

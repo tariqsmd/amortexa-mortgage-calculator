@@ -521,150 +521,153 @@ class CalcForge_Settings {
 		}
 		?>
 		<div class="wrap calcforge-settings">
-			<div class="calcforge-settings__header">
-				<div class="calcforge-settings__header-brand">
-					<div class="calcforge-settings__logo-badge">
-						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<rect x="4" y="2" width="16" height="20" rx="3"></rect>
-							<line x1="8" y1="6" x2="16" y2="6"></line>
-							<line x1="16" y1="14" x2="16" y2="18"></line>
-							<path d="M16 10h.01"></path>
-							<path d="M12 10h.01"></path>
-							<path d="M8 10h.01"></path>
-							<path d="M12 14h.01"></path>
-							<path d="M8 14h.01"></path>
-							<path d="M12 18h.01"></path>
-							<path d="M8 18h.01"></path>
-						</svg>
-					</div>
-					<div>
-						<div class="calcforge-settings__title-row">
-							<h1 class="calcforge-settings__title"><?php echo esc_html( get_admin_page_title() ); ?></h1>
-							<span class="calcforge-settings__version-badge"><?php echo esc_html( 'v' . CALCFORGE_VERSION ); ?></span>
+			<div class="calcforge-settings__frame">
+				<div class="calcforge-settings__header">
+					<div class="calcforge-settings__header-brand">
+						<div class="calcforge-settings__logo-badge">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<rect x="4" y="2" width="16" height="20" rx="3"></rect>
+								<line x1="8" y1="6" x2="16" y2="6"></line>
+								<line x1="16" y1="14" x2="16" y2="18"></line>
+								<path d="M16 10h.01"></path>
+								<path d="M12 10h.01"></path>
+								<path d="M8 10h.01"></path>
+								<path d="M12 14h.01"></path>
+								<path d="M8 14h.01"></path>
+								<path d="M12 18h.01"></path>
+								<path d="M8 18h.01"></path>
+							</svg>
 						</div>
-						<p class="calcforge-settings__intro">
-							<?php esc_html_e( 'These values are the site-wide defaults. Every new Mortgage Calculator block starts with them, and each block can then be adjusted on its own without affecting the others.', CALCFORGE_TEXT_DOMAIN ); ?>
-						</p>
+						<div>
+							<div class="calcforge-settings__title-row">
+								<h1 class="calcforge-settings__title"><?php echo esc_html( get_admin_page_title() ); ?></h1>
+								<span class="calcforge-settings__version-badge"><?php echo esc_html( 'v' . CALCFORGE_VERSION ); ?></span>
+							</div>
+							<p class="calcforge-settings__intro">
+								<?php esc_html_e( 'These values are the site-wide defaults. Every new Mortgage Calculator block starts with them, and each block can then be adjusted on its own without affecting the others.', CALCFORGE_TEXT_DOMAIN ); ?>
+							</p>
+						</div>
+					</div>
+					<div class="calcforge-settings__status-pills">
+						<span class="calcforge-pill calcforge-pill--success">
+							<span class="calcforge-pill__dot"></span>
+							<?php esc_html_e( 'Block Active', CALCFORGE_TEXT_DOMAIN ); ?>
+						</span>
+						<span class="calcforge-pill calcforge-pill--info">
+							<span class="calcforge-pill__dot"></span>
+							<?php esc_html_e( 'REST API Ready', CALCFORGE_TEXT_DOMAIN ); ?>
+						</span>
 					</div>
 				</div>
-				<div class="calcforge-settings__status-pills">
-					<span class="calcforge-pill calcforge-pill--success">
-						<span class="calcforge-pill__dot"></span>
-						<?php esc_html_e( 'Block Active', CALCFORGE_TEXT_DOMAIN ); ?>
-					</span>
-					<span class="calcforge-pill calcforge-pill--info">
-						<span class="calcforge-pill__dot"></span>
-						<?php esc_html_e( 'REST API Ready', CALCFORGE_TEXT_DOMAIN ); ?>
-					</span>
-				</div>
-			</div>
 
-			<div class="calcforge-settings__layout">
-				<div class="calcforge-settings__main">
-					<?php
-					$tabs    = $this->get_tabs();
-					$sections = $this->get_sections();
-					?>
-
-					<!-- Tab navigation -->
-					<div class="calcforge-settings__tabs" role="tablist">
+				<div class="calcforge-settings__layout">
+					<div class="calcforge-settings__main">
 						<?php
-						/*
-						 * The first tab and its panel are marked active here rather
-						 * than in the script, so the page still shows a usable
-						 * settings form if the script fails to load. Without it every
-						 * panel would stay hidden and a Save would post nothing.
-						 */
-						$first_tab = true;
-						foreach ( $tabs as $tab_id => $tab ) :
-							?>
-							<button
-								type="button"
-								id="<?php echo esc_attr( self::TAB_ID_PREFIX . $tab_id ); ?>"
-								class="calcforge-settings__tab-btn"
-								role="tab"
-								data-tab="<?php echo esc_attr( $tab_id ); ?>"
-								aria-controls="<?php echo esc_attr( $tab_id ); ?>"
-								aria-selected="<?php echo $first_tab ? 'true' : 'false'; ?>"
-								tabindex="<?php echo $first_tab ? '0' : '-1'; ?>"
-							>
-								<span class="calcforge-settings__tab-icon calcforge-settings__tab-icon--<?php echo esc_attr( $tab['icon'] ); ?>">
-									<?php $this->render_section_icon( $tab_id ); ?>
-								</span>
-								<?php echo esc_html( $tab['title'] ); ?>
-							</button>
-							<?php
-							$first_tab = false;
-						endforeach;
+						$tabs    = $this->get_tabs();
+						$sections = $this->get_sections();
 						?>
-					</div>
 
-					<!-- Tab panels -->
-					<div class="calcforge-settings__tab-panels">
-						<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
-							<?php settings_fields( self::OPTION_GROUP ); ?>
+						<!-- Tab navigation -->
+						<div class="calcforge-settings__tabs" role="tablist">
+							<?php
+							/*
+							 * The first tab and its panel are marked active here rather
+							 * than in the script, so the page still shows a usable
+							 * settings form if the script fails to load. Without it every
+							 * panel would stay hidden and a Save would post nothing.
+							 */
+							$first_tab = true;
+							foreach ( $tabs as $tab_id => $tab ) :
+								?>
+								<button
+									type="button"
+									id="<?php echo esc_attr( self::TAB_ID_PREFIX . $tab_id ); ?>"
+									class="calcforge-settings__tab-btn"
+									role="tab"
+									data-tab="<?php echo esc_attr( $tab_id ); ?>"
+									aria-controls="<?php echo esc_attr( $tab_id ); ?>"
+									aria-selected="<?php echo $first_tab ? 'true' : 'false'; ?>"
+									tabindex="<?php echo $first_tab ? '0' : '-1'; ?>"
+								>
+									<span class="calcforge-settings__tab-icon calcforge-settings__tab-icon--<?php echo esc_attr( $tab['icon'] ); ?>">
+										<?php $this->render_section_icon( $tab_id ); ?>
+									</span>
+									<?php echo esc_html( $tab['title'] ); ?>
+								</button>
+								<?php
+								$first_tab = false;
+							endforeach;
+							?>
+						</div>
+
+						<!-- Tab panels -->
+						<div class="calcforge-settings__tab-panels">
+							<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
+								<?php settings_fields( self::OPTION_GROUP ); ?>
+
+								<?php
+								$first_panel = true;
+								foreach ( $sections as $section_id => $section ) :
+									?>
+									<div
+										class="calcforge-settings__tab-panel"
+										id="<?php echo esc_attr( $section_id ); ?>"
+										role="tabpanel"
+										aria-labelledby="<?php echo esc_attr( self::TAB_ID_PREFIX . $section_id ); ?>"
+										aria-hidden="<?php echo $first_panel ? 'false' : 'true'; ?>"
+									>
+										<div class="calcforge-settings__panel-header">
+											<p class="calcforge-settings__panel-description"><?php echo esc_html( $section['description'] ); ?></p>
+										</div>
+										<table class="form-table" role="presentation">
+											<?php do_settings_fields( self::PAGE_SLUG, $section_id ); ?>
+										</table>
+									</div>
+									<?php
+										$first_panel = false;
+									endforeach;
+								?>
+
+									<div class="calcforge-settings__save-bar">
+									<?php submit_button( __( 'Save Changes', CALCFORGE_TEXT_DOMAIN ), 'primary', 'submit', false ); ?>
+									<span class="calcforge-settings__save-note">
+										<?php esc_html_e( 'Saved defaults immediately apply to all newly inserted calculators.', CALCFORGE_TEXT_DOMAIN ); ?>
+									</span>
+								</div>
+							</form>
 
 							<?php
-							$first_panel = true;
-							foreach ( $sections as $section_id => $section ) :
+							/*
+							 * Reference tabs own no options, so they sit outside the
+							 * settings form and never show the Save button.
+							 */
+							foreach ( $this->get_reference_tabs() as $ref_id => $ref ) :
 								?>
 								<div
 									class="calcforge-settings__tab-panel"
-									id="<?php echo esc_attr( $section_id ); ?>"
+									id="<?php echo esc_attr( $ref_id ); ?>"
 									role="tabpanel"
-									aria-labelledby="<?php echo esc_attr( self::TAB_ID_PREFIX . $section_id ); ?>"
-									aria-hidden="<?php echo $first_panel ? 'false' : 'true'; ?>"
+									aria-labelledby="<?php echo esc_attr( self::TAB_ID_PREFIX . $ref_id ); ?>"
+									aria-hidden="true"
 								>
 									<div class="calcforge-settings__panel-header">
-										<p class="calcforge-settings__panel-description"><?php echo esc_html( $section['description'] ); ?></p>
+										<p class="calcforge-settings__panel-description"><?php echo esc_html( $ref['description'] ); ?></p>
 									</div>
-									<table class="form-table" role="presentation">
-										<?php do_settings_fields( self::PAGE_SLUG, $section_id ); ?>
-									</table>
+
+									<?php
+									$render = $ref['render'];
+									$this->$render();
+									?>
 								</div>
 								<?php
-									$first_panel = false;
-								endforeach;
+							endforeach;
 							?>
-
-								<div class="calcforge-settings__save-bar">
-								<?php submit_button( __( 'Save Changes', CALCFORGE_TEXT_DOMAIN ), 'primary', 'submit', false ); ?>
-								<span class="calcforge-settings__save-note">
-									<?php esc_html_e( 'Saved defaults immediately apply to all newly inserted calculators.', CALCFORGE_TEXT_DOMAIN ); ?>
-								</span>
-							</div>
-						</form>
-
-						<?php
-						/*
-						 * Reference tabs own no options, so they sit outside the
-						 * settings form and never show the Save button.
-						 */
-						foreach ( $this->get_reference_tabs() as $ref_id => $ref ) :
-							?>
-							<div
-								class="calcforge-settings__tab-panel"
-								id="<?php echo esc_attr( $ref_id ); ?>"
-								role="tabpanel"
-								aria-labelledby="<?php echo esc_attr( self::TAB_ID_PREFIX . $ref_id ); ?>"
-								aria-hidden="true"
-							>
-								<div class="calcforge-settings__panel-header">
-									<p class="calcforge-settings__panel-description"><?php echo esc_html( $ref['description'] ); ?></p>
-								</div>
-
-								<?php
-								$render = $ref['render'];
-								$this->$render();
-								?>
-							</div>
-							<?php
-						endforeach;
-						?>
+						</div>
 					</div>
+
+					<?php $this->render_sidebar(); ?>
 				</div>
 
-				<?php $this->render_sidebar(); ?>
 			</div>
 		</div>
 		<?php
