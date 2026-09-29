@@ -277,64 +277,8 @@
 }
 
 .calcforge-settings__panel-header {
-	display: flex;
-	align-items: flex-start;
-	gap: 12px;
 	padding: 20px 28px 16px;
 	border-bottom: 1px solid var(--calcforge-admin-slate-100);
-}
-
-.calcforge-settings__panel-icon {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 36px;
-	height: 36px;
-	border-radius: 8px;
-	flex-shrink: 0;
-}
-
-.calcforge-settings__panel-icon--calcforge_currency {
-	background: #f0fdf4;
-	color: #15803d;
-	border: 1px solid #bbf7d0;
-}
-
-.calcforge-settings__panel-icon--calcforge_loan {
-	background: #fffbeb;
-	color: #b45309;
-	border: 1px solid #fde68a;
-}
-
-.calcforge-settings__panel-icon--calcforge_appearance {
-	background: #faf5ff;
-	color: #7c3aed;
-	border: 1px solid #e9d5ff;
-}
-
-.calcforge-settings__panel-icon--calcforge_shortcode {
-	background: #eff6ff;
-	color: #1d4ed8;
-	border: 1px solid #bfdbfe;
-}
-
-.calcforge-settings__panel-icon--calcforge_api {
-	background: #ecfdf5;
-	color: #047857;
-	border: 1px solid #a7f3d0;
-}
-
-.calcforge-settings__panel-heading {
-	flex: 1;
-}
-
-.calcforge-settings__panel-title {
-	margin: 0 0 3px !important;
-	padding: 0 !important;
-	border: none !important;
-	font-size: 15px !important;
-	font-weight: 600 !important;
-	color: var(--calcforge-admin-slate-900) !important;
 }
 
 .calcforge-settings__panel-description {
@@ -659,8 +603,8 @@
 	justify-content: space-between;
 	gap: 10px;
 	padding: 8px 12px;
-	background: var(--calcforge-admin-slate-900);
-	border: 1px solid var(--calcforge-admin-slate-700);
+	background: #ecfdf5;
+	border: 1px solid #a7f3d0;
 	border-radius: 8px;
 	margin: 8px 0 14px;
 }
@@ -669,7 +613,7 @@
 	background: transparent;
 	border: none;
 	padding: 0;
-	color: #38bdf8;
+	color: #14532d;
 	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 	font-size: 12px;
 	font-weight: 500;
@@ -687,17 +631,30 @@
 	white-space: pre;
 	overflow-x: auto;
 	word-break: normal;
+	scrollbar-width: thin;
+	scrollbar-color: #34d399 transparent;
+	padding-bottom: 4px;
 }
 
-.calcforge-settings__code--block {
-	display: block;
-	padding: 8px 12px;
-	background: var(--calcforge-admin-slate-100);
-	color: var(--calcforge-admin-slate-800);
-	border: 1px solid var(--calcforge-admin-slate-200);
-	border-radius: 6px;
-	font-size: 12px;
-	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+.calcforge-settings__code-box .calcforge-settings__code--pre::-webkit-scrollbar {
+	height: 8px;
+}
+
+.calcforge-settings__code-box .calcforge-settings__code--pre::-webkit-scrollbar-track {
+	background: transparent;
+	border-radius: 999px;
+}
+
+.calcforge-settings__code-box .calcforge-settings__code--pre::-webkit-scrollbar-thumb {
+	border-radius: 999px;
+	border: 2px solid transparent;
+	background-color: #6ee7b7;
+	background-clip: padding-box;
+}
+
+.calcforge-settings__code-box .calcforge-settings__code--pre::-webkit-scrollbar-thumb:hover {
+	background-color: #34d399;
+	background-clip: padding-box;
 }
 
 .calcforge-copy-btn {
@@ -735,49 +692,6 @@
  */
 .calcforge-settings__reference {
 	padding: 20px 28px 28px;
-}
-
-.calcforge-settings__reference .calcforge-settings__attrs {
-	max-height: none;
-	overflow-y: visible;
-}
-
-.calcforge-settings__attrs {
-	margin: 0;
-	max-height: 200px;
-	overflow-y: auto;
-	padding-right: 6px;
-}
-
-.calcforge-settings__attrs::-webkit-scrollbar {
-	width: 5px;
-}
-
-.calcforge-settings__attrs::-webkit-scrollbar-thumb {
-	background: var(--calcforge-admin-slate-300);
-	border-radius: 999px;
-}
-
-.calcforge-settings__attrs dt {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin-top: 10px;
-}
-
-.calcforge-settings__attrs dt:first-child {
-	margin-top: 0;
-}
-
-.calcforge-settings__attrs dt .calcforge-settings__code {
-	background: var(--calcforge-admin-slate-100);
-	color: var(--calcforge-admin-slate-900);
-	border: 1px solid var(--calcforge-admin-slate-200);
-	border-radius: 4px;
-	padding: 1px 6px;
-	font-size: 11.5px;
-	font-weight: 600;
-	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 .calcforge-settings__attr-type {
@@ -821,10 +735,12 @@
 }
 
 /*
- * The API fields are a reference, not part of the settings form, so they opt
- * out of the fixed-height input sizing used for the real settings controls.
- */
-.calcforge-settings__api .calcforge-settings__api-input {
+   * The API and shortcode builders are references, not part of the settings
+   * form, so they opt out of the fixed-height input sizing used for the real
+   * settings controls.
+   */
+.calcforge-settings__api .calcforge-settings__api-input,
+.calcforge-settings__reference .calcforge-settings__api-input {
 	height: auto;
 	line-height: 20px;
 	padding-top: 8px;
@@ -859,13 +775,6 @@
 .calcforge-copy-btn:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
-}
-
-.calcforge-settings__attrs dd {
-	margin: 3px 0 0 2px;
-	font-size: 12px;
-	line-height: 1.5;
-	color: var(--calcforge-admin-slate-500);
 }
 
 .calcforge-settings__tips-list {

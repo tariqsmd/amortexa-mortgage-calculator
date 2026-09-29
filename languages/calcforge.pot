@@ -184,124 +184,140 @@ msgstr ""
 msgid "REST API Ready"
 msgstr ""
 
-#: includes/class-settings.php:601
+#: includes/class-settings.php:595
 msgid "Save Changes"
 msgstr ""
 
-#: includes/class-settings.php:603
+#: includes/class-settings.php:597
 msgid "Saved defaults immediately apply to all newly inserted calculators."
 msgstr ""
 
-#: includes/class-settings.php:658
+#: includes/class-settings.php:646
 msgid "Copy to clipboard"
 msgstr ""
 
-#: includes/class-settings.php:663
+#: includes/class-settings.php:651
 msgid "Copy"
 msgstr ""
 
-#: includes/class-settings.php:677
+#: includes/class-settings.php:742
 msgid "Paste the calculator into any post, page, or widget area:"
 msgstr ""
 
-#: includes/class-settings.php:685
-msgid "Add attributes to override the defaults, then add it as a block to keep changing it visually:"
+#: includes/class-settings.php:750
+msgid "Attributes accept the values below"
 msgstr ""
 
-#: includes/class-settings.php:693
-msgid "Attribute names are lowercase. Wrap the value in quotes. Attributes accept:"
+#: includes/class-settings.php:753
+msgid "Attribute names are lowercase and values are wrapped in quotes. Change any field to rebuild the shortcode; clear a field to leave the attribute out and use the site default instead."
 msgstr ""
 
-#: includes/class-settings.php:719, includes/class-settings.php:728, includes/class-settings.php:737
+#: includes/class-settings.php:784, includes/class-settings.php:774
+msgid "default"
+msgstr ""
+
+#: includes/class-settings.php:775
+msgid "true"
+msgstr ""
+
+#: includes/class-settings.php:776
+msgid "false"
+msgstr ""
+
+#: includes/class-settings.php:812
+msgid "Sample shortcode"
+msgstr ""
+
+#: includes/class-settings.php:833, includes/class-settings.php:842, includes/class-settings.php:851
 msgid "number"
 msgstr ""
 
-#: includes/class-settings.php:720
+#: includes/class-settings.php:834
 msgid "required"
 msgstr ""
 
-#: includes/class-settings.php:721, src/utils/field-definitions.js:23
+#: includes/class-settings.php:835, src/utils/field-definitions.js:23
 msgid "Total amount being financed."
 msgstr ""
 
-#: includes/class-settings.php:729, includes/class-settings.php:738
+#: includes/class-settings.php:843, includes/class-settings.php:852
 msgid "optional, default 0"
 msgstr ""
 
-#: includes/class-settings.php:730, src/utils/field-definitions.js:33
+#: includes/class-settings.php:844, src/utils/field-definitions.js:33
 msgid "Paid up front. Interest is charged on the remainder."
 msgstr ""
 
-#: includes/class-settings.php:739
+#: includes/class-settings.php:853
 msgid "Annual rate as a percentage, up to 100."
 msgstr ""
 
-#: includes/class-settings.php:747
+#: includes/class-settings.php:861
 msgid "integer"
 msgstr ""
 
-#: includes/class-settings.php:748
+#: includes/class-settings.php:862
 msgid "optional, default 30"
 msgstr ""
 
-#: includes/class-settings.php:749
+#: includes/class-settings.php:863
 msgid "Length of the loan in years, from 1 to 60."
 msgstr ""
 
-#: includes/class-settings.php:758
+#: includes/class-settings.php:872
 msgid "boolean"
 msgstr ""
 
-#: includes/class-settings.php:759
+#: includes/class-settings.php:873
 msgid "optional, default false"
 msgstr ""
 
-#: includes/class-settings.php:760
+#: includes/class-settings.php:874
 msgid "Return the year-by-year amortization schedule alongside the totals."
 msgstr ""
 
-#: includes/class-settings.php:771
+#: includes/class-settings.php:885
 msgid "A stateless endpoint that runs the same arithmetic as the calculator. It stores nothing and returns no private data, so it needs no authentication or nonce."
 msgstr ""
 
-#: includes/class-settings.php:779
+#: includes/class-settings.php:893
 msgid "Parameters"
 msgstr ""
 
-#: includes/class-settings.php:782
+#: includes/class-settings.php:896
 msgid "Change any value to rebuild the sample request below."
 msgstr ""
 
-#: includes/class-settings.php:807
+#: includes/class-settings.php:921
 msgid "Include the schedule"
 msgstr ""
 
-#: includes/class-settings.php:831
+#: includes/class-settings.php:945
 msgid "Sample request"
 msgstr ""
 
-#: includes/class-settings.php:838
+#: includes/class-settings.php:952
 msgid "Enter a loan amount to build a request. It is the only required parameter."
 msgstr ""
 
-#: includes/class-settings.php:843
+#: includes/class-settings.php:957
 msgid "The response carries principal, monthly_payment, total_paid, total_interest, months, and schedule. The schedule stays empty unless with_schedule is passed. It runs the same calculations as the block, so the calcforge_calculation_result filter applies to responses too."
 msgstr ""
 
 #. translators: %d: Requests allowed per minute.
-#: includes/class-settings.php:849
+#: includes/class-settings.php:963
 msgid "Calls are rate limited to %d per minute per client address, after which the endpoint answers 429 with a Retry-After header. Change that with the calcforge_rest_calculate_rate_limit and calcforge_rest_calculate_rate_window filters, or return 0 from the first to switch throttling off. Buckets use the remote address alone, so behind a proxy or CDN supply a trusted client address through the calcforge_rate_limit_client_key filter. Return false from calcforge_rest_calculate_allowed to require authentication instead."
 msgstr ""
 
-#: includes/class-settings.php:874
+#: includes/class-settings.php:988
 msgid "Help"
 msgstr ""
 
-#: includes/class-settings.php:879
+#: includes/class-settings.php:993
 msgid "Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on."
 msgstr ""
 
-#: includes/class-settings.php:882
+#: includes/class-settings.php:996
 msgid "Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar."
 msgstr ""
 

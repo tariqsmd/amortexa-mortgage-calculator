@@ -583,13 +583,7 @@ class CalcForge_Settings {
 									aria-hidden="true"
 								>
 									<div class="calcforge-settings__panel-header">
-										<div class="calcforge-settings__panel-icon calcforge-settings__panel-icon--<?php echo esc_attr( $section_id ); ?>">
-											<?php $this->render_section_icon( $section_id ); ?>
-										</div>
-										<div class="calcforge-settings__panel-heading">
-											<h2 class="calcforge-settings__panel-title"><?php echo esc_html( $section['title'] ); ?></h2>
-											<p class="calcforge-settings__panel-description"><?php echo esc_html( $section['description'] ); ?></p>
-										</div>
+										<p class="calcforge-settings__panel-description"><?php echo esc_html( $section['description'] ); ?></p>
 									</div>
 									<table class="form-table" role="presentation">
 										<?php do_settings_fields( self::PAGE_SLUG, $section_id ); ?>
@@ -619,13 +613,7 @@ class CalcForge_Settings {
 								aria-hidden="true"
 							>
 								<div class="calcforge-settings__panel-header">
-									<div class="calcforge-settings__panel-icon calcforge-settings__panel-icon--<?php echo esc_attr( $ref_id ); ?>">
-										<?php $this->render_section_icon( $ref_id ); ?>
-									</div>
-									<div class="calcforge-settings__panel-heading">
-										<h2 class="calcforge-settings__panel-title"><?php echo esc_html( $ref['title'] ); ?></h2>
-										<p class="calcforge-settings__panel-description"><?php echo esc_html( $ref['description'] ); ?></p>
-									</div>
+									<p class="calcforge-settings__panel-description"><?php echo esc_html( $ref['description'] ); ?></p>
 								</div>
 
 								<?php
@@ -666,13 +654,90 @@ class CalcForge_Settings {
 	}
 
 	/**
-	 * Renders the shortcode reference shown on the Shortcode tab.
+	 * Renders the shortcode builder shown on the Shortcode tab.
+	 *
+	 * Every documented attribute gets a live input in the same layout as the
+	 * Developer API parameters, so editing one rebuilds a copyable shortcode
+	 * instead of a hand-written example.
 	 */
 	private function render_shortcode_reference() {
-		$plain     = '[calcforge]';
-		$with_args = '[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]';
+		$plain    = '[calcforge]';
+		$defaults = calcforge_get_default_attributes();
+
+		$controls = array(
+			'loanamount'       => array(
+				'kind'  => 'number',
+				'value' => $defaults['loanAmount'],
+				'min'   => 0,
+			),
+			'downpayment'      => array(
+				'kind'  => 'number',
+				'value' => $defaults['downPayment'],
+				'min'   => 0,
+			),
+			'interestrate'     => array(
+				'kind'  => 'number',
+				'value' => $defaults['interestRate'],
+				'min'   => 0,
+				'max'   => 100,
+			),
+			'loanterm'         => array(
+				'kind'    => 'number',
+				'value'   => $defaults['loanTerm'],
+				'min'     => 1,
+				'max'     => 60,
+				'integer' => true,
+			),
+			'currencysymbol'   => array(
+				'kind'  => 'text',
+				'value' => $defaults['currencySymbol'],
+			),
+			'currencyposition' => array(
+				'kind'    => 'select',
+				'options' => calcforge_get_currency_positions(),
+				'value'   => $defaults['currencyPosition'],
+			),
+			'showcharts'       => array(
+				'kind' => 'boolean',
+			),
+			'charttype'        => array(
+				'kind'    => 'select',
+				'options' => calcforge_get_chart_types(),
+				'value'   => $defaults['chartType'],
+			),
+			'formcolumns'      => array(
+				'kind'    => 'select',
+				'options' => calcforge_get_form_columns(),
+				'value'   => $defaults['formColumns'],
+			),
+			'panelorder'       => array(
+				'kind'  => 'text',
+				'value' => implode( ',', $defaults['panelOrder'] ),
+			),
+			'layout'           => array(
+				'kind'    => 'select',
+				'options' => calcforge_get_layouts(),
+				'value'   => $defaults['layout'],
+			),
+			'theme'            => array(
+				'kind'    => 'select',
+				'options' => calcforge_get_skins(),
+				'value'   => $defaults['theme'],
+			),
+			'showamortization' => array(
+				'kind' => 'boolean',
+			),
+			'showsliders'      => array(
+				'kind' => 'boolean',
+			),
+			'showresults'      => array(
+				'kind' => 'boolean',
+			),
+		);
+
+		$attrs = CalcForge_Shortcode::get_documented_attributes();
 		?>
-		<div class="calcforge-settings__reference">
+		<div class="calcforge-settings__reference" data-calcforge-shortcode>
 			<p class="calcforge-settings__card-text">
 				<?php esc_html_e( 'Paste the calculator into any post, page, or widget area:', CALCFORGE_TEXT_DOMAIN ); ?>
 			</p>
@@ -681,26 +746,75 @@ class CalcForge_Settings {
 				<?php $this->render_copy_button( $plain ); ?>
 			</div>
 
+			<h3 class="calcforge-settings__subheading">
+				<?php esc_html_e( 'Attributes accept the values below', CALCFORGE_TEXT_DOMAIN ); ?>
+			</h3>
 			<p class="calcforge-settings__card-text">
-				<?php esc_html_e( 'Add attributes to override the defaults, then add it as a block to keep changing it visually:', CALCFORGE_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'Attribute names are lowercase and values are wrapped in quotes. Change any field to rebuild the shortcode; clear a field to leave the attribute out and use the site default instead.', CALCFORGE_TEXT_DOMAIN ); ?>
 			</p>
-			<div class="calcforge-settings__code-box">
-				<code class="calcforge-settings__code"><?php echo esc_html( $with_args ); ?></code>
-				<?php $this->render_copy_button( $with_args ); ?>
+
+			<div class="calcforge-settings__api-grid">
+				<?php foreach ( $attrs as $attr => $spec ) : ?>
+					<?php
+					$control = isset( $controls[ $attr ] ) ? $controls[ $attr ] : array( 'kind' => 'text' );
+					$field_id = 'calcforge-shortcode-' . $attr;
+					?>
+					<div class="calcforge-settings__api-field">
+						<label class="calcforge-settings__api-label" for="<?php echo esc_attr( $field_id ); ?>">
+							<code class="calcforge-settings__code"><?php echo esc_html( $attr ); ?></code>
+							<span class="calcforge-settings__attr-type"><?php echo esc_html( $spec['type'] ); ?></span>
+						</label>
+
+						<?php if ( 'boolean' === $control['kind'] ) : ?>
+							<select
+								class="calcforge-settings__api-input"
+								id="<?php echo esc_attr( $field_id ); ?>"
+								data-shortcode-param="<?php echo esc_attr( $attr ); ?>"
+							>
+								<option value=""><?php esc_html_e( 'default', CALCFORGE_TEXT_DOMAIN ); ?></option>
+								<option value="true"><?php esc_html_e( 'true', CALCFORGE_TEXT_DOMAIN ); ?></option>
+								<option value="false"><?php esc_html_e( 'false', CALCFORGE_TEXT_DOMAIN ); ?></option>
+							</select>
+						<?php elseif ( 'select' === $control['kind'] ) : ?>
+							<select
+								class="calcforge-settings__api-input"
+								id="<?php echo esc_attr( $field_id ); ?>"
+								data-shortcode-param="<?php echo esc_attr( $attr ); ?>"
+							>
+								<option value=""><?php esc_html_e( 'default', CALCFORGE_TEXT_DOMAIN ); ?></option>
+								<?php foreach ( $control['options'] as $option_value => $option_label ) : ?>
+									<option
+										value="<?php echo esc_attr( (string) $option_value ); ?>"
+										<?php selected( (string) $control['value'], (string) $option_value ); ?>
+									><?php echo esc_html( $option_label ); ?></option>
+								<?php endforeach; ?>
+							</select>
+						<?php else : ?>
+							<input
+								type="<?php echo 'number' === $control['kind'] ? 'number' : 'text'; ?>"
+								class="calcforge-settings__api-input"
+								id="<?php echo esc_attr( $field_id ); ?>"
+								data-shortcode-param="<?php echo esc_attr( $attr ); ?>"
+								<?php echo ! empty( $control['integer'] ) ? 'data-shortcode-integer="true" ' : ''; ?>
+								value="<?php echo esc_attr( (string) $control['value'] ); ?>"
+								<?php if ( isset( $control['min'] ) ) { echo 'min="' . esc_attr( (string) $control['min'] ) . '" '; } ?>
+								<?php if ( isset( $control['max'] ) ) { echo 'max="' . esc_attr( (string) $control['max'] ) . '" '; } ?>
+								<?php echo 'number' === $control['kind'] ? 'step="any"' : ''; ?>
+							/>
+						<?php endif; ?>
+
+						<p class="calcforge-settings__api-hint"><?php echo esc_html( $spec['type'] ); ?> &mdash; <?php echo esc_html( $spec['description'] ); ?></p>
+					</div>
+				<?php endforeach; ?>
 			</div>
 
 			<h3 class="calcforge-settings__subheading">
-				<?php esc_html_e( 'Attribute names are lowercase. Wrap the value in quotes. Attributes accept:', CALCFORGE_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'Sample shortcode', CALCFORGE_TEXT_DOMAIN ); ?>
 			</h3>
-			<dl class="calcforge-settings__attrs">
-				<?php foreach ( CalcForge_Shortcode::get_documented_attributes() as $attr => $spec ) : ?>
-					<dt>
-						<code class="calcforge-settings__code"><?php echo esc_html( $attr ); ?></code>
-						<span class="calcforge-settings__attr-type"><?php echo esc_html( $spec['type'] ); ?></span>
-					</dt>
-					<dd><?php echo esc_html( $spec['description'] ); ?></dd>
-				<?php endforeach; ?>
-			</dl>
+			<div class="calcforge-settings__code-box">
+				<code class="calcforge-settings__code calcforge-settings__code--pre" data-shortcode-request></code>
+				<?php $this->render_copy_button( '' ); ?>
+			</div>
 		</div>
 		<?php
 	}

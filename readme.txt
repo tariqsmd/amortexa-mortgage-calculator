@@ -68,7 +68,11 @@ Calls are rate limited per client address: 30 requests per minute by default, af
 
 = Can I insert the calculator with a shortcode? =
 
-The block is the only supported insertion method. The underlying calculation functions are plain, reusable PHP, so you can register your own shortcode if you need one.
+The `[calcforge]` shortcode is supported alongside the block and accepts every block attribute. On the Settings -> Shortcode screen each attribute has an input, and a sample shortcode rebuilds and copies as you change them:
+
+`[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]`
+
+Attributes are lowercase and values are wrapped in double quotes. Clearing a field leaves that attribute out, so the other Settings tabs control it instead. Add the finished shortcode to any post, page, or widget area.
 
 = Which actions and filters are available? =
 
@@ -108,6 +112,7 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 == Changelog ==
 
 = 1.0.0 =
+* New: a shortcode builder on the Settings -> Shortcode screen. Every attribute gets an input and the sample shortcode rebuilds and copies as you change them.
 * New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type under Settings → CalcForge.
 * New: per-block toggles to show/hide the results summary and the range sliders.
 * New: currency symbol position option globally and per block — before the amount ($99) or after (99 €).

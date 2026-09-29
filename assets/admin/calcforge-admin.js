@@ -212,5 +212,71 @@
 			apiRoot.addEventListener( 'change', buildRequest );
 			buildRequest();
 		}
+
+		// ---------------------------------------------------------------
+		// Shortcode builder
+		// ---------------------------------------------------------------
+		const shortcodeRoot = document.querySelector( '[data-calcforge-shortcode]' );
+
+		if ( shortcodeRoot ) {
+			const output = shortcodeRoot.querySelector( '[data-shortcode-request]' );
+			const copyButton = shortcodeRoot.querySelector( '.calcforge-settings__code-box .calcforge-copy-btn' );
+			const controls = shortcodeRoot.querySelectorAll( '[data-shortcode-param]' );
+
+			/*
+			 * Builds the shortcode in the order the reference lists the
+			 * attributes, so the generated snippet reads like the docs. Fields
+			 * are skipped when they are blank, which is what "use the site
+			 * default" means for a shortcode attribute.
+			 */
+			const buildShortcode = function () {
+				const attrs = [];
+
+				controls.forEach( function ( control ) {
+					const name = control.getAttribute( 'data-shortcode-param' );
+					let value;
+
+					// Number fields type as you go, so a half-typed value must
+					// not end up in the snippet.
+					if ( 'number' === control.type ) {
+						const numeric = control.valueAsNumber;
+
+						if ( ! isFinite( numeric ) ) {
+							return;
+						}
+
+						value = 'true' === control.getAttribute( 'data-shortcode-integer' )
+							? String( Math.round( numeric ) )
+							: String( numeric );
+					} else {
+						value = control.value.trim();
+					}
+
+					if ( '' === value ) {
+						return;
+					}
+
+					/*
+					 * A literal double quote would break shortcode_parse_atts(),
+					 * so swap it for a single quote rather than emit a snippet
+					 * that cannot be inserted.
+					 */
+					attrs.push( name + '="' + value.replace( /"/g, "'" ) + '"' );
+				} );
+
+				const shortcode = '[calcforge' + ( attrs.length ? ' ' + attrs.join( ' ' ) : '' ) + ']';
+
+				if ( output ) {
+					output.textContent = shortcode;
+				}
+				if ( copyButton ) {
+					copyButton.setAttribute( 'data-clipboard-text', shortcode );
+				}
+			};
+
+			shortcodeRoot.addEventListener( 'input', buildShortcode );
+			shortcodeRoot.addEventListener( 'change', buildShortcode );
+			buildShortcode();
+		}
 	} );
 } )();
