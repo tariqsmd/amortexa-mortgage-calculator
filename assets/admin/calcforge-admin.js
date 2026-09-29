@@ -1,10 +1,11 @@
 /**
  * Admin JavaScript for CalcForge settings page.
  *
- * Handles tab switching and clipboard copy interactivity.
+ * Handles tab switching and clipboard copy interactivity, and keeps the
+ * settings page header free of notices that other admin tooling relocates.
  */
 
-/* global navigator, sessionStorage */
+/* global navigator, sessionStorage, MutationObserver */
 
 ( function () {
 	'use strict';
@@ -382,6 +383,47 @@
 			shortcodeRoot.addEventListener( 'input', buildShortcode );
 			shortcodeRoot.addEventListener( 'change', buildShortcode );
 			buildShortcode();
+		}
+
+		// ---------------------------------------------------------------
+		// Stray notices
+		// ---------------------------------------------------------------
+		/*
+		 * WordPress prints "Settings saved." above the page, but on sites
+		 * running other admin tooling that notice gets relocated, and here
+		 * it lands inside the page header - squeezed between the title and
+		 * the version badge. This plugin never asks for the notice, so
+		 * rather than depend on which script moved it, any notice that ends
+		 * up inside the header is put back at the top of the page, which is
+		 * where a save confirmation belongs. The observer covers the case
+		 * where the other script runs after this one.
+		 */
+		const settingsHeader = document.querySelector(
+			'.calcforge-settings__header'
+		);
+		const settingsPage = document.querySelector(
+			'.wrap.calcforge-settings'
+		);
+
+		function relocateStrayNotices() {
+			if ( ! settingsHeader || ! settingsPage ) {
+				return;
+			}
+
+			settingsHeader
+				.querySelectorAll( '.notice' )
+				.forEach( ( notice ) => {
+					settingsPage.insertBefore( notice, settingsHeader );
+				} );
+		}
+
+		relocateStrayNotices();
+
+		if ( settingsHeader && typeof MutationObserver === 'function' ) {
+			new MutationObserver( relocateStrayNotices ).observe(
+				settingsHeader,
+				{ childList: true, subtree: true }
+			);
 		}
 	} );
 } )();

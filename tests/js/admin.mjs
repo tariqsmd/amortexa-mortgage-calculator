@@ -286,41 +286,83 @@ setField( 'loanamount', '' );
 setField( 'downpayment', '' );
 check( scOutput.textContent === '[calcforge loanterm="30"]', 'clearing every field but one leaves just that attribute' );
 
-// The save notice, wherever an admin script decides to put it.
-const noticeDom = new JSDOM(
-	`<div class="calcforge-settings__title-row">
-		<h1 class="calcforge-settings__title">CalcForge</h1>
-		<span class="calcforge-settings__version-badge">v1.0.0</span>
-	</div>`,
-	{ url: 'http://localhost/wp-admin/options-general.php?page=calcforge-settings' }
+/*
+ * The save notice. The plugin never asks for it - WordPress prints it above the
+ * page - but other admin tooling on this site relocates it into the header,
+ * between the title and the version badge. The header is a flex row, so the
+ * notice gets squeezed into the gap instead of reading as a confirmation.
+ * The admin script moves any such notice back to the top of the page, both for
+ * a notice already present at load and one injected afterwards.
+ */
+function noticeMarkup( notice ) {
+	return `<!DOCTYPE html><html><body>
+		<div class="wrap calcforge-settings">
+			<div class="calcforge-settings__header">
+				<div class="calcforge-settings__header-brand">
+					<div>
+						<div class="calcforge-settings__title-row">
+							<h1 class="calcforge-settings__title">CalcForge</h1>
+							${ notice }
+							<span class="calcforge-settings__version-badge">v1.0.0</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body></html>`;
+}
+
+const SAVED_NOTICE =
+	'<div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible">' +
+	'<p><strong>Settings saved.</strong></p></div>';
+
+function bootNotices( markup ) {
+	const noticeDom = new JSDOM( markup, {
+		runScripts: 'outside-only',
+		pretendToBeVisual: true,
+		url: 'http://localhost/wp-admin/options-general.php?page=calcforge-settings',
+	} );
+	noticeDom.window.eval( adminJs );
+	return start( noticeDom );
+}
+
+// A notice that is already in the header when the script runs.
+const present = bootNotices( noticeMarkup( SAVED_NOTICE ) );
+const presentDoc = present.window.document;
+check(
+	! presentDoc.querySelector( '.calcforge-settings__header .notice' ),
+	'a notice sitting in the header is moved out of it'
 );
-const { document: noticeDoc } = noticeDom.window;
-const titleRow = noticeDoc.querySelector( '.calcforge-settings__title-row' );
-const moved = noticeDoc.createElement( 'div' );
-moved.id = 'setting-error-settings_updated';
-moved.className = 'notice notice-success settings-error is-dismissible';
-moved.innerHTML = '<p><strong>Settings saved.</strong></p>';
-titleRow.querySelector( '.calcforge-settings__version-badge' ).before( moved );
+check(
+	presentDoc.querySelector( '.wrap.calcforge-settings' ).firstElementChild.classList.contains( 'notice' ),
+	'the relocated notice goes above the header, where a save confirmation belongs'
+);
+check(
+	presentDoc.querySelector( '.calcforge-settings__title-row' ).textContent.includes( 'CalcForge' ) &&
+		presentDoc.querySelector( '.calcforge-settings__title-row' ).textContent.includes( 'v1.0.0' ),
+	'the title and version badge are left intact'
+);
+
+// A notice injected after the script has already run, which is the ordering
+// that the MutationObserver has to cover.
+const late = bootNotices( noticeMarkup( '' ) );
+const lateDoc = late.window.document;
+const lateNotice = lateDoc.createElement( 'div' );
+lateNotice.className = 'notice notice-success settings-error is-dismissible';
+lateNotice.innerHTML = '<p><strong>Settings saved.</strong></p>';
+lateDoc.querySelector( '.calcforge-settings__version-badge' ).before( lateNotice );
+await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+check(
+	! lateDoc.querySelector( '.calcforge-settings__header .notice' ),
+	'a notice injected after load is moved out of the header too'
+);
 
 check(
-	!! noticeDoc.querySelector( '.calcforge-settings__title-row > .notice' ),
-	'a notice moved into the title row is still reachable as a row child'
+	/flex-wrap:\s*wrap/.test(
+		adminCss.match( /\.calcforge-settings__title-row\s*\{([^}]*)\}/ )?.[ 1 ] || ''
+	),
+	'the title row can still wrap, e.g. for a long translated version badge'
 );
-check(
-	!! noticeDoc.querySelector( '.calcforge-settings__title-row > [id^="setting-error-"]' ),
-	'the id-prefix selector also catches core\'s settings notice'
-);
-
-const rowBlock = ( adminCss.match( /\.calcforge-settings__title-row\s*\{([^}]*)\}/ ) || [ '', '' ] )[ 1 ];
-check( /flex-wrap:\s*wrap/.test( rowBlock ), 'the title row is allowed to wrap' );
-
-const noticeBlock = [
-	...adminCss.matchAll( /\.calcforge-settings__title-row\s*>\s*(?:\.notice|\[id\^="setting-error-")[^}]*\{([^}]*)\}/g ),
-]
-	.map( ( match ) => match[ 1 ] )
-	.join( ';' );
-check( noticeBlock !== '', 'the stylesheet has a title-row notice rule' );
-check( /flex:\s*0 0 100%/.test( noticeBlock ), 'an injected notice is given a full-width line of its own' );
 
 console.log( failures ? `\n${ failures } failure(s).` : '\nAll tab checks passed.' );
 process.exit( failures ? 1 : 0 );

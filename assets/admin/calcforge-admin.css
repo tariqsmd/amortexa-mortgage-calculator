@@ -78,19 +78,6 @@
 	margin-bottom: 6px;
 }
 
-/*
- * WordPress prints the "Settings saved." notice from admin-header.php, above
- * this page entirely, and an admin script on the site moves it into the title
- * row afterwards. As a plain flex child it would then be squeezed between the
- * heading and the version badge, so it is given a full-width line of its own
- * and the title row keeps the layout it was designed for.
- */
-.calcforge-settings__title-row > .notice,
-.calcforge-settings__title-row > [id^="setting-error-"] {
-	flex: 0 0 100%;
-	margin: 4px 0 0;
-}
-
 .calcforge-settings__title {
 	margin: 0 !important;
 	padding: 0 !important;
