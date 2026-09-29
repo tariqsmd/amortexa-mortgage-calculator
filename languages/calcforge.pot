@@ -398,11 +398,11 @@ msgstr ""
 msgid "Years. Blank follows the site default."
 msgstr ""
 
-#: includes/class-widget.php:192
+#: includes/class-widget.php:194
 msgid "Title:"
 msgstr ""
 
-#: includes/class-widget.php:211
+#: includes/class-widget.php:213
 msgid "Site default"
 msgstr ""
 

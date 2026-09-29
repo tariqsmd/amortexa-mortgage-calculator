@@ -5,6 +5,10 @@
  * calcforge-admin.js through jsdom. Covers the ARIA tabs pattern (roving
  * tabindex, arrow keys, Home/End, form-only save bar) and the shortcode
  * builder, including per-code-box copy button scoping.
+ *
+ * Also guards the save notice: WordPress prints "Settings saved." from
+ * admin-header.php, and on this site an admin script moves it into the title
+ * row, where it used to be squeezed between the heading and the version badge.
  */
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -13,6 +17,7 @@ import { JSDOM } from 'jsdom';
 
 const here = dirname( fileURLToPath( import.meta.url ) );
 const adminJs = readFileSync( join( here, '../../assets/admin/calcforge-admin.js' ), 'utf8' );
+const adminCss = readFileSync( join( here, '../../assets/admin/calcforge-admin.css' ), 'utf8' );
 
 const TABS = [
 	{ id: 'general', icon: 'sliders', title: 'General' },
@@ -280,6 +285,42 @@ setField( 'interestrate', '' );
 setField( 'loanamount', '' );
 setField( 'downpayment', '' );
 check( scOutput.textContent === '[calcforge loanterm="30"]', 'clearing every field but one leaves just that attribute' );
+
+// The save notice, wherever an admin script decides to put it.
+const noticeDom = new JSDOM(
+	`<div class="calcforge-settings__title-row">
+		<h1 class="calcforge-settings__title">CalcForge</h1>
+		<span class="calcforge-settings__version-badge">v1.0.0</span>
+	</div>`,
+	{ url: 'http://localhost/wp-admin/options-general.php?page=calcforge-settings' }
+);
+const { document: noticeDoc } = noticeDom.window;
+const titleRow = noticeDoc.querySelector( '.calcforge-settings__title-row' );
+const moved = noticeDoc.createElement( 'div' );
+moved.id = 'setting-error-settings_updated';
+moved.className = 'notice notice-success settings-error is-dismissible';
+moved.innerHTML = '<p><strong>Settings saved.</strong></p>';
+titleRow.querySelector( '.calcforge-settings__version-badge' ).before( moved );
+
+check(
+	!! noticeDoc.querySelector( '.calcforge-settings__title-row > .notice' ),
+	'a notice moved into the title row is still reachable as a row child'
+);
+check(
+	!! noticeDoc.querySelector( '.calcforge-settings__title-row > [id^="setting-error-"]' ),
+	'the id-prefix selector also catches core\'s settings notice'
+);
+
+const rowBlock = ( adminCss.match( /\.calcforge-settings__title-row\s*\{([^}]*)\}/ ) || [ '', '' ] )[ 1 ];
+check( /flex-wrap:\s*wrap/.test( rowBlock ), 'the title row is allowed to wrap' );
+
+const noticeBlock = [
+	...adminCss.matchAll( /\.calcforge-settings__title-row\s*>\s*(?:\.notice|\[id\^="setting-error-")[^}]*\{([^}]*)\}/g ),
+]
+	.map( ( match ) => match[ 1 ] )
+	.join( ';' );
+check( noticeBlock !== '', 'the stylesheet has a title-row notice rule' );
+check( /flex:\s*0 0 100%/.test( noticeBlock ), 'an injected notice is given a full-width line of its own' );
 
 console.log( failures ? `\n${ failures } failure(s).` : '\nAll tab checks passed.' );
 process.exit( failures ? 1 : 0 );
