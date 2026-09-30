@@ -156,7 +156,7 @@ dist/
 └── calcforge.zip <- upload this for review
 ```
 
-> Do **not** use `wp-scripts plugin-zip`. It uses a hardcoded allowlist that omits `src/render.php`, which the render callback `include`s — the resulting plugin would fatal on the front end.
+> `npm run dist` packages from an explicit allowlist instead of calling `wp-scripts plugin-zip`, because it also has to emit the SVN `trunk/`, `tags/<version>/` and listing-assets layout, not just a zip. Note that nothing under `src/` ships: `build/block.json` declares `"render": "file:./render.php"`, which resolves inside `build/`, and `wp-scripts build` copies `src/render.php` there. The only runtime PHP outside `build/` is `includes/`.
 
 ### 3. Submit for review
 

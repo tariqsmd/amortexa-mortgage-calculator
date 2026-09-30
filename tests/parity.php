@@ -1183,6 +1183,61 @@ function calcforge_test_settings_and_shortcode() {
 		fwrite( STDOUT, sprintf( "FAIL formColumns rejected an unknown value but produced '%s'\n", $columns['formColumns'] ) );
 	}
 
+	/*
+	 * A third party is allowed to reshape the defaults through
+	 * calcforge_default_attributes, including dropping a key outright. The
+	 * shortcode reads the defaults for every attribute it documents, so a
+	 * missing key used to raise an undefined-array-key warning on the front end
+	 * and, for a numeric attribute, fell through to a second unguarded read.
+	 * Warnings are captured here because PHP only surfaces them as diagnostics,
+	 * never as a non-zero exit from the process.
+	 */
+	$warnings = array();
+
+	add_filter(
+		'calcforge_default_attributes',
+		static function ( $filtered_defaults ) use ( &$warnings ) {
+			foreach ( array( 'loanAmount', 'loanTerm', 'currencyPosition', 'panelOrder' ) as $dropped ) {
+				unset( $filtered_defaults[ $dropped ] );
+			}
+
+			return $filtered_defaults;
+		}
+	);
+
+	set_error_handler(
+		static function ( $errno, $errstr ) use ( &$warnings ) {
+			$warnings[] = $errstr;
+
+			return true;
+		},
+		E_WARNING
+	);
+
+	$pruned = $method->invoke( $shortcode, array_fill_keys( array_keys( $shortcode_map ), '' ), $shortcode_map );
+
+	restore_error_handler();
+	remove_all_filters( 'calcforge_default_attributes' );
+
+	if ( array() !== $warnings ) {
+		++$failures;
+		fwrite( STDOUT, sprintf( "FAIL pruned defaults raised %d warning(s): %s\n", count( $warnings ), implode( '; ', $warnings ) ) );
+	}
+
+	// The dropped attributes resolve to null instead of warning or throwing.
+	if ( array_key_exists( 'loanAmount', $pruned ) && null !== $pruned['loanAmount'] ) {
+		++$failures;
+		fwrite( STDOUT, sprintf( "FAIL a pruned numeric attribute produced %s\n", wp_json_encode_compat( $pruned['loanAmount'] ) ) );
+	}
+
+	// Pruning the defaults must not disturb the attributes that remain.
+	if ( ! isset( $pruned['interestRate'] ) ) {
+		++$failures;
+		fwrite( STDOUT, "FAIL pruning the defaults dropped an attribute that was still present\n" );
+	}
+
+	fwrite( STDOUT, "ok   shortcode tolerates a third party pruning the attribute defaults\n" );
+
 	fwrite( STDOUT, "ok   shortcode exposes form layout and panel order with safe list parsing\n" );
 
 	return $failures;

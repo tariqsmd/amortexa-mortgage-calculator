@@ -149,7 +149,9 @@ final class CalcForge_Shortcode {
 		 * site-wide default, exactly as an unset block attribute would.
 		 */
 		foreach ( $map as $shortcode_name => $spec ) {
-			$pairs[ $shortcode_name ] = $defaults[ $spec['attribute'] ];
+			$pairs[ $shortcode_name ] = array_key_exists( $spec['attribute'], $defaults )
+				? $defaults[ $spec['attribute'] ]
+				: null;
 		}
 
 		$atts = shortcode_atts( $pairs, (array) $atts, self::TAG );
@@ -195,7 +197,14 @@ final class CalcForge_Shortcode {
 
 		foreach ( $map as $shortcode_name => $spec ) {
 			$block_key = $spec['attribute'];
-			$value     = $atts[ $shortcode_name ] ?? $defaults[ $block_key ];
+			/*
+			 * A third party can remove an attribute from the defaults through
+			 * the calcforge_default_attributes filter, so a missing key is
+			 * read as null and falls through to the cast below rather than
+			 * raising an undefined-array-key warning on the front end.
+			 */
+			$fallback = array_key_exists( $block_key, $defaults ) ? $defaults[ $block_key ] : null;
+			$value    = array_key_exists( $shortcode_name, $atts ) ? $atts[ $shortcode_name ] : $fallback;
 
 			switch ( $spec['type'] ) {
 				case 'boolean':
@@ -205,7 +214,7 @@ final class CalcForge_Shortcode {
 				case 'number':
 					$typed[ $block_key ] = is_numeric( $value )
 						? $value + 0
-						: $defaults[ $block_key ];
+						: $fallback;
 					break;
 
 				/*
@@ -233,7 +242,7 @@ final class CalcForge_Shortcode {
 					);
 					$typed[ $block_key ] = $parts
 						? $parts
-						: (array) $defaults[ $block_key ];
+						: (array) $fallback;
 					break;
 
 				default:
