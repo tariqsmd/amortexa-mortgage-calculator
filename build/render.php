@@ -140,11 +140,6 @@ if ( '' !== $attrs['paymentFontWeight'] ) {
 $typography_attr = implode( ';', $typography );
 
 /*
- * Per-block palette overrides (accent, labels, fields) and font family.
- * Empty attribute values mean "use the active skin" and are skipped, so
- * skins keep working until a user explicitly overrides a color.
- */
-/*
  * Every appearance override, derived from the design token schema, so the
  * frontend and the editor resolve identical values. Empty values mean "use the
  * active skin" and are skipped, which is what keeps skins working until a value
