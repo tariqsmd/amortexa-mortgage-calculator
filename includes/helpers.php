@@ -373,7 +373,9 @@ function calcforge_sanitize_settings( $settings ) {
 			: 'prefix';
 	}
 
-	$rate = isset( $raw['default_interest_rate'] ) && is_scalar( $raw['default_interest_rate'] )
+	// A non-numeric string casts to 0.0 here, so the default is lost; test with
+	// is_numeric() rather than is_scalar() so unusable input takes the default.
+	$rate = isset( $raw['default_interest_rate'] ) && is_numeric( $raw['default_interest_rate'] )
 		? (float) $raw['default_interest_rate']
 		: (float) $defaults['default_interest_rate'];
 	$rate = calcforge_clamp_float( $rate, 0, 100 );
@@ -383,15 +385,17 @@ function calcforge_sanitize_settings( $settings ) {
 		: (int) $defaults['decimal_precision'];
 	$precision = min( max( $precision, 0 ), 4 );
 
-	$loan_amount = isset( $raw['default_loan_amount'] ) && is_scalar( $raw['default_loan_amount'] )
+	// is_scalar() keeps arrays and objects out, but still admits non-numeric
+	// strings, which would clamp to 0.0. is_numeric() is the tighter test.
+	$loan_amount = isset( $raw['default_loan_amount'] ) && is_numeric( $raw['default_loan_amount'] )
 		? calcforge_clamp_float( $raw['default_loan_amount'], 0, 999999999999 )
 		: (float) $defaults['default_loan_amount'];
 
-	$down_payment = isset( $raw['default_down_payment'] ) && is_scalar( $raw['default_down_payment'] )
+	$down_payment = isset( $raw['default_down_payment'] ) && is_numeric( $raw['default_down_payment'] )
 		? calcforge_clamp_float( $raw['default_down_payment'], 0, 999999999999 )
 		: (float) $defaults['default_down_payment'];
 
-	$loan_term = isset( $raw['default_loan_term'] ) && is_scalar( $raw['default_loan_term'] )
+	$loan_term = isset( $raw['default_loan_term'] ) && is_numeric( $raw['default_loan_term'] )
 		? absint( $raw['default_loan_term'] )
 		: (int) $defaults['default_loan_term'];
 	$loan_term = min( max( $loan_term, 1 ), 60 );
@@ -612,14 +616,28 @@ function calcforge_sanitize_attributes( $attributes ) {
 	$defaults = calcforge_get_default_attributes();
 	$raw      = is_array( $attributes ) ? $attributes : array();
 
-	$loan_amount = isset( $raw['loanAmount'] ) ? calcforge_clamp_float( $raw['loanAmount'], 0, 999999999999 ) : (float) $defaults['loanAmount'];
+	/*
+	 * isset() is true for a key that holds garbage, so a present-but-non-numeric
+	 * value would reach calcforge_clamp_float() and clamp to 0.0, quietly
+	 * replacing a configured default with a zero loan or a zero interest rate.
+	 * Requiring is_numeric() sends unusable input down the default path instead.
+	 */
+	$loan_amount = isset( $raw['loanAmount'] ) && is_numeric( $raw['loanAmount'] )
+		? calcforge_clamp_float( $raw['loanAmount'], 0, 999999999999 )
+		: (float) $defaults['loanAmount'];
 
-	$interest_rate = isset( $raw['interestRate'] ) ? calcforge_clamp_float( $raw['interestRate'], 0, 100 ) : (float) $defaults['interestRate'];
+	$interest_rate = isset( $raw['interestRate'] ) && is_numeric( $raw['interestRate'] )
+		? calcforge_clamp_float( $raw['interestRate'], 0, 100 )
+		: (float) $defaults['interestRate'];
 
-	$loan_term = isset( $raw['loanTerm'] ) ? absint( $raw['loanTerm'] ) : (int) $defaults['loanTerm'];
+	$loan_term = isset( $raw['loanTerm'] ) && is_numeric( $raw['loanTerm'] )
+		? absint( $raw['loanTerm'] )
+		: (int) $defaults['loanTerm'];
 	$loan_term = min( max( $loan_term, 1 ), 60 );
 
-	$down_payment = isset( $raw['downPayment'] ) ? calcforge_clamp_float( $raw['downPayment'], 0, 999999999999 ) : (float) $defaults['downPayment'];
+	$down_payment = isset( $raw['downPayment'] ) && is_numeric( $raw['downPayment'] )
+		? calcforge_clamp_float( $raw['downPayment'], 0, 999999999999 )
+		: (float) $defaults['downPayment'];
 	$down_payment = min( $down_payment, $loan_amount );
 
 	$currency_symbol = isset( $raw['currencySymbol'] ) && is_scalar( $raw['currencySymbol'] )
@@ -688,7 +706,7 @@ function calcforge_sanitize_attributes( $attributes ) {
 		calcforge_get_panel_keys()
 	);
 
-	$payment_font_size = array_key_exists( 'paymentFontSize', $raw )
+	$payment_font_size = array_key_exists( 'paymentFontSize', $raw ) && is_numeric( $raw['paymentFontSize'] )
 		? calcforge_clamp_float( $raw['paymentFontSize'], 0, 120 )
 		: (float) $defaults['paymentFontSize'];
 

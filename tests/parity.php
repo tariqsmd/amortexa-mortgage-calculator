@@ -1340,6 +1340,73 @@ function calcforge_test_input_guards() {
 	$attrs = calcforge_sanitize_attributes( array( 'showAmortization' => '1' ) );
 	$report( true === $attrs['showAmortization'], 'a block showAmortization stored as "1" renders as on' );
 
+	/*
+	 * A present-but-unusable numeric attribute must fall back to the configured
+	 * default, not clamp to zero. isset() is true for the garbage, so the guard
+	 * has to be is_numeric(); otherwise a mangled loanAmount yields $0/month and
+	 * a mangled interestRate yields a free mortgage.
+	 */
+	/*
+	 * The seeded down-payment default is 0.0, which would make that check
+	 * vacuous: clamping garbage to 0.0 and falling back to a 0.0 default give
+	 * the same answer. A non-zero default is seeded through the settings filter
+	 * so every key below can actually fail. downPayment derives from the same
+	 * setting, so one filter covers both the block and the settings screens.
+	 */
+	add_filter(
+		'calcforge_default_settings',
+		static function ( $settings_defaults ) {
+			$settings_defaults['default_down_payment'] = 12345.0;
+
+			return $settings_defaults;
+		}
+	);
+
+	$numeric_defaults = calcforge_get_default_attributes();
+
+	foreach ( array( 'loanAmount', 'interestRate', 'loanTerm', 'downPayment' ) as $key ) {
+		$attrs = calcforge_sanitize_attributes( array( $key => 'not-a-number' ) );
+
+		if ( ! isset( $numeric_defaults[ $key ] ) ) {
+			$report( false, "the default for {$key} is missing, so this check cannot run" );
+			continue;
+		}
+
+		$report(
+			(float) $attrs[ $key ] === (float) $numeric_defaults[ $key ],
+			sprintf( 'a non-numeric %s falls back to the default instead of zero', $key )
+		);
+	}
+
+	// A numeric value that is merely a loose string must still be honoured.
+	$attrs = calcforge_sanitize_attributes( array( 'loanAmount' => '250000.50' ) );
+	$report( 250000.5 === (float) $attrs['loanAmount'], 'a numeric string loanAmount is still honoured' );
+
+	// The settings screen has the same exposure through its own sanitizer.
+	$settings_defaults = calcforge_get_default_settings();
+
+	foreach ( array( 'default_loan_amount', 'default_interest_rate', 'default_loan_term', 'default_down_payment' ) as $key ) {
+		$settings = calcforge_sanitize_settings( array( $key => 'not-a-number' ) );
+
+		if ( ! isset( $settings_defaults[ $key ] ) ) {
+			$report( false, "the default for {$key} is missing, so this check cannot run" );
+			continue;
+		}
+
+		$report(
+			(float) $settings[ $key ] === (float) $settings_defaults[ $key ],
+			sprintf( 'a non-numeric %s falls back to the default instead of zero', $key )
+		);
+	}
+
+	remove_all_filters( 'calcforge_default_settings' );
+
+	// Removing the filter must restore the seeded defaults for later checks.
+	$report(
+		0.0 === (float) calcforge_get_default_settings()['default_down_payment'],
+		'the seeded down-payment default is restored after the filter is removed'
+	);
+
 	if ( 0 === $failures ) {
 		fwrite( STDOUT, "ok   sanitizers reject loosely typed settings and attributes\n" );
 	}

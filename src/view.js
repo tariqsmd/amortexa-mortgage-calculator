@@ -6,8 +6,8 @@
  * syncing, live recalculation while typing, dependency-free SVG charts, and
  * the schedule collapse toggle.
  *
- * All dynamic text is inserted via textContent/createElement â€” never
- * innerHTML â€” so user input can never inject markup.
+ * All dynamic text is inserted via textContent/createElement — never
+ * innerHTML — so user input can never inject markup.
  */
 
 import {
@@ -80,7 +80,7 @@ function buildXTicks( schedule ) {
  *
  * @param {number} amount Amount to format.
  * @param {Object} config Block config parsed from data-calcforge-config.
- * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 â‚¬".
+ * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 €".
  */
 function formatAmount( amount, config ) {
 	const decimals = Number.isFinite( config.decimals ) ? config.decimals : 2;
@@ -297,7 +297,7 @@ function renderLegend( host, items ) {
  * Draws the donut (payment composition) and line (balance over time) charts.
  *
  * The balance series is always computed for charts even when the schedule
- * table is disabled â€” the two features are independent.
+ * table is disabled — the two features are independent.
  *
  * @param {HTMLElement} root   Calculator container element.
  * @param {Object}      values Current input values.

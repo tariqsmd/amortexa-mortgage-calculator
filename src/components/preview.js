@@ -26,7 +26,7 @@ import { resolvePanelOrder } from '../utils/panel-order';
  * @param {number} amount   Amount to format.
  * @param {string} symbol   Currency symbol.
  * @param {string} position Symbol placement: 'prefix' or 'suffix'.
- * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 â‚¬".
+ * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 €".
  */
 export function formatAmount( amount, symbol, position = 'prefix' ) {
 	const formatted = new Intl.NumberFormat( undefined, {
