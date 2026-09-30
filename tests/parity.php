@@ -1205,7 +1205,7 @@ function calcforge_test_settings_and_shortcode() {
 		}
 	);
 
-	set_error_handler(
+	set_error_handler( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- capturing warnings is the point of this check.
 		static function ( $errno, $errstr ) use ( &$warnings ) {
 			$warnings[] = $errstr;
 
@@ -1345,8 +1345,7 @@ function calcforge_test_input_guards() {
 	 * default, not clamp to zero. isset() is true for the garbage, so the guard
 	 * has to be is_numeric(); otherwise a mangled loanAmount yields $0/month and
 	 * a mangled interestRate yields a free mortgage.
-	 */
-	/*
+	 *
 	 * The seeded down-payment default is 0.0, which would make that check
 	 * vacuous: clamping garbage to 0.0 and falling back to a 0.0 default give
 	 * the same answer. A non-zero default is seeded through the settings filter
