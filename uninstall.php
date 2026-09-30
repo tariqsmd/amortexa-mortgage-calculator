@@ -21,6 +21,15 @@ function calcforge_delete_site_data() {
 
 	// Clean up anything left behind by builds from before the plugin rename.
 	delete_option( 'mtgb_settings' );
+
+	/*
+	 * The rate limit buckets are deliberately not deleted here. Their transient
+	 * names are calcforge_rl_ followed by md5( $bucket ), so the bucket cannot be
+	 * reconstructed and there is no prefix to enumerate without a direct LIKE
+	 * query on the options table. The helper avoids direct database queries by
+	 * design, and every bucket is written with a finite expiry and a refreshed
+	 * one on each hit, so WordPress expires them on its own within the window.
+	 */
 }
 
 if ( is_multisite() ) {
