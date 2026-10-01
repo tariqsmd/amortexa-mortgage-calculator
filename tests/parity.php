@@ -1214,6 +1214,144 @@ function wp_json_encode_compat( $value ) {
 	return (string) json_encode( $value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES );
 }
 
+/*
+ * The escaping and output stubs below exist so build/render.php can be executed
+ * by this harness. They mirror the real WordPress behaviour closely enough for
+ * the assertions to mean something, and the escaping ones are the point: a test
+ * that stubs esc_html() with htmlspecialchars() is what proves the template
+ * actually escapes what it prints.
+ */
+if ( ! function_exists( 'esc_html' ) ) {
+	/**
+	 * Escapes text for HTML output.
+	 *
+	 * @param string $text Raw text.
+	 * @return string Escaped text.
+	 */
+	function esc_html( $text ) {
+		return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
+	}
+}
+
+if ( ! function_exists( 'esc_attr' ) ) {
+	/**
+	 * Escapes a value for an HTML attribute.
+	 *
+	 * @param string $text Raw text.
+	 * @return string Escaped text.
+	 */
+	function esc_attr( $text ) {
+		return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
+	}
+}
+
+if ( ! function_exists( '_e' ) ) {
+	/**
+	 * Echoes a translated string.
+	 *
+	 * @param string $text   Raw text.
+	 * @param string $domain Text domain.
+	 */
+	function _e( $text, $domain = 'default' ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.textFound
+		echo esc_html( $text );
+	}
+}
+
+if ( ! function_exists( 'esc_html_e' ) ) {
+	/**
+	 * Echoes an escaped translated string.
+	 *
+	 * @param string $text   Raw text.
+	 * @param string $domain Text domain.
+	 */
+	function esc_html_e( $text, $domain = 'default' ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.textFound
+		echo esc_html( $text );
+	}
+}
+
+if ( ! function_exists( 'esc_attr__' ) ) {
+	/**
+	 * Returns a translated string escaped for an HTML attribute.
+	 *
+	 * @param string $text   Raw text.
+	 * @param string $domain Text domain.
+	 * @return string Escaped text.
+	 */
+	function esc_attr__( $text, $domain = 'default' ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.textFound
+		return esc_attr( $text );
+	}
+}
+
+if ( ! function_exists( 'wp_json_encode' ) ) {
+	/**
+	 * Encodes a value as JSON the way WordPress does.
+	 *
+	 * @param mixed $data  Value to encode.
+	 * @param int   $flags Encoding flags.
+	 * @param int   $depth Maximum depth.
+	 * @return string|false JSON string, or false on failure.
+	 */
+	function wp_json_encode( $data, $flags = 0, $depth = 512 ) {
+		return json_encode( $data, $flags, $depth );
+	}
+}
+
+if ( ! function_exists( 'do_action' ) ) {
+	/**
+	 * Records an action. Nothing needs to happen for these assertions.
+	 *
+	 * @param string $hook_name Hook name.
+	 * @param mixed  ...$args   Arguments.
+	 */
+	function do_action( $hook_name, ...$args ) {} // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
+}
+
+if ( ! function_exists( 'wp_unique_id' ) ) {
+	/**
+	 * Returns a stable-ish unique id for markup.
+	 *
+	 * @param string $prefix Id prefix.
+	 * @return string Unique id.
+	 */
+	function wp_unique_id( $prefix = '' ) {
+		static $id = 0;
+		return $prefix . (string) ++$id;
+	}
+}
+
+if ( ! function_exists( 'get_block_wrapper_attributes' ) ) {
+	/**
+	 * Renders the wrapper attributes for a block.
+	 *
+	 * @param array<string,string> $extra_attributes Extra attributes.
+	 * @return string Attribute string.
+	 */
+	function get_block_wrapper_attributes( $extra_attributes = array() ) {
+		$out = '';
+		foreach ( $extra_attributes as $key => $value ) {
+			$out .= ' ' . $key . '="' . esc_attr( $value ) . '"';
+		}
+		return $out;
+	}
+}
+
+if ( ! function_exists( 'number_format_i18n' ) ) {
+	/**
+	 * Formats a number with thousands separators.
+	 *
+	 * The en_US shape is deliberate: the assertions below look for grouped digits
+	 * such as "5,000", so the stub has to reproduce the grouping the real locale
+	 * would.
+	 *
+	 * @param float $number   Number to format.
+	 * @param int   $decimals Decimal places.
+	 * @return string Formatted number.
+	 */
+	function number_format_i18n( $number, $decimals = 0 ) {
+		return number_format( (float) $number, (int) $decimals, '.', ',' );
+	}
+}
+
 /**
  * Covers the global currency position setting and the shortcode list attribute.
  *
@@ -1286,6 +1424,68 @@ function calcforge_test_settings_and_shortcode() {
 		if ( ( $shortcode_map[ $name ]['attribute'] ?? null ) !== $attribute ) {
 			++$failures;
 			fwrite( STDOUT, sprintf( "FAIL shortcode is missing the '%s' attribute\n", $name ) );
+		}
+	}
+
+	/*
+	 * The readme promises the shortcode "accepts every block attribute", and that
+	 * promise silently broke when the recurring costs shipped: all eleven cost
+	 * attributes were reachable from the block and the editor but not from the
+	 * shortcode, so a hand-written [calcforge showcosts="true" propertytax="1.25"]
+	 * was quietly ignored with no error anywhere. Rather than re-list the costs,
+	 * this compares the whole documented map against the block schema so the next
+	 * attribute added to block.json has to be added to the shortcode too.
+	 *
+	 * Attributes the shortcode deliberately does not expose are listed here with
+	 * the reason, so adding one is a conscious decision rather than an omission.
+	 */
+	$not_exposed = array(
+		/*
+		 * Per-element appearance. These belong to the Design tab, and exposing them
+		 * here would add nine inputs to the shortcode builder for settings that are
+		 * stilled by site defaults anyway. A shortcode can pick a skin and a
+		 * layout; it cannot sensibly reproduce a design token map.
+		 */
+		'design'                => 'style is set through the Design tab tokens',
+		'paymentFontSize'       => 'typography is set through the Design tab',
+		'paymentFontWeight'     => 'typography is set through the Design tab',
+		'fontFamily'            => 'typography is set through the Design tab',
+		'accentColor'           => 'colours are set through the Design tab',
+		'accentAltColor'        => 'colours are set through the Design tab',
+		'labelColor'            => 'colours are set through the Design tab',
+		'fieldTextColor'        => 'colours are set through the Design tab',
+		'fieldBackgroundColor'  => 'colours are set through the Design tab',
+		'fieldBorderColor'      => 'colours are set through the Design tab',
+	);
+
+	$exposed_attributes = array();
+
+	foreach ( $shortcode_map as $spec ) {
+		if ( isset( $spec['attribute'] ) ) {
+			$exposed_attributes[ $spec['attribute'] ] = true;
+		}
+	}
+
+	$block_schema = json_decode( (string) file_get_contents( dirname( __DIR__ ) . '/src/block.json' ), true );
+
+	if ( is_array( $block_schema ) && isset( $block_schema['attributes'] ) && is_array( $block_schema['attributes'] ) ) {
+		foreach ( array_keys( $block_schema['attributes'] ) as $attribute ) {
+			if ( isset( $exposed_attributes[ $attribute ] ) || isset( $not_exposed[ $attribute ] ) ) {
+				continue;
+			}
+
+			++$failures;
+			fwrite( STDOUT, sprintf( "FAIL the shortcode cannot set the block's '%s' attribute\n", $attribute ) );
+		}
+	} else {
+		++$failures;
+		fwrite( STDOUT, "FAIL src/block.json could be read to compare it against the shortcode\n" );
+	}
+
+	foreach ( array_keys( $not_exposed ) as $attribute ) {
+		if ( isset( $exposed_attributes[ $attribute ] ) ) {
+			++$failures;
+			fwrite( STDOUT, sprintf( "FAIL '%s' is on the shortcode exemption list but is also exposed\n", $attribute ) );
 		}
 	}
 
@@ -2160,7 +2360,223 @@ function calcforge_test_version_consistency() {
 	return $failures;
 }
 
-$exit = calcforge_test_parity() + calcforge_test_design_schema() + calcforge_test_settings_and_shortcode() + calcforge_test_input_guards() + calcforge_test_rate_limit() + calcforge_test_costs() + calcforge_test_version_consistency();
+/**
+ * Renders build/render.php the way WordPress would and returns the markup.
+ *
+ * The template reads $attributes and echoes into the output buffer, so it has
+ * to be included inside a function that supplies that variable. Including it
+ * rather than testing src/render.php is deliberate: build/render.php is the file
+ * that actually ships and the one every visitor is served.
+ *
+ * @param array<string,mixed> $attributes Block attributes.
+ * @return string Rendered markup.
+ */
+function calcforge_render_block( array $attributes ) {
+	$content = '';
+	$block   = array();
+
+	ob_start();
+	require dirname( __DIR__ ) . '/build/render.php';
+
+	return (string) ob_get_clean();
+}
+
+/**
+ * Covers the server-rendered markup, which nothing else here exercises.
+ *
+ * Every calculation in this file is proved through calcforge_calculate(), but the
+ * template that turns those numbers into what a visitor actually reads is a
+ * separate 500-odd lines of markup with its own conditions. Two of those
+ * conditions are the ones a visitor notices immediately: the recurring cost rows
+ * and inputs must not appear at all when costs are off, and every attribute the
+ * template prints has to be escaped.
+ *
+ * @return int Number of failures.
+ */
+function calcforge_test_ssr() {
+	$failures = 0;
+	$report   = function ( $ok, $message ) use ( &$failures ) {
+		if ( $ok ) {
+			fwrite( STDOUT, "ok   $message\n" );
+		} else {
+			++$failures;
+			fwrite( STDOUT, "FAIL $message\n" );
+		}
+	};
+
+	$base = array(
+		'loanAmount'   => 400000,
+		'downPayment'  => 80000,
+		'interestRate' => 6.5,
+		'loanTerm'     => 30,
+		'showResults'  => true,
+		'showCharts'   => true,
+		'showSliders'  => true,
+		'showCosts'    => false,
+	);
+
+	fwrite( STDOUT, "-- costs off --\n" );
+	$off = calcforge_render_block( $base );
+
+	$report( '' !== $off, 'the template renders markup' );
+	$report( false !== strpos( $off, 'data-calcforge-config' ), 'the front-end config payload is emitted' );
+
+	foreach ( array( 'propertyTax', 'homeInsurance', 'hoaFee', 'pmi', 'otherCosts' ) as $attribute ) {
+		$report(
+			false === strpos( $off, 'data-calcforge-field="' . $attribute . '"' ),
+			"the $attribute input is not rendered while costs are off"
+		);
+	}
+
+	/*
+	 * The regression this guards: an existing calculator saved before costs
+	 * existed must not grow a "Total Monthly Cost" row that merely repeats the
+	 * monthly payment, or a "$0" totals block, because the author never asked
+	 * for costs.
+	 */
+	foreach ( array( 'totalMonthlyCost', 'totalCosts', 'totalOutOfPocket' ) as $bind ) {
+		$report(
+			false === strpos( $off, 'data-calcforge-bind="' . $bind . '"' ),
+			"the $bind row is not rendered while costs are off"
+		);
+	}
+
+	$report( false === strpos( $off, 'calcforge-calc__result-list--costs' ), 'the costs result list is not rendered while costs are off' );
+
+	/*
+	 * The labels travel to the front end inside the config payload so JavaScript
+	 * can relabel its own rows, so the label text is always present in the markup
+	 * somewhere. What has to be absent is the visible row, which is why the
+	 * payload is stripped before this check.
+	 */
+	$off_visible = preg_replace( '/data-calcforge-config="[^"]*"/', 'data-calcforge-config=""', $off );
+	$report( false === strpos( $off_visible, 'Total Monthly Cost' ), 'the total monthly cost label is not visible while costs are off' );
+	$report( false === strpos( $off_visible, 'Total Taxes &amp; Costs' ), 'the totals label is not visible while costs are off' );
+
+	foreach ( array( 'loanAmount', 'downPayment', 'interestRate', 'loanTerm' ) as $attribute ) {
+		$report(
+			false !== strpos( $off, 'data-calcforge-field="' . $attribute . '"' ),
+			"the $attribute input still renders while costs are off"
+		);
+	}
+
+	$report( substr_count( $off, '<form' ) === 1, 'exactly one form is rendered' );
+
+	fwrite( STDOUT, "-- costs on --\n" );
+	$on = calcforge_render_block(
+		array_merge(
+			$base,
+			array(
+				'showCosts'         => true,
+				'propertyTax'       => 1.25,
+				'propertyTaxUnit'   => 'percent',
+				'homeInsurance'     => 1500,
+				'homeInsuranceUnit' => 'amount',
+				'hoaFee'            => 120,
+				'hoaFeeUnit'        => 'amount',
+				'pmi'               => 200,
+				'pmiUnit'           => 'amount',
+				'otherCosts'        => 60,
+				'otherCostsUnit'    => 'amount',
+			)
+		)
+	);
+
+	foreach ( array( 'propertyTax', 'homeInsurance', 'hoaFee', 'pmi', 'otherCosts' ) as $attribute ) {
+		$report(
+			false !== strpos( $on, 'data-calcforge-field="' . $attribute . '"' ),
+			"the $attribute input is rendered once costs are on"
+		);
+	}
+
+	foreach ( array( 'totalMonthlyCost', 'totalCosts', 'totalOutOfPocket' ) as $bind ) {
+		$report(
+			false !== strpos( $on, 'data-calcforge-bind="' . $bind . '"' ),
+			"the $bind row is rendered once costs are on"
+		);
+	}
+
+	$report( false !== strpos( $on, 'data-calcforge-unit="propertyTaxUnit"' ), 'the percent/amount toggle renders for tax' );
+	$report( false !== strpos( $on, 'Total Monthly Cost' ), 'the total monthly cost label appears once costs are on' );
+	$report( substr_count( $on, '<form' ) === 1, 'still exactly one form with costs on' );
+
+	/*
+	 * The rendered figures have to be the ones the calculator produced, not just
+	 * plausible looking placeholders. The breakdown is a monthly breakdown, so
+	 * 1.25% of 400,000 is 5,000 a year and therefore 416.67 a month.
+	 */
+	$report( false !== strpos( $on, '416.67' ), 'the percent tax renders as its monthly figure, 416.67' );
+	$report( false !== strpos( $on, '125.00' ), 'an amount-based premium renders as its monthly figure, 125.00' );
+
+	fwrite( STDOUT, "-- escaping --\n" );
+
+	/*
+	 * Tags are removed from the currency symbol during sanitization, which is the
+	 * layer that actually keeps markup out of the output. Quotes and ampersands
+	 * deliberately survive it, because a currency symbol is allowed to contain
+	 * them; those are handled where they are printed.
+	 */
+	$symbol_cases = array(
+		'<script>alert(1)</script>'  => 'alert(1)',
+		'<b>bold</b>'                => 'bold',
+		// Stripping this leaves nothing behind, so the default symbol takes over
+		// rather than the block rendering an empty currency.
+		'<img src=x onerror=alert(1)>' => '$',
+	);
+
+	foreach ( $symbol_cases as $hostile => $expected ) {
+		$clean = calcforge_sanitize_attributes( array( 'currencySymbol' => $hostile ) );
+		$report(
+			$expected === $clean['currencySymbol'],
+			sprintf( 'the sanitizer strips markup out of the symbol: %s -> %s', $hostile, $clean['currencySymbol'] )
+		);
+	}
+
+	$survivor = calcforge_sanitize_attributes( array( 'currencySymbol' => 'a"b&c' ) );
+	$report( 'a"b&c' === $survivor['currencySymbol'], 'quotes and ampersands survive sanitization, to be escaped on output instead' );
+
+	$xss = calcforge_render_block(
+		array_merge(
+			$base,
+			array(
+				'showCosts'      => true,
+				'propertyTax'    => 1.25,
+				'currencySymbol' => '"><script>alert(1)</script>',
+			)
+		)
+	);
+
+	$report( false === strpos( $xss, '<script' ), 'a hostile symbol introduces no script tag' );
+	$report( false === strpos( $xss, '<img ' ), 'a hostile symbol introduces no img tag' );
+
+	/*
+	 * The property that matters for the config attribute is that a surviving
+	 * quote cannot terminate the attribute it travels in, so the whole attribute
+	 * still matches one balanced quoted run.
+	 */
+	$report(
+		1 === preg_match( '/data-calcforge-config="[^"]*"/', $xss ),
+		'the config attribute stays balanced with a hostile currency symbol'
+	);
+
+	fwrite( STDOUT, "-- config payload --\n" );
+	if ( preg_match( '/data-calcforge-config="([^"]*)"/', $off, $match ) ) {
+		$decoded = json_decode( html_entity_decode( $match[1], ENT_QUOTES, 'UTF-8' ), true );
+		$report( is_array( $decoded ), 'the config payload is valid JSON once entity decoded' );
+		$report( is_array( $decoded ) && isset( $decoded['decimals'] ), 'the config payload carries the decimal setting' );
+		$report( is_array( $decoded ) && isset( $decoded['labels']['monthly'] ), 'the config payload carries labels for the front end' );
+	} else {
+		$report( false, 'the config payload could be extracted from the markup' );
+	}
+
+	if ( 0 === $failures ) {
+		fwrite( STDOUT, "ok   server-rendered markup, cost gating and escaping\n" );
+	}
+
+	return $failures;
+}
+
+$exit = calcforge_test_parity() + calcforge_test_design_schema() + calcforge_test_settings_and_shortcode() + calcforge_test_input_guards() + calcforge_test_rate_limit() + calcforge_test_costs() + calcforge_test_version_consistency() + calcforge_test_ssr();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

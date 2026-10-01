@@ -116,6 +116,61 @@ final class CalcForge_Shortcode {
 				'type'        => 'boolean',
 				'description' => __( 'false hides the results summary.', CALCFORGE_TEXT_DOMAIN ),
 			),
+			'showcosts'       => array(
+				'attribute'   => 'showCosts',
+				'type'        => 'boolean',
+				'description' => __( 'true adds the recurring cost inputs and the total monthly cost.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'propertytax'     => array(
+				'attribute'   => 'propertyTax',
+				'type'        => 'number',
+				'description' => __( 'Annual property tax, as a rate or an amount, depending on propertytaxunit.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'propertytaxunit' => array(
+				'attribute'   => 'propertyTaxUnit',
+				'type'        => 'text',
+				'description' => __( 'percent or amount, deciding whether propertytax is read as a rate of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'homeinsurance'     => array(
+				'attribute'   => 'homeInsurance',
+				'type'        => 'number',
+				'description' => __( 'Annual home insurance, as a rate or an amount, depending on homeinsuranceunit.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'homeinsuranceunit' => array(
+				'attribute'   => 'homeInsuranceUnit',
+				'type'        => 'text',
+				'description' => __( 'percent or amount, deciding whether homeinsurance is read as a rate of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'hoafee'     => array(
+				'attribute'   => 'hoaFee',
+				'type'        => 'number',
+				'description' => __( 'Annual HOA fee, as a rate or an amount, depending on hoafeeunit.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'hoafeeunit' => array(
+				'attribute'   => 'hoaFeeUnit',
+				'type'        => 'text',
+				'description' => __( 'percent or amount, deciding whether hoafee is read as a rate of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'pmi'     => array(
+				'attribute'   => 'pmi',
+				'type'        => 'number',
+				'description' => __( 'Annual mortgage insurance premium, as a rate or an amount, depending on pmiunit. It stops once the balance reaches 80% of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'pmiunit' => array(
+				'attribute'   => 'pmiUnit',
+				'type'        => 'text',
+				'description' => __( 'percent or amount, deciding whether pmi is read as a rate of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'othercosts'     => array(
+				'attribute'   => 'otherCosts',
+				'type'        => 'number',
+				'description' => __( 'Any other annual cost, as a rate or an amount, depending on othercostsunit.', CALCFORGE_TEXT_DOMAIN ),
+			),
+			'othercostsunit' => array(
+				'attribute'   => 'otherCostsUnit',
+				'type'        => 'text',
+				'description' => __( 'percent or amount, deciding whether othercosts is read as a rate of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+			),
 		);
 	}
 

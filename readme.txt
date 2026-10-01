@@ -80,9 +80,9 @@ Calls are rate limited per client address: 30 requests per minute by default, af
 
 = Can I insert the calculator with a shortcode? =
 
-The `[calcforge]` shortcode is supported alongside the block and accepts every block attribute. On the Settings -> Shortcode screen each attribute has an input, and a sample shortcode rebuilds and copies as you change them:
+The `[calcforge]` shortcode is supported alongside the block and accepts every loan, cost, layout, panel, skin, chart and schedule attribute. The per-element appearance settings from the Design tab are block-only, because they are stilled by your site-wide defaults and a shortcode cannot sensibly reproduce a design token map. On the Settings -> Shortcode screen each exposed attribute has an input, and a sample shortcode rebuilds and copies as you change them:
 
-`[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar"]`
+`[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar" showcosts="true" propertytax="1.25"]`
 
 Attributes are lowercase and values are wrapped in double quotes. Clearing a field leaves that attribute out, so the other Settings tabs control it instead. Add the finished shortcode to any post, page, or widget area.
 
@@ -139,6 +139,7 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 * Improved: cost components each pick up a distinct, automatically chosen colour, with a legend, so the breakdown stays readable across light and dark skins.
 * Improved: cost figures are clamped by the unit the author chose, so an amount-based premium is no longer truncated by a percentage bound.
 * New: `calcforge_skins`, `calcforge_cost_units`, and `calcforge_shortcode_block` filters are now documented.
+* Fixed: the `[calcforge]` shortcode accepts the recurring cost attributes. `showcosts`, `propertytax`, `homeinsurance`, `hoafee`, `pmi`, `othercosts` and their `*unit` counterparts were reachable from the block and the editor but silently ignored in a shortcode.
 * Removed: documentation for a `calcforge_enqueue_assets` filter that was never implemented. Front-end assets are registered from the block metadata for `calcforge/mortgage-calculator`; to replace them, dequeue the handles that block registers and enqueue your own in a theme.
 
 = 1.0.0 =

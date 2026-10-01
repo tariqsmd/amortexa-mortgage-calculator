@@ -377,6 +377,50 @@ msgstr ""
 msgid "false hides the results summary."
 msgstr ""
 
+#: includes/class-shortcode.php:122
+msgid "true adds the recurring cost inputs and the total monthly cost."
+msgstr ""
+
+#: includes/class-shortcode.php:127
+msgid "Annual property tax, as a rate or an amount, depending on propertytaxunit."
+msgstr ""
+
+#: includes/class-shortcode.php:132
+msgid "percent or amount, deciding whether propertytax is read as a rate of the purchase price."
+msgstr ""
+
+#: includes/class-shortcode.php:137
+msgid "Annual home insurance, as a rate or an amount, depending on homeinsuranceunit."
+msgstr ""
+
+#: includes/class-shortcode.php:142
+msgid "percent or amount, deciding whether homeinsurance is read as a rate of the purchase price."
+msgstr ""
+
+#: includes/class-shortcode.php:147
+msgid "Annual HOA fee, as a rate or an amount, depending on hoafeeunit."
+msgstr ""
+
+#: includes/class-shortcode.php:152
+msgid "percent or amount, deciding whether hoafee is read as a rate of the purchase price."
+msgstr ""
+
+#: includes/class-shortcode.php:157
+msgid "Annual mortgage insurance premium, as a rate or an amount, depending on pmiunit. It stops once the balance reaches 80% of the purchase price."
+msgstr ""
+
+#: includes/class-shortcode.php:162
+msgid "percent or amount, deciding whether pmi is read as a rate of the purchase price."
+msgstr ""
+
+#: includes/class-shortcode.php:167
+msgid "Any other annual cost, as a rate or an amount, depending on othercostsunit."
+msgstr ""
+
+#: includes/class-shortcode.php:172
+msgid "percent or amount, deciding whether othercosts is read as a rate of the purchase price."
+msgstr ""
+
 #. Translators: block title shown in the block inserter.
 #: includes/class-widget.php:40, src/block.json:6
 msgid "Mortgage Calculator"
