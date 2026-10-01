@@ -17,6 +17,11 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Local-only submission notes. This is a personal working checklist rather than
+# contributor documentation, so it is deliberately not tracked and never ships
+# in the package.
+/PUBLISHING.md
+
 # Source maps are not committed; the compiled build/ folder is.
 *.map
 
