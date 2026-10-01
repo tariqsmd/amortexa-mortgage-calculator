@@ -2,13 +2,6 @@
 
 A native WordPress block that adds an interactive mortgage calculator to any post or page — with live monthly payment results, down-payment support, an amortization schedule, twenty-four design skins, dependency-free SVG charts, and full server-side rendering that works without JavaScript.
 
-- **Plugin name:** CalcForge
-- **Slug:** `calcforge`
-- **Block:** `calcforge/mortgage-calculator` (category: *calcforge*)
-- **Text domain:** `calcforge`
-- **License:** GPLv2 or later
-- **Requires at least:** WordPress 6.4 / PHP 7.4
-
 ---
 
 ## Features
