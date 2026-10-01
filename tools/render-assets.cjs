@@ -71,6 +71,20 @@ function findBrowser() {
 	return found;
 }
 
+// The vector sources are not tracked in this checkout, so there is nothing to
+// rasterise. Treat that as a no-op rather than an error: `npm run release`
+// chains this step, and a package without listing artwork is still a valid
+// plugin. A source directory that exists but is incomplete is still an error.
+if ( ! fs.existsSync( SOURCE_DIR ) ) {
+	console.warn(
+		`  skipping listing assets - no vector sources in ${ path.relative(
+			PLUGIN_DIR,
+			SOURCE_DIR
+		) } (run render-assets on the machine that holds the artwork)`
+	);
+	process.exit( 0 );
+}
+
 const browser = findBrowser();
 const workDir = fs.mkdtempSync( path.join( os.tmpdir(), 'cf-assets-' ) );
 
