@@ -25,9 +25,6 @@ Thumbs.db
 # Source maps are not committed; the compiled build/ folder is.
 *.map
 
-# Lock files for dev tooling
-composer.lock
-
 # Note: LICENSE and readme.txt are intentionally NOT ignored. The WordPress.org
 # guidelines require the license to be shipped with the plugin, so never add
 # them here.

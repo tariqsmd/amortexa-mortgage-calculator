@@ -48,9 +48,9 @@ npm run make-pot        # regenerate languages/calcforge.pot
 npm run render-assets   # rasterise .wordpress-org/assets into wp.org PNGs
 npm run dist            # build dist/trunk, dist/tags/<version> and the release zip
 npm run release         # build + make-pot + render-assets + dist
-composer install        # PHPCS / WPCS dev tooling
-composer lint           # WPCS phpcs against phpcs.xml.dist
 ```
+
+PHPCS is not part of the build. `phpcs.xml.dist` records the WordPress Coding Standards the code is checked against if you install WPCS yourself.
 
 ### Architecture overview
 

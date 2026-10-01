@@ -8,8 +8,6 @@
 # Dependencies and tooling
 node_modules
 vendor
-composer.json
-composer.lock
 package.json
 package-lock.json
 webpack.config.js
