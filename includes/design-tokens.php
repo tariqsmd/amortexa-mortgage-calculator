@@ -256,6 +256,24 @@ function calcforge_get_design_tokens() {
 	$tokens[] = calcforge_select_token( 'chartTitleWeight', '--calcforge-chart-title-weight', __( 'Title weight', CALCFORGE_TEXT_DOMAIN ), 'weights' );
 	$tokens[] = calcforge_spacing_token( 'chartTitleMargin', '--calcforge-chart-title-margin', __( 'Title margin', CALCFORGE_TEXT_DOMAIN ), 48 );
 
+	/*
+	 * One colour per payment component, so the donut, the legend and the results
+	 * breakdown all read the same hue for the same component. A component that
+	 * means "tax" should look like tax on every calculator, which is why the
+	 * defaults are fixed, but like every other token each one is still overridable
+	 * per block in the inspector.
+	 *
+	 * The shipped defaults clear 4.5:1 against white so a component can be used as
+	 * text as well as a fill, and are far enough apart to be told apart side by
+	 * side. The test suite re-checks both rather than trusting this comment.
+	 */
+	$tokens[] = calcforge_color_token( 'costPi', '--calcforge-cost-pi', __( 'Principal & Interest', CALCFORGE_TEXT_DOMAIN ) );
+	$tokens[] = calcforge_color_token( 'costTax', '--calcforge-cost-tax', __( 'Property Tax', CALCFORGE_TEXT_DOMAIN ) );
+	$tokens[] = calcforge_color_token( 'costInsurance', '--calcforge-cost-insurance', __( 'Home Insurance', CALCFORGE_TEXT_DOMAIN ) );
+	$tokens[] = calcforge_color_token( 'costHoa', '--calcforge-cost-hoa', __( 'HOA Fee', CALCFORGE_TEXT_DOMAIN ) );
+	$tokens[] = calcforge_color_token( 'costPmi', '--calcforge-cost-pmi', __( 'PMI', CALCFORGE_TEXT_DOMAIN ) );
+	$tokens[] = calcforge_color_token( 'costOther', '--calcforge-cost-other', __( 'Other Costs', CALCFORGE_TEXT_DOMAIN ) );
+
 	// Chart legends.
 	$tokens[] = calcforge_color_token( 'legendText', '--calcforge-legend-text', __( 'Text', CALCFORGE_TEXT_DOMAIN ) );
 	$tokens[] = calcforge_select_token( 'legendFamily', '--calcforge-legend-family', __( 'Font', CALCFORGE_TEXT_DOMAIN ), 'families' );
@@ -323,7 +341,7 @@ function calcforge_get_design_groups() {
 		'chart'   => array(
 			'label'  => __( 'Charts', CALCFORGE_TEXT_DOMAIN ),
 			'summary' => __( 'Series colours, size and titles.', CALCFORGE_TEXT_DOMAIN ),
-			'tokens' => array( 'accent', 'accentAlt', 'chartHeight', 'chartAxis', 'chartTitleColor', 'chartTitleSize', 'chartTitleWeight', 'chartTitleMargin' ),
+			'tokens' => array( 'accent', 'accentAlt', 'costPi', 'costTax', 'costInsurance', 'costHoa', 'costPmi', 'costOther', 'chartHeight', 'chartAxis', 'chartTitleColor', 'chartTitleSize', 'chartTitleWeight', 'chartTitleMargin' ),
 		),
 		'legend'  => array(
 			'label'  => __( 'Chart Legends', CALCFORGE_TEXT_DOMAIN ),

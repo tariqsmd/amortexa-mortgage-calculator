@@ -6,7 +6,7 @@
  * prints a deterministic JSON snapshot of the same test matrix used by
  * tests/parity.php. Output format:
  *
- *   { "monthly": [...], "schedule": [...] }
+ *   { "monthly": [...], "schedule": [...], "costs": [...] }
  *
  * Run with: node tests/js/calc.mjs
  */
@@ -41,6 +41,69 @@ const schedule = CASES.map( ( c ) =>
 	mod.buildAmortizationSchedule( c.principal, c.rate, c.years )
 );
 
+/*
+ * Cost scenarios run through the full entry point, because the interest rate,
+ * the purchase price and the unit of each field all have to agree between the
+ * server render and the live recalculation.
+ */
+const COST_CASES = [
+	{
+		loanAmount: 400000,
+		downPayment: 80000,
+		interestRate: 7.455,
+		loanTerm: 30,
+		propertyTax: 1.2,
+		homeInsurance: 1500,
+		otherCosts: 4000,
+	},
+	{
+		loanAmount: 400000,
+		downPayment: 40000,
+		interestRate: 7.0,
+		loanTerm: 30,
+		pmi: 1200,
+		pmiUnit: 'amount',
+	},
+	{
+		loanAmount: 300000,
+		interestRate: 6.5,
+		loanTerm: 30,
+	},
+	{
+		loanAmount: 250000,
+		downPayment: 25000,
+		interestRate: 5.5,
+		loanTerm: 15,
+		propertyTax: 1.8,
+		propertyTaxUnit: 'percent',
+		hoaFee: 3600,
+		hoaFeeUnit: 'amount',
+		homeInsurance: 2,
+		homeInsuranceUnit: 'amount',
+		pmi: 0.5,
+		pmiUnit: 'percent',
+		otherCosts: 1200,
+		otherCostsUnit: 'amount',
+	},
+];
+
+const costs = COST_CASES.map( ( attrs ) => {
+	const result = mod.calculateMortgage( {
+		...attrs,
+		showAmortization: false,
+	} );
+
+	return {
+		monthlyPayment: result.monthlyPayment,
+		monthlyCosts: result.monthlyCosts,
+		totalMonthlyCost: result.totalMonthlyCost,
+		pmiEndMonth: result.pmiEndMonth,
+		totalPmi: result.totalPmi,
+		totalCosts: result.totalCosts,
+		totalOutOfPocket: result.totalOutOfPocket,
+	};
+} );
+
 process.stdout.write(
-	JSON.stringify( { monthly, schedule } )
+	JSON.stringify( { monthly, schedule, costs } )
 );

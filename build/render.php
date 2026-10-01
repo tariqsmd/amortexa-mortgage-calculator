@@ -52,20 +52,33 @@ $config = array(
 	// as a custom property the way colours do.
 	'chartHeight'      => (int) calcforge_get_design_chart_metrics( $attrs )['height'],
 	'labels'           => array(
-		'monthly'   => __( 'Monthly Payment', CALCFORGE_TEXT_DOMAIN ),
-		'principal' => __( 'Financed Principal', CALCFORGE_TEXT_DOMAIN ),
-		'totalInt'  => __( 'Total Interest', CALCFORGE_TEXT_DOMAIN ),
-		'totalPaid' => __( 'Total Paid', CALCFORGE_TEXT_DOMAIN ),
-		'toggle'    => __( 'Collapse schedule', CALCFORGE_TEXT_DOMAIN ),
-		'toggleOpen' => __( 'Expand schedule', CALCFORGE_TEXT_DOMAIN ),
-		'year'      => __( 'Year', CALCFORGE_TEXT_DOMAIN ),
-		'prinPaid'  => __( 'Principal Paid', CALCFORGE_TEXT_DOMAIN ),
-		'intPaid'   => __( 'Interest Paid', CALCFORGE_TEXT_DOMAIN ),
-		'balance'   => __( 'Remaining Balance', CALCFORGE_TEXT_DOMAIN ),
-		'balanceY1' => __( 'Balance After Year 1', CALCFORGE_TEXT_DOMAIN ),
-		'cumInt'    => __( 'Cumulative Interest', CALCFORGE_TEXT_DOMAIN ),
+		'monthly'     => __( 'Monthly Payment', CALCFORGE_TEXT_DOMAIN ),
+		'totalMonthly' => __( 'Total Monthly Cost', CALCFORGE_TEXT_DOMAIN ),
+		'principal'   => __( 'Financed Principal', CALCFORGE_TEXT_DOMAIN ),
+		'totalInt'    => __( 'Total Interest', CALCFORGE_TEXT_DOMAIN ),
+		'totalPaid'   => __( 'Total Paid', CALCFORGE_TEXT_DOMAIN ),
+		'totalCosts'  => __( 'Total Taxes & Costs', CALCFORGE_TEXT_DOMAIN ),
+		'outOfPocket' => __( 'Total Out-of-Pocket', CALCFORGE_TEXT_DOMAIN ),
+		'pi'          => __( 'Principal & Interest', CALCFORGE_TEXT_DOMAIN ),
+		'toggle'      => __( 'Collapse schedule', CALCFORGE_TEXT_DOMAIN ),
+		'toggleOpen'  => __( 'Expand schedule', CALCFORGE_TEXT_DOMAIN ),
+		'year'        => __( 'Year', CALCFORGE_TEXT_DOMAIN ),
+		'prinPaid'    => __( 'Principal Paid', CALCFORGE_TEXT_DOMAIN ),
+		'intPaid'     => __( 'Interest Paid', CALCFORGE_TEXT_DOMAIN ),
+		'balance'     => __( 'Remaining Balance', CALCFORGE_TEXT_DOMAIN ),
+		'balanceY1'   => __( 'Balance After Year 1', CALCFORGE_TEXT_DOMAIN ),
+		'cumInt'      => __( 'Cumulative Interest', CALCFORGE_TEXT_DOMAIN ),
 	),
 );
+
+/*
+ * Legend labels are taken from the component descriptors rather than repeated
+ * here, so the chart legend and the results rows cannot drift apart, and both
+ * pick up translations from one place.
+ */
+foreach ( calcforge_get_cost_components() as $component_key => $component ) {
+	$config['labels'][ $component_key ] = $component['label'];
+}
 
 /*
  * Field metadata drives both the number inputs and their paired range
@@ -122,6 +135,78 @@ $fields = array(
 		'sstep' => '1',
 	),
 );
+
+/*
+ * Recurring ownership costs. These only render when the author turns them on, so
+ * an existing calculator keeps the exact field list it shipped with. A component
+ * that can be a percentage carries its unit toggle; one that is always a cash
+ * figure does not.
+ */
+$cost_fields = array();
+
+if ( ! empty( $attrs['showCosts'] ) ) {
+	foreach ( calcforge_get_cost_components() as $component_key => $component ) {
+		if ( empty( $component['percent'] ) ) {
+			continue;
+		}
+
+		$attribute = calcforge_get_cost_attribute( $component_key );
+		$unit      = calcforge_resolve_cost_units( $attrs );
+		$is_amount = isset( $unit[ $attribute ] ) && 'amount' === $unit[ $attribute ];
+
+		$cost_fields[] = array(
+			'id'      => $uid . '-cost-' . $component_key,
+			'name'    => $attribute,
+			'label'   => $component['label'],
+			'value'   => (string) $attrs[ $attribute ],
+			'step'    => $is_amount ? 'any' : '0.01',
+			'min'     => '0',
+			'max'     => '',
+			'unit'    => $unit[ $attribute ],
+			'unitAttr' => $attribute . 'Unit',
+		);
+	}
+}
+
+/*
+ * Which cost components are worth showing. A component the author left at zero is
+ * dropped rather than rendered as a $0.00 row, so a calculator that only has tax
+ * does not show six lines with five of them empty. Principal and interest is
+ * always present because it is the loan itself, and it anchors the chart legend.
+ */
+$breakdown   = array();
+$cost_values = isset( $result['monthly_costs'] ) ? (array) $result['monthly_costs'] : array();
+
+foreach ( calcforge_get_cost_components() as $component_key => $component ) {
+	if ( 'pi' === $component_key ) {
+		$amount = (float) $result['monthly_payment'];
+	} elseif ( isset( $cost_values[ $component_key ] ) ) {
+		$amount = (float) $cost_values[ $component_key ];
+	} else {
+		$amount = 0.0;
+	}
+
+	// Only ever hide a component the author did not fill in.
+	if ( $amount <= 0 && 'pi' !== $component_key ) {
+		continue;
+	}
+
+	/*
+	 * The bind key has to match the one view.js builds from the component key,
+	 * since it is the only handle connecting a row to a live recalculation.
+	 */
+	$bind_key = 'pi' === $component_key ? 'monthlyPayment' : 'cost' . ucfirst( $component_key );
+
+	$breakdown[] = array(
+		'key'    => $component_key,
+		'label'  => $component['label'],
+		'bind'   => $bind_key,
+		'amount' => round( $amount, 2 ),
+		'color'  => calcforge_get_cost_component_color( $attrs, $component_key ),
+	);
+}
+
+$show_costs = ! empty( $attrs['showCosts'] ) && count( $breakdown ) > 0;
 
 /*
  * Inline typography for the primary result. Only emitted when the user set a
@@ -261,6 +346,51 @@ if ( ! empty( $style_vars ) ) {
 						</dd>
 					</div>
 				</dl>
+
+				<?php if ( $show_costs ) : ?>
+				<dl class="calcforge-calc__result-list calcforge-calc__result-list--costs">
+					<?php foreach ( $breakdown as $breakdown_row ) : ?>
+						<div
+							class="calcforge-calc__result-row calcforge-calc__result-row--cost"
+							data-calcforge-cost="<?php echo esc_attr( $breakdown_row['key'] ); ?>"
+						>
+							<dt>
+								<span
+									class="calcforge-calc__cost-swatch"
+									style="background-color:<?php echo esc_attr( $breakdown_row['color'] ); ?>"
+									aria-hidden="true"
+								></span>
+								<?php echo esc_html( $breakdown_row['label'] ); ?>
+							</dt>
+							<dd data-calcforge-bind="<?php echo esc_attr( $breakdown_row['bind'] ); ?>">
+								<?php echo esc_html( calcforge_format_amount( $breakdown_row['amount'], $symbol, $decimals, $position ) ); ?>
+							</dd>
+						</div>
+					<?php endforeach; ?>
+
+						<div class="calcforge-calc__result-row calcforge-calc__result-row--total">
+							<dt><?php echo esc_html( $config['labels']['totalMonthly'] ); ?></dt>
+							<dd data-calcforge-bind="totalMonthlyCost">
+								<?php echo esc_html( calcforge_format_amount( $result['total_monthly_cost'], $symbol, $decimals, $position ) ); ?>
+							</dd>
+						</div>
+				</dl>
+
+					<dl class="calcforge-calc__result-list calcforge-calc__result-list--totals">
+						<div class="calcforge-calc__result-row">
+							<dt><?php echo esc_html( $config['labels']['totalCosts'] ); ?></dt>
+							<dd data-calcforge-bind="totalCosts">
+								<?php echo esc_html( calcforge_format_amount( $result['total_costs'], $symbol, $decimals, $position ) ); ?>
+							</dd>
+						</div>
+						<div class="calcforge-calc__result-row">
+							<dt><?php echo esc_html( $config['labels']['outOfPocket'] ); ?></dt>
+							<dd data-calcforge-bind="totalOutOfPocket">
+								<?php echo esc_html( calcforge_format_amount( $result['total_out_of_pocket'], $symbol, $decimals, $position ) ); ?>
+							</dd>
+						</div>
+					</dl>
+				<?php endif; ?>
 			</div>
 			<?php endif; ?>
 
@@ -352,7 +482,46 @@ if ( ! empty( $style_vars ) ) {
 								<td><?php echo esc_html( calcforge_format_amount( $row['interest'], $symbol, $decimals, $position ) ); ?></td>
 								<td><?php echo esc_html( calcforge_format_amount( $row['balance'], $symbol, $decimals, $position ) ); ?></td>
 							</tr>
+			<?php endforeach; ?>
+
+				<?php if ( $cost_fields ) : ?>
+					<fieldset class="calcforge-calc__costs">
+						<legend class="calcforge-calc__costs-legend">
+							<?php esc_html_e( 'Taxes & Costs (annual)', CALCFORGE_TEXT_DOMAIN ); ?>
+						</legend>
+						<?php foreach ( $cost_fields as $cost_field ) : ?>
+							<div class="calcforge-calc__field-group calcforge-calc__field-group--cost">
+								<label class="calcforge-calc__label" for="<?php echo esc_attr( $cost_field['id'] ); ?>">
+									<?php echo esc_html( $cost_field['label'] ); ?>
+								</label>
+								<div class="calcforge-calc__field-row">
+									<input
+										type="number"
+										class="calcforge-calc__field"
+										id="<?php echo esc_attr( $cost_field['id'] ); ?>"
+										data-calcforge-field="<?php echo esc_attr( $cost_field['name'] ); ?>"
+										value="<?php echo esc_attr( $cost_field['value'] ); ?>"
+										step="<?php echo esc_attr( $cost_field['step'] ); ?>"
+										min="<?php echo esc_attr( $cost_field['min'] ); ?>"
+										inputmode="decimal"
+									/>
+									<button
+										type="button"
+										class="calcforge-calc__unit"
+										data-calcforge-unit="<?php echo esc_attr( $cost_field['unitAttr'] ); ?>"
+										aria-label="<?php
+											/* translators: %s: cost component name. */
+											printf( esc_attr__( 'Toggle %s between a percentage and an amount', 'calcforge' ), esc_attr( $cost_field['label'] ) );
+										?>"
+									>
+										<?php echo esc_html( 'percent' === $cost_field['unit'] ? '%' : __( 'Amount', 'calcforge' ) ); ?>
+									</button>
+								</div>
+							</div>
 						<?php endforeach; ?>
+					</fieldset>
+				<?php endif; ?>
+
 					</tbody>
 				</table>
 				</div>

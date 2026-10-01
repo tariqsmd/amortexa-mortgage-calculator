@@ -183,6 +183,18 @@ if ( ! function_exists( 'sanitize_text_field' ) ) {
 	}
 }
 
+if ( ! function_exists( 'sanitize_key' ) ) {
+	/**
+	 * Mirrors core so a stub bug cannot mask a real sanitizing bug.
+	 *
+	 * @param string $key Raw key.
+	 * @return string Lowercased key with anything outside [a-z0-9_-] removed.
+	 */
+	function sanitize_key( $key ) {
+		return preg_replace( '/[^a-z0-9_\-]/', '', strtolower( (string) $key ) );
+	}
+}
+
 if ( ! function_exists( 'wp_html_excerpt' ) ) {
 	/**
 	 * Emulates WP wp_html_excerpt().
@@ -593,6 +605,149 @@ function calcforge_test_parity() {
 			)
 		);
 	}
+
+	$failures += calcforge_test_cost_parity( $decoded, $failures );
+
+	return $failures;
+}
+
+/**
+ * Compares the cost math between the server render and the live recalculation.
+ *
+ * The two implementations are written separately, one in PHP and one in JS, so
+ * nothing stops them drifting apart. A cached page shows the PHP numbers and a
+ * visitor typing in a field shows the JS ones, and if the two disagree the
+ * figures visibly jump, so they are compared directly here.
+ *
+ * @param array $decoded Decoded output of the Node driver.
+ * @param int   $already Failures counted so far, reported for context.
+ * @return int Number of failures encountered.
+ */
+function calcforge_test_cost_parity( $decoded, $already ) {
+	if ( ! isset( $decoded['costs'] ) || ! is_array( $decoded['costs'] ) ) {
+		return 0;
+	}
+
+	$cases = array(
+		array(
+			'loanAmount'    => 400000,
+			'downPayment'   => 80000,
+			'interestRate'  => 7.455,
+			'loanTerm'      => 30,
+			'propertyTax'   => 1.2,
+			'homeInsurance' => 1500,
+			'otherCosts'    => 4000,
+		),
+		array(
+			'loanAmount'   => 400000,
+			'downPayment'  => 40000,
+			'interestRate' => 7.0,
+			'loanTerm'     => 30,
+			'pmi'          => 1200,
+			'pmiUnit'      => 'amount',
+		),
+		array(
+			'loanAmount'   => 300000,
+			'interestRate' => 6.5,
+			'loanTerm'     => 30,
+		),
+		array(
+			'loanAmount'        => 250000,
+			'downPayment'       => 25000,
+			'interestRate'      => 5.5,
+			'loanTerm'          => 15,
+			'propertyTax'       => 1.8,
+			'propertyTaxUnit'   => 'percent',
+			'hoaFee'            => 3600,
+			'hoaFeeUnit'        => 'amount',
+			'homeInsurance'     => 2,
+			'homeInsuranceUnit' => 'amount',
+			'pmi'               => 0.5,
+			'pmiUnit'           => 'percent',
+			'otherCosts'        => 1200,
+			'otherCostsUnit'    => 'amount',
+		),
+	);
+
+	$failures = 0;
+
+	foreach ( $cases as $index => $attrs ) {
+		if ( ! isset( $decoded['costs'][ $index ] ) ) {
+			continue;
+		}
+
+		$php = calcforge_calculate( array_merge( $attrs, array( 'showAmortization' => false ) ) );
+		$js  = $decoded['costs'][ $index ];
+
+		$pairs = array(
+			'monthlyPayment'   => array( $php['monthly_payment'], $js['monthlyPayment'] ),
+			'totalMonthlyCost' => array( $php['total_monthly_cost'], $js['totalMonthlyCost'] ),
+			'totalPmi'         => array( $php['total_pmi'], $js['totalPmi'] ),
+			'totalCosts'       => array( $php['total_costs'], $js['totalCosts'] ),
+			'totalOutOfPocket' => array( $php['total_out_of_pocket'], $js['totalOutOfPocket'] ),
+		);
+
+		foreach ( $pairs as $key => $pair ) {
+			if ( abs( (float) $pair[0] - (float) $pair[1] ) > 0.0001 ) {
+				$failures++;
+				fwrite(
+					STDOUT,
+					sprintf(
+						"FAIL cost case %d '%s': PHP=%s JS=%s\n",
+						$index,
+						$key,
+						var_export( $pair[0], true ),
+						var_export( $pair[1], true )
+					)
+				);
+			}
+		}
+
+		// The cancellation month is an integer, and must match exactly.
+		if ( (int) $php['pmi_end_month'] !== (int) $js['pmiEndMonth'] ) {
+			$failures++;
+			fwrite(
+				STDOUT,
+				sprintf(
+					"FAIL cost case %d 'pmiEndMonth': PHP=%d JS=%d\n",
+					$index,
+					(int) $php['pmi_end_month'],
+					(int) $js['pmiEndMonth']
+				)
+			);
+		}
+
+		foreach ( array( 'tax', 'insurance', 'hoa', 'pmi', 'other' ) as $component ) {
+			$php_value = isset( $php['monthly_costs'][ $component ] ) ? (float) $php['monthly_costs'][ $component ] : 0.0;
+			$js_value  = isset( $js['monthlyCosts'][ $component ] ) ? (float) $js['monthlyCosts'][ $component ] : 0.0;
+
+			if ( abs( $php_value - $js_value ) > 0.0001 ) {
+				$failures++;
+				fwrite(
+					STDOUT,
+					sprintf(
+						"FAIL cost case %d component '%s': PHP=%s JS=%s\n",
+						$index,
+						$component,
+						var_export( $php_value, true ),
+						var_export( $js_value, true )
+					)
+				);
+			}
+		}
+
+		fwrite(
+			STDOUT,
+			sprintf(
+				"ok   cost case %d: PHP and JS agree on %d components, PMI ends month %d\n",
+				$index,
+				5,
+				(int) $php['pmi_end_month']
+			)
+		);
+	}
+
+	unset( $already );
 
 	return $failures;
 }
@@ -1636,7 +1791,376 @@ function calcforge_test_rate_limit() {
 	return $failures;
 }
 
-$exit = calcforge_test_parity() + calcforge_test_design_schema() + calcforge_test_settings_and_shortcode() + calcforge_test_input_guards() + calcforge_test_rate_limit();
+/**
+ * Checks the recurring cost inputs, the conversion between percent and amount,
+ * and the PMI cancellation rule.
+ *
+ * The reference figures come from a 400,000 home with 20% down at 7.455% over
+ * 30 years, which is the worked example published by the well known calculator
+ * this feature was modelled on, so a change in the math shows up here rather
+ * than as a quietly wrong total on someone's page.
+ *
+ * @return int Number of failures.
+ */
+function calcforge_test_costs() {
+	$failures = 0;
+	$report   = function ( $ok, $message ) use ( &$failures ) {
+		if ( $ok ) {
+			fwrite( STDOUT, "ok   $message\n" );
+		} else {
+			++$failures;
+			fwrite( STDOUT, "FAIL $message\n" );
+		}
+	};
+	$near = function ( $got, $want, $tolerance = 0.02 ) {
+		return abs( (float) $got - (float) $want ) <= $tolerance;
+	};
+
+	$reference = array(
+		'loanAmount'     => 400000,
+		'downPayment'    => 80000,
+		'interestRate'   => 7.455,
+		'loanTerm'       => 30,
+		'propertyTax'    => 1.2,
+		'homeInsurance'  => 1500,
+		'otherCosts'     => 4000,
+	);
+
+	$result = calcforge_calculate( $reference );
+
+	$report( $near( $result['monthly_payment'], 2227.63 ), 'principal and interest matches the reference payment' );
+	$report( $near( $result['principal'], 320000 ), 'the financed principal is the price less the down payment' );
+	$report( $near( $result['monthly_costs']['tax'], 400 ), 'a percentage tax is a share of the purchase price' );
+	$report( $near( $result['monthly_costs']['insurance'], 125 ), 'an annual amount becomes a monthly figure' );
+	$report( $near( $result['monthly_costs']['other'], 333.33 ), 'other costs convert like any other amount' );
+	$report( $near( $result['total_monthly_cost'], 3085.97 ), 'the total monthly cost is P&I plus every cost' );
+
+	/*
+	 * A calculator with no costs entered must be byte-for-byte what it was before
+	 * this feature, otherwise adding it silently changes existing pages.
+	 */
+	$plain = calcforge_calculate(
+		array(
+			'loanAmount'   => 300000,
+			'interestRate' => 6.5,
+			'loanTerm'     => 30,
+		)
+	);
+
+	$report( $near( $plain['total_monthly_cost'], $plain['monthly_payment'] ), 'no costs means the total equals the payment' );
+	$report( $near( $plain['total_costs'], 0 ), 'no costs means no lifetime cost total' );
+	$report( $near( $plain['total_out_of_pocket'], $plain['total_paid'] ), 'no costs means out-of-pocket equals total paid' );
+	$report( $near( array_sum( $plain['monthly_costs'] ), 0 ), 'every component defaults to zero' );
+
+	/*
+	 * PMI has to stop once the balance reaches 80% of the original value. Running
+	 * it to term end is the common error and inflates the lifetime cost, so both
+	 * directions are checked: not charged past the threshold, and not dropped
+	 * before it either.
+	 */
+	$report( 0 === calcforge_get_pmi_end_month( 320000, 400000, 7.455, 360 ), 'no PMI is charged at exactly 80% LTV' );
+
+	$pmi_attrs = array(
+		'loanAmount'   => 400000,
+		'downPayment'  => 40000,
+		'interestRate' => 7.0,
+		'loanTerm'     => 30,
+		'pmi'          => 1200,
+	);
+	$pmi        = calcforge_calculate( $pmi_attrs );
+	$end        = (int) $pmi['pmi_end_month'];
+
+	$report( $end > 0 && $end < 360, 'PMI is cancelled part way through a 90% LTV loan' );
+	$report( $pmi['total_pmi'] < 1200 / 12 * 360, 'PMI is not charged for the whole term' );
+
+	// interestRate is a percentage, so 7.0 arrives here as 0.07 a month.
+	$rate    = 7.0 / 100 / 12;
+	$payment = calcforge_calculate_monthly_payment( 360000, 7.0, 30 );
+	$balance = 360000;
+	$before  = null;
+
+	for ( $month = 1; $month <= $end; $month++ ) {
+		if ( $month === $end ) {
+			$before = $balance;
+		}
+
+		$interest = $balance * $rate;
+		$balance -= max( min( $payment, $balance + $interest ) - $interest, 0 );
+	}
+
+	$report( $balance <= 320000.01, 'the balance has reached 80% of the value when PMI stops' );
+	$report( $before > 320000, 'PMI does not stop before the balance reaches 80% of the value' );
+
+	// The month reported has to match the term the lifetime total is based on.
+	$report( $near( $pmi['total_pmi'], 1200 / 12 * $end, 0.01 ), 'lifetime PMI covers exactly the months before cancellation' );
+
+	// A loan already at or below the threshold never carries PMI at all.
+	$report( 0 === calcforge_get_pmi_end_month( 100000, 400000, 7.0, 360 ), 'PMI is not scheduled for a loan under 80% LTV' );
+
+	// Unit handling.
+	$as_amount = calcforge_calculate(
+		array(
+			'loanAmount'        => 400000,
+			'interestRate'      => 6.5,
+			'loanTerm'          => 30,
+			'homeInsurance'     => 1500,
+			'homeInsuranceUnit' => 'amount',
+		)
+	);
+	$report( $near( $as_amount['monthly_costs']['insurance'], 125 ), 'a field entered as an amount is not multiplied by the price' );
+
+	$clamped = calcforge_sanitize_attributes( array( 'propertyTax' => 1500 ) );
+	$kept    = calcforge_sanitize_attributes(
+		array(
+			'propertyTax'     => 1500,
+			'propertyTaxUnit' => 'amount',
+		)
+	);
+
+	$report( $near( $clamped['propertyTax'], 100 ), 'a percentage field is capped at 100' );
+	$report( $near( $kept['propertyTax'], 1500 ), 'the same figure is kept whole when entered as an amount' );
+
+	$bogus = calcforge_sanitize_attributes( array( 'propertyTaxUnit' => 'bananas' ) );
+	$report( 'bananas' !== $bogus['propertyTaxUnit'], 'an unrecognised unit falls back rather than being stored' );
+
+	$junk = calcforge_sanitize_attributes(
+		array(
+			'propertyTax' => 'abc',
+			'pmi'          => -50,
+		)
+	);
+	$report( 0.0 === (float) $junk['propertyTax'], 'a non-numeric cost falls back to its default' );
+	$report( 0.0 === (float) $junk['pmi'], 'a negative cost is clamped to zero' );
+
+	// The component colours are only worth having if they can be told apart.
+	$scss     = (string) file_get_contents( dirname( __DIR__ ) . '/src/style.scss' );
+	$swatches = array();
+
+	if ( preg_match_all( '/--calcforge-cost-([a-z]+):\s*(#[0-9a-f]{6});/i', $scss, $hits, PREG_SET_ORDER ) ) {
+		foreach ( $hits as $hit ) {
+			$swatches[ $hit[1] ] = $hit[2];
+		}
+	}
+
+	$report( 6 === count( $swatches ), 'every cost component has a colour' );
+
+	foreach ( $swatches as $name => $hex ) {
+		$report( calcforge_test_contrast( $hex, '#ffffff' ) >= 4.5, "the $name colour is readable as text on white" );
+	}
+
+	foreach ( $swatches as $name => $hex ) {
+		foreach ( $swatches as $other => $other_hex ) {
+			if ( $name >= $other ) {
+				continue;
+			}
+
+			$report(
+				calcforge_test_colour_distance( $hex, $other_hex ) >= 60,
+				"the $name and $other colours are distinguishable side by side"
+			);
+		}
+	}
+
+	if ( 0 === $failures ) {
+		fwrite( STDOUT, "ok   recurring costs, PMI cancellation and component colours\n" );
+	}
+
+	return $failures;
+}
+
+/**
+ * Converts a hex colour to its relative luminance.
+ *
+ * @param string $hex Six digit hex colour, with or without the leading hash.
+ * @return float Relative luminance between 0 and 1.
+ */
+function calcforge_test_luminance( $hex ) {
+	$hex = ltrim( (string) $hex, '#' );
+
+	if ( 3 === strlen( $hex ) ) {
+		$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+	}
+
+	$channels = array();
+
+	foreach ( str_split( $hex, 2 ) as $pair ) {
+		$value = hexdec( $pair ) / 255;
+		$channels[] = $value <= 0.03928
+			? $value / 12.92
+			: pow( ( $value + 0.055 ) / 1.055, 2.4 );
+	}
+
+	return 0.2126 * $channels[0] + 0.7152 * $channels[1] + 0.0722 * $channels[2];
+}
+
+/**
+ * Returns the WCAG contrast ratio between two colours.
+ *
+ * @param string $a First hex colour.
+ * @param string $b Second hex colour.
+ * @return float Contrast ratio, where 1 is identical and 21 is maximal.
+ */
+function calcforge_test_contrast( $a, $b ) {
+	$one = calcforge_test_luminance( $a );
+	$two = calcforge_test_luminance( $b );
+
+	$lighter = max( $one, $two );
+	$darker  = min( $one, $two );
+
+	return ( $lighter + 0.05 ) / ( $darker + 0.05 );
+}
+
+/**
+ * Returns the straight-line RGB distance between two colours.
+ *
+ * A crude stand-in for perceptual difference, but it is enough to catch the
+ * failure that matters here: two swatches so close that a legend reader cannot
+ * tell which slice they belong to.
+ *
+ * @param string $a First hex colour.
+ * @param string $b Second hex colour.
+ * @return float Distance between 0 and 441.
+ */
+function calcforge_test_colour_distance( $a, $b ) {
+	$a = ltrim( (string) $a, '#' );
+	$b = ltrim( (string) $b, '#' );
+
+	$total = 0;
+
+	for ( $index = 0; $index < 3; $index++ ) {
+		$offset = $index * 2;
+		$total  += pow( hexdec( substr( $a, $offset, 2 ) ) - hexdec( substr( $b, $offset, 2 ) ), 2 );
+	}
+
+	return sqrt( $total );
+}
+
+/**
+ * Checks that every place the version is written down agrees with every other.
+ *
+ * CALCFORGE_VERSION is what cache-busts the compiled assets, so a header bumped
+ * without bumping the constant leaves visitors on the previous release's JS
+ * indefinitely: the file URLs do not change, so the browser never refetches it.
+ * Nothing at runtime would report that, which is exactly why it is asserted here.
+ *
+ * @return int Number of failures.
+ */
+function calcforge_test_version_consistency() {
+	$failures = 0;
+	$report   = function ( $ok, $message ) use ( &$failures ) {
+		if ( $ok ) {
+			fwrite( STDOUT, "ok   $message\n" );
+		} else {
+			++$failures;
+			fwrite( STDOUT, "FAIL $message\n" );
+		}
+	};
+
+	$root    = dirname( __DIR__ );
+	$grab    = function ( $file, $pattern ) use ( $root ) {
+		$contents = (string) file_get_contents( $root . '/' . $file );
+
+		return preg_match( $pattern, $contents, $match ) ? trim( $match[1] ) : '';
+	};
+
+	$header   = $grab( 'calcforge.php', '/^ \* Version:\s*(.+)$/m' );
+	$constant = $grab( 'calcforge.php', "/define\(\s*'CALCFORGE_VERSION',\s*'([^']+)'\s*\)/" );
+	$readme   = $grab( 'readme.txt', '/^Stable tag:\s*(.+)$/m' );
+
+	$report( '' !== $header, 'the plugin header carries a version' );
+	$report( '' !== $constant, 'CALCFORGE_VERSION is defined' );
+	$report( '' !== $readme, 'readme.txt carries a stable tag' );
+
+	$report(
+		$header === $constant,
+		sprintf( 'CALCFORGE_VERSION (%s) matches the plugin header (%s)', $constant, $header )
+	);
+	$report(
+		$header === $readme,
+		sprintf( 'the readme stable tag (%s) matches the plugin header (%s)', $readme, $header )
+	);
+
+	/*
+	 * The costs work ships real behaviour, so a release carrying it must not be
+	 * published under the previous version number.
+	 */
+	$report(
+		version_compare( $header, '1.1.0', '>=' ),
+		'the version is at least 1.1.0, which is where recurring costs shipped'
+	);
+
+	/*
+	 * build/block.json is generated from src/block.json. If the two drift, the
+	 * registered block exposes attributes the source never declared, or loses the
+	 * cost attributes entirely.
+	 */
+	$src  = json_decode( (string) file_get_contents( $root . '/src/block.json' ), true );
+	$dest = json_decode( (string) file_get_contents( $root . '/build/block.json' ), true );
+
+	if ( is_array( $src ) && is_array( $dest ) ) {
+		$source_attributes = array_keys( $src['attributes'] );
+		$built_attributes  = array_keys( $dest['attributes'] );
+
+		sort( $source_attributes );
+		sort( $built_attributes );
+
+		$report(
+			$source_attributes === $built_attributes,
+			'the compiled block metadata declares the same attributes as the source'
+		);
+
+		$report(
+			isset( $dest['attributes']['showCosts'] ),
+			'the compiled block metadata declares the cost switch'
+		);
+
+		/*
+		 * Only the cost attributes ship in this release. Anything left over from
+		 * the unreleased start-date, escalation, extra-payment and per-field
+		 * toggle work would show up in the editor as settings that do nothing.
+		 */
+		$withdrawn = array(
+			'showLoanSummary',
+			'showPayoffDate',
+			'scheduleFrequency',
+			'startMonth',
+			'startYear',
+			'taxIncrease',
+			'insuranceIncrease',
+			'hoaIncrease',
+			'otherCostsIncrease',
+			'extraMonthly',
+			'extraYearly',
+			'fieldToggles',
+		);
+
+		foreach ( $withdrawn as $attribute ) {
+			$report(
+				! isset( $src['attributes'][ $attribute ] ),
+				sprintf( 'the unreleased "%s" attribute is not declared', $attribute )
+			);
+		}
+
+		$one_time = array_filter(
+			$source_attributes,
+			function ( $attribute ) {
+				return 0 === strpos( $attribute, 'oneTime' );
+			}
+		);
+
+		$report( array() === $one_time, 'no unreleased one-time payment attributes are declared' );
+	} else {
+		$report( false, 'both block.json files are valid JSON' );
+	}
+
+	if ( 0 === $failures ) {
+		fwrite( STDOUT, "ok   version, stable tag and compiled metadata agree\n" );
+	}
+
+	return $failures;
+}
+
+$exit = calcforge_test_parity() + calcforge_test_design_schema() + calcforge_test_settings_and_shortcode() + calcforge_test_input_guards() + calcforge_test_rate_limit() + calcforge_test_costs() + calcforge_test_version_consistency();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

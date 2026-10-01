@@ -158,27 +158,68 @@ export default function Preview( {
 				'#d97706',
 		};
 
+		/*
+		 * Mirrors buildCostSeries() in view.js so the editor shows the same donut
+		 * the front end will: component slices once any recurring cost is entered,
+		 * and the original principal/interest pair when none is.
+		 */
+		const costColors = {};
+		for ( const key of [
+			'pi',
+			'tax',
+			'insurance',
+			'hoa',
+			'pmi',
+			'other',
+		] ) {
+			costColors[ key ] =
+				styles.getPropertyValue( `--calcforge-cost-${ key }` ).trim() ||
+				'#2563eb';
+		}
+
+		const previewCosts = result.monthlyCosts || {};
+		const hasPreviewCosts = Object.values( previewCosts ).some(
+			( value ) => ( Number( value ) || 0 ) > 0
+		);
+
+		const costSlices = hasPreviewCosts
+			? [ 'pi', 'tax', 'insurance', 'hoa', 'pmi', 'other' ]
+					.map( ( key ) => ( {
+						key,
+						value:
+							'pi' === key
+								? result.monthlyPayment
+								: previewCosts[ key ] || 0,
+					} ) )
+					.filter( ( slice ) => slice.value > 0 )
+					.map( ( slice ) => ( {
+						value: slice.value,
+						color: costColors[ slice.key ],
+					} ) )
+			: [
+					{ value: result.principal, color: palette.accent },
+					{ value: result.totalInterest, color: palette.accent2 },
+			  ];
+
 		if ( donutRef.current ) {
 			donutRef.current.replaceChildren(
-				createDonutChart(
-					[
-						{ value: result.principal, color: palette.accent },
-						{ value: result.totalInterest, color: palette.accent2 },
-					],
-					{
-						size: previewDonutSize,
-						thickness: Math.max(
-							12,
-							Math.round( previewDonutSize * 0.135 )
-						),
-						centerTitle: __( 'Monthly Payment', 'calcforge' ),
-						centerValue: formatAmount(
-							result.monthlyPayment,
-							currencySymbol,
-							currencyPosition
-						),
-					}
-				)
+				createDonutChart( costSlices, {
+					size: previewDonutSize,
+					thickness: Math.max(
+						12,
+						Math.round( previewDonutSize * 0.135 )
+					),
+					centerTitle: hasPreviewCosts
+						? __( 'Total Monthly Cost', 'calcforge' )
+						: __( 'Monthly Payment', 'calcforge' ),
+					centerValue: formatAmount(
+						hasPreviewCosts
+							? result.totalMonthlyCost
+							: result.monthlyPayment,
+						currencySymbol,
+						currencyPosition
+					),
+				} )
 			);
 		}
 

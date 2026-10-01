@@ -13,6 +13,8 @@
 import {
 	buildAmortizationSchedule,
 	calculateMortgage,
+	COST_COMPONENTS,
+	round2,
 } from './utils/calculator';
 import {
 	createBarChart,
@@ -108,12 +110,33 @@ function readValues( root ) {
 		return input ? parseFloat( input.value ) : NaN;
 	};
 
-	return {
+	const values = {
 		loanAmount: read( 'loanAmount' ),
 		downPayment: read( 'downPayment' ),
 		interestRate: read( 'interestRate' ),
 		loanTerm: read( 'loanTerm' ),
 	};
+
+	/*
+	 * Cost components are optional, so their inputs only exist when the author
+	 * turned them on. A missing field reads as zero rather than NaN, which matters
+	 * because NaN would poison the sum and blank out the total.
+	 */
+	for ( const component of COST_COMPONENTS ) {
+		const value = read( component.attribute );
+
+		values[ component.attribute ] = Number.isFinite( value ) ? value : 0;
+
+		const unit = root.querySelector(
+			`[data-calcforge-unit="${ component.attribute }Unit"]`
+		);
+
+		values[ `${ component.attribute }Unit` ] = unit
+			? unit.dataset.actualUnit || unit.dataset.calcforgeUnit || 'percent'
+			: 'amount';
+	}
+
+	return values;
 }
 
 /**
@@ -226,12 +249,26 @@ function renderSchedule( root, schedule, config ) {
  * @param {Object}      config Block config.
  */
 function renderResults( root, result, config ) {
+	const costs = result.monthlyCosts || {};
+
 	const bindings = {
 		monthlyPayment: result.monthlyPayment,
 		principal: result.principal,
 		totalInterest: result.totalInterest,
 		totalPaid: result.totalPaid,
+		totalMonthlyCost: result.totalMonthlyCost,
+		totalCosts: result.totalCosts,
+		totalOutOfPocket: result.totalOutOfPocket,
 	};
+
+	// One binding per component row. Absent rows are simply skipped.
+	for ( const component of COST_COMPONENTS ) {
+		bindings[
+			`cost${ component.key
+				.charAt( 0 )
+				.toUpperCase() }${ component.key.slice( 1 ) }`
+		] = costs[ component.key ] || 0;
+	}
 
 	Object.entries( bindings ).forEach( ( [ key, value ] ) => {
 		const node = root.querySelector( `[data-calcforge-bind="${ key }"]` );
@@ -240,6 +277,21 @@ function renderResults( root, result, config ) {
 			node.textContent = formatAmount( value, config );
 		}
 	} );
+
+	/*
+	 * Rows the server omitted cannot reappear without markup, so only the ones
+	 * already present are hidden. Clearing a cost therefore tidies the summary
+	 * instead of leaving a row reading zero for something nobody entered.
+	 */
+	for ( const component of COST_COMPONENTS ) {
+		const row = root.querySelector(
+			`[data-calcforge-cost="${ component.key }"]`
+		);
+
+		if ( row ) {
+			row.hidden = ! ( costs[ component.key ] > 0 );
+		}
+	}
 }
 
 /**
@@ -262,6 +314,84 @@ function readPalette( root ) {
 }
 
 /**
+ * Reads the per-component cost colours from CSS custom properties.
+ *
+ * Read the same way as the two-series palette so a skin or a design override
+ * restyles the donut without any JavaScript knowing the hex values.
+ *
+ * @param {HTMLElement} root Calculator container element.
+ * @return {Object.<string, string>} Component key => colour.
+ */
+function readCostPalette( root ) {
+	const styles = window.getComputedStyle( root );
+
+	const read = ( key, fallback ) =>
+		(
+			styles.getPropertyValue( `--calcforge-cost-${ key }` ) || fallback
+		).trim();
+
+	return {
+		pi: read( 'pi', '#2563eb' ),
+		tax: read( 'tax', '#047857' ),
+		insurance: read( 'insurance', '#b45309' ),
+		hoa: read( 'hoa', '#7c3aed' ),
+		pmi: read( 'pmi', '#db2777' ),
+		other: read( 'other', '#57534e' ),
+	};
+}
+
+/**
+ * Builds the donut and legend series for a result.
+ *
+ * When the author has entered any recurring cost, the chart switches from
+ * "principal vs lifetime interest" to "what this month's payment is actually
+ * made of", because a donut showing a 30-year interest total next to a monthly
+ * figure mixes two different time scales and reads as a share of the wrong whole.
+ * With no costs entered it keeps the original two slices, so an existing
+ * calculator's chart is unchanged.
+ *
+ * Components left at zero are omitted rather than drawn as zero-width slices,
+ * which would still claim space in the legend.
+ *
+ * @param {HTMLElement} root   Calculator container element.
+ * @param {Object}      result Result from calculateMortgage().
+ * @param {Object}      labels Config labels.
+ * @return {{series: Array<Object>, legend: Array<Object>}|null} Null when there is nothing to show.
+ */
+function buildCostSeries( root, result, labels ) {
+	const palette = readCostPalette( root );
+	const costs = result.monthlyCosts || {};
+	const series = [];
+	const legend = [];
+
+	const add = ( key, label, value ) => {
+		if ( ! ( value > 0 ) ) {
+			return;
+		}
+
+		series.push( { value, color: palette[ key ] } );
+		legend.push( { key, label, color: palette[ key ] } );
+	};
+
+	const monthlyPayment = Number( result.monthlyPayment ) || 0;
+	const active = Object.keys( costs ).some(
+		( key ) => ( Number( costs[ key ] ) || 0 ) > 0
+	);
+
+	if ( ! active ) {
+		return null;
+	}
+
+	add( 'pi', labels.pi || 'Principal & Interest', monthlyPayment );
+
+	for ( const key of [ 'tax', 'insurance', 'hoa', 'pmi', 'other' ] ) {
+		add( key, labels[ key ] || key, Number( costs[ key ] ) || 0 );
+	}
+
+	return { series, legend };
+}
+
+/**
  * Builds a small legend (color dot + label) into a host element.
  *
  * @param {HTMLElement}                           host  Legend container.
@@ -280,6 +410,18 @@ function renderLegend( host, items ) {
 
 		const dot = document.createElement( 'span' );
 		dot.className = 'calcforge-calc__legend-dot';
+
+		/*
+		 * The colour is set inline from the palette that was read off the
+		 * computed style, so a legend entry is correct even before its CSS loads.
+		 * The data attribute is what lets the stylesheet colour the same dot from
+		 * the component variables, which is how an override in the editor shows up
+		 * here without the JS having to know the hex value.
+		 */
+		if ( item.key ) {
+			dot.dataset.calcforgeSeries = item.key;
+		}
+
 		dot.style.backgroundColor = item.color;
 
 		const label = document.createElement( 'span' );
@@ -323,36 +465,53 @@ function renderCharts( root, values, config, result ) {
 	);
 
 	if ( donutHost ) {
-		donutHost.replaceChildren(
-			createDonutChart(
-				[
+		const costSeries = buildCostSeries( root, result, labels );
+
+		// With no recurring costs entered the donut keeps its original two slices.
+		const slices = costSeries
+			? costSeries.series
+			: [
 					{ value: result.principal, color: palette.accent },
 					{ value: result.totalInterest, color: palette.accent2 },
-				],
-				{
-					size: Math.min(
-						260,
-						Math.round( chartHeight( config ) * 0.76 )
-					),
-					thickness: Math.max(
-						12,
-						Math.round(
-							Math.min(
-								260,
-								Math.round( chartHeight( config ) * 0.76 )
-							) * 0.135
-						)
-					),
-					centerTitle: labels.monthly,
-					centerValue: formatAmount( result.monthlyPayment, config ),
-				}
-			)
+			  ];
+
+		const centerValue = costSeries
+			? result.totalMonthlyCost
+			: result.monthlyPayment;
+
+		donutHost.replaceChildren(
+			createDonutChart( slices, {
+				size: Math.min(
+					260,
+					Math.round( chartHeight( config ) * 0.76 )
+				),
+				thickness: Math.max(
+					12,
+					Math.round(
+						Math.min(
+							260,
+							Math.round( chartHeight( config ) * 0.76 )
+						) * 0.135
+					)
+				),
+				centerTitle: costSeries ? labels.totalMonthly : labels.monthly,
+				centerValue: formatAmount( centerValue, config ),
+			} )
 		);
 
-		renderLegend( root.querySelector( '[data-calcforge-legend="donut"]' ), [
-			{ label: labels.principal, color: palette.accent },
-			{ label: labels.totalInt, color: palette.accent2 },
-		] );
+		renderLegend(
+			root.querySelector( '[data-calcforge-legend="donut"]' ),
+			costSeries
+				? costSeries.legend.map( ( item ) => ( {
+						label: item.label,
+						color: item.color,
+						key: item.key,
+				  } ) )
+				: [
+						{ label: labels.principal, color: palette.accent },
+						{ label: labels.totalInt, color: palette.accent2 },
+				  ]
+		);
 	}
 
 	if ( lineHost ) {
@@ -585,6 +744,63 @@ function initializeCalculator( root ) {
 		syncSliders( root );
 		recalc();
 	}
+
+	/*
+	 * The percent/amount toggle converts the number rather than only relabelling
+	 * it, so switching a tax rate to a cash amount carries the value across
+	 * instead of leaving a misleading figure in the field.
+	 *
+	 * A percentage becomes price * value / 100, and a cash amount becomes its
+	 * share of the price. The converted value is what gets typed back, so the
+	 * stored attribute always matches what is on screen.
+	 */
+	root.querySelectorAll( '[data-calcforge-unit]' ).forEach( ( button ) => {
+		if ( button.dataset.calcforgeBound ) {
+			return;
+		}
+
+		button.dataset.actualUnit = button.dataset.calcforgeUnit || 'percent';
+
+		button.addEventListener( 'click', () => {
+			const attribute = button.dataset.calcforgeUnit.replace(
+				/Unit$/,
+				''
+			);
+			const input = root.querySelector(
+				`[data-calcforge-field="${ attribute }"]`
+			);
+
+			if ( input ) {
+				const current = parseFloat( input.value );
+				const price = parseFloat(
+					(
+						root.querySelector(
+							'[data-calcforge-field="loanAmount"]'
+						) || {}
+					).value
+				);
+
+				if ( Number.isFinite( current ) && Number.isFinite( price ) ) {
+					const toAmount = 'percent' === button.dataset.actualUnit;
+
+					input.value = round2(
+						toAmount
+							? ( price * current ) / 100
+							: ( current / price ) * 100
+					);
+				}
+			}
+
+			button.dataset.actualUnit =
+				'percent' === button.dataset.actualUnit ? 'amount' : 'percent';
+			button.textContent =
+				'percent' === button.dataset.actualUnit ? '%' : 'Amount';
+
+			recalc();
+		} );
+
+		button.dataset.calcforgeBound = 'true';
+	} );
 
 	const toggle = root.querySelector( '.calcforge-calc__toggle' );
 	const scheduleBody = root.querySelector( '[data-calcforge-schedule-body]' );

@@ -15,6 +15,18 @@
 	--calcforge-text-muted: #5c6b73;
 	--calcforge-border: #dde4e9;
 
+	/* Cost component colours. Each clears 4.5:1 on white so a component can be
+	   used as a label as well as a chart fill. Kept out of the skins on purpose:
+	   tax should look like tax whichever skin is active. "Other costs" is
+	   deliberately near-neutral so it reads as the catch-all it is rather than
+	   competing with a named component. */
+	--calcforge-cost-pi: #2563eb;
+	--calcforge-cost-tax: #047857;
+	--calcforge-cost-insurance: #b45309;
+	--calcforge-cost-hoa: #7c3aed;
+	--calcforge-cost-pmi: #db2777;
+	--calcforge-cost-other: #57534e;
+
 	/* Element-level hooks so per-block color controls can target inputs,
 	   labels, and borders without touching the rest of the palette. */
 	--calcforge-field-bg: var(--calcforge-bg);
@@ -883,6 +895,107 @@
 	height: var(--calcforge-legend-swatch-size);
 	border-radius: 50%;
 	display: inline-block;
+}
+
+/* ----------------------------------------------------------------
+ * Cost components
+ * One swatch per component, each tied to its own colour variable so
+ * the row in the results panel and the slice in the donut always
+ * agree. The variable is read here rather than hardcoded, which is
+ * what lets a skin or an override restyle all six at once.
+ * ---------------------------------------------------------------- */
+
+.calcforge-calc__cost-swatch {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	margin-right: 8px;
+	border-radius: 2px;
+	vertical-align: baseline;
+}
+
+.calcforge-calc__result-row--cost[data-calcforge-cost="pi"] .calcforge-calc__cost-swatch,
+.calcforge-calc__legend-dot[data-calcforge-series="pi"] {
+	background-color: var(--calcforge-cost-pi);
+}
+
+.calcforge-calc__result-row--cost[data-calcforge-cost="tax"] .calcforge-calc__cost-swatch,
+.calcforge-calc__legend-dot[data-calcforge-series="tax"] {
+	background-color: var(--calcforge-cost-tax);
+}
+
+.calcforge-calc__result-row--cost[data-calcforge-cost="insurance"] .calcforge-calc__cost-swatch,
+.calcforge-calc__legend-dot[data-calcforge-series="insurance"] {
+	background-color: var(--calcforge-cost-insurance);
+}
+
+.calcforge-calc__result-row--cost[data-calcforge-cost="hoa"] .calcforge-calc__cost-swatch,
+.calcforge-calc__legend-dot[data-calcforge-series="hoa"] {
+	background-color: var(--calcforge-cost-hoa);
+}
+
+.calcforge-calc__result-row--cost[data-calcforge-cost="pmi"] .calcforge-calc__cost-swatch,
+.calcforge-calc__legend-dot[data-calcforge-series="pmi"] {
+	background-color: var(--calcforge-cost-pmi);
+}
+
+.calcforge-calc__result-row--cost[data-calcforge-cost="other"] .calcforge-calc__cost-swatch,
+.calcforge-calc__legend-dot[data-calcforge-series="other"] {
+	background-color: var(--calcforge-cost-other);
+}
+
+.calcforge-calc__result-list--costs {
+	margin-top: 12px;
+}
+
+/* The true monthly outlay is the number buyers actually budget from, so it is
+   set apart from the per-component rows above it rather than blending in. */
+.calcforge-calc__result-row--total {
+	border-bottom: 0;
+
+	dt {
+		font-weight: 600;
+		color: var(--calcforge-result-label-color);
+	}
+
+	dd {
+		font-size: calc(var(--calcforge-result-size) * 1.15);
+		font-weight: 700;
+	}
+}
+
+.calcforge-calc__costs {
+	grid-column: 1 / -1;
+	margin: 8px 0 0;
+	padding: 12px;
+	border: 1px solid var(--calcforge-border);
+	border-radius: calc(var(--calcforge-radius) / 2);
+}
+
+.calcforge-calc__costs-legend {
+	padding: 0 6px;
+	font-size: var(--calcforge-label-size, 13px);
+	font-weight: 600;
+	color: var(--calcforge-label-color);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.calcforge-calc__unit {
+	flex: none;
+	min-width: 44px;
+	padding: 4px 8px;
+	font: inherit;
+	font-size: var(--calcforge-field-size, 14px);
+	color: var(--calcforge-toggle-text);
+	background-color: var(--calcforge-toggle-bg);
+	border: 1px solid var(--calcforge-toggle-border);
+	border-radius: calc(var(--calcforge-field-radius) / 2);
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--calcforge-accent);
+	}
 }
 
 /*

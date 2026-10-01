@@ -32,6 +32,70 @@
       "type": "number",
       "default": 30
     },
+    "propertyTax": {
+      "type": "number",
+      "default": 0
+    },
+    "propertyTaxUnit": {
+      "type": "string",
+      "default": "percent",
+      "enum": [
+        "percent",
+        "amount"
+      ]
+    },
+    "homeInsurance": {
+      "type": "number",
+      "default": 0
+    },
+    "homeInsuranceUnit": {
+      "type": "string",
+      "default": "amount",
+      "enum": [
+        "percent",
+        "amount"
+      ]
+    },
+    "hoaFee": {
+      "type": "number",
+      "default": 0
+    },
+    "hoaFeeUnit": {
+      "type": "string",
+      "default": "amount",
+      "enum": [
+        "percent",
+        "amount"
+      ]
+    },
+    "pmi": {
+      "type": "number",
+      "default": 0
+    },
+    "pmiUnit": {
+      "type": "string",
+      "default": "amount",
+      "enum": [
+        "percent",
+        "amount"
+      ]
+    },
+    "otherCosts": {
+      "type": "number",
+      "default": 0
+    },
+    "otherCostsUnit": {
+      "type": "string",
+      "default": "amount",
+      "enum": [
+        "percent",
+        "amount"
+      ]
+    },
+    "showCosts": {
+      "type": "boolean",
+      "default": false
+    },
     "currencySymbol": {
       "type": "string",
       "default": "$"

@@ -259,6 +259,16 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 						checked={ !! attributes.showCharts }
 						onChange={ setToggle( 'showCharts' ) }
 					/>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Show Taxes & Costs', 'calcforge' ) }
+						help={ __(
+							'Adds property tax, insurance, HOA, PMI and other recurring costs, and reports the true total monthly cost alongside the principal and interest payment.',
+							'calcforge'
+						) }
+						checked={ !! attributes.showCosts }
+						onChange={ setToggle( 'showCosts' ) }
+					/>
 
 					<SelectControl
 						__nextHasNoMarginBottom

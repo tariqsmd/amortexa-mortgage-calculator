@@ -11,6 +11,10 @@
 	<exclude-pattern>/dist/*</exclude-pattern>
 	<exclude-pattern>/node_modules/*</exclude-pattern>
 	<exclude-pattern>/vendor/*</exclude-pattern>
+	<!-- /tests is the harness, not shipped code. It defines its own stubs for
+		WordPress functions and calls shell_exec(), which has no place in a
+		release and trips escaping and file-handling sniffs by design. -->
+	<exclude-pattern>/tests/*</exclude-pattern>
 
 	<arg value="sp"/>
 	<arg name="colors"/>
@@ -23,19 +27,25 @@
 	<!-- Enforce the plugin text domain on every translation function. -->
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="text_domain" type="array" value="calcforge"/>
+			<property name="text_domain" type="array">
+				<element value="calcforge"/>
+			</property>
 		</properties>
 	</rule>
 
 	<!-- Only allow the documented global prefixes. -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
-			<property name="prefixes" type="array" value="calcforge_,CalcForge_,CALCFORGE_"/>
+			<property name="prefixes" type="array">
+				<element value="calcforge_"/>
+				<element value="CalcForge_"/>
+				<element value="CALCFORGE_"/>
+			</property>
 		</properties>
 	</rule>
 
 	<!-- Minimum WordPress version the plugin supports. -->
-	<config name="minimum_supported_wp_version" value="6.4"/>
+	<config name="minimum_supported_wp_version" value="6.5"/>
 
 	<config name="testVersion" value="7.4-"/>
 </ruleset>

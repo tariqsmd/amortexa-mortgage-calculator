@@ -37,6 +37,16 @@ export default function Edit( { attributes, setAttributes } ) {
 		fontFamily,
 		paymentFontSize,
 		paymentFontWeight,
+		propertyTax,
+		propertyTaxUnit,
+		homeInsurance,
+		homeInsuranceUnit,
+		hoaFee,
+		hoaFeeUnit,
+		pmi,
+		pmiUnit,
+		otherCosts,
+		otherCostsUnit,
 	} = attributes;
 
 	const result = useMemo(
@@ -46,8 +56,33 @@ export default function Edit( { attributes, setAttributes } ) {
 				downPayment,
 				interestRate,
 				loanTerm,
+				propertyTax,
+				propertyTaxUnit,
+				homeInsurance,
+				homeInsuranceUnit,
+				hoaFee,
+				hoaFeeUnit,
+				pmi,
+				pmiUnit,
+				otherCosts,
+				otherCostsUnit,
 			} ),
-		[ loanAmount, downPayment, interestRate, loanTerm ]
+		[
+			loanAmount,
+			downPayment,
+			interestRate,
+			loanTerm,
+			propertyTax,
+			propertyTaxUnit,
+			homeInsurance,
+			homeInsuranceUnit,
+			hoaFee,
+			hoaFeeUnit,
+			pmi,
+			pmiUnit,
+			otherCosts,
+			otherCostsUnit,
+		]
 	);
 
 	const chartSchedule = useMemo(

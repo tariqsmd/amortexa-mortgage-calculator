@@ -1,8 +1,8 @@
-# Copyright (C) 2026 CalcForge 1.0.0
-# This file is distributed under the same license as the CalcForge 1.0.0 package.
+# Copyright (C) 2026 CalcForge 1.1.0
+# This file is distributed under the same license as the CalcForge 1.1.0 package.
 msgid ""
 msgstr ""
-"Project-Id-Version: CalcForge 1.0.0\n"
+"Project-Id-Version: CalcForge 1.1.0\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -108,7 +108,7 @@ msgstr ""
 msgid "Adds the year-by-year schedule to new calculators."
 msgstr ""
 
-#: includes/class-settings.php:164, includes/class-widget.php:100, src/components/inspector-controls.js:324
+#: includes/class-settings.php:164, includes/class-widget.php:100, src/components/inspector-controls.js:334
 msgid "Skin"
 msgstr ""
 
@@ -116,7 +116,7 @@ msgstr ""
 msgid "Colour scheme applied to new calculators. Each block can change it later."
 msgstr ""
 
-#: includes/class-settings.php:171, includes/design-tokens.php:324, src/components/inspector-controls.js:47
+#: includes/class-settings.php:171, includes/design-tokens.php:342, src/components/inspector-controls.js:47
 msgid "Charts"
 msgstr ""
 
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Which charts new calculators start with."
 msgstr ""
 
-#: includes/class-settings.php:178, includes/class-widget.php:94, src/components/inspector-controls.js:280
+#: includes/class-settings.php:178, includes/class-widget.php:94, src/components/inspector-controls.js:290
 msgid "Layout"
 msgstr ""
 
@@ -430,7 +430,7 @@ msgstr ""
 msgid "Tighter"
 msgstr ""
 
-#: includes/design-tokens.php:83, includes/helpers.php:209
+#: includes/design-tokens.php:83, includes/helpers.php:331
 msgid "Normal"
 msgstr ""
 
@@ -450,7 +450,7 @@ msgstr ""
 msgid "Background"
 msgstr ""
 
-#: includes/design-tokens.php:189, includes/design-tokens.php:210, includes/design-tokens.php:228, includes/design-tokens.php:260
+#: includes/design-tokens.php:189, includes/design-tokens.php:210, includes/design-tokens.php:228, includes/design-tokens.php:278
 msgid "Text"
 msgstr ""
 
@@ -458,7 +458,7 @@ msgstr ""
 msgid "Border"
 msgstr ""
 
-#: includes/design-tokens.php:191, includes/design-tokens.php:196, includes/design-tokens.php:214, includes/design-tokens.php:230, includes/design-tokens.php:276
+#: includes/design-tokens.php:191, includes/design-tokens.php:196, includes/design-tokens.php:214, includes/design-tokens.php:230, includes/design-tokens.php:294
 msgid "Corner radius"
 msgstr ""
 
@@ -474,7 +474,7 @@ msgstr ""
 msgid "Colour"
 msgstr ""
 
-#: includes/design-tokens.php:202, includes/design-tokens.php:217, includes/design-tokens.php:232, includes/design-tokens.php:261
+#: includes/design-tokens.php:202, includes/design-tokens.php:217, includes/design-tokens.php:232, includes/design-tokens.php:279
 msgid "Font"
 msgstr ""
 
@@ -482,7 +482,7 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: includes/design-tokens.php:204, includes/design-tokens.php:219, includes/design-tokens.php:234, includes/design-tokens.php:263
+#: includes/design-tokens.php:204, includes/design-tokens.php:219, includes/design-tokens.php:234, includes/design-tokens.php:281
 msgid "Weight"
 msgstr ""
 
@@ -498,7 +498,7 @@ msgstr ""
 msgid "Margin"
 msgstr ""
 
-#: includes/design-tokens.php:213, includes/design-tokens.php:273
+#: includes/design-tokens.php:213, includes/design-tokens.php:291
 msgid "Border width"
 msgstr ""
 
@@ -506,7 +506,7 @@ msgstr ""
 msgid "Field height"
 msgstr ""
 
-#: includes/design-tokens.php:218, includes/design-tokens.php:233, includes/design-tokens.php:262, includes/design-tokens.php:275
+#: includes/design-tokens.php:218, includes/design-tokens.php:233, includes/design-tokens.php:280, includes/design-tokens.php:293
 msgid "Font size"
 msgstr ""
 
@@ -594,116 +594,140 @@ msgstr ""
 msgid "Title margin"
 msgstr ""
 
-#: includes/design-tokens.php:264
+#: includes/design-tokens.php:270, includes/helpers.php:124, src/render.php:62
+msgid "Principal & Interest"
+msgstr ""
+
+#: includes/design-tokens.php:271, includes/helpers.php:129
+msgid "Property Tax"
+msgstr ""
+
+#: includes/design-tokens.php:272, includes/helpers.php:134
+msgid "Home Insurance"
+msgstr ""
+
+#: includes/design-tokens.php:273, includes/helpers.php:139
+msgid "HOA Fee"
+msgstr ""
+
+#: includes/design-tokens.php:274, includes/helpers.php:144
+msgid "PMI"
+msgstr ""
+
+#: includes/design-tokens.php:275, includes/helpers.php:149
+msgid "Other Costs"
+msgstr ""
+
+#: includes/design-tokens.php:282
 msgid "Swatch size"
 msgstr ""
 
-#: includes/design-tokens.php:265
+#: includes/design-tokens.php:283
 msgid "Gap between items"
 msgstr ""
 
-#: includes/design-tokens.php:268
+#: includes/design-tokens.php:286
 msgid "Header background"
 msgstr ""
 
-#: includes/design-tokens.php:269
+#: includes/design-tokens.php:287
 msgid "Header text"
 msgstr ""
 
-#: includes/design-tokens.php:270
+#: includes/design-tokens.php:288
 msgid "Row background"
 msgstr ""
 
-#: includes/design-tokens.php:271
+#: includes/design-tokens.php:289
 msgid "Alternating row"
 msgstr ""
 
-#: includes/design-tokens.php:272
+#: includes/design-tokens.php:290
 msgid "Borders"
 msgstr ""
 
-#: includes/design-tokens.php:274
+#: includes/design-tokens.php:292
 msgid "Cell padding"
 msgstr ""
 
-#: includes/design-tokens.php:289
+#: includes/design-tokens.php:307
 msgid "Calculator"
 msgstr ""
 
-#: includes/design-tokens.php:290
+#: includes/design-tokens.php:308
 msgid "The card that wraps the whole block."
 msgstr ""
 
-#: includes/design-tokens.php:294
+#: includes/design-tokens.php:312
 msgid "Panels"
 msgstr ""
 
-#: includes/design-tokens.php:295
+#: includes/design-tokens.php:313
 msgid "The boxes around inputs, results, charts and schedule."
 msgstr ""
 
-#: includes/design-tokens.php:299
+#: includes/design-tokens.php:317
 msgid "Field Labels"
 msgstr ""
 
-#: includes/design-tokens.php:300
+#: includes/design-tokens.php:318
 msgid "The text above each input."
 msgstr ""
 
-#: includes/design-tokens.php:304, src/components/inspector-controls.js:45
+#: includes/design-tokens.php:322, src/components/inspector-controls.js:45
 msgid "Inputs"
 msgstr ""
 
-#: includes/design-tokens.php:305
+#: includes/design-tokens.php:323
 msgid "Text inputs and dropdowns."
 msgstr ""
 
-#: includes/design-tokens.php:309
+#: includes/design-tokens.php:327
 msgid "Sliders"
 msgstr ""
 
-#: includes/design-tokens.php:310
+#: includes/design-tokens.php:328
 msgid "The draggable range controls."
 msgstr ""
 
-#: includes/design-tokens.php:314
+#: includes/design-tokens.php:332
 msgid "Sliders Toggle"
 msgstr ""
 
-#: includes/design-tokens.php:315
+#: includes/design-tokens.php:333
 msgid "The button that shows and hides the sliders."
 msgstr ""
 
-#: includes/design-tokens.php:319, src/components/inspector-controls.js:46
+#: includes/design-tokens.php:337, src/components/inspector-controls.js:46
 msgid "Results"
 msgstr ""
 
-#: includes/design-tokens.php:320
+#: includes/design-tokens.php:338
 msgid "The monthly payment and the rows beneath it."
 msgstr ""
 
-#: includes/design-tokens.php:325
+#: includes/design-tokens.php:343
 msgid "Series colours, size and titles."
 msgstr ""
 
-#: includes/design-tokens.php:329
+#: includes/design-tokens.php:347
 msgid "Chart Legends"
 msgstr ""
 
-#: includes/design-tokens.php:330
+#: includes/design-tokens.php:348
 msgid "The colour key under each chart."
 msgstr ""
 
-#: includes/design-tokens.php:334
+#: includes/design-tokens.php:352
 msgid "Schedule Table"
 msgstr ""
 
-#: includes/design-tokens.php:335
+#: includes/design-tokens.php:353
 msgid "The amortization table header, rows and borders."
 msgstr ""
 
 #. translators: 1: group key, 2: token key.
-#: includes/design-tokens.php:361
+#: includes/design-tokens.php:379
 msgid "Design group \"%1$s\" lists unknown token \"%2$s\"."
 msgstr ""
 
@@ -823,224 +847,249 @@ msgstr ""
 msgid "Dot comparison"
 msgstr ""
 
-#: includes/helpers.php:159
+#: includes/helpers.php:281
 msgid "Stacked (single column)"
 msgstr ""
 
-#: includes/helpers.php:160
+#: includes/helpers.php:282
 msgid "Two column split"
 msgstr ""
 
-#: includes/helpers.php:178
+#: includes/helpers.php:300
 msgid "Full width controls"
 msgstr ""
 
-#: includes/helpers.php:179
+#: includes/helpers.php:301
 msgid "Compact rows, input below slider"
 msgstr ""
 
-#: includes/helpers.php:193, includes/helpers.php:207
+#: includes/helpers.php:315, includes/helpers.php:329
 msgid "Theme default"
 msgstr ""
 
-#: includes/helpers.php:194
+#: includes/helpers.php:316
 msgid "Modern Sans (system)"
 msgstr ""
 
-#: includes/helpers.php:195
+#: includes/helpers.php:317
 msgid "Classic Serif (system)"
 msgstr ""
 
-#: includes/helpers.php:196
+#: includes/helpers.php:318
 msgid "Monospace (system)"
 msgstr ""
 
-#: includes/helpers.php:208
+#: includes/helpers.php:330
 msgid "Light"
 msgstr ""
 
-#: includes/helpers.php:210
+#: includes/helpers.php:332
 msgid "Medium"
 msgstr ""
 
-#: includes/helpers.php:211
+#: includes/helpers.php:333
 msgid "Semi Bold"
 msgstr ""
 
-#: includes/helpers.php:212
+#: includes/helpers.php:334
 msgid "Bold"
 msgstr ""
 
-#: includes/helpers.php:213
+#: includes/helpers.php:335
 msgid "Extra Bold"
 msgstr ""
 
-#: includes/helpers.php:224
+#: includes/helpers.php:346
 msgid "Before amount ($99)"
 msgstr ""
 
-#: includes/helpers.php:225
+#: includes/helpers.php:347
 msgid "After amount (99 EUR)"
 msgstr ""
 
-#: includes/helpers.php:559
+#: includes/helpers.php:693
 msgid "Forest"
 msgstr ""
 
-#: includes/helpers.php:560
+#: includes/helpers.php:694
 msgid "Teal"
 msgstr ""
 
-#: includes/helpers.php:561
+#: includes/helpers.php:695
 msgid "Amber"
 msgstr ""
 
-#: includes/helpers.php:562
+#: includes/helpers.php:696
 msgid "Bronze"
 msgstr ""
 
-#: includes/helpers.php:563
+#: includes/helpers.php:697
 msgid "Red"
 msgstr ""
 
-#: includes/helpers.php:564
+#: includes/helpers.php:698
 msgid "Crimson"
 msgstr ""
 
-#: includes/helpers.php:565
+#: includes/helpers.php:699
 msgid "Violet"
 msgstr ""
 
-#: includes/helpers.php:566
+#: includes/helpers.php:700
 msgid "Indigo"
 msgstr ""
 
-#: includes/helpers.php:567
+#: includes/helpers.php:701
 msgid "Blue"
 msgstr ""
 
-#: includes/helpers.php:568
+#: includes/helpers.php:702
 msgid "Sky"
 msgstr ""
 
-#: includes/helpers.php:569
+#: includes/helpers.php:703
 msgid "Cyan"
 msgstr ""
 
-#: includes/helpers.php:570
+#: includes/helpers.php:704
 msgid "Green"
 msgstr ""
 
-#: includes/helpers.php:571
+#: includes/helpers.php:705
 msgid "Lime"
 msgstr ""
 
-#: includes/helpers.php:572
+#: includes/helpers.php:706
 msgid "Ink"
 msgstr ""
 
-#: includes/helpers.php:573
+#: includes/helpers.php:707
 msgid "Slate"
 msgstr ""
 
-#: includes/helpers.php:574
+#: includes/helpers.php:708
 msgid "Gray"
 msgstr ""
 
-#: includes/helpers.php:575
+#: includes/helpers.php:709
 msgid "Silver"
 msgstr ""
 
-#: includes/helpers.php:576
+#: includes/helpers.php:710
 msgid "Mist"
 msgstr ""
 
-#: includes/helpers.php:577
+#: includes/helpers.php:711
 msgid "White"
 msgstr ""
 
-#: src/render.php:55, src/components/preview.js:174, src/components/preview.js:508
+#: src/render.php:55, src/components/preview.js:214, src/components/preview.js:549
 msgid "Monthly Payment"
 msgstr ""
 
-#: src/render.php:56, src/components/preview.js:251, src/components/preview.js:297, src/components/preview.js:523
+#: src/render.php:56, src/components/preview.js:213
+msgid "Total Monthly Cost"
+msgstr ""
+
+#: src/render.php:57, src/components/preview.js:292, src/components/preview.js:338, src/components/preview.js:564
 msgid "Financed Principal"
 msgstr ""
 
-#: src/render.php:57, src/components/preview.js:255, src/components/preview.js:307, src/components/preview.js:538
+#: src/render.php:58, src/components/preview.js:296, src/components/preview.js:348, src/components/preview.js:579
 msgid "Total Interest"
 msgstr ""
 
-#: src/render.php:58, src/components/preview.js:312, src/components/preview.js:553
+#: src/render.php:59, src/components/preview.js:353, src/components/preview.js:594
 msgid "Total Paid"
 msgstr ""
 
-#: src/render.php:59
+#: src/render.php:60
+msgid "Total Taxes & Costs"
+msgstr ""
+
+#: src/render.php:61
+msgid "Total Out-of-Pocket"
+msgstr ""
+
+#: src/render.php:63
 msgid "Collapse schedule"
 msgstr ""
 
-#: src/render.php:60
+#: src/render.php:64
 msgid "Expand schedule"
 msgstr ""
 
-#: src/render.php:61, src/components/preview.js:667
+#: src/render.php:65, src/components/preview.js:708
 msgid "Year"
 msgstr ""
 
-#: src/render.php:62, src/components/preview.js:271, src/components/preview.js:670
+#: src/render.php:66, src/components/preview.js:312, src/components/preview.js:711
 msgid "Principal Paid"
 msgstr ""
 
-#: src/render.php:63, src/components/preview.js:275, src/components/preview.js:676
+#: src/render.php:67, src/components/preview.js:316, src/components/preview.js:717
 msgid "Interest Paid"
 msgstr ""
 
-#: src/render.php:64, src/components/preview.js:261, src/components/preview.js:682
+#: src/render.php:68, src/components/preview.js:302, src/components/preview.js:723
 msgid "Remaining Balance"
 msgstr ""
 
-#: src/render.php:65, src/components/preview.js:302
+#: src/render.php:69, src/components/preview.js:343
 msgid "Balance After Year 1"
 msgstr ""
 
-#: src/render.php:66, src/components/preview.js:265
+#: src/render.php:70, src/components/preview.js:306
 msgid "Cumulative Interest"
 msgstr ""
 
-#: src/render.php:79, src/utils/field-definitions.js:22
+#: src/render.php:92, src/utils/field-definitions.js:22
 msgid "Loan Amount"
 msgstr ""
 
-#: src/render.php:91, src/utils/field-definitions.js:32
+#: src/render.php:104, src/utils/field-definitions.js:32
 msgid "Down Payment"
 msgstr ""
 
-#: src/render.php:103
+#: src/render.php:116
 msgid "Interest Rate (%)"
 msgstr ""
 
-#: src/render.php:115
+#: src/render.php:128
 msgid "Term (Years)"
 msgstr ""
 
-#: src/render.php:272, src/components/preview.js:577
+#: src/render.php:402, src/components/preview.js:618
 msgid "Payment Composition"
 msgstr ""
 
-#: src/render.php:282, src/components/preview.js:596
+#: src/render.php:412, src/components/preview.js:637
 msgid "Balance Over Time"
 msgstr ""
 
-#: src/render.php:292, src/components/preview.js:615
+#: src/render.php:422, src/components/preview.js:656
 msgid "Principal vs Interest by Year"
 msgstr ""
 
-#: src/render.php:302, src/components/preview.js:634
+#: src/render.php:432, src/components/preview.js:675
 msgid "Parameter Comparison"
 msgstr ""
 
-#: src/render.php:337
+#: src/render.php:467
 msgid "Amortization Schedule"
+msgstr ""
+
+#: src/render.php:490
+msgid "Taxes & Costs (annual)"
+msgstr ""
+
+#. translators: %s: cost component name.
+#: src/render.php:514
+msgid "Toggle %s between a percentage and an amount"
+msgstr ""
+
+#: src/render.php:517
+msgid "Amount"
 msgstr ""
 
 #: src/components/design-controls.js:58
@@ -1119,83 +1168,91 @@ msgstr ""
 msgid "Show Charts"
 msgstr ""
 
+#: src/components/inspector-controls.js:264
+msgid "Show Taxes & Costs"
+msgstr ""
+
 #: src/components/inspector-controls.js:265
+msgid "Adds property tax, insurance, HOA, PMI and other recurring costs, and reports the true total monthly cost alongside the principal and interest payment."
+msgstr ""
+
+#: src/components/inspector-controls.js:275
 msgid "Chart Type"
 msgstr ""
 
-#: src/components/inspector-controls.js:281
+#: src/components/inspector-controls.js:291
 msgid "Two column split places the inputs beside the results on wide screens."
 msgstr ""
 
-#: src/components/inspector-controls.js:298
+#: src/components/inspector-controls.js:308
 msgid "Show Amortization Table"
 msgstr ""
 
-#: src/components/inspector-controls.js:305
+#: src/components/inspector-controls.js:315
 msgid "Form Columns"
 msgstr ""
 
-#: src/components/inspector-controls.js:306
+#: src/components/inspector-controls.js:316
 msgid "Full width gives each control the whole row. Compact packs more controls per row and drops each input below its slider, which shortens a single column calculator but makes a two column split taller."
 msgstr ""
 
-#: src/components/inspector-controls.js:336, src/components/inspector-controls.js:342
+#: src/components/inspector-controls.js:346, src/components/inspector-controls.js:352
 msgid "Panel Order"
 msgstr ""
 
-#: src/components/inspector-controls.js:343
+#: src/components/inspector-controls.js:353
 msgid "Drag a section to move it, or use the up and down buttons. Every section can go anywhere, including the inputs."
 msgstr ""
 
-#: src/components/inspector-controls.js:393
+#: src/components/inspector-controls.js:403
 msgid "Move %s up"
 msgstr ""
 
-#: src/components/inspector-controls.js:397
+#: src/components/inspector-controls.js:407
 msgid "Up"
 msgstr ""
 
-#: src/components/inspector-controls.js:410
+#: src/components/inspector-controls.js:420
 msgid "Move %s down"
 msgstr ""
 
-#: src/components/inspector-controls.js:414
+#: src/components/inspector-controls.js:424
 msgid "Down"
 msgstr ""
 
-#: src/components/inspector-controls.js:423
+#: src/components/inspector-controls.js:433
 msgid "Typography"
 msgstr ""
 
-#: src/components/inspector-controls.js:428
+#: src/components/inspector-controls.js:438
 msgid "Font Family"
 msgstr ""
 
-#: src/components/inspector-controls.js:444
+#: src/components/inspector-controls.js:454
 msgid "Payment Font Size"
 msgstr ""
 
-#: src/components/inspector-controls.js:445
+#: src/components/inspector-controls.js:455
 msgid "In pixels. Use 0 for the skin default."
 msgstr ""
 
-#: src/components/inspector-controls.js:463
+#: src/components/inspector-controls.js:473
 msgid "Payment Font Weight"
 msgstr ""
 
-#: src/components/inspector-controls.js:480
+#: src/components/inspector-controls.js:490
 msgid "Site Defaults"
 msgstr ""
 
-#: src/components/inspector-controls.js:485
+#: src/components/inspector-controls.js:495
 msgid "These are the values this site starts new calculators with. Reset to go back to them."
 msgstr ""
 
-#: src/components/inspector-controls.js:498
+#: src/components/inspector-controls.js:508
 msgid "Reset to Site Defaults"
 msgstr ""
 
-#: src/components/preview.js:423
+#: src/components/preview.js:464
 msgid "Live Preview use Settings and Styles sidebar to change values."
 msgstr ""
 

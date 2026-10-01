@@ -100,6 +100,128 @@ function calcforge_get_panel_keys() {
 }
 
 /**
+ * Returns the payment breakdown components, in the order they are shown.
+ *
+ * Principal and interest leads the list because it is the cost the borrower
+ * always pays, but it is flagged as not being a percentage: it is the loan
+ * itself rather than a figure the homeowner chose, and the form does not offer
+ * an input for it because it already has its own headline. Every other entry
+ * defaults to zero, so a calculator that never touches these inputs renders
+ * exactly as it did before they existed, with an empty breakdown rather than a
+ * row of zero-width chart slices.
+ *
+ * Each entry carries the attribute that holds the annual figure, whether that
+ * figure is a percentage of the home price or a currency amount, and the design
+ * token that colours it. Deriving all three from one list keeps the form, the
+ * calculation, the results panel and the chart legend from disagreeing about
+ * which component is which.
+ *
+ * @return array<string,array<string,mixed>> Component key => descriptor.
+ */
+function calcforge_get_cost_components() {
+	return array(
+		'pi'        => array(
+			'label'    => __( 'Principal & Interest', CALCFORGE_TEXT_DOMAIN ),
+			'token'    => 'costPi',
+			'percent'  => false,
+		),
+		'tax'       => array(
+			'label'    => __( 'Property Tax', CALCFORGE_TEXT_DOMAIN ),
+			'token'    => 'costTax',
+			'percent'  => true,
+		),
+		'insurance' => array(
+			'label'    => __( 'Home Insurance', CALCFORGE_TEXT_DOMAIN ),
+			'token'    => 'costInsurance',
+			'percent'  => true,
+		),
+		'hoa'       => array(
+			'label'    => __( 'HOA Fee', CALCFORGE_TEXT_DOMAIN ),
+			'token'    => 'costHoa',
+			'percent'  => true,
+		),
+		'pmi'       => array(
+			'label'    => __( 'PMI', CALCFORGE_TEXT_DOMAIN ),
+			'token'    => 'costPmi',
+			'percent'  => true,
+		),
+		'other'     => array(
+			'label'    => __( 'Other Costs', CALCFORGE_TEXT_DOMAIN ),
+			'token'    => 'costOther',
+			'percent'  => true,
+		),
+	);
+}
+
+/**
+ * Returns the attribute name holding a cost component's annual figure.
+ *
+ * @param string $component Component key, e.g. 'tax'.
+ * @return string Block attribute name.
+ */
+function calcforge_get_cost_attribute( $component ) {
+	$map = array(
+		'tax'       => 'propertyTax',
+		'insurance' => 'homeInsurance',
+		'hoa'       => 'hoaFee',
+		'pmi'       => 'pmi',
+		'other'     => 'otherCosts',
+	);
+
+	return isset( $map[ $component ] ) ? $map[ $component ] : '';
+}
+
+/**
+ * Maps each percentage-capable cost attribute to its display unit.
+ *
+ * @return array<string,string> Attribute name => 'percent' or 'amount'.
+ */
+function calcforge_get_cost_units() {
+	$units = array();
+
+	foreach ( calcforge_get_cost_components() as $key => $component ) {
+		if ( empty( $component['percent'] ) ) {
+			continue;
+		}
+
+		$units[ calcforge_get_cost_attribute( $key ) ] = 'percent';
+	}
+
+	/**
+	 * Filters whether each cost field is entered as a percentage or an amount.
+	 *
+	 * @param array<string,string> $units Attribute name => 'percent' or 'amount'.
+	 */
+	return apply_filters( 'calcforge_cost_units', $units );
+}
+
+/**
+ * Resolves the display unit for each cost attribute, honouring the saved choice.
+ *
+ * calcforge_get_cost_units() reports which fields can be a percentage at all,
+ * which is a property of the schema. This adds the per-block answer: the author
+ * can enter tax as a rate or as the cash amount off a bill, and that decision
+ * lives in the saved `homeInsuranceUnit` style attributes. Reading them here is
+ * what stops a field labelled in dollars being multiplied by the home price.
+ *
+ * @param array<string,mixed> $attributes Sanitized or raw block attributes.
+ * @return array<string,string> Attribute name => 'percent' or 'amount'.
+ */
+function calcforge_resolve_cost_units( $attributes ) {
+	$attributes = is_array( $attributes ) ? $attributes : array();
+	$units      = calcforge_get_cost_units();
+	$resolved   = array();
+
+	foreach ( $units as $attribute => $default ) {
+		$raw = isset( $attributes[ $attribute . 'Unit' ] ) ? (string) $attributes[ $attribute . 'Unit' ] : '';
+
+		$resolved[ $attribute ] = in_array( $raw, array( 'percent', 'amount' ), true ) ? $raw : $default;
+	}
+
+	return $resolved;
+}
+
+/**
  * Resolves the panel order to render, given the saved order and which panels
  * are visible.
  *
@@ -494,6 +616,18 @@ function calcforge_get_default_attributes() {
 		'theme'                => (string) $settings['default_theme'],
 		'showSliders'          => true,
 		'showResults'          => true,
+		'showCosts'            => false,
+		'propertyTax'          => 0.0,
+		'homeInsurance'        => 0.0,
+		'hoaFee'               => 0.0,
+		'pmi'                  => 0.0,
+		'otherCosts'           => 0.0,
+		// Tax is conventionally quoted as a rate; the rest are usually a bill amount.
+		'propertyTaxUnit'      => 'percent',
+		'homeInsuranceUnit'    => 'amount',
+		'hoaFeeUnit'           => 'amount',
+		'pmiUnit'              => 'amount',
+		'otherCostsUnit'       => 'amount',
 		'paymentFontSize'      => 0,
 		'paymentFontWeight'    => '',
 		'fontFamily'           => 'inherit',
@@ -752,6 +886,71 @@ function calcforge_sanitize_attributes( $attributes ) {
 		: (string) $defaults['fontFamily'];
 	$font_family    = in_array( $requested_font, $font_families, true ) ? $requested_font : 'inherit';
 
+	/*
+	 * Recurring ownership costs. Each is stored in whatever unit the author chose,
+	 * so a tax bill entered as a cash amount and a tax rate entered as a percent
+	 * both round-trip through the control unchanged. The upper bound is generous
+	 * because a percentage is also allowed to carry an annual cash figure for
+	 * fields that switch units.
+	 */
+	$cost_units = calcforge_get_cost_units();
+	$costs      = array();
+
+	foreach ( calcforge_get_cost_components() as $key => $component ) {
+		if ( empty( $component['percent'] ) ) {
+			continue;
+		}
+
+		$attribute = calcforge_get_cost_attribute( $key );
+
+		/*
+		 * The author's choice of unit is saved alongside the figure. Reading it
+		 * here rather than assuming the schema default is what makes a field
+		 * labelled in dollars behave as an amount instead of being multiplied by
+		 * the home price.
+		 */
+		$requested_unit = isset( $raw[ $attribute . 'Unit' ] ) && is_scalar( $raw[ $attribute . 'Unit' ] )
+			? (string) $raw[ $attribute . 'Unit' ]
+			: '';
+
+		/*
+		 * A saved choice wins, then the attribute default, and only then the
+		 * schema's own default. Reading the schema first would report every field
+		 * as a percentage, because that is what a fresh block can express, and
+		 * would defeat the amount defaults set below.
+		 */
+		$default_unit = isset( $defaults[ $attribute . 'Unit' ] ) ? (string) $defaults[ $attribute . 'Unit' ] : '';
+
+		if ( in_array( $requested_unit, array( 'percent', 'amount' ), true ) ) {
+			$unit = $requested_unit;
+		} elseif ( in_array( $default_unit, array( 'percent', 'amount' ), true ) ) {
+			$unit = $default_unit;
+		} else {
+			$unit = isset( $cost_units[ $attribute ] ) ? $cost_units[ $attribute ] : 'percent';
+		}
+
+		/*
+		 * The upper bound has to follow the unit rather than be fixed at 100. A
+		 * percentage field is capped there, but clamping an amount at 100 would
+		 * silently turn a $1500 insurance premium into $100 before the conversion
+		 * ever ran.
+		 */
+		$maximum = 'amount' === $unit ? 99999999.0 : 100.0;
+
+		if ( isset( $raw[ $attribute ] ) && is_numeric( $raw[ $attribute ] ) ) {
+			$costs[ $attribute ] = calcforge_clamp_float( $raw[ $attribute ], 0, $maximum );
+		} else {
+			$default_unit = isset( $defaults[ $attribute . 'Unit' ] ) ? (string) $defaults[ $attribute . 'Unit' ] : $unit;
+			$default_max  = 'amount' === $default_unit ? 99999999.0 : 100.0;
+
+			$costs[ $attribute ] = isset( $defaults[ $attribute ] )
+				? calcforge_clamp_float( $defaults[ $attribute ], 0, $default_max )
+				: 0.0;
+		}
+
+		$costs[ $attribute . 'Unit' ] = $unit;
+	}
+
 	$sanitized = array(
 		'loanAmount'       => $loan_amount,
 		'interestRate'     => $interest_rate,
@@ -778,8 +977,15 @@ function calcforge_sanitize_attributes( $attributes ) {
 		'showResults'      => calcforge_sanitize_bool(
 			isset( $raw['showResults'] ) ? $raw['showResults'] : $defaults['showResults']
 		),
+		'showCosts'        => calcforge_sanitize_bool(
+			isset( $raw['showCosts'] ) ? $raw['showCosts'] : $defaults['showCosts']
+		),
 		'fontFamily'       => $font_family,
 	);
+
+	foreach ( $costs as $cost_key => $cost_value ) {
+		$sanitized[ $cost_key ] = $cost_value;
+	}
 
 	foreach ( $colors as $key => $value ) {
 		$sanitized[ $key ] = $value;
@@ -1004,6 +1210,158 @@ function calcforge_calculate_amortization_schedule( $principal, $annual_rate, $t
 }
 
 /**
+ * Resolves the colour a cost component is drawn in.
+ *
+ * The design token wins when the author has overridden it, so the swatch beside
+ * the row and the fill inside the chart come from the same place and cannot drift
+ * apart. Falls back to the stylesheet's own default by returning an empty string,
+ * which lets the skin decide.
+ *
+ * @param array<string,mixed> $attributes Sanitized block attributes.
+ * @param string              $component  Component key.
+ * @return string Hex colour, or '' to defer to the stylesheet.
+ */
+function calcforge_get_cost_component_color( $attributes, $component ) {
+	$components = calcforge_get_cost_components();
+
+	if ( ! isset( $components[ $component ] ) ) {
+		return '';
+	}
+
+	$token = (string) $components[ $component ]['token'];
+
+	// The swatch is painted inline, so it needs a concrete colour, not a var().
+	$values = calcforge_get_design_values( $attributes );
+
+	if ( isset( $values[ $token ] ) ) {
+		return $values[ $token ];
+	}
+
+	return '';
+}
+
+/**
+ * Returns the cost components that should be drawn, in order.
+ *
+ * Kept beside calcforge_get_cost_components() so the chart legend and the results
+ * panel agree about what exists, and both agree that a zero component is simply
+ * absent rather than a zero-width slice.
+ *
+ * @param array<string,mixed> $result Calculation result.
+ * @return array<string,float> Component key => monthly amount, P&I first.
+ */
+function calcforge_get_active_costs( $result ) {
+	$monthly = isset( $result['monthly_costs'] ) ? (array) $result['monthly_costs'] : array();
+	$active  = array(
+		'pi' => round( isset( $result['monthly_payment'] ) ? (float) $result['monthly_payment'] : 0.0, 2 ),
+	);
+
+	foreach ( calcforge_get_cost_components() as $key => $component ) {
+		if ( 'pi' === $key ) {
+			continue;
+		}
+
+		$amount = isset( $monthly[ $key ] ) ? (float) $monthly[ $key ] : 0.0;
+
+		if ( $amount > 0 ) {
+			$active[ $key ] = round( $amount, 2 );
+		}
+	}
+
+	return $active;
+}
+
+/**
+ * Converts the stored cost inputs into annual cash amounts.
+ *
+ * A percentage field multiplies the home price, an amount field is already cash.
+ * The home price is the block's `loanAmount`, which is the purchase price rather
+ * than the financed amount, because tax and insurance are levied on the property
+ * the buyer ends up with and not on the part they borrowed against.
+ *
+ * @param array<string,mixed> $attrs Sanitized block attributes.
+ * @return array<string,float> Component key => annual amount.
+ */
+function calcforge_calculate_annual_costs( $attrs ) {
+	$home_price = (float) $attrs['loanAmount'];
+	$units      = calcforge_resolve_cost_units( $attrs );
+	$annual     = array();
+
+	foreach ( calcforge_get_cost_components() as $key => $component ) {
+		if ( empty( $component['percent'] ) ) {
+			continue;
+		}
+
+		$attribute = calcforge_get_cost_attribute( $key );
+		$value     = isset( $attrs[ $attribute ] ) ? (float) $attrs[ $attribute ] : 0.0;
+
+		if ( $value <= 0 ) {
+			$annual[ $key ] = 0.0;
+			continue;
+		}
+
+		$is_percent = ! isset( $units[ $attribute ] ) || 'percent' === $units[ $attribute ];
+
+		$annual[ $key ] = $is_percent
+			? round( $home_price * $value / 100, 2 )
+			: round( $value, 2 );
+	}
+
+	return $annual;
+}
+
+/**
+ * Returns the month PMI stops being charged.
+ *
+ * Federal rules require the lender to cancel PMI once the balance reaches 78% of
+ * the original value, and permit cancellation at the borrower's request from
+ * 80%. Charging it to term end is wrong; cancelling it earlier than the statute
+ * allows is not the borrower's entitlement either. So the balance is walked
+ * forward month by month and the first month at or below the 80% threshold is
+ * returned, which is the later of the two and therefore the safe one.
+ *
+ * Returned as a 1-based month index so it can be compared against the schedule
+ * loop directly. Zero means PMI is never charged.
+ *
+ * @param float $principal   Original financed principal.
+ * @param float $home_price  Original purchase price.
+ * @param float $annual_rate Annual interest rate as a percentage.
+ * @param int   $months      Loan term in months.
+ * @return int Month PMI ends, or 0 when there is no PMI or no threshold to reach.
+ */
+function calcforge_get_pmi_end_month( $principal, $home_price, $annual_rate, $months ) {
+	if ( $home_price <= 0 || $principal <= 0 || $months <= 0 ) {
+		return 0;
+	}
+
+	// Below this there is no PMI to cancel, whatever the author entered.
+	$original_ltv = $principal / $home_price;
+
+	if ( $original_ltv <= 0.80 ) {
+		return 0;
+	}
+
+	$monthly_rate = $annual_rate / 100 / 12;
+	$payment      = calcforge_calculate_monthly_payment( $principal, $annual_rate, (int) ceil( $months / 12 ) );
+	$balance      = $principal;
+	$threshold    = $home_price * 0.80;
+
+	for ( $month = 1; $month <= $months; $month++ ) {
+		$interest = $balance * $monthly_rate;
+		$paid     = min( $payment, $balance + $interest );
+
+		$balance -= max( $paid - $interest, 0 );
+
+		if ( $balance <= $threshold ) {
+			return $month;
+		}
+	}
+
+	// The balance never reaches the threshold inside the term.
+	return 0;
+}
+
+/**
  * Runs the full calculation for a set of block attributes.
  *
  * The result passes through the `calcforge_calculation_result` filter, the
@@ -1029,6 +1387,58 @@ function calcforge_calculate( $attributes ) {
 	$result['monthly_payment'] = calcforge_calculate_monthly_payment( $result['principal'], $attrs['interestRate'], $attrs['loanTerm'] );
 	$result['total_paid']      = round( $result['monthly_payment'] * $months, 2 );
 	$result['total_interest']  = round( max( $result['total_paid'] - $result['principal'], 0 ), 2 );
+
+	/*
+	 * loanAmount is the purchase price in this block, not the amount financed:
+	 * principal is derived from it by subtracting the down payment. So the value
+	 * of the property, which is what tax, insurance and the PMI threshold are all
+	 * measured against, is loanAmount itself. Adding the down payment back on
+	 * would inflate every percentage and put PMI on borrowers above 80% LTV.
+	 */
+	$home_price = (float) $attrs['loanAmount'];
+	$annual     = calcforge_calculate_annual_costs( $attrs );
+
+	/*
+	 * PMI is the one component that stops part way through the loan, so it cannot
+	 * be flattened into a single monthly figure alongside the others. Its
+	 * lifetime cost is the premium paid up to the cancellation month only.
+	 */
+	$pmi_base = isset( $annual['pmi'] ) ? (float) $annual['pmi'] : 0.0;
+
+	/*
+	 * Only worth working out when a premium was actually entered. Otherwise the
+	 * field would report a cancellation month for a loan that never carried PMI,
+	 * which reads as though something was paid and then stopped.
+	 */
+	$pmi_end = $pmi_base > 0
+		? calcforge_get_pmi_end_month( $result['principal'], $home_price, (float) $attrs['interestRate'], $months )
+		: 0;
+
+	$result['pmi_end_month'] = $pmi_end;
+
+	$monthly_costs = array(
+		'tax'       => isset( $annual['tax'] ) ? round( $annual['tax'] / 12, 2 ) : 0.0,
+		'insurance' => isset( $annual['insurance'] ) ? round( $annual['insurance'] / 12, 2 ) : 0.0,
+		'hoa'       => isset( $annual['hoa'] ) ? round( $annual['hoa'] / 12, 2 ) : 0.0,
+		'other'     => isset( $annual['other'] ) ? round( $annual['other'] / 12, 2 ) : 0.0,
+	);
+
+	// Month one carries PMI whenever a premium was entered at all.
+	$monthly_costs['pmi'] = $pmi_base > 0 ? round( $pmi_base / 12, 2 ) : 0.0;
+
+	$result['monthly_costs'] = $monthly_costs;
+
+	/*
+	 * The first month's true outlay, which is what a buyer actually writes a
+	 * cheque for. Later months drop PMI once the threshold is crossed.
+	 */
+	$result['total_monthly_cost'] = round( $result['monthly_payment'] + array_sum( $monthly_costs ), 2 );
+
+	$pmi_months = $pmi_end > 0 ? $pmi_end : ( $pmi_base > 0 ? $months : 0 );
+
+	$result['total_pmi']      = round( $pmi_months * ( $pmi_base / 12 ), 2 );
+	$result['total_costs']    = round( $result['total_pmi'] + ( array_sum( $annual ) - $pmi_base ) * ( $months / 12 ), 2 );
+	$result['total_out_of_pocket'] = round( $result['total_paid'] + $result['total_costs'], 2 );
 
 	if ( $attrs['showAmortization'] ) {
 		$result['schedule'] = calcforge_calculate_amortization_schedule( $result['principal'], $attrs['interestRate'], $attrs['loanTerm'] );

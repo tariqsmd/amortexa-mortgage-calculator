@@ -4,7 +4,7 @@ Tags: block, gutenberg, mortgage, calculator, finance, loans, real estate, amort
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -18,6 +18,8 @@ CalcForge adds a **Mortgage Calculator** block to the block editor. Drop it on a
 
 * **Live calculation.** Monthly payment, financed principal, total interest, and total paid update instantly as visitors type or drag a slider.
 * **Down payment support.** Interest is correctly charged on the financed principal only, not the full purchase price.
+* **Real monthly cost, not just principal and interest.** Turn on recurring costs to add property tax, home insurance, HOA fees, PMI, and any other monthly costs, and the calculator reports a genuine total monthly payment. Each component is a cash amount or a percentage of the purchase price, and the results and the composition chart both include it.
+* **PMI that cancels itself.** When PMI is set, the balance is walked forward month by month and PMI stops the first month the loan reaches 80% of the purchase price, the later of automatic cancellation and the point you could request it yourself. Charge it to term end and it overstates what you would actually pay.
 * **Twenty-four built-in skins.** Twelve light and twelve dark: Classic Light, Elegant Dark, Ocean Blue, Sunset Warm, Forest Green, Midnight Violet, Rose Quartz, Minimal Slate, Royal Grape, Aqua Fresh, Mocha Cream, Cyber Neon, Emerald Nights, Crimson Dusk, Graphite, Copper Forge, Royal Sapphire, Amber Gold, Cobalt Blue, Fuchsia Bloom, Mint Fresh, Sandstone, Lemon Zest, and Steel Blue — chosen per block.
 * **Colour and typography controls.** Override the accent, secondary accent, label, and field text/background/border colours, pick a font family, and adjust the payment figure's size and weight — all per block, without writing CSS.
 * **Dependency-free SVG charts.** A payment-composition donut and a balance-over-time line chart with cumulative interest, drawn in plain SVG. No charting library, no external requests.
@@ -35,7 +37,7 @@ Under **Settings → CalcForge** you can set the defaults every new calculator b
 
 All mortgage math lives in pure, reusable PHP functions, mirrored by an equivalent JavaScript implementation for instant client-side feedback. A parity test in the repository asserts the two agree exactly.
 
-The plugin also exposes a REST endpoint and a set of documented actions and filters for extending defaults, results, currency, and asset loading.
+The plugin also exposes a REST endpoint and a set of documented actions and filters for extending skins, defaults, results, currency, and rate limiting.
 
 == Installation ==
 
@@ -53,6 +55,16 @@ Yes. The block is server-rendered: the initial results and amortization table ar
 = Why does the amortization table show years instead of months? =
 
 A 30-year loan produces 360 monthly rows, which would bloat every page load. Rows are aggregated annually to keep pages fast; the underlying schedule is still calculated month by month, so the per-year figures are accurate.
+
+= How do I work out my real monthly payment? =
+
+Turn on **Show costs** and fill in the recurring costs you actually pay: property tax, home insurance, HOA fees, PMI, and any other monthly costs. The results then show a **Total monthly cost** alongside principal and interest, plus what you would pay out of pocket in total over the life of the loan. The payment composition chart gains a slice per cost, and the amortization schedule carries them through year by year.
+
+Every cost that can reasonably be quoted as a rate has a unit switch, so you can enter, for example, property tax as `1.25%` or as a cash amount such as `$1850` a year. Percentage costs are worked out from the purchase price. Only the components you turn on are rendered, so an existing calculator keeps exactly the field list it already had.
+
+= When does PMI stop? =
+
+As soon as the loan balance reaches 80% of the original purchase price, unless that happens later in the schedule. Federal rules require a lender to cancel PMI automatically at 78% and allow you to request cancellation from 80%, so CalcForge uses 80%: it never charges PMI past what you would actually be entitled to stop, and it stops as early as the rules permit. If your loan starts at 80% LTV or below, PMI is not charged at all.
 
 = Can I change the currency symbol? =
 
@@ -82,11 +94,13 @@ Yes. Under **Appearance → Widgets** you will find a **Mortgage Calculator** wi
 
 **Filters**
 
+* `calcforge_skins` — add or replace the available visual skins.
 * `calcforge_default_attributes` — override the default loan amount, rate, term, and other block attributes.
 * `calcforge_default_settings` — override the default admin settings.
 * `calcforge_calculation_result` — modify the computed result before output, for example to convert currency.
 * `calcforge_currency_symbol` — replace the resolved currency symbol.
-* `calcforge_enqueue_assets` — return `false` to disable the plugin's front-end CSS and JavaScript and bundle your own.
+* `calcforge_cost_units` — change whether a recurring cost is treated as a percentage or a cash amount.
+* `calcforge_shortcode_block` — change the block attributes built from the shortcode's own attributes.
 * `calcforge_rest_calculate_allowed` — return `false` to require authentication for the REST calculation endpoint.
 * `calcforge_rest_calculate_rate_limit` — change how many calculation requests a client may make per window. Return `0` to disable rate limiting.
 * `calcforge_rest_calculate_rate_window` — change the rate limit window length in seconds.
@@ -104,7 +118,7 @@ No. See the Privacy section below.
 
 = Requirements =
 
-* WordPress 6.4 or higher.
+* WordPress 6.5 or higher.
 * PHP 7.4 or higher.
 * A block theme or a classic theme with the block editor enabled.
 
@@ -116,6 +130,17 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 
 == Changelog ==
 
+= 1.1.0 =
+* New: recurring costs — property tax, home insurance, HOA fees, PMI, and other costs — behind an opt-in **Show costs** switch, so an existing calculator keeps exactly the field list it already had.
+* New: every cost that can be quoted as a rate carries a unit switch, so it can be entered as a percentage of the purchase price or as a cash amount. Property tax defaults to a rate, the rest to a cash amount.
+* New: a **Total monthly cost** result and a lifetime out-of-pocket figure alongside the existing principal and interest, total interest, and total paid.
+* New: the payment composition chart gains a slice per active cost, and the amortization schedule carries recurring costs through each year.
+* New: PMI ends the first month the balance reaches 80% of the purchase price, instead of being charged to term end.
+* Improved: cost components each pick up a distinct, automatically chosen colour, with a legend, so the breakdown stays readable across light and dark skins.
+* Improved: cost figures are clamped by the unit the author chose, so an amount-based premium is no longer truncated by a percentage bound.
+* New: `calcforge_skins`, `calcforge_cost_units`, and `calcforge_shortcode_block` filters are now documented.
+* Removed: documentation for a `calcforge_enqueue_assets` filter that was never implemented. Front-end assets are registered from the block metadata for `calcforge/mortgage-calculator`; to replace them, dequeue the handles that block registers and enqueue your own in a theme.
+
 = 1.0.0 =
 * New: a Mortgage Calculator widget for sidebars and any other widget area, with optional overrides for amount, rate, term, layout, and skin.
 * New: a shortcode builder on the Settings -> Shortcode screen. Every attribute gets an input and the sample shortcode rebuilds and copies as you change them.
@@ -124,11 +149,11 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 * New: currency symbol position option globally and per block — before the amount ($99) or after (99 €).
 * New: shortcode attributes for form layout (`formcolumns`) and panel order (`panelorder`).
 * New: twenty-four visual skins across light, dark, and accent colourways.
-* New: per-element appearance controls in a dedicated Design tab, covering seventy design tokens grouped by calculator region.
+* New: per-element appearance controls in a dedicated Design tab, covering seventy-six design tokens grouped by calculator region.
 * New: font family selector for the calculator (theme default, modern sans, classic serif, monospace).
 * New: SVG charts — payment composition donut, balance over time line, annual bar, and dot comparison (no external libraries).
 * New: range sliders paired with every number input for quick value adjustments.
-* New: the front-end bundle is now also enqueued from the render callback, so assets load correctly in templates and block widgets where `has_block()` cannot detect the block.
+* Improved: the front-end bundle is registered through the block metadata, so assets load in templates and block widgets where `has_block()` cannot detect the block.
 * Improved: layout adapts to the block's container width — columns stack, sliders wrap, charts reflow, and the amortization table scrolls inside narrow columns with a sticky first column.
 * Improved: the shortcode reference moved to its own tab on the settings screen, and the monthly payment announces changes to screen readers.
 * Improved: the settings tabs follow the ARIA tabs pattern, so they can be reached with the arrow keys, Home, and End, and only the active tab is a tab stop.
@@ -144,6 +169,9 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 * Removed: development-only files (tests, build tooling and the duplicated helper source) from the distributed plugin.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Adds opt-in recurring costs (property tax, insurance, HOA, PMI, other) with a real total monthly payment. Nothing changes for existing calculators until you turn costs on.
 
 = 1.0.0 =
 Site-wide defaults for loan amount, down payment, loan term, skin, and chart type are available under Settings → CalcForge.
