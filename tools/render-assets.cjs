@@ -17,6 +17,7 @@ const path = require( 'path' );
 const { execFileSync } = require( 'child_process' );
 
 const PLUGIN_DIR = path.resolve( __dirname, '..' );
+const SOURCE_DIR = path.join( PLUGIN_DIR, 'assets-src' );
 const ASSET_DIR = path.join( PLUGIN_DIR, '.wordpress-org', 'assets' );
 
 /**
@@ -76,11 +77,15 @@ const workDir = fs.mkdtempSync( path.join( os.tmpdir(), 'cf-assets-' ) );
 console.log( `Rendering listing assets with ${ path.basename( browser ) }\n` );
 
 for ( const { source, output, width, height } of TARGETS ) {
-	const sourcePath = path.join( ASSET_DIR, source );
+	const sourcePath = path.join( SOURCE_DIR, source );
 	const outputPath = path.join( ASSET_DIR, output );
 
 	if ( ! fs.existsSync( sourcePath ) ) {
 		throw new Error( `Vector source not found: ${ sourcePath }` );
+	}
+
+	if ( ! fs.existsSync( ASSET_DIR ) ) {
+		fs.mkdirSync( ASSET_DIR, { recursive: true } );
 	}
 
 	const svg = fs.readFileSync( sourcePath, 'utf8' );

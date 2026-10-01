@@ -32,7 +32,9 @@ composer.lock
 # guidelines require the license to be shipped with the plugin, so never add
 # them here.
 
-# The rendered icon/banner PNGs under .wordpress-org/assets/ ARE committed.
-# They are the files uploaded to the WordPress.org listing, so they must be
-# versioned even though they are generated from the adjacent .svg sources by
-# `npm run render-assets`.
+# Generated listing artwork. The PNGs under .wordpress-org/assets/ are rasterised
+# from the versioned vectors in assets-src/ by `npm run render-assets`, so they
+# are build output rather than source and are not tracked. They are still copied
+# into dist/assets/ for the WordPress.org upload, which means anyone building a
+# submission package must run `npm run render-assets` first.
+/.wordpress-org/assets/
