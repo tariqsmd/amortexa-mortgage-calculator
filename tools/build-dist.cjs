@@ -160,10 +160,12 @@ console.log(
 // directory that is a *sibling* of trunk and tags in the SVN repository, not
 // from inside the plugin. Copy them alongside the plugin tree so `dist/` can be
 // committed to SVN as-is.
-const listing = fs
-	.readdirSync( LISTING_SRC )
-	.filter( ( entry ) => ! entry.startsWith( '.' ) )
-	.sort();
+const listing = fs.existsSync( LISTING_SRC )
+	? fs
+			.readdirSync( LISTING_SRC )
+			.filter( ( entry ) => ! entry.startsWith( '.' ) )
+			.sort()
+	: [];
 
 if ( listing.length ) {
 	fs.mkdirSync( LISTING_OUT, { recursive: true } );
@@ -175,5 +177,9 @@ if ( listing.length ) {
 	const pngs = listing.filter( ( entry ) => entry.endsWith( '.png' ) );
 	console.log(
 		`  dist/assets/         ${ listing.length } files (${ pngs.length } PNG for wp.org)`
+	);
+} else {
+	console.warn(
+		'  dist/assets/         empty - run `npm run render-assets` before packaging a submission'
 	);
 }

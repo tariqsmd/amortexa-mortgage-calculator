@@ -32,9 +32,9 @@ composer.lock
 # guidelines require the license to be shipped with the plugin, so never add
 # them here.
 
-# Generated listing artwork. The PNGs under .wordpress-org/assets/ are rasterised
-# from the versioned vectors in assets-src/ by `npm run render-assets`, so they
-# are build output rather than source and are not tracked. They are still copied
-# into dist/assets/ for the WordPress.org upload, which means anyone building a
-# submission package must run `npm run render-assets` first.
+# Listing artwork is not versioned for now. assets-src/ holds the authored
+# vectors and .wordpress-org/assets/ holds the PNGs rasterised from them; both
+# live only on the machine that builds the submission package. Run
+# `npm run render-assets` before `npm run release` to regenerate the PNGs.
+/assets-src/
 /.wordpress-org/assets/
