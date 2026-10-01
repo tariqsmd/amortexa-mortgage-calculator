@@ -113,9 +113,6 @@ tools/build-dist.cjs            Release packaging (trunk / tags / zip)
 
 ---
 
-Publishing this plugin to WordPress.org is tracked in a local, untracked
-`PUBLISHING.md` checklist rather than in this file.
-
 ## License
 
 CalcForge is released under the [GPL v2 or later](https://www.gnu.org/licenses/gpl-2.0.html).
