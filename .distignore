@@ -11,6 +11,7 @@ vendor
 package.json
 package-lock.json
 webpack.config.js
+babel.config.js
 phpcs.xml.dist
 
 # Development sources and tooling
