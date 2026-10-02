@@ -13,13 +13,13 @@
  * element the mark is not stripped. The CSS parser then folds it into the
  * first selector, so the very first rule in the file becomes
  *
- *     \uFEFF.calcforge-calc { ... }
+ *     \uFEFF.amortexa-calc { ... }
  *
- * which matches nothing. That rule is the one declaring every --calcforge-*
+ * which matches nothing. That rule is the one declaring every --amortexa-*
  * custom property, the calculator's own background and border, and
  * `container-type: inline-size`. With it dead:
  *
- *   - var(--calcforge-field-bg) and friends resolve to nothing, so the number
+ *   - var(--amortexa-field-bg) and friends resolve to nothing, so the number
  *     inputs fall back to invalid-at-computed-value-time and render with a
  *     transparent background, no border and the theme's inherited text colour.
  *   - the calculator's own background and border disappear.

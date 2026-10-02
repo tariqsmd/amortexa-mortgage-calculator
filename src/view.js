@@ -35,7 +35,7 @@ const DEFAULT_CHART_HEIGHT = 250;
  * A missing, zero or non-numeric value means the token is unset and the default
  * applies, which is what keeps existing posts rendering exactly as before.
  *
- * @param {Object} config Block config parsed from data-calcforge-config.
+ * @param {Object} config Block config parsed from data-amortexa-config.
  * @return {number} Chart height in SVG user units.
  */
 function chartHeight( config ) {
@@ -81,7 +81,7 @@ function buildXTicks( schedule ) {
  * symbol position.
  *
  * @param {number} amount Amount to format.
- * @param {Object} config Block config parsed from data-calcforge-config.
+ * @param {Object} config Block config parsed from data-amortexa-config.
  * @return {string} Formatted amount such as "$1,234.56" or "1.234,56 €".
  */
 function formatAmount( amount, config ) {
@@ -104,9 +104,7 @@ function formatAmount( amount, config ) {
  */
 function readValues( root ) {
 	const read = ( name ) => {
-		const input = root.querySelector(
-			`[data-calcforge-field="${ name }"]`
-		);
+		const input = root.querySelector( `[data-amortexa-field="${ name }"]` );
 		return input ? parseFloat( input.value ) : NaN;
 	};
 
@@ -128,11 +126,11 @@ function readValues( root ) {
 		values[ component.attribute ] = Number.isFinite( value ) ? value : 0;
 
 		const unit = root.querySelector(
-			`[data-calcforge-unit="${ component.attribute }Unit"]`
+			`[data-amortexa-unit="${ component.attribute }Unit"]`
 		);
 
 		values[ `${ component.attribute }Unit` ] = unit
-			? unit.dataset.actualUnit || unit.dataset.calcforgeUnit || 'percent'
+			? unit.dataset.actualUnit || unit.dataset.amortexaUnit || 'percent'
 			: 'amount';
 	}
 
@@ -155,7 +153,7 @@ function readValues( root ) {
  */
 function clampDownPayment( root, loanAmount ) {
 	const downField = root.querySelector(
-		'[data-calcforge-field="downPayment"]'
+		'[data-amortexa-field="downPayment"]'
 	);
 
 	if ( ! downField ) {
@@ -164,7 +162,7 @@ function clampDownPayment( root, loanAmount ) {
 
 	const max = Math.max( parseFloat( loanAmount ) || 0, 1 );
 	const downSlider = root.querySelector(
-		'[data-calcforge-slider="downPayment"]'
+		'[data-amortexa-slider="downPayment"]'
 	);
 
 	if ( downSlider ) {
@@ -183,18 +181,18 @@ function clampDownPayment( root, loanAmount ) {
  * @param {HTMLElement} root Calculator container element.
  */
 function syncSliders( root ) {
-	root.querySelectorAll( '[data-calcforge-field]' ).forEach( ( field ) => {
+	root.querySelectorAll( '[data-amortexa-field]' ).forEach( ( field ) => {
 		const slider = root.querySelector(
-			`[data-calcforge-slider="${ field.dataset.calcforgeField }"]`
+			`[data-amortexa-slider="${ field.dataset.amortexaField }"]`
 		);
 
 		if ( ! slider || slider.value === field.value ) {
 			return;
 		}
 
-		if ( field.dataset.calcforgeField === 'downPayment' ) {
+		if ( field.dataset.amortexaField === 'downPayment' ) {
 			const amount = root.querySelector(
-				'[data-calcforge-field="loanAmount"]'
+				'[data-amortexa-field="loanAmount"]'
 			);
 			slider.max = String(
 				Math.max( parseFloat( amount ? amount.value : '0' ), 1 )
@@ -213,7 +211,7 @@ function syncSliders( root ) {
  * @param {Object}        config   Block config.
  */
 function renderSchedule( root, schedule, config ) {
-	const tbody = root.querySelector( '[data-calcforge-schedule]' );
+	const tbody = root.querySelector( '[data-amortexa-schedule]' );
 
 	if ( ! tbody ) {
 		return;
@@ -271,7 +269,7 @@ function renderResults( root, result, config ) {
 	}
 
 	Object.entries( bindings ).forEach( ( [ key, value ] ) => {
-		const node = root.querySelector( `[data-calcforge-bind="${ key }"]` );
+		const node = root.querySelector( `[data-amortexa-bind="${ key }"]` );
 
 		if ( node ) {
 			node.textContent = formatAmount( value, config );
@@ -285,7 +283,7 @@ function renderResults( root, result, config ) {
 	 */
 	for ( const component of COST_COMPONENTS ) {
 		const row = root.querySelector(
-			`[data-calcforge-cost="${ component.key }"]`
+			`[data-amortexa-cost="${ component.key }"]`
 		);
 
 		if ( row ) {
@@ -308,8 +306,8 @@ function readPalette( root ) {
 		( styles.getPropertyValue( name ) || fallback ).trim();
 
 	return {
-		accent: read( '--calcforge-accent', '#1a6f4b' ),
-		accent2: read( '--calcforge-accent-2', '#d97706' ),
+		accent: read( '--amortexa-accent', '#1a6f4b' ),
+		accent2: read( '--amortexa-accent-2', '#d97706' ),
 	};
 }
 
@@ -327,7 +325,7 @@ function readCostPalette( root ) {
 
 	const read = ( key, fallback ) =>
 		(
-			styles.getPropertyValue( `--calcforge-cost-${ key }` ) || fallback
+			styles.getPropertyValue( `--amortexa-cost-${ key }` ) || fallback
 		).trim();
 
 	return {
@@ -406,10 +404,10 @@ function renderLegend( host, items ) {
 
 	items.forEach( ( item ) => {
 		const entry = document.createElement( 'span' );
-		entry.className = 'calcforge-calc__legend-item';
+		entry.className = 'amortexa-calc__legend-item';
 
 		const dot = document.createElement( 'span' );
-		dot.className = 'calcforge-calc__legend-dot';
+		dot.className = 'amortexa-calc__legend-dot';
 
 		/*
 		 * The colour is set inline from the palette that was read off the
@@ -419,7 +417,7 @@ function renderLegend( host, items ) {
 		 * here without the JS having to know the hex value.
 		 */
 		if ( item.key ) {
-			dot.dataset.calcforgeSeries = item.key;
+			dot.dataset.amortexaSeries = item.key;
 		}
 
 		dot.style.backgroundColor = item.color;
@@ -447,10 +445,10 @@ function renderLegend( host, items ) {
  * @param {Object}      result Result from calculateMortgage().
  */
 function renderCharts( root, values, config, result ) {
-	const donutHost = root.querySelector( '[data-calcforge-chart="donut"]' );
-	const lineHost = root.querySelector( '[data-calcforge-chart="line"]' );
-	const barHost = root.querySelector( '[data-calcforge-chart="bar"]' );
-	const dotsHost = root.querySelector( '[data-calcforge-chart="dots"]' );
+	const donutHost = root.querySelector( '[data-amortexa-chart="donut"]' );
+	const lineHost = root.querySelector( '[data-amortexa-chart="line"]' );
+	const barHost = root.querySelector( '[data-amortexa-chart="bar"]' );
+	const dotsHost = root.querySelector( '[data-amortexa-chart="dots"]' );
 
 	if ( ! donutHost && ! lineHost && ! barHost && ! dotsHost ) {
 		return;
@@ -500,7 +498,7 @@ function renderCharts( root, values, config, result ) {
 		);
 
 		renderLegend(
-			root.querySelector( '[data-calcforge-legend="donut"]' ),
+			root.querySelector( '[data-amortexa-legend="donut"]' ),
 			costSeries
 				? costSeries.legend.map( ( item ) => ( {
 						label: item.label,
@@ -545,7 +543,7 @@ function renderCharts( root, values, config, result ) {
 			)
 		);
 
-		renderLegend( root.querySelector( '[data-calcforge-legend="line"]' ), [
+		renderLegend( root.querySelector( '[data-amortexa-legend="line"]' ), [
 			{ label: labels.balance, color: palette.accent },
 			{ label: labels.cumInt, color: palette.accent2 },
 		] );
@@ -583,7 +581,7 @@ function renderCharts( root, values, config, result ) {
 			)
 		);
 
-		renderLegend( root.querySelector( '[data-calcforge-legend="bar"]' ), [
+		renderLegend( root.querySelector( '[data-amortexa-legend="bar"]' ), [
 			{ label: labels.prinPaid, color: palette.accent },
 			{ label: labels.intPaid, color: palette.accent2 },
 		] );
@@ -636,7 +634,7 @@ function renderCharts( root, values, config, result ) {
 			} )
 		);
 
-		renderLegend( root.querySelector( '[data-calcforge-legend="dots"]' ), [
+		renderLegend( root.querySelector( '[data-amortexa-legend="dots"]' ), [
 			{ label: labels.principal, color: series[ 0 ].color },
 			{ label: labels.balance, color: series[ 1 ].color },
 			{ label: labels.totalInt, color: series[ 2 ].color },
@@ -666,7 +664,7 @@ function labelCharts( hosts ) {
 
 		const figure = host.closest( 'figure' );
 		const caption = figure
-			? figure.querySelector( '.calcforge-calc__chart-title' )
+			? figure.querySelector( '.amortexa-calc__chart-title' )
 			: null;
 		const text = caption ? ( caption.textContent || '' ).trim() : '';
 
@@ -685,7 +683,7 @@ function initializeCalculator( root ) {
 	let config;
 
 	try {
-		config = JSON.parse( root.dataset.calcforgeConfig || '{}' );
+		config = JSON.parse( root.dataset.amortexaConfig || '{}' );
 	} catch ( error ) {
 		config = {};
 	}
@@ -710,15 +708,15 @@ function initializeCalculator( root ) {
 		}
 	};
 
-	const form = root.querySelector( '.calcforge-calc__form' );
+	const form = root.querySelector( '.amortexa-calc__form' );
 
-	if ( form && ! form.dataset.calcforgeBound ) {
+	if ( form && ! form.dataset.amortexaBound ) {
 		form.addEventListener( 'input', ( event ) => {
 			const target = event.target;
 
-			if ( target.matches( '[data-calcforge-slider]' ) ) {
+			if ( target.matches( '[data-amortexa-slider]' ) ) {
 				const field = root.querySelector(
-					`[data-calcforge-field="${ target.dataset.calcforgeSlider }"]`
+					`[data-amortexa-field="${ target.dataset.amortexaSlider }"]`
 				);
 
 				if ( field ) {
@@ -729,8 +727,8 @@ function initializeCalculator( root ) {
 			// Clamp for both entry points: dragging the slider and typing into the
 			// loan amount input each change the value the other control depends on.
 			if (
-				target.dataset.calcforgeField === 'loanAmount' ||
-				target.dataset.calcforgeSlider === 'loanAmount'
+				target.dataset.amortexaField === 'loanAmount' ||
+				target.dataset.amortexaSlider === 'loanAmount'
 			) {
 				clampDownPayment( root, target.value );
 			}
@@ -739,7 +737,7 @@ function initializeCalculator( root ) {
 			recalc();
 		} );
 
-		form.dataset.calcforgeBound = 'true';
+		form.dataset.amortexaBound = 'true';
 
 		syncSliders( root );
 		recalc();
@@ -754,20 +752,20 @@ function initializeCalculator( root ) {
 	 * share of the price. The converted value is what gets typed back, so the
 	 * stored attribute always matches what is on screen.
 	 */
-	root.querySelectorAll( '[data-calcforge-unit]' ).forEach( ( button ) => {
-		if ( button.dataset.calcforgeBound ) {
+	root.querySelectorAll( '[data-amortexa-unit]' ).forEach( ( button ) => {
+		if ( button.dataset.amortexaBound ) {
 			return;
 		}
 
-		button.dataset.actualUnit = button.dataset.calcforgeUnit || 'percent';
+		button.dataset.actualUnit = button.dataset.amortexaUnit || 'percent';
 
 		button.addEventListener( 'click', () => {
-			const attribute = button.dataset.calcforgeUnit.replace(
+			const attribute = button.dataset.amortexaUnit.replace(
 				/Unit$/,
 				''
 			);
 			const input = root.querySelector(
-				`[data-calcforge-field="${ attribute }"]`
+				`[data-amortexa-field="${ attribute }"]`
 			);
 
 			if ( input ) {
@@ -775,7 +773,7 @@ function initializeCalculator( root ) {
 				const price = parseFloat(
 					(
 						root.querySelector(
-							'[data-calcforge-field="loanAmount"]'
+							'[data-amortexa-field="loanAmount"]'
 						) || {}
 					).value
 				);
@@ -799,11 +797,11 @@ function initializeCalculator( root ) {
 			recalc();
 		} );
 
-		button.dataset.calcforgeBound = 'true';
+		button.dataset.amortexaBound = 'true';
 	} );
 
-	const toggle = root.querySelector( '.calcforge-calc__toggle' );
-	const scheduleBody = root.querySelector( '[data-calcforge-schedule-body]' );
+	const toggle = root.querySelector( '.amortexa-calc__toggle' );
+	const scheduleBody = root.querySelector( '[data-amortexa-schedule-body]' );
 
 	if ( toggle && scheduleBody ) {
 		/*
@@ -816,8 +814,8 @@ function initializeCalculator( root ) {
 
 		toggle.addEventListener( 'click', () => {
 			const expanded = toggle.getAttribute( 'aria-expanded' ) === 'true';
-			const collapse = toggle.dataset.calcforgeLabelCollapse;
-			const expand = toggle.dataset.calcforgeLabelExpand;
+			const collapse = toggle.dataset.amortexaLabelCollapse;
+			const expand = toggle.dataset.amortexaLabelExpand;
 
 			toggle.setAttribute( 'aria-expanded', expanded ? 'false' : 'true' );
 			scheduleBody.hidden = expanded;
@@ -837,5 +835,5 @@ function initializeCalculator( root ) {
 }
 
 document
-	.querySelectorAll( '.calcforge-calc[data-calcforge-config]' )
+	.querySelectorAll( '.amortexa-calc[data-amortexa-config]' )
 	.forEach( initializeCalculator );

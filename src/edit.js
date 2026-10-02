@@ -101,11 +101,11 @@ export default function Edit( { attributes, setAttributes } ) {
 	// block node. Spreading the props and then adding `ref={ rootRef }` would
 	// silently drop that ref, so the two are merged instead.
 	const { ref: blockRef, ...restBlockProps } = useBlockProps( {
-		className: `calcforge-calc calcforge-theme-${
+		className: `amortexa-calc amortexa-theme-${
 			getSkinSlugs().includes( theme ) ? theme : 'light'
-		} calcforge-calc--layout-${ layout === 'split' ? 'split' : 'stacked' }${
+		} amortexa-calc--layout-${ layout === 'split' ? 'split' : 'stacked' }${
 			formColumns === 'compact'
-				? ' calcforge-calc--form-columns-compact'
+				? ' amortexa-calc--form-columns-compact'
 				: ''
 		}`,
 		style: getPaletteOverrides( attributes, fontFamily ),

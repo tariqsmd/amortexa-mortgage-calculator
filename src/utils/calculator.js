@@ -3,7 +3,7 @@
  * front-end view script.
  *
  * This module mirrors the authoritative PHP helpers in includes/helpers.php
- * (calcforge_calculate_monthly_payment / calcforge_calculate_amortization_schedule) so the
+ * (amortexa_calculate_monthly_payment / amortexa_calculate_amortization_schedule) so the
  * editor and browser previews agree with server-rendered output.
  */
 
@@ -112,7 +112,7 @@ export function buildAmortizationSchedule( principal, annualRate, termYears ) {
 /**
  * The recurring cost components, in display order.
  *
- * Kept in step with calcforge_get_cost_components() in helpers.php. The two must
+ * Kept in step with amortexa_get_cost_components() in helpers.php. The two must
  * agree, because one drives the server render and the other drives what happens
  * when a visitor types, and a disagreement shows up as the numbers jumping when
  * the page is cached.
@@ -227,7 +227,7 @@ function annualCost( attrs, component, homePrice ) {
 /**
  * Returns the first month the balance reaches 80% of the purchase price.
  *
- * Matches calcforge_get_pmi_end_month() in helpers.php, including the case of a
+ * Matches amortexa_get_pmi_end_month() in helpers.php, including the case of a
  * loan that starts under the threshold and therefore never carries PMI.
  *
  * @param {number} principal  Financed principal.

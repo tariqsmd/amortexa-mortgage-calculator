@@ -3,7 +3,7 @@
  *
  * The settings screen, the attribute sanitizer, and this inspector all need the
  * same lists (skins, chart types, fonts, colors). Rather than duplicating them
- * in JavaScript, PHP passes them in via the `calcforgeData` global, so adding a
+ * in JavaScript, PHP passes them in via the `amortexaData` global, so adding a
  * skin means editing exactly one place. The fallbacks below only exist so the
  * compiled bundle still behaves if the global is ever missing.
  */
@@ -48,7 +48,7 @@ export function getData() {
 		return {};
 	}
 
-	return window.calcforgeData || {};
+	return window.amortexaData || {};
 }
 
 /**
@@ -179,7 +179,7 @@ export function getCurrencyPositions() {
  * Returns the swatches shown inside the inspector colour pickers.
  *
  * ColorPalette renders an empty popover without a `colors` list, so the presets
- * come from PHP (calcforge_get_color_swatches) with a local fallback.
+ * come from PHP (amortexa_get_color_swatches) with a local fallback.
  *
  * @return {Array<{name: string, color: string}>} Swatch list.
  */
@@ -217,27 +217,27 @@ export function getColorControls() {
 	}
 
 	return [
-		{ key: 'accentColor', label: 'Accent', cssVar: '--calcforge-accent' },
+		{ key: 'accentColor', label: 'Accent', cssVar: '--amortexa-accent' },
 		{
 			key: 'accentAltColor',
 			label: 'Secondary accent',
-			cssVar: '--calcforge-accent-alt',
+			cssVar: '--amortexa-accent-alt',
 		},
-		{ key: 'labelColor', label: 'Label text', cssVar: '--calcforge-label' },
+		{ key: 'labelColor', label: 'Label text', cssVar: '--amortexa-label' },
 		{
 			key: 'fieldTextColor',
 			label: 'Field text',
-			cssVar: '--calcforge-field-text',
+			cssVar: '--amortexa-field-text',
 		},
 		{
 			key: 'fieldBackgroundColor',
 			label: 'Field background',
-			cssVar: '--calcforge-field-bg',
+			cssVar: '--amortexa-field-bg',
 		},
 		{
 			key: 'fieldBorderColor',
 			label: 'Field border',
-			cssVar: '--calcforge-field-border',
+			cssVar: '--amortexa-field-border',
 		},
 	];
 }

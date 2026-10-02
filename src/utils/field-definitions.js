@@ -19,8 +19,11 @@ import { __ } from '@wordpress/i18n';
 export const NUMERIC_FIELDS = [
 	{
 		key: 'loanAmount',
-		label: __( 'Loan Amount', 'calcforge' ),
-		help: __( 'Total amount being financed.', 'calcforge' ),
+		label: __( 'Loan Amount', 'amortexa-mortgage-calculator' ),
+		help: __(
+			'Total amount being financed.',
+			'amortexa-mortgage-calculator'
+		),
 		min: 0,
 		step: 'any',
 		sliderMin: 10000,
@@ -29,10 +32,10 @@ export const NUMERIC_FIELDS = [
 	},
 	{
 		key: 'downPayment',
-		label: __( 'Down Payment', 'calcforge' ),
+		label: __( 'Down Payment', 'amortexa-mortgage-calculator' ),
 		help: __(
 			'Paid up front. Interest is charged on the remainder.',
-			'calcforge'
+			'amortexa-mortgage-calculator'
 		),
 		min: 0,
 		step: 'any',
@@ -42,8 +45,11 @@ export const NUMERIC_FIELDS = [
 	},
 	{
 		key: 'interestRate',
-		label: __( 'Interest Rate', 'calcforge' ),
-		help: __( 'Annual rate as a percentage.', 'calcforge' ),
+		label: __( 'Interest Rate', 'amortexa-mortgage-calculator' ),
+		help: __(
+			'Annual rate as a percentage.',
+			'amortexa-mortgage-calculator'
+		),
 		min: 0,
 		max: 100,
 		step: '0.01',
@@ -53,8 +59,11 @@ export const NUMERIC_FIELDS = [
 	},
 	{
 		key: 'loanTerm',
-		label: __( 'Loan Term', 'calcforge' ),
-		help: __( 'Length of the loan in years.', 'calcforge' ),
+		label: __( 'Loan Term', 'amortexa-mortgage-calculator' ),
+		help: __(
+			'Length of the loan in years.',
+			'amortexa-mortgage-calculator'
+		),
 		min: 1,
 		max: 60,
 		step: 1,

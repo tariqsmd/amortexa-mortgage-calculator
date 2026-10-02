@@ -20,7 +20,7 @@ src/utils
 src/*.scss
 tools
 tests
-# `includes/` is deliberately NOT excluded: calcforge.php requires it on every
+# `includes/` is deliberately NOT excluded: amortexa-mortgage-calculator.php requires it on every
 # request, so shipping without it produces a plugin that fatals on activation.
 
 # Repository documentation (readme.txt and LICENSE always ship)

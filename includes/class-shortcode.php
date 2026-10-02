@@ -1,8 +1,8 @@
 <?php
 /**
- * [calcforge] shortcode.
+ * [amortexa-mortgage-calculator] shortcode.
  *
- * @package CalcForge
+ * @package Amortexa
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,15 +15,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The shortcode deliberately renders through render_block() rather than calling
  * the render callback directly. That reuses the block's own attribute
  * sanitization, defaults, stylesheet, and view script, so a calculator placed
- * with [calcforge] behaves identically to one placed as a block and cannot
+ * with [amortexa-mortgage-calculator] behaves identically to one placed as a block and cannot
  * drift from it when attributes are added later.
  */
-final class CalcForge_Shortcode {
+final class Amortexa_Shortcode {
 
 	/**
 	 * Shortcode tag.
 	 */
-	const TAG = 'calcforge';
+	const TAG = 'amortexa-mortgage-calculator';
 
 	/**
 	 * Attributes the shortcode accepts, keyed by the name an author types.
@@ -44,132 +44,132 @@ final class CalcForge_Shortcode {
 			'loanamount'       => array(
 				'attribute'   => 'loanAmount',
 				'type'        => 'number',
-				'description' => __( 'Financed amount before the down payment, for example 300000.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Financed amount before the down payment, for example 300000.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'downpayment'      => array(
 				'attribute'   => 'downPayment',
 				'type'        => 'number',
-				'description' => __( 'Up-front amount deducted from the loan amount.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Up-front amount deducted from the loan amount.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'interestrate'     => array(
 				'attribute'   => 'interestRate',
 				'type'        => 'number',
-				'description' => __( 'Annual interest rate as a percentage, for example 5.5.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Annual interest rate as a percentage, for example 5.5.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'loanterm'         => array(
 				'attribute'   => 'loanTerm',
 				'type'        => 'number',
-				'description' => __( 'Term in years, from 1 to 60.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Term in years, from 1 to 60.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'currencysymbol'   => array(
 				'attribute'   => 'currencySymbol',
 				'type'        => 'text',
-				'description' => __( 'Symbol shown next to every amount, for example $ or EUR.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Symbol shown next to every amount, for example $ or EUR.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'currencyposition' => array(
 				'attribute'   => 'currencyPosition',
 				'type'        => 'text',
-				'description' => __( 'prefix or suffix, deciding which side of the number the symbol sits on.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'prefix or suffix, deciding which side of the number the symbol sits on.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'showcharts'       => array(
 				'attribute'   => 'showCharts',
 				'type'        => 'boolean',
-				'description' => __( 'false hides the charts.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'false hides the charts.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'charttype'        => array(
 				'attribute'   => 'chartType',
 				'type'        => 'text',
-				'description' => __( 'donut, line, bar, dots, or both.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'donut, line, bar, dots, or both.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'formcolumns'      => array(
 				'attribute'   => 'formColumns',
 				'type'        => 'text',
-				'description' => __( 'wide or compact, deciding how the form fields are laid out.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'wide or compact, deciding how the form fields are laid out.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'panelorder'       => array(
 				'attribute'   => 'panelOrder',
 				'type'        => 'list',
-				'description' => __( 'Comma separated panel order, for example form,results,charts,schedule.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Comma separated panel order, for example form,results,charts,schedule.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'layout'           => array(
 				'attribute'   => 'layout',
 				'type'        => 'text',
-				'description' => __( 'split or stacked.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'split or stacked.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'theme'            => array(
 				'attribute'   => 'theme',
 				'type'        => 'text',
-				'description' => __( 'Skin slug for the calculator, for example light or dark.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Skin slug for the calculator, for example light or dark.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'showamortization' => array(
 				'attribute'   => 'showAmortization',
 				'type'        => 'boolean',
-				'description' => __( 'false hides the year-by-year schedule.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'false hides the year-by-year schedule.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'showsliders'      => array(
 				'attribute'   => 'showSliders',
 				'type'        => 'boolean',
-				'description' => __( 'false replaces the sliders with plain inputs.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'false replaces the sliders with plain inputs.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'showresults'      => array(
 				'attribute'   => 'showResults',
 				'type'        => 'boolean',
-				'description' => __( 'false hides the results summary.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'false hides the results summary.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'showcosts'       => array(
 				'attribute'   => 'showCosts',
 				'type'        => 'boolean',
-				'description' => __( 'true adds the recurring cost inputs and the total monthly cost.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'true adds the recurring cost inputs and the total monthly cost.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'propertytax'     => array(
 				'attribute'   => 'propertyTax',
 				'type'        => 'number',
-				'description' => __( 'Annual property tax, as a rate or an amount, depending on propertytaxunit.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Annual property tax, as a rate or an amount, depending on propertytaxunit.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'propertytaxunit' => array(
 				'attribute'   => 'propertyTaxUnit',
 				'type'        => 'text',
-				'description' => __( 'percent or amount, deciding whether propertytax is read as a rate of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'percent or amount, deciding whether propertytax is read as a rate of the purchase price.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'homeinsurance'     => array(
 				'attribute'   => 'homeInsurance',
 				'type'        => 'number',
-				'description' => __( 'Annual home insurance, as a rate or an amount, depending on homeinsuranceunit.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Annual home insurance, as a rate or an amount, depending on homeinsuranceunit.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'homeinsuranceunit' => array(
 				'attribute'   => 'homeInsuranceUnit',
 				'type'        => 'text',
-				'description' => __( 'percent or amount, deciding whether homeinsurance is read as a rate of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'percent or amount, deciding whether homeinsurance is read as a rate of the purchase price.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'hoafee'     => array(
 				'attribute'   => 'hoaFee',
 				'type'        => 'number',
-				'description' => __( 'Annual HOA fee, as a rate or an amount, depending on hoafeeunit.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Annual HOA fee, as a rate or an amount, depending on hoafeeunit.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'hoafeeunit' => array(
 				'attribute'   => 'hoaFeeUnit',
 				'type'        => 'text',
-				'description' => __( 'percent or amount, deciding whether hoafee is read as a rate of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'percent or amount, deciding whether hoafee is read as a rate of the purchase price.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'pmi'     => array(
 				'attribute'   => 'pmi',
 				'type'        => 'number',
-				'description' => __( 'Annual mortgage insurance premium, as a rate or an amount, depending on pmiunit. It stops once the balance reaches 80% of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Annual mortgage insurance premium, as a rate or an amount, depending on pmiunit. It stops once the balance reaches 80% of the purchase price.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'pmiunit' => array(
 				'attribute'   => 'pmiUnit',
 				'type'        => 'text',
-				'description' => __( 'percent or amount, deciding whether pmi is read as a rate of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'percent or amount, deciding whether pmi is read as a rate of the purchase price.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'othercosts'     => array(
 				'attribute'   => 'otherCosts',
 				'type'        => 'number',
-				'description' => __( 'Any other annual cost, as a rate or an amount, depending on othercostsunit.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Any other annual cost, as a rate or an amount, depending on othercostsunit.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'othercostsunit' => array(
 				'attribute'   => 'otherCostsUnit',
 				'type'        => 'text',
-				'description' => __( 'percent or amount, deciding whether othercosts is read as a rate of the purchase price.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'percent or amount, deciding whether othercosts is read as a rate of the purchase price.', AMORTEXA_TEXT_DOMAIN ),
 			),
 		);
 	}
@@ -194,7 +194,7 @@ final class CalcForge_Shortcode {
 		}
 
 		$map      = self::get_documented_attributes();
-		$defaults = calcforge_get_default_attributes();
+		$defaults = amortexa_get_default_attributes();
 		$pairs    = array();
 
 		/*
@@ -212,17 +212,17 @@ final class CalcForge_Shortcode {
 		$atts = shortcode_atts( $pairs, (array) $atts, self::TAG );
 
 		$block = array(
-			'blockName' => 'calcforge/mortgage-calculator',
+			'blockName' => 'amortexa-mortgage-calculator/mortgage-calculator',
 			'attrs'     => $this->to_block_attributes( $atts, $map ),
 		);
 
 		/**
-		 * Filters the block array a [calcforge] shortcode renders.
+		 * Filters the block array a [amortexa-mortgage-calculator] shortcode renders.
 		 *
 		 * @param array<string,mixed> $block Block name and attributes.
 		 * @param array<string,string> $atts Merged shortcode attributes.
 		 */
-		$block = apply_filters( 'calcforge_shortcode_block', $block, $atts );
+		$block = apply_filters( 'amortexa_shortcode_block', $block, $atts );
 
 		if ( ! is_array( $block ) || empty( $block['blockName'] ) ) {
 			return '';
@@ -237,7 +237,7 @@ final class CalcForge_Shortcode {
 	 * Renames shortcode attributes to block attributes and casts their values.
 	 *
 	 * Shortcodes can only carry strings, but the block schema declares booleans
-	 * and numbers. Casting here means calcforge_sanitize_attributes() receives
+	 * and numbers. Casting here means amortexa_sanitize_attributes() receives
 	 * the same shapes it receives from the editor, so a shortcode and a block set
 	 * to the same values render identically. A value that is not numeric falls
 	 * back to the site default rather than becoming 0.
@@ -247,14 +247,14 @@ final class CalcForge_Shortcode {
 	 * @return array<string,mixed> Block attributes keyed by block attribute name.
 	 */
 	private function to_block_attributes( $atts, $map ) {
-		$defaults = calcforge_get_default_attributes();
+		$defaults = amortexa_get_default_attributes();
 		$typed    = array();
 
 		foreach ( $map as $shortcode_name => $spec ) {
 			$block_key = $spec['attribute'];
 			/*
 			 * A third party can remove an attribute from the defaults through
-			 * the calcforge_default_attributes filter, so a missing key is
+			 * the amortexa_default_attributes filter, so a missing key is
 			 * read as null and falls through to the cast below rather than
 			 * raising an undefined-array-key warning on the front end.
 			 */
@@ -277,7 +277,7 @@ final class CalcForge_Shortcode {
 				 * "form,results". The seeded default is already an array, and a
 				 * value that splits to nothing falls back to it, so neither
 				 * panelorder="" nor an omitted attribute collapses the
-				 * calculator to zero panels. calcforge_resolve_panel_order()
+				 * calculator to zero panels. amortexa_resolve_panel_order()
 				 * drops any key that is not a real panel.
 				 */
 				case 'list':

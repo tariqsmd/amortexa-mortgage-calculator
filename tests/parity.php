@@ -11,7 +11,7 @@
  * Usage: php tests/parity.php
  * Exit code 0 on parity, 1 on mismatch or error.
  *
- * @package CalcForge
+ * @package Amortexa
  */
 
 error_reporting( E_ALL );
@@ -22,9 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', dirname( __DIR__ ) . '/' );
 }
 
-// The plugin's own text domain constant, normally set by calcforge.php.
-if ( ! defined( 'CALCFORGE_TEXT_DOMAIN' ) ) {
-	define( 'CALCFORGE_TEXT_DOMAIN', 'calcforge' );
+// The plugin's own text domain constant, normally set by amortexa-mortgage-calculator.php.
+if ( ! defined( 'AMORTEXA_TEXT_DOMAIN' ) ) {
+	define( 'AMORTEXA_TEXT_DOMAIN', 'amortexa-mortgage-calculator' );
 }
 
 /*
@@ -117,7 +117,7 @@ if ( ! function_exists( 'wp_parse_args' ) ) {
 }
 
 if ( ! function_exists( 'add_filter' ) ) {
-	$GLOBALS['calcforge_test_filters'] = array();
+	$GLOBALS['amortexa_test_filters'] = array();
 
 	/**
 	 * Emulates WP add_filter() for single callback slots.
@@ -127,7 +127,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 	 * @return bool Always true.
 	 */
 	function add_filter( $hook_name, $callback ) {
-		$GLOBALS['calcforge_test_filters'][ $hook_name ] = $callback;
+		$GLOBALS['amortexa_test_filters'][ $hook_name ] = $callback;
 		return true;
 	}
 }
@@ -140,7 +140,7 @@ if ( ! function_exists( 'remove_all_filters' ) ) {
 	 * @return bool Always true.
 	 */
 	function remove_all_filters( $hook_name ) {
-		unset( $GLOBALS['calcforge_test_filters'][ $hook_name ] );
+		unset( $GLOBALS['amortexa_test_filters'][ $hook_name ] );
 		return true;
 	}
 }
@@ -157,12 +157,12 @@ if ( ! function_exists( 'apply_filters' ) ) { // phpcs:ignore WordPress.NamingCo
 	 * @return mixed The filtered value.
 	 */
 	function apply_filters( $hook_name, $value, ...$args ) {
-		if ( ! isset( $GLOBALS['calcforge_test_filters'][ $hook_name ] ) ) {
+		if ( ! isset( $GLOBALS['amortexa_test_filters'][ $hook_name ] ) ) {
 			return $value;
 		}
 
 		return call_user_func_array(
-			$GLOBALS['calcforge_test_filters'][ $hook_name ],
+			$GLOBALS['amortexa_test_filters'][ $hook_name ],
 			array_merge( array( $value ), $args )
 		);
 	}
@@ -227,7 +227,7 @@ if ( ! function_exists( '_doing_it_wrong' ) ) {
  * expiries with time(), so a stubbed clock would disagree with it and make
  * assertions about window expiry meaningless. Tests age an entry out explicitly.
  */
-$GLOBALS['calcforge_test_transients'] = array();
+$GLOBALS['amortexa_test_transients'] = array();
 
 if ( ! function_exists( 'get_transient' ) ) {
 	/**
@@ -237,14 +237,14 @@ if ( ! function_exists( 'get_transient' ) ) {
 	 * @return mixed Stored value, or false when absent or expired.
 	 */
 	function get_transient( $key ) {
-		if ( ! isset( $GLOBALS['calcforge_test_transients'][ $key ] ) ) {
+		if ( ! isset( $GLOBALS['amortexa_test_transients'][ $key ] ) ) {
 			return false;
 		}
 
-		$entry = $GLOBALS['calcforge_test_transients'][ $key ];
+		$entry = $GLOBALS['amortexa_test_transients'][ $key ];
 
 		if ( $entry['expires'] > 0 && $entry['expires'] <= time() ) {
-			unset( $GLOBALS['calcforge_test_transients'][ $key ] );
+			unset( $GLOBALS['amortexa_test_transients'][ $key ] );
 			return false;
 		}
 
@@ -262,7 +262,7 @@ if ( ! function_exists( 'set_transient' ) ) {
 	 * @return bool Always true.
 	 */
 	function set_transient( $key, $value, $expiration = 0 ) {
-		$GLOBALS['calcforge_test_transients'][ $key ] = array(
+		$GLOBALS['amortexa_test_transients'][ $key ] = array(
 			'value'   => $value,
 			'expires' => $expiration > 0 ? time() + $expiration : 0,
 		);
@@ -484,7 +484,7 @@ if ( ! function_exists( 'wp_generate_uuid4' ) ) {
  *
  * @return int Number of failures encountered.
  */
-function calcforge_test_parity() {
+function amortexa_test_parity() {
 	$cases = array(
 		array( 200000, 6.0, 30 ),
 		array( 250000, 0.0, 30 ),
@@ -501,8 +501,8 @@ function calcforge_test_parity() {
 	foreach ( $cases as $case ) {
 		list( $principal, $rate, $years ) = $case;
 
-		$php_monthly[] = calcforge_calculate_monthly_payment( $principal, $rate, $years );
-		$php_schedules[] = calcforge_calculate_amortization_schedule( $principal, $rate, $years );
+		$php_monthly[] = amortexa_calculate_monthly_payment( $principal, $rate, $years );
+		$php_schedules[] = amortexa_calculate_amortization_schedule( $principal, $rate, $years );
 	}
 
 	// Locate the repo root and the JS driver, then run it.
@@ -606,7 +606,7 @@ function calcforge_test_parity() {
 		);
 	}
 
-	$failures += calcforge_test_cost_parity( $decoded, $failures );
+	$failures += amortexa_test_cost_parity( $decoded, $failures );
 
 	return $failures;
 }
@@ -623,7 +623,7 @@ function calcforge_test_parity() {
  * @param int   $already Failures counted so far, reported for context.
  * @return int Number of failures encountered.
  */
-function calcforge_test_cost_parity( $decoded, $already ) {
+function amortexa_test_cost_parity( $decoded, $already ) {
 	if ( ! isset( $decoded['costs'] ) || ! is_array( $decoded['costs'] ) ) {
 		return 0;
 	}
@@ -676,7 +676,7 @@ function calcforge_test_cost_parity( $decoded, $already ) {
 			continue;
 		}
 
-		$php = calcforge_calculate( array_merge( $attrs, array( 'showAmortization' => false ) ) );
+		$php = amortexa_calculate( array_merge( $attrs, array( 'showAmortization' => false ) ) );
 		$js  = $decoded['costs'][ $index ];
 
 		$pairs = array(
@@ -761,7 +761,7 @@ function calcforge_test_cost_parity( $decoded, $already ) {
  * @param array<string,mixed> $token Token definition.
  * @return string Sample stored value.
  */
-function calcforge_test_design_sample( $token ) {
+function amortexa_test_design_sample( $token ) {
 	switch ( $token['type'] ) {
 		case 'color':
 			return '#1d4ed8';
@@ -786,7 +786,7 @@ function calcforge_test_design_sample( $token ) {
 			}
 
 			// Raw token shape, where options names a shared list.
-			$lists = calcforge_get_design_option_lists();
+			$lists = amortexa_get_design_option_lists();
 			$list  = isset( $lists[ $token['options'] ] ) ? $lists[ $token['options'] ] : array();
 
 			foreach ( array_keys( $list ) as $option ) {
@@ -815,24 +815,24 @@ function calcforge_test_design_sample( $token ) {
  * 3. Every custom property the stylesheet consumes is declared, and every token
  *    the inspector offers is actually read. A token that is written but never
  *    read is a control that silently does nothing, which is exactly the bug that
- *    shipped when the editor wrote --calcforge-accent-alt and --calcforge-label
- *    while the stylesheet only knew --calcforge-accent-2 and
- *    --calcforge-label-color.
+ *    shipped when the editor wrote --amortexa-accent-alt and --amortexa-label
+ *    while the stylesheet only knew --amortexa-accent-2 and
+ *    --amortexa-label-color.
  *
  * @return int Number of failures encountered.
  */
-function calcforge_test_design_schema() {
+function amortexa_test_design_schema() {
 	$failures = 0;
 	$root     = dirname( __DIR__ );
 
-	$editor_data = calcforge_get_editor_data();
+	$editor_data = amortexa_get_editor_data();
 
 	/*
 	 * The schema goes to the JS driver through a file, because a shell_exec() on
 	 * Windows runs through cmd.exe which cannot set an inline variable, and the
 	 * payload is larger than the command line limit.
 	 */
-	$payload = tempnam( sys_get_temp_dir(), 'calcforge-design-' );
+	$payload = tempnam( sys_get_temp_dir(), 'amortexa-design-' );
 	file_put_contents( $payload, wp_json_encode_compat( $editor_data ) );
 
 	$driver = $root . '/tests/js/design.mjs';
@@ -893,8 +893,8 @@ function calcforge_test_design_schema() {
 				}
 			}
 
-			$sample = calcforge_test_design_sample( $php_token );
-			$php_css = calcforge_design_css_value( $php_token, $sample );
+			$sample = amortexa_test_design_sample( $php_token );
+			$php_css = amortexa_design_css_value( $php_token, $sample );
 			$js_css  = $js['cssValues'][ $php_token['key'] ] ?? '';
 
 			if ( $php_css !== $js_css ) {
@@ -939,7 +939,7 @@ function calcforge_test_design_schema() {
 	 * The same messy design object the JS driver is given, so a token set in the
 	 * editor resolves to the identical custom property the front end will emit.
 	 */
-	$attributes = calcforge_sanitize_attributes(
+	$attributes = amortexa_sanitize_attributes(
 		array(
 			'design'     => array(
 				'fieldPadding'     => '10 14',
@@ -956,7 +956,7 @@ function calcforge_test_design_schema() {
 
 	$php_overrides = array();
 
-	foreach ( calcforge_get_design_css( $attributes ) as $declaration ) {
+	foreach ( amortexa_get_design_css( $attributes ) as $declaration ) {
 		list( $var, $value ) = explode( ':', $declaration, 2 );
 		$php_overrides[ $var ] = $value;
 	}
@@ -978,7 +978,7 @@ function calcforge_test_design_schema() {
 	 * The legacy colour attribute still reaches the stylesheet, and the design
 	 * token layered on top of it wins.
 	 */
-	$resolved = calcforge_get_design_values( $attributes );
+	$resolved = amortexa_get_design_values( $attributes );
 
 	if ( '#be123c' !== ( $resolved['labelColor'] ?? '' ) ) {
 		$failures++;
@@ -987,14 +987,14 @@ function calcforge_test_design_schema() {
 		fwrite( STDOUT, "ok   legacy colour attributes still resolve\n" );
 	}
 
-	$overridden = calcforge_sanitize_attributes(
+	$overridden = amortexa_sanitize_attributes(
 		array(
 			'design'     => array( 'labelColor' => '#0e7490' ),
 			'labelColor' => '#be123c',
 		)
 	);
 
-	$resolved_override = calcforge_get_design_values( $overridden );
+	$resolved_override = amortexa_get_design_values( $overridden );
 
 	if ( '#0e7490' !== ( $resolved_override['labelColor'] ?? '' ) ) {
 		$failures++;
@@ -1008,8 +1008,8 @@ function calcforge_test_design_schema() {
 	 * straight to the skin, otherwise a per-block colour saved before the design
 	 * tab existed is lost the first time anyone touches the tab.
 	 */
-	$after_reset = calcforge_get_design_values(
-		calcforge_sanitize_attributes( array( 'labelColor' => '#be123c' ) )
+	$after_reset = amortexa_get_design_values(
+		amortexa_sanitize_attributes( array( 'labelColor' => '#be123c' ) )
 	);
 
 	if ( '#be123c' !== ( $after_reset['labelColor'] ?? '' ) ) {
@@ -1035,8 +1035,8 @@ function calcforge_test_design_schema() {
 	);
 
 	foreach ( $chart_cases as $index => $chart_case ) {
-		$php_height = calcforge_get_design_chart_metrics(
-			calcforge_sanitize_attributes( $chart_case )
+		$php_height = amortexa_get_design_chart_metrics(
+			amortexa_sanitize_attributes( $chart_case )
 		)['height'];
 
 		$js_height = $js['chartHeights'][ $index ] ?? null;
@@ -1049,7 +1049,7 @@ function calcforge_test_design_schema() {
 
 	fwrite( STDOUT, sprintf( "ok   chart height: %d cases agree between the render and the preview\n", count( $chart_cases ) ) );
 
-	$failures += calcforge_test_design_wiring( $root );
+	$failures += amortexa_test_design_wiring( $root );
 
 	return $failures;
 }
@@ -1060,16 +1060,16 @@ function calcforge_test_design_schema() {
  * @param string $root Repository root.
  * @return int Number of failures.
  */
-function calcforge_test_design_wiring( $root ) {
+function amortexa_test_design_wiring( $root ) {
 	$failures = 0;
 	$scss     = (string) file_get_contents( $root . '/src/style.scss' );
 
 	// Properties the stylesheet reads.
-	preg_match_all( '/var\(\s*(--calcforge-[a-z0-9-]+)/', $scss, $consumed );
+	preg_match_all( '/var\(\s*(--amortexa-[a-z0-9-]+)/', $scss, $consumed );
 	$consumed = array_values( array_unique( $consumed[1] ) );
 
 	// Properties the stylesheet gives a default to.
-	preg_match_all( '/(--calcforge-[a-z0-9-]+)\s*:/', $scss, $declared );
+	preg_match_all( '/(--amortexa-[a-z0-9-]+)\s*:/', $scss, $declared );
 	$declared = array_values( array_unique( $declared[1] ) );
 
 	/*
@@ -1077,18 +1077,18 @@ function calcforge_test_design_wiring( $root ) {
 	 * they are legitimately consumed without appearing in the schema.
 	 */
 	$palette = array(
-		'--calcforge-accent',
-		'--calcforge-accent-2',
-		'--calcforge-accent-soft',
-		'--calcforge-bg',
-		'--calcforge-border',
-		'--calcforge-field-bg',
-		'--calcforge-field-border',
-		'--calcforge-field-text',
-		'--calcforge-label-color',
-		'--calcforge-surface',
-		'--calcforge-text',
-		'--calcforge-text-muted',
+		'--amortexa-accent',
+		'--amortexa-accent-2',
+		'--amortexa-accent-soft',
+		'--amortexa-bg',
+		'--amortexa-border',
+		'--amortexa-field-bg',
+		'--amortexa-field-border',
+		'--amortexa-field-text',
+		'--amortexa-label-color',
+		'--amortexa-surface',
+		'--amortexa-text',
+		'--amortexa-text-muted',
 	);
 
 	/*
@@ -1106,7 +1106,7 @@ function calcforge_test_design_wiring( $root ) {
 		fwrite( STDOUT, "FAIL stylesheet consumes {$var} but nothing declares it\n" );
 	}
 
-	foreach ( calcforge_get_design_token_map() as $key => $token ) {
+	foreach ( amortexa_get_design_token_map() as $key => $token ) {
 		/*
 		 * Palette variables are declared by the skin CSS in PHP rather than in
 		 * style.scss, and chartHeight is read by view.js, so both are exempt
@@ -1128,12 +1128,12 @@ function calcforge_test_design_wiring( $root ) {
 		STDOUT,
 		sprintf(
 			"ok   design wiring: %d tokens, %d properties consumed, no orphans\n",
-			count( calcforge_get_design_token_map() ),
+			count( amortexa_get_design_token_map() ),
 			count( $consumed )
 		)
 	);
 
-	$failures += calcforge_test_design_defaults( $scss, $declared );
+	$failures += amortexa_test_design_defaults( $scss, $declared );
 
 	return $failures;
 }
@@ -1150,10 +1150,10 @@ function calcforge_test_design_wiring( $root ) {
  * @param array<int,string>     $declared Custom properties given a default.
  * @return int Number of failures.
  */
-function calcforge_test_design_defaults( $scss, $declared ) {
+function amortexa_test_design_defaults( $scss, $declared ) {
 	$failures = 0;
 
-	preg_match_all( '/(--calcforge-[a-z0-9-]+)\s*:\s*([^;]+);/', $scss, $matches, PREG_SET_ORDER );
+	preg_match_all( '/(--amortexa-[a-z0-9-]+)\s*:\s*([^;]+);/', $scss, $matches, PREG_SET_ORDER );
 
 	$defaults = array();
 
@@ -1166,7 +1166,7 @@ function calcforge_test_design_defaults( $scss, $declared ) {
 		}
 	}
 
-	foreach ( calcforge_get_design_token_map() as $key => $token ) {
+	foreach ( amortexa_get_design_token_map() as $key => $token ) {
 		$var = $token['var'];
 
 		if ( ! in_array( $var, $declared, true ) ) {
@@ -1362,13 +1362,13 @@ if ( ! function_exists( 'number_format_i18n' ) ) {
  *
  * @return int Failure count.
  */
-function calcforge_test_settings_and_shortcode() {
+function amortexa_test_settings_and_shortcode() {
 	$failures = 0;
-	$valid    = calcforge_get_currency_positions();
+	$valid    = amortexa_get_currency_positions();
 
 	// Every position the site offers must survive sanitization.
 	foreach ( array_keys( $valid ) as $position ) {
-		$clean = calcforge_sanitize_settings( array( 'currency_position' => $position ) );
+		$clean = amortexa_sanitize_settings( array( 'currency_position' => $position ) );
 
 		if ( $position !== $clean['currency_position'] ) {
 			++$failures;
@@ -1378,7 +1378,7 @@ function calcforge_test_settings_and_shortcode() {
 
 	// An unknown or missing value falls back to the default, never to raw input.
 	foreach ( array( 'nonsense', '', array( 'prefix' ) ) as $bad ) {
-		$clean = calcforge_sanitize_settings( array( 'currency_position' => $bad ) );
+		$clean = amortexa_sanitize_settings( array( 'currency_position' => $bad ) );
 
 		if ( 'prefix' !== $clean['currency_position'] ) {
 			++$failures;
@@ -1387,14 +1387,14 @@ function calcforge_test_settings_and_shortcode() {
 	}
 
 	// The setting has to be reachable from the settings screen and seed blocks.
-	$map = calcforge_get_settings_attribute_map();
+	$map = amortexa_get_settings_attribute_map();
 
 	if ( 'currencyPosition' !== ( $map['currency_position'] ?? null ) ) {
 		++$failures;
 		fwrite( STDOUT, "FAIL currency_position is not mapped onto the currencyPosition block attribute\n" );
 	}
 
-	$defaults = calcforge_get_default_attributes();
+	$defaults = amortexa_get_default_attributes();
 
 	if ( 'prefix' !== $defaults['currencyPosition'] ) {
 		++$failures;
@@ -1405,7 +1405,7 @@ function calcforge_test_settings_and_shortcode() {
 
 	require_once dirname( __DIR__ ) . '/includes/class-shortcode.php';
 
-	$shortcode = new CalcForge_Shortcode();
+	$shortcode = new Amortexa_Shortcode();
 	$method    = new ReflectionMethod( $shortcode, 'to_block_attributes' );
 
 	/*
@@ -1431,7 +1431,7 @@ function calcforge_test_settings_and_shortcode() {
 	 * The readme promises the shortcode "accepts every block attribute", and that
 	 * promise silently broke when the recurring costs shipped: all eleven cost
 	 * attributes were reachable from the block and the editor but not from the
-	 * shortcode, so a hand-written [calcforge showcosts="true" propertytax="1.25"]
+	 * shortcode, so a hand-written [amortexa-mortgage-calculator showcosts="true" propertytax="1.25"]
 	 * was quietly ignored with no error anywhere. Rather than re-list the costs,
 	 * this compares the whole documented map against the block schema so the next
 	 * attribute added to block.json has to be added to the shortcode too.
@@ -1523,7 +1523,7 @@ function calcforge_test_settings_and_shortcode() {
 
 	// The block sanitizer drops keys that are not real panels, so a shortcode
 	// cannot smuggle an unknown panel into the rendered markup.
-	$resolved = calcforge_resolve_panel_order( array( 'form', 'not-a-panel', 'results' ), calcforge_get_panel_keys() );
+	$resolved = amortexa_resolve_panel_order( array( 'form', 'not-a-panel', 'results' ), amortexa_get_panel_keys() );
 
 	if ( in_array( 'not-a-panel', $resolved, true ) ) {
 		++$failures;
@@ -1531,7 +1531,7 @@ function calcforge_test_settings_and_shortcode() {
 	}
 
 	// formcolumns is a straight enum, so an unknown value falls back to wide.
-	$columns = calcforge_sanitize_attributes( array( 'formColumns' => 'nonsense' ) );
+	$columns = amortexa_sanitize_attributes( array( 'formColumns' => 'nonsense' ) );
 
 	if ( 'wide' !== $columns['formColumns'] ) {
 		++$failures;
@@ -1540,7 +1540,7 @@ function calcforge_test_settings_and_shortcode() {
 
 	/*
 	 * A third party is allowed to reshape the defaults through
-	 * calcforge_default_attributes, including dropping a key outright. The
+	 * amortexa_default_attributes, including dropping a key outright. The
 	 * shortcode reads the defaults for every attribute it documents, so a
 	 * missing key used to raise an undefined-array-key warning on the front end
 	 * and, for a numeric attribute, fell through to a second unguarded read.
@@ -1550,7 +1550,7 @@ function calcforge_test_settings_and_shortcode() {
 	$warnings = array();
 
 	add_filter(
-		'calcforge_default_attributes',
+		'amortexa_default_attributes',
 		static function ( $filtered_defaults ) use ( &$warnings ) {
 			foreach ( array( 'loanAmount', 'loanTerm', 'currencyPosition', 'panelOrder' ) as $dropped ) {
 				unset( $filtered_defaults[ $dropped ] );
@@ -1572,7 +1572,7 @@ function calcforge_test_settings_and_shortcode() {
 	$pruned = $method->invoke( $shortcode, array_fill_keys( array_keys( $shortcode_map ), '' ), $shortcode_map );
 
 	restore_error_handler();
-	remove_all_filters( 'calcforge_default_attributes' );
+	remove_all_filters( 'amortexa_default_attributes' );
 
 	if ( array() !== $warnings ) {
 		++$failures;
@@ -1610,7 +1610,7 @@ function calcforge_test_settings_and_shortcode() {
  *
  * @return int Number of failures.
  */
-function calcforge_test_input_guards() {
+function amortexa_test_input_guards() {
 	$failures = 0;
 	$report   = function ( $ok, $message ) use ( &$failures ) {
 		if ( $ok ) {
@@ -1622,22 +1622,22 @@ function calcforge_test_input_guards() {
 	};
 
 	// Boolean normalization.
-	$report( true === calcforge_sanitize_bool( true ), 'a real boolean true survives' );
-	$report( false === calcforge_sanitize_bool( false ), 'a real boolean false survives' );
-	$report( true === calcforge_sanitize_bool( '1' ), 'the string "1" reads as true' );
-	$report( true === calcforge_sanitize_bool( 'on' ), 'the string "on" reads as true' );
-	$report( false === calcforge_sanitize_bool( '0' ), 'the string "0" reads as false' );
-	$report( false === calcforge_sanitize_bool( 'false' ), 'the string "false" reads as false' );
-	$report( false === calcforge_sanitize_bool( 'off' ), 'the string "off" reads as false' );
-	$report( false === calcforge_sanitize_bool( array( '1' ) ), 'a non-empty array is rejected instead of reading as true' );
-	$report( true === calcforge_sanitize_bool( array( '0', '1' ), true ), 'a rejected array uses the caller default' );
-	$report( true === calcforge_sanitize_bool( null, true ), 'an absent value falls back to the default' );
-	$report( true === calcforge_sanitize_bool( 'nonsense', true ), 'an unrecognized string falls back to the default' );
+	$report( true === amortexa_sanitize_bool( true ), 'a real boolean true survives' );
+	$report( false === amortexa_sanitize_bool( false ), 'a real boolean false survives' );
+	$report( true === amortexa_sanitize_bool( '1' ), 'the string "1" reads as true' );
+	$report( true === amortexa_sanitize_bool( 'on' ), 'the string "on" reads as true' );
+	$report( false === amortexa_sanitize_bool( '0' ), 'the string "0" reads as false' );
+	$report( false === amortexa_sanitize_bool( 'false' ), 'the string "false" reads as false' );
+	$report( false === amortexa_sanitize_bool( 'off' ), 'the string "off" reads as false' );
+	$report( false === amortexa_sanitize_bool( array( '1' ) ), 'a non-empty array is rejected instead of reading as true' );
+	$report( true === amortexa_sanitize_bool( array( '0', '1' ), true ), 'a rejected array uses the caller default' );
+	$report( true === amortexa_sanitize_bool( null, true ), 'an absent value falls back to the default' );
+	$report( true === amortexa_sanitize_bool( 'nonsense', true ), 'an unrecognized string falls back to the default' );
 
 	// An array must never reach a string cast inside the settings sanitizer.
 	foreach ( array( 'default_interest_rate', 'decimal_precision', 'default_loan_amount', 'default_down_payment', 'default_loan_term', 'default_theme', 'default_chart_type', 'default_layout' ) as $key ) {
-		$defaults = calcforge_get_default_settings();
-		$clean    = calcforge_sanitize_settings( array( $key => array( '1' ) ) );
+		$defaults = amortexa_get_default_settings();
+		$clean    = amortexa_sanitize_settings( array( $key => array( '1' ) ) );
 
 		if ( ! array_key_exists( $key, $clean ) ) {
 			continue;
@@ -1654,45 +1654,45 @@ function calcforge_test_input_guards() {
 	 * the key is always present. An explicit 0 has to switch the table off
 	 * instead of being read as a truthy non-empty value.
 	 */
-	$settings = calcforge_sanitize_settings( array( 'enable_amortization' => '0' ) );
+	$settings = amortexa_sanitize_settings( array( 'enable_amortization' => '0' ) );
 	$report( false === $settings['enable_amortization'], 'an explicit 0 switches the amortization table off' );
 
-	$settings = calcforge_sanitize_settings( array( 'enable_amortization' => '1' ) );
+	$settings = amortexa_sanitize_settings( array( 'enable_amortization' => '1' ) );
 	$report( true === $settings['enable_amortization'], 'an explicit 1 switches the amortization table on' );
 
 	// An unknown skin must fall back to the site's own choice, not a hardcoded one.
-	$defaults = calcforge_get_default_attributes();
-	$skins    = calcforge_get_skin_slugs();
+	$defaults = amortexa_get_default_attributes();
+	$skins    = amortexa_get_skin_slugs();
 	$site     = (string) $defaults['theme'];
 	$other    = in_array( 'ocean', $skins, true ) && 'ocean' !== $site ? 'ocean' : 'light';
 
-	$stale = calcforge_sanitize_attributes( array( 'theme' => 'a-skin-that-no-longer-exists' ) );
+	$stale = amortexa_sanitize_attributes( array( 'theme' => 'a-skin-that-no-longer-exists' ) );
 	$report( $site === $stale['theme'], 'a retired skin slug falls back to the site default' );
 
-	$kept = calcforge_sanitize_attributes( array( 'theme' => $other ) );
+	$kept = amortexa_sanitize_attributes( array( 'theme' => $other ) );
 	$report( $other === $kept['theme'], 'a known skin is preserved' );
 
 	// An array must never become a visible "Array" on the front end.
-	$attrs = calcforge_sanitize_attributes( array( 'currencySymbol' => array( 'a' ) ) );
+	$attrs = amortexa_sanitize_attributes( array( 'currencySymbol' => array( 'a' ) ) );
 	$report( '$' === $attrs['currencySymbol'], 'an array posted for the currency symbol falls back to the default' );
 
-	$attrs = calcforge_sanitize_attributes( array( 'fontFamily' => array( 'mono' ) ) );
+	$attrs = amortexa_sanitize_attributes( array( 'fontFamily' => array( 'mono' ) ) );
 	$report( 'inherit' === $attrs['fontFamily'], 'an array posted for the font family falls back to inherit' );
 
-	$attrs = calcforge_sanitize_attributes( array( 'accentColor' => array( '#fff' ) ) );
+	$attrs = amortexa_sanitize_attributes( array( 'accentColor' => array( '#fff' ) ) );
 	$report( '' === $attrs['accentColor'], 'an array posted for a colour override falls back to the skin value' );
 
-	$attrs = calcforge_sanitize_attributes( array( 'paymentFontWeight' => array( '700' ) ) );
+	$attrs = amortexa_sanitize_attributes( array( 'paymentFontWeight' => array( '700' ) ) );
 	$report( '' === $attrs['paymentFontWeight'], 'an array posted for the font weight falls back to auto' );
 
 	// Block booleans stored as strings must not be read as truthy noise.
-	$attrs = calcforge_sanitize_attributes( array( 'showCharts' => 'false' ) );
+	$attrs = amortexa_sanitize_attributes( array( 'showCharts' => 'false' ) );
 	$report( false === $attrs['showCharts'], 'a block showCharts stored as "false" renders as off' );
 
-	$attrs = calcforge_sanitize_attributes( array( 'showResults' => '0' ) );
+	$attrs = amortexa_sanitize_attributes( array( 'showResults' => '0' ) );
 	$report( false === $attrs['showResults'], 'a block showResults stored as "0" renders as off' );
 
-	$attrs = calcforge_sanitize_attributes( array( 'showAmortization' => '1' ) );
+	$attrs = amortexa_sanitize_attributes( array( 'showAmortization' => '1' ) );
 	$report( true === $attrs['showAmortization'], 'a block showAmortization stored as "1" renders as on' );
 
 	/*
@@ -1708,7 +1708,7 @@ function calcforge_test_input_guards() {
 	 * setting, so one filter covers both the block and the settings screens.
 	 */
 	add_filter(
-		'calcforge_default_settings',
+		'amortexa_default_settings',
 		static function ( $settings_defaults ) {
 			$settings_defaults['default_down_payment'] = 12345.0;
 
@@ -1716,10 +1716,10 @@ function calcforge_test_input_guards() {
 		}
 	);
 
-	$numeric_defaults = calcforge_get_default_attributes();
+	$numeric_defaults = amortexa_get_default_attributes();
 
 	foreach ( array( 'loanAmount', 'interestRate', 'loanTerm', 'downPayment' ) as $key ) {
-		$attrs = calcforge_sanitize_attributes( array( $key => 'not-a-number' ) );
+		$attrs = amortexa_sanitize_attributes( array( $key => 'not-a-number' ) );
 
 		if ( ! isset( $numeric_defaults[ $key ] ) ) {
 			$report( false, "the default for {$key} is missing, so this check cannot run" );
@@ -1733,14 +1733,14 @@ function calcforge_test_input_guards() {
 	}
 
 	// A numeric value that is merely a loose string must still be honoured.
-	$attrs = calcforge_sanitize_attributes( array( 'loanAmount' => '250000.50' ) );
+	$attrs = amortexa_sanitize_attributes( array( 'loanAmount' => '250000.50' ) );
 	$report( 250000.5 === (float) $attrs['loanAmount'], 'a numeric string loanAmount is still honoured' );
 
 	// The settings screen has the same exposure through its own sanitizer.
-	$settings_defaults = calcforge_get_default_settings();
+	$settings_defaults = amortexa_get_default_settings();
 
 	foreach ( array( 'default_loan_amount', 'default_interest_rate', 'default_loan_term', 'default_down_payment' ) as $key ) {
-		$settings = calcforge_sanitize_settings( array( $key => 'not-a-number' ) );
+		$settings = amortexa_sanitize_settings( array( $key => 'not-a-number' ) );
 
 		if ( ! isset( $settings_defaults[ $key ] ) ) {
 			$report( false, "the default for {$key} is missing, so this check cannot run" );
@@ -1753,11 +1753,11 @@ function calcforge_test_input_guards() {
 		);
 	}
 
-	remove_all_filters( 'calcforge_default_settings' );
+	remove_all_filters( 'amortexa_default_settings' );
 
 	// Removing the filter must restore the seeded defaults for later checks.
 	$report(
-		0.0 === (float) calcforge_get_default_settings()['default_down_payment'],
+		0.0 === (float) amortexa_get_default_settings()['default_down_payment'],
 		'the seeded down-payment default is restored after the filter is removed'
 	);
 
@@ -1776,7 +1776,7 @@ function calcforge_test_input_guards() {
  *
  * @return int Number of failures.
  */
-function calcforge_test_rate_limit() {
+function amortexa_test_rate_limit() {
 	$failures = 0;
 	$report   = function ( $ok, $message ) use ( &$failures ) {
 		if ( $ok ) {
@@ -1787,37 +1787,37 @@ function calcforge_test_rate_limit() {
 		}
 	};
 
-	$GLOBALS['calcforge_test_transients'] = array();
+	$GLOBALS['amortexa_test_transients'] = array();
 
 	// The default budget must permit exactly N requests, then refuse.
 	$limit  = 5;
 	$window = 60;
 	$bucket = 'visitor-a';
-	$key    = 'calcforge_rl_' . md5( $bucket );
+	$key    = 'amortexa_rl_' . md5( $bucket );
 
 	for ( $i = 1; $i <= $limit; $i++ ) {
-		$outcome = calcforge_rate_limit_hit( $bucket, $limit, $window );
+		$outcome = amortexa_rate_limit_hit( $bucket, $limit, $window );
 		$report(
 			! $outcome['exceeded'] && $outcome['count'] === $i,
 			"request $i of $limit is allowed"
 		);
 	}
 
-	$blocked = calcforge_rate_limit_hit( $bucket, $limit, $window );
+	$blocked = amortexa_rate_limit_hit( $bucket, $limit, $window );
 	$report( $blocked['exceeded'], 'the request past the budget is refused' );
 	$report( $blocked['retry_after'] > 0 && $blocked['retry_after'] <= $window, 'a refusal reports a usable Retry-After' );
 
 	// Still refused on the following attempt, and it must not reset the window.
-	$again = calcforge_rate_limit_hit( $bucket, $limit, $window );
+	$again = amortexa_rate_limit_hit( $bucket, $limit, $window );
 	$report( $again['exceeded'] && $again['count'] === $limit + 2, 'continued traffic stays refused' );
 
 	// A different caller must have its own budget.
-	$other = calcforge_rate_limit_hit( 'visitor-b', $limit, $window );
+	$other = amortexa_rate_limit_hit( 'visitor-b', $limit, $window );
 	$report( ! $other['exceeded'] && $other['count'] === 1, 'a second visitor has an independent budget' );
 
 	// The window is fixed, so it must not be pushed forward by continued hits.
 	$before = get_transient( $key );
-	calcforge_rate_limit_hit( $bucket, $limit, $window );
+	amortexa_rate_limit_hit( $bucket, $limit, $window );
 	$after = get_transient( $key );
 	$report(
 		$before['expires'] === $after['expires'],
@@ -1830,43 +1830,43 @@ function calcforge_test_rate_limit() {
 	 * would lock a caller out permanently once tripped.
 	 */
 	$report(
-		isset( $GLOBALS['calcforge_test_transients'][ $key ]['expires'] )
-			&& $GLOBALS['calcforge_test_transients'][ $key ]['expires'] > time(),
+		isset( $GLOBALS['amortexa_test_transients'][ $key ]['expires'] )
+			&& $GLOBALS['amortexa_test_transients'][ $key ]['expires'] > time(),
 		'a live window always carries a finite expiry'
 	);
 
 	// Age the window out, then confirm the caller is served again.
-	$GLOBALS['calcforge_test_transients'][ $key ]['expires'] = time() - 1;
-	$reset = calcforge_rate_limit_hit( $bucket, $limit, $window );
+	$GLOBALS['amortexa_test_transients'][ $key ]['expires'] = time() - 1;
+	$reset = amortexa_rate_limit_hit( $bucket, $limit, $window );
 	$report( ! $reset['exceeded'] && $reset['count'] === 1, 'the budget resets after the window lapses' );
 
 	// A non-positive limit disables limiting outright.
-	$off = calcforge_rate_limit_hit( 'visitor-c', 0, $window );
+	$off = amortexa_rate_limit_hit( 'visitor-c', 0, $window );
 	$report( ! $off['exceeded'] && 0 === $off['limit'], 'a limit below one disables throttling' );
 
 	// Client key: REMOTE_ADDR by default, and never the spoofable forwarded header.
 	unset( $_SERVER['REMOTE_ADDR'] );
 	$_SERVER['HTTP_X_FORWARDED_FOR'] = '203.0.113.9';
-	$spoofed = calcforge_rate_limit_client_key();
+	$spoofed = amortexa_rate_limit_client_key();
 	$report( 0 === strpos( $spoofed, 'unknown:' ), 'forwarded headers cannot be used as a bucket key' );
 
 	$_SERVER['REMOTE_ADDR'] = '198.51.100.7';
-	$report( '198.51.100.7' === calcforge_rate_limit_client_key(), 'the remote address is used when present' );
+	$report( '198.51.100.7' === amortexa_rate_limit_client_key(), 'the remote address is used when present' );
 
 	// An over-long key must not be collapsed into a shared bucket.
 	add_filter(
-		'calcforge_rate_limit_client_key',
+		'amortexa_rate_limit_client_key',
 		function () {
 			return str_repeat( 'x', 46 );
 		}
 	);
-	$long = calcforge_rate_limit_client_key();
+	$long = amortexa_rate_limit_client_key();
 	$report( 0 === strpos( $long, 'unknown:' ), 'an unusable client key falls back to a per-request bucket' );
-	$report( $long !== calcforge_rate_limit_client_key(), 'each fallback bucket is unique' );
-	remove_all_filters( 'calcforge_rate_limit_client_key' );
+	$report( $long !== amortexa_rate_limit_client_key(), 'each fallback bucket is unique' );
+	remove_all_filters( 'amortexa_rate_limit_client_key' );
 
 	unset( $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_X_FORWARDED_FOR'] );
-	$GLOBALS['calcforge_test_transients'] = array();
+	$GLOBALS['amortexa_test_transients'] = array();
 
 	/*
 	 * Enforcement has to be checked by calling the permission callback, not by
@@ -1874,12 +1874,12 @@ function calcforge_test_rate_limit() {
 	 * a refusal; a WP_REST_Response return is truthy and the request is let
 	 * through, so a limiter that looks right can silently never apply.
 	 */
-	$rest = new CalcForge_REST();
+	$rest = new Amortexa_REST();
 	$_SERVER['REMOTE_ADDR'] = '198.51.100.20';
 
 	// Use a small budget so the refusal is reachable without 30 round trips.
 	add_filter(
-		'calcforge_rest_calculate_rate_limit',
+		'amortexa_rest_calculate_rate_limit',
 		function () {
 			return 3;
 		}
@@ -1894,18 +1894,18 @@ function calcforge_test_rate_limit() {
 	for ( $i = 0; $i < 10; $i++ ) {
 		$rest->check_permissions( null );
 	}
-	$report( 0 === calcforge_rate_limit_peek( '198.51.100.20' )['count'], 'the permission callback records no hits of its own' );
+	$report( 0 === amortexa_rate_limit_peek( '198.51.100.20' )['count'], 'the permission callback records no hits of its own' );
 
 	// Serve requests the way the handler does, recording one hit each.
 	for ( $i = 0; $i < 3; $i++ ) {
-		calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+		amortexa_rate_limit_hit( '198.51.100.20', 3, 60 );
 	}
-	$report( 3 === calcforge_rate_limit_peek( '198.51.100.20' )['count'], 'a served request costs exactly one unit' );
+	$report( 3 === amortexa_rate_limit_peek( '198.51.100.20' )['count'], 'a served request costs exactly one unit' );
 
 	$refusal = $rest->check_permissions( null );
 	$report( $refusal instanceof WP_Error, 'an exhausted budget is refused with a WP_Error' );
 	$report(
-		$refusal instanceof WP_Error && 'calcforge_rest_rate_limited' === $refusal->get_error_code(),
+		$refusal instanceof WP_Error && 'amortexa_rest_rate_limited' === $refusal->get_error_code(),
 		'the refusal carries the rate limit error code'
 	);
 	$report(
@@ -1918,12 +1918,12 @@ function calcforge_test_rate_limit() {
 	);
 
 	// The last request inside the budget must still be served.
-	$GLOBALS['calcforge_test_transients'] = array();
+	$GLOBALS['amortexa_test_transients'] = array();
 	for ( $i = 0; $i < 2; $i++ ) {
-		calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+		amortexa_rate_limit_hit( '198.51.100.20', 3, 60 );
 		$report( true === $rest->check_permissions( null ), 'the final request inside the budget is still served' );
 	}
-	calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+	amortexa_rate_limit_hit( '198.51.100.20', 3, 60 );
 	$report( $rest->check_permissions( null ) instanceof WP_Error, 'the request past the budget is refused' );
 
 	// The headers have to survive onto a real response object.
@@ -1949,40 +1949,40 @@ function calcforge_test_rate_limit() {
 
 	// The auth filter still short-circuits ahead of the limiter.
 	add_filter(
-		'calcforge_rest_calculate_allowed',
+		'amortexa_rest_calculate_allowed',
 		function () {
 			return false;
 		}
 	);
 	$denied = $rest->check_permissions( null );
 	$report(
-		$denied instanceof WP_Error && 'calcforge_rest_forbidden' === $denied->get_error_code(),
+		$denied instanceof WP_Error && 'amortexa_rest_forbidden' === $denied->get_error_code(),
 		'the authentication filter refuses ahead of the limiter'
 	);
-	remove_all_filters( 'calcforge_rest_calculate_allowed' );
+	remove_all_filters( 'amortexa_rest_calculate_allowed' );
 
 	// Once the window lapses the caller is served again.
-	$GLOBALS['calcforge_test_transients'][ 'calcforge_rl_' . md5( '198.51.100.20' ) ]['expires'] = time() - 1;
+	$GLOBALS['amortexa_test_transients'][ 'amortexa_rl_' . md5( '198.51.100.20' ) ]['expires'] = time() - 1;
 	$report( true === $rest->check_permissions( null ), 'the caller is served again once the window lapses' );
 
 	// Lifting the budget serves the same caller without waiting.
-	calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
-	calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
-	calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
-	calcforge_rate_limit_hit( '198.51.100.20', 3, 60 );
+	amortexa_rate_limit_hit( '198.51.100.20', 3, 60 );
+	amortexa_rate_limit_hit( '198.51.100.20', 3, 60 );
+	amortexa_rate_limit_hit( '198.51.100.20', 3, 60 );
+	amortexa_rate_limit_hit( '198.51.100.20', 3, 60 );
 	$report( $rest->check_permissions( null ) instanceof WP_Error, 'the budget is exhausted again' );
-	remove_all_filters( 'calcforge_rest_calculate_rate_limit' );
+	remove_all_filters( 'amortexa_rest_calculate_rate_limit' );
 	add_filter(
-		'calcforge_rest_calculate_rate_limit',
+		'amortexa_rest_calculate_rate_limit',
 		function () {
 			return 0;
 		}
 	);
 	$report( true === $rest->check_permissions( null ), 'a limit of zero disables throttling' );
-	remove_all_filters( 'calcforge_rest_calculate_rate_limit' );
+	remove_all_filters( 'amortexa_rest_calculate_rate_limit' );
 
 	unset( $_SERVER['REMOTE_ADDR'] );
-	$GLOBALS['calcforge_test_transients'] = array();
+	$GLOBALS['amortexa_test_transients'] = array();
 
 	if ( 0 === $failures ) {
 		fwrite( STDOUT, "ok   the REST endpoint enforces a per-client request budget\n" );
@@ -2002,7 +2002,7 @@ function calcforge_test_rate_limit() {
  *
  * @return int Number of failures.
  */
-function calcforge_test_costs() {
+function amortexa_test_costs() {
 	$failures = 0;
 	$report   = function ( $ok, $message ) use ( &$failures ) {
 		if ( $ok ) {
@@ -2026,7 +2026,7 @@ function calcforge_test_costs() {
 		'otherCosts'     => 4000,
 	);
 
-	$result = calcforge_calculate( $reference );
+	$result = amortexa_calculate( $reference );
 
 	$report( $near( $result['monthly_payment'], 2227.63 ), 'principal and interest matches the reference payment' );
 	$report( $near( $result['principal'], 320000 ), 'the financed principal is the price less the down payment' );
@@ -2039,7 +2039,7 @@ function calcforge_test_costs() {
 	 * A calculator with no costs entered must be byte-for-byte what it was before
 	 * this feature, otherwise adding it silently changes existing pages.
 	 */
-	$plain = calcforge_calculate(
+	$plain = amortexa_calculate(
 		array(
 			'loanAmount'   => 300000,
 			'interestRate' => 6.5,
@@ -2058,7 +2058,7 @@ function calcforge_test_costs() {
 	 * directions are checked: not charged past the threshold, and not dropped
 	 * before it either.
 	 */
-	$report( 0 === calcforge_get_pmi_end_month( 320000, 400000, 7.455, 360 ), 'no PMI is charged at exactly 80% LTV' );
+	$report( 0 === amortexa_get_pmi_end_month( 320000, 400000, 7.455, 360 ), 'no PMI is charged at exactly 80% LTV' );
 
 	$pmi_attrs = array(
 		'loanAmount'   => 400000,
@@ -2067,7 +2067,7 @@ function calcforge_test_costs() {
 		'loanTerm'     => 30,
 		'pmi'          => 1200,
 	);
-	$pmi        = calcforge_calculate( $pmi_attrs );
+	$pmi        = amortexa_calculate( $pmi_attrs );
 	$end        = (int) $pmi['pmi_end_month'];
 
 	$report( $end > 0 && $end < 360, 'PMI is cancelled part way through a 90% LTV loan' );
@@ -2075,7 +2075,7 @@ function calcforge_test_costs() {
 
 	// interestRate is a percentage, so 7.0 arrives here as 0.07 a month.
 	$rate    = 7.0 / 100 / 12;
-	$payment = calcforge_calculate_monthly_payment( 360000, 7.0, 30 );
+	$payment = amortexa_calculate_monthly_payment( 360000, 7.0, 30 );
 	$balance = 360000;
 	$before  = null;
 
@@ -2095,10 +2095,10 @@ function calcforge_test_costs() {
 	$report( $near( $pmi['total_pmi'], 1200 / 12 * $end, 0.01 ), 'lifetime PMI covers exactly the months before cancellation' );
 
 	// A loan already at or below the threshold never carries PMI at all.
-	$report( 0 === calcforge_get_pmi_end_month( 100000, 400000, 7.0, 360 ), 'PMI is not scheduled for a loan under 80% LTV' );
+	$report( 0 === amortexa_get_pmi_end_month( 100000, 400000, 7.0, 360 ), 'PMI is not scheduled for a loan under 80% LTV' );
 
 	// Unit handling.
-	$as_amount = calcforge_calculate(
+	$as_amount = amortexa_calculate(
 		array(
 			'loanAmount'        => 400000,
 			'interestRate'      => 6.5,
@@ -2109,8 +2109,8 @@ function calcforge_test_costs() {
 	);
 	$report( $near( $as_amount['monthly_costs']['insurance'], 125 ), 'a field entered as an amount is not multiplied by the price' );
 
-	$clamped = calcforge_sanitize_attributes( array( 'propertyTax' => 1500 ) );
-	$kept    = calcforge_sanitize_attributes(
+	$clamped = amortexa_sanitize_attributes( array( 'propertyTax' => 1500 ) );
+	$kept    = amortexa_sanitize_attributes(
 		array(
 			'propertyTax'     => 1500,
 			'propertyTaxUnit' => 'amount',
@@ -2120,10 +2120,10 @@ function calcforge_test_costs() {
 	$report( $near( $clamped['propertyTax'], 100 ), 'a percentage field is capped at 100' );
 	$report( $near( $kept['propertyTax'], 1500 ), 'the same figure is kept whole when entered as an amount' );
 
-	$bogus = calcforge_sanitize_attributes( array( 'propertyTaxUnit' => 'bananas' ) );
+	$bogus = amortexa_sanitize_attributes( array( 'propertyTaxUnit' => 'bananas' ) );
 	$report( 'bananas' !== $bogus['propertyTaxUnit'], 'an unrecognised unit falls back rather than being stored' );
 
-	$junk = calcforge_sanitize_attributes(
+	$junk = amortexa_sanitize_attributes(
 		array(
 			'propertyTax' => 'abc',
 			'pmi'          => -50,
@@ -2136,7 +2136,7 @@ function calcforge_test_costs() {
 	$scss     = (string) file_get_contents( dirname( __DIR__ ) . '/src/style.scss' );
 	$swatches = array();
 
-	if ( preg_match_all( '/--calcforge-cost-([a-z]+):\s*(#[0-9a-f]{6});/i', $scss, $hits, PREG_SET_ORDER ) ) {
+	if ( preg_match_all( '/--amortexa-cost-([a-z]+):\s*(#[0-9a-f]{6});/i', $scss, $hits, PREG_SET_ORDER ) ) {
 		foreach ( $hits as $hit ) {
 			$swatches[ $hit[1] ] = $hit[2];
 		}
@@ -2145,7 +2145,7 @@ function calcforge_test_costs() {
 	$report( 6 === count( $swatches ), 'every cost component has a colour' );
 
 	foreach ( $swatches as $name => $hex ) {
-		$report( calcforge_test_contrast( $hex, '#ffffff' ) >= 4.5, "the $name colour is readable as text on white" );
+		$report( amortexa_test_contrast( $hex, '#ffffff' ) >= 4.5, "the $name colour is readable as text on white" );
 	}
 
 	foreach ( $swatches as $name => $hex ) {
@@ -2155,7 +2155,7 @@ function calcforge_test_costs() {
 			}
 
 			$report(
-				calcforge_test_colour_distance( $hex, $other_hex ) >= 60,
+				amortexa_test_colour_distance( $hex, $other_hex ) >= 60,
 				"the $name and $other colours are distinguishable side by side"
 			);
 		}
@@ -2174,7 +2174,7 @@ function calcforge_test_costs() {
  * @param string $hex Six digit hex colour, with or without the leading hash.
  * @return float Relative luminance between 0 and 1.
  */
-function calcforge_test_luminance( $hex ) {
+function amortexa_test_luminance( $hex ) {
 	$hex = ltrim( (string) $hex, '#' );
 
 	if ( 3 === strlen( $hex ) ) {
@@ -2200,9 +2200,9 @@ function calcforge_test_luminance( $hex ) {
  * @param string $b Second hex colour.
  * @return float Contrast ratio, where 1 is identical and 21 is maximal.
  */
-function calcforge_test_contrast( $a, $b ) {
-	$one = calcforge_test_luminance( $a );
-	$two = calcforge_test_luminance( $b );
+function amortexa_test_contrast( $a, $b ) {
+	$one = amortexa_test_luminance( $a );
+	$two = amortexa_test_luminance( $b );
 
 	$lighter = max( $one, $two );
 	$darker  = min( $one, $two );
@@ -2221,7 +2221,7 @@ function calcforge_test_contrast( $a, $b ) {
  * @param string $b Second hex colour.
  * @return float Distance between 0 and 441.
  */
-function calcforge_test_colour_distance( $a, $b ) {
+function amortexa_test_colour_distance( $a, $b ) {
 	$a = ltrim( (string) $a, '#' );
 	$b = ltrim( (string) $b, '#' );
 
@@ -2238,14 +2238,14 @@ function calcforge_test_colour_distance( $a, $b ) {
 /**
  * Checks that every place the version is written down agrees with every other.
  *
- * CALCFORGE_VERSION is what cache-busts the compiled assets, so a header bumped
+ * AMORTEXA_VERSION is what cache-busts the compiled assets, so a header bumped
  * without bumping the constant leaves visitors on the previous release's JS
  * indefinitely: the file URLs do not change, so the browser never refetches it.
  * Nothing at runtime would report that, which is exactly why it is asserted here.
  *
  * @return int Number of failures.
  */
-function calcforge_test_version_consistency() {
+function amortexa_test_version_consistency() {
 	$failures = 0;
 	$report   = function ( $ok, $message ) use ( &$failures ) {
 		if ( $ok ) {
@@ -2263,17 +2263,17 @@ function calcforge_test_version_consistency() {
 		return preg_match( $pattern, $contents, $match ) ? trim( $match[1] ) : '';
 	};
 
-	$header   = $grab( 'calcforge.php', '/^ \* Version:\s*(.+)$/m' );
-	$constant = $grab( 'calcforge.php', "/define\(\s*'CALCFORGE_VERSION',\s*'([^']+)'\s*\)/" );
+	$header   = $grab( 'amortexa-mortgage-calculator.php', '/^ \* Version:\s*(.+)$/m' );
+	$constant = $grab( 'amortexa-mortgage-calculator.php', "/define\(\s*'AMORTEXA_VERSION',\s*'([^']+)'\s*\)/" );
 	$readme   = $grab( 'readme.txt', '/^Stable tag:\s*(.+)$/m' );
 
 	$report( '' !== $header, 'the plugin header carries a version' );
-	$report( '' !== $constant, 'CALCFORGE_VERSION is defined' );
+	$report( '' !== $constant, 'AMORTEXA_VERSION is defined' );
 	$report( '' !== $readme, 'readme.txt carries a stable tag' );
 
 	$report(
 		$header === $constant,
-		sprintf( 'CALCFORGE_VERSION (%s) matches the plugin header (%s)', $constant, $header )
+		sprintf( 'AMORTEXA_VERSION (%s) matches the plugin header (%s)', $constant, $header )
 	);
 	$report(
 		$header === $readme,
@@ -2371,7 +2371,7 @@ function calcforge_test_version_consistency() {
  * @param array<string,mixed> $attributes Block attributes.
  * @return string Rendered markup.
  */
-function calcforge_render_block( array $attributes ) {
+function amortexa_render_block( array $attributes ) {
 	$content = '';
 	$block   = array();
 
@@ -2384,7 +2384,7 @@ function calcforge_render_block( array $attributes ) {
 /**
  * Covers the server-rendered markup, which nothing else here exercises.
  *
- * Every calculation in this file is proved through calcforge_calculate(), but the
+ * Every calculation in this file is proved through amortexa_calculate(), but the
  * template that turns those numbers into what a visitor actually reads is a
  * separate 500-odd lines of markup with its own conditions. Two of those
  * conditions are the ones a visitor notices immediately: the recurring cost rows
@@ -2393,7 +2393,7 @@ function calcforge_render_block( array $attributes ) {
  *
  * @return int Number of failures.
  */
-function calcforge_test_ssr() {
+function amortexa_test_ssr() {
 	$failures = 0;
 	$report   = function ( $ok, $message ) use ( &$failures ) {
 		if ( $ok ) {
@@ -2416,14 +2416,14 @@ function calcforge_test_ssr() {
 	);
 
 	fwrite( STDOUT, "-- costs off --\n" );
-	$off = calcforge_render_block( $base );
+	$off = amortexa_render_block( $base );
 
 	$report( '' !== $off, 'the template renders markup' );
-	$report( false !== strpos( $off, 'data-calcforge-config' ), 'the front-end config payload is emitted' );
+	$report( false !== strpos( $off, 'data-amortexa-config' ), 'the front-end config payload is emitted' );
 
 	foreach ( array( 'propertyTax', 'homeInsurance', 'hoaFee', 'pmi', 'otherCosts' ) as $attribute ) {
 		$report(
-			false === strpos( $off, 'data-calcforge-field="' . $attribute . '"' ),
+			false === strpos( $off, 'data-amortexa-field="' . $attribute . '"' ),
 			"the $attribute input is not rendered while costs are off"
 		);
 	}
@@ -2436,12 +2436,12 @@ function calcforge_test_ssr() {
 	 */
 	foreach ( array( 'totalMonthlyCost', 'totalCosts', 'totalOutOfPocket' ) as $bind ) {
 		$report(
-			false === strpos( $off, 'data-calcforge-bind="' . $bind . '"' ),
+			false === strpos( $off, 'data-amortexa-bind="' . $bind . '"' ),
 			"the $bind row is not rendered while costs are off"
 		);
 	}
 
-	$report( false === strpos( $off, 'calcforge-calc__result-list--costs' ), 'the costs result list is not rendered while costs are off' );
+	$report( false === strpos( $off, 'amortexa-calc__result-list--costs' ), 'the costs result list is not rendered while costs are off' );
 
 	/*
 	 * The labels travel to the front end inside the config payload so JavaScript
@@ -2449,13 +2449,13 @@ function calcforge_test_ssr() {
 	 * somewhere. What has to be absent is the visible row, which is why the
 	 * payload is stripped before this check.
 	 */
-	$off_visible = preg_replace( '/data-calcforge-config="[^"]*"/', 'data-calcforge-config=""', $off );
+	$off_visible = preg_replace( '/data-amortexa-config="[^"]*"/', 'data-amortexa-config=""', $off );
 	$report( false === strpos( $off_visible, 'Total Monthly Cost' ), 'the total monthly cost label is not visible while costs are off' );
 	$report( false === strpos( $off_visible, 'Total Taxes &amp; Costs' ), 'the totals label is not visible while costs are off' );
 
 	foreach ( array( 'loanAmount', 'downPayment', 'interestRate', 'loanTerm' ) as $attribute ) {
 		$report(
-			false !== strpos( $off, 'data-calcforge-field="' . $attribute . '"' ),
+			false !== strpos( $off, 'data-amortexa-field="' . $attribute . '"' ),
 			"the $attribute input still renders while costs are off"
 		);
 	}
@@ -2463,7 +2463,7 @@ function calcforge_test_ssr() {
 	$report( substr_count( $off, '<form' ) === 1, 'exactly one form is rendered' );
 
 	fwrite( STDOUT, "-- costs on --\n" );
-	$on = calcforge_render_block(
+	$on = amortexa_render_block(
 		array_merge(
 			$base,
 			array(
@@ -2484,19 +2484,19 @@ function calcforge_test_ssr() {
 
 	foreach ( array( 'propertyTax', 'homeInsurance', 'hoaFee', 'pmi', 'otherCosts' ) as $attribute ) {
 		$report(
-			false !== strpos( $on, 'data-calcforge-field="' . $attribute . '"' ),
+			false !== strpos( $on, 'data-amortexa-field="' . $attribute . '"' ),
 			"the $attribute input is rendered once costs are on"
 		);
 	}
 
 	foreach ( array( 'totalMonthlyCost', 'totalCosts', 'totalOutOfPocket' ) as $bind ) {
 		$report(
-			false !== strpos( $on, 'data-calcforge-bind="' . $bind . '"' ),
+			false !== strpos( $on, 'data-amortexa-bind="' . $bind . '"' ),
 			"the $bind row is rendered once costs are on"
 		);
 	}
 
-	$report( false !== strpos( $on, 'data-calcforge-unit="propertyTaxUnit"' ), 'the percent/amount toggle renders for tax' );
+	$report( false !== strpos( $on, 'data-amortexa-unit="propertyTaxUnit"' ), 'the percent/amount toggle renders for tax' );
 	$report( false !== strpos( $on, 'Total Monthly Cost' ), 'the total monthly cost label appears once costs are on' );
 	$report( substr_count( $on, '<form' ) === 1, 'still exactly one form with costs on' );
 
@@ -2525,17 +2525,17 @@ function calcforge_test_ssr() {
 	);
 
 	foreach ( $symbol_cases as $hostile => $expected ) {
-		$clean = calcforge_sanitize_attributes( array( 'currencySymbol' => $hostile ) );
+		$clean = amortexa_sanitize_attributes( array( 'currencySymbol' => $hostile ) );
 		$report(
 			$expected === $clean['currencySymbol'],
 			sprintf( 'the sanitizer strips markup out of the symbol: %s -> %s', $hostile, $clean['currencySymbol'] )
 		);
 	}
 
-	$survivor = calcforge_sanitize_attributes( array( 'currencySymbol' => 'a"b&c' ) );
+	$survivor = amortexa_sanitize_attributes( array( 'currencySymbol' => 'a"b&c' ) );
 	$report( 'a"b&c' === $survivor['currencySymbol'], 'quotes and ampersands survive sanitization, to be escaped on output instead' );
 
-	$xss = calcforge_render_block(
+	$xss = amortexa_render_block(
 		array_merge(
 			$base,
 			array(
@@ -2555,12 +2555,12 @@ function calcforge_test_ssr() {
 	 * still matches one balanced quoted run.
 	 */
 	$report(
-		1 === preg_match( '/data-calcforge-config="[^"]*"/', $xss ),
+		1 === preg_match( '/data-amortexa-config="[^"]*"/', $xss ),
 		'the config attribute stays balanced with a hostile currency symbol'
 	);
 
 	fwrite( STDOUT, "-- config payload --\n" );
-	if ( preg_match( '/data-calcforge-config="([^"]*)"/', $off, $match ) ) {
+	if ( preg_match( '/data-amortexa-config="([^"]*)"/', $off, $match ) ) {
 		$decoded = json_decode( html_entity_decode( $match[1], ENT_QUOTES, 'UTF-8' ), true );
 		$report( is_array( $decoded ), 'the config payload is valid JSON once entity decoded' );
 		$report( is_array( $decoded ) && isset( $decoded['decimals'] ), 'the config payload carries the decimal setting' );
@@ -2576,7 +2576,7 @@ function calcforge_test_ssr() {
 	return $failures;
 }
 
-$exit = calcforge_test_parity() + calcforge_test_design_schema() + calcforge_test_settings_and_shortcode() + calcforge_test_input_guards() + calcforge_test_rate_limit() + calcforge_test_costs() + calcforge_test_version_consistency() + calcforge_test_ssr();
+$exit = amortexa_test_parity() + amortexa_test_design_schema() + amortexa_test_settings_and_shortcode() + amortexa_test_input_guards() + amortexa_test_rate_limit() + amortexa_test_costs() + amortexa_test_version_consistency() + amortexa_test_ssr();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

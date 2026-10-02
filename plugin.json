@@ -1,15 +1,15 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/plugin.json",
-	"name": "CalcForge",
+	"name": "Amortexa Mortgage Calculator",
 	"version": "1.0.0",
 	"description": "An interactive mortgage calculator block for the block editor, with live monthly payment results, down payment support, charts, and an amortization schedule.",
 	"author": "Muhammad Tariq",
 	"authorUrl": "https://profiles.wordpress.org/mtariqsmd/",
-	"homepage": "https://wordpress.org/plugins/calcforge/",
-	"repository": "https://wordpress.org/plugins/calcforge/",
+	"homepage": "https://wordpress.org/plugins/amortexa-mortgage-calculator/",
+	"repository": "https://wordpress.org/plugins/amortexa-mortgage-calculator/",
 	"license": "GPL-2.0-or-later",
-	"textdomain": "calcforge",
+	"textdomain": "amortexa-mortgage-calculator",
 	"requires": "6.5",
 	"requiresPhp": "7.4",
-	"textDomains": [ "calcforge", "calcforge-gutenberg-blocks" ]
+	"textDomains": [ "amortexa-mortgage-calculator" ]
 }

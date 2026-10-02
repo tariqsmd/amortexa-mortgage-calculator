@@ -2,7 +2,7 @@
 /**
  * Block category and block type registration.
  *
- * @package CalcForge
+ * @package Amortexa
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,17 +12,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Registers the mortgage calculator block from its build/block.json metadata.
  */
-class CalcForge_Blocks {
+class Amortexa_Blocks {
 
 	/**
 	 * Fully qualified block name.
 	 */
-	const BLOCK_NAME = 'calcforge/mortgage-calculator';
+	const BLOCK_NAME = 'amortexa-mortgage-calculator/mortgage-calculator';
 
 	/**
 	 * Custom block category slug.
 	 */
-	const CATEGORY = 'calcforge';
+	const CATEGORY = 'amortexa-mortgage-calculator';
 
 	/**
 	 * Registers the hooks this component responds to.
@@ -33,7 +33,7 @@ class CalcForge_Blocks {
 	}
 
 	/**
-	 * Adds the CalcForge block category.
+	 * Adds the Amortexa block category.
 	 *
 	 * @param array<int,array<string,mixed>> $categories Existing block categories.
 	 * @return array<int,array<string,mixed>> Categories including our own.
@@ -47,7 +47,7 @@ class CalcForge_Blocks {
 
 		$categories[] = array(
 			'slug'  => self::CATEGORY,
-			'title' => __( 'CalcForge', CALCFORGE_TEXT_DOMAIN ),
+			'title' => __( 'Amortexa', AMORTEXA_TEXT_DOMAIN ),
 			'icon'  => 'calculator',
 		);
 
@@ -64,12 +64,12 @@ class CalcForge_Blocks {
 	 * both read the same injected values instead of two different sources.
 	 */
 	public function register_block_type() {
-		$build_dir = CALCFORGE_PLUGIN_DIR . 'build';
+		$build_dir = AMORTEXA_PLUGIN_DIR . 'build';
 
 		if ( ! file_exists( $build_dir . '/block.json' ) ) {
 			_doing_it_wrong(
 				__METHOD__,
-				esc_html__( 'The block build is missing. Run `npm install` then `npm run build` inside the plugin folder.', CALCFORGE_TEXT_DOMAIN ),
+				esc_html__( 'The block build is missing. Run `npm install` then `npm run build` inside the plugin folder.', AMORTEXA_TEXT_DOMAIN ),
 				'1.0.0'
 			);
 			return;
@@ -87,14 +87,14 @@ class CalcForge_Blocks {
 	 * @return array<string,array<string,mixed>> Attribute schemas.
 	 */
 	private function get_attributes_with_site_defaults() {
-		$metadata = json_decode( (string) file_get_contents( CALCFORGE_PLUGIN_DIR . 'build/block.json' ), true );
+		$metadata = json_decode( (string) file_get_contents( AMORTEXA_PLUGIN_DIR . 'build/block.json' ), true );
 
 		if ( ! is_array( $metadata ) || empty( $metadata['attributes'] ) || ! is_array( $metadata['attributes'] ) ) {
 			return array();
 		}
 
 		$attributes = $metadata['attributes'];
-		$defaults   = calcforge_get_default_attributes();
+		$defaults   = amortexa_get_default_attributes();
 
 		foreach ( $attributes as $name => $schema ) {
 			if ( array_key_exists( $name, $defaults ) ) {

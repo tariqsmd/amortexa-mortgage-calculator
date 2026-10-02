@@ -2,7 +2,7 @@
 /**
  * Plugin bootstrap and lifecycle.
  *
- * @package CalcForge
+ * @package Amortexa
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,12 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * components load and in what order. Keeping the global namespace limited to one
  * class is what lets the main plugin file stay a pure loader.
  */
-final class CalcForge_Plugin {
+final class Amortexa_Plugin {
 
 	/**
 	 * The single instance of this class.
 	 *
-	 * @var CalcForge_Plugin|null
+	 * @var Amortexa_Plugin|null
 	 */
 	private static $instance = null;
 
@@ -35,7 +35,7 @@ final class CalcForge_Plugin {
 	/**
 	 * Retrieves the singleton instance.
 	 *
-	 * @return CalcForge_Plugin The plugin instance.
+	 * @return Amortexa_Plugin The plugin instance.
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -50,11 +50,11 @@ final class CalcForge_Plugin {
 	 */
 	private function init_components() {
 		$components = array(
-			'CalcForge_I18n',
-			'CalcForge_Assets',
-			'CalcForge_Blocks',
-			'CalcForge_REST',
-			'CalcForge_Shortcode',
+			'Amortexa_I18n',
+			'Amortexa_Assets',
+			'Amortexa_Blocks',
+			'Amortexa_REST',
+			'Amortexa_Shortcode',
 		);
 
 		foreach ( $components as $class ) {
@@ -67,11 +67,11 @@ final class CalcForge_Plugin {
 		 * admin screen and in the customizer, which are both admin requests but
 		 * still need the widget to exist.
 		 */
-		add_action( 'widgets_init', array( 'CalcForge_Widget', 'register' ) );
+		add_action( 'widgets_init', array( 'Amortexa_Widget', 'register' ) );
 
 		// The settings screen is admin-only, so it never loads on the front end.
 		if ( is_admin() ) {
-			$settings = new CalcForge_Settings();
+			$settings = new Amortexa_Settings();
 			$settings->register_hooks();
 		}
 	}
@@ -86,32 +86,34 @@ final class CalcForge_Plugin {
 
 		self::migrate_legacy_settings();
 
-		if ( false === get_option( CalcForge_Settings::OPTION_NAME, false ) ) {
-			add_option( CalcForge_Settings::OPTION_NAME, calcforge_get_default_settings() );
+		if ( false === get_option( Amortexa_Settings::OPTION_NAME, false ) ) {
+			add_option( Amortexa_Settings::OPTION_NAME, amortexa_get_default_settings() );
 		}
 	}
 
 	/**
-	 * Carries settings saved by the pre-rename build over to the current option.
+	 * Carries settings saved by earlier builds over to the current option.
 	 *
-	 * The plugin was renamed from "MT Gutenberg Blocks" to "CalcForge", which
-	 * included renaming the settings option from `mtgb_settings` to
-	 * `calcforge_settings`. Migrating on activation keeps site-wide defaults that
-	 * were already configured instead of silently reverting them.
+	 * The plugin has been renamed twice: "MT Gutenberg Blocks" stored settings
+	 * under `mtgb_settings`, and "CalcForge" under `calcforge_settings`. Both are
+	 * migrated on activation so site-wide defaults that were already configured
+	 * survive the rename instead of silently reverting.
 	 */
 	private static function migrate_legacy_settings() {
-		$legacy = get_option( 'mtgb_settings', false );
+		foreach ( array( 'calcforge_settings', 'mtgb_settings' ) as $legacy_name ) {
+			$legacy = get_option( $legacy_name, false );
 
-		if ( ! is_array( $legacy ) ) {
-			return;
+			if ( ! is_array( $legacy ) ) {
+				continue;
+			}
+
+			// Never clobber settings already saved under the current option name.
+			if ( false === get_option( Amortexa_Settings::OPTION_NAME, false ) ) {
+				update_option( Amortexa_Settings::OPTION_NAME, $legacy );
+			}
+
+			delete_option( $legacy_name );
 		}
-
-		// Never clobber settings already saved under the current option name.
-		if ( false === get_option( CalcForge_Settings::OPTION_NAME, false ) ) {
-			update_option( CalcForge_Settings::OPTION_NAME, $legacy );
-		}
-
-		delete_option( 'mtgb_settings' );
 	}
 
 	/**
@@ -137,7 +139,7 @@ final class CalcForge_Plugin {
 	public function __wakeup() {
 		_doing_it_wrong(
 			__FUNCTION__,
-			esc_html__( 'Unserializing CalcForge_Plugin is not allowed.', CALCFORGE_TEXT_DOMAIN ),
+			esc_html__( 'Unserializing Amortexa_Plugin is not allowed.', AMORTEXA_TEXT_DOMAIN ),
 			'1.0.0'
 		);
 	}

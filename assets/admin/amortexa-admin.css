@@ -1,42 +1,42 @@
 /**
- * Styles for the Settings -> CalcForge screen.
+ * Styles for the Settings -> Amortexa screen.
  *
- * Modern, clean, tabbed administration layout styled to match CalcForge's
+ * Modern, clean, tabbed administration layout styled to match Amortexa's
  * design system.
  */
 
 :root {
-	--calcforge-admin-primary: #1a6f4b;
-	--calcforge-admin-primary-hover: #14532d;
-	--calcforge-admin-primary-soft: #ecfdf5;
-	--calcforge-admin-accent: #0f766e;
-	--calcforge-admin-amber: #d97706;
-	--calcforge-admin-slate-50: #f8fafc;
-	--calcforge-admin-slate-100: #f1f5f9;
-	--calcforge-admin-slate-200: #e2e8f0;
-	--calcforge-admin-slate-300: #cbd5e1;
-	--calcforge-admin-slate-400: #94a3b8;
-	--calcforge-admin-slate-500: #64748b;
-	--calcforge-admin-slate-700: #334155;
-	--calcforge-admin-slate-800: #1e293b;
-	--calcforge-admin-slate-900: #0f172a;
-	--calcforge-admin-radius: 12px;
-	--calcforge-admin-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
-	--calcforge-admin-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+	--amortexa-admin-primary: #1a6f4b;
+	--amortexa-admin-primary-hover: #14532d;
+	--amortexa-admin-primary-soft: #ecfdf5;
+	--amortexa-admin-accent: #0f766e;
+	--amortexa-admin-amber: #d97706;
+	--amortexa-admin-slate-50: #f8fafc;
+	--amortexa-admin-slate-100: #f1f5f9;
+	--amortexa-admin-slate-200: #e2e8f0;
+	--amortexa-admin-slate-300: #cbd5e1;
+	--amortexa-admin-slate-400: #94a3b8;
+	--amortexa-admin-slate-500: #64748b;
+	--amortexa-admin-slate-700: #334155;
+	--amortexa-admin-slate-800: #1e293b;
+	--amortexa-admin-slate-900: #0f172a;
+	--amortexa-admin-radius: 12px;
+	--amortexa-admin-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+	--amortexa-admin-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
 }
 
-.wrap.calcforge-settings {
+.wrap.amortexa-settings {
 	max-width: 1280px;
 	margin: 20px 20px 40px 0;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-	color: var(--calcforge-admin-slate-800);
+	color: var(--amortexa-admin-slate-800);
 }
 
 /* ==========================================================================
    Header Hero Banner
    ========================================================================== */
 
-.calcforge-settings__header {
+.amortexa-settings__header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -44,33 +44,33 @@
 	gap: 20px;
 	padding: 24px 28px;
 	background: #fff;
-	border: 1px solid var(--calcforge-admin-slate-200);
-	border-radius: var(--calcforge-admin-radius);
-	box-shadow: var(--calcforge-admin-shadow-sm);
+	border: 1px solid var(--amortexa-admin-slate-200);
+	border-radius: var(--amortexa-admin-radius);
+	box-shadow: var(--amortexa-admin-shadow-sm);
 	margin-bottom: 24px;
 }
 
-.calcforge-settings__header-brand {
+.amortexa-settings__header-brand {
 	display: flex;
 	align-items: flex-start;
 	gap: 16px;
 	max-width: 720px;
 }
 
-.calcforge-settings__logo-badge {
+.amortexa-settings__logo-badge {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	width: 46px;
 	height: 46px;
-	background: linear-gradient(135deg, var(--calcforge-admin-primary) 0%, var(--calcforge-admin-accent) 100%);
+	background: linear-gradient(135deg, var(--amortexa-admin-primary) 0%, var(--amortexa-admin-accent) 100%);
 	color: #fff;
 	border-radius: 10px;
 	box-shadow: 0 4px 10px rgba(26, 111, 75, 0.25);
 	flex-shrink: 0;
 }
 
-.calcforge-settings__title-row {
+.amortexa-settings__title-row {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
@@ -78,42 +78,42 @@
 	margin-bottom: 6px;
 }
 
-.calcforge-settings__title {
+.amortexa-settings__title {
 	margin: 0 !important;
 	padding: 0 !important;
 	font-size: 22px !important;
 	font-weight: 700 !important;
 	line-height: 1.2 !important;
-	color: var(--calcforge-admin-slate-900) !important;
+	color: var(--amortexa-admin-slate-900) !important;
 }
 
-.calcforge-settings__version-badge {
+.amortexa-settings__version-badge {
 	display: inline-block;
 	font-size: 11px;
 	font-weight: 700;
 	letter-spacing: 0.04em;
 	padding: 2px 8px;
-	background: var(--calcforge-admin-primary-soft);
-	color: var(--calcforge-admin-primary);
+	background: var(--amortexa-admin-primary-soft);
+	color: var(--amortexa-admin-primary);
 	border: 1px solid rgba(26, 111, 75, 0.2);
 	border-radius: 999px;
 }
 
-.calcforge-settings__intro {
+.amortexa-settings__intro {
 	margin: 0 !important;
 	font-size: 13.5px;
 	line-height: 1.5;
-	color: var(--calcforge-admin-slate-500);
+	color: var(--amortexa-admin-slate-500);
 }
 
-.calcforge-settings__status-pills {
+.amortexa-settings__status-pills {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	flex-wrap: wrap;
 }
 
-.calcforge-pill {
+.amortexa-pill {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -123,30 +123,30 @@
 	font-weight: 600;
 }
 
-.calcforge-pill__dot {
+.amortexa-pill__dot {
 	width: 7px;
 	height: 7px;
 	border-radius: 50%;
 }
 
-.calcforge-pill--success {
+.amortexa-pill--success {
 	background: #ecfdf5;
 	color: #047857;
 	border: 1px solid #a7f3d0;
 }
 
-.calcforge-pill--success .calcforge-pill__dot {
+.amortexa-pill--success .amortexa-pill__dot {
 	background: #10b981;
 	box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
-.calcforge-pill--info {
+.amortexa-pill--info {
 	background: #eff6ff;
 	color: #1d4ed8;
 	border: 1px solid #bfdbfe;
 }
 
-.calcforge-pill--info .calcforge-pill__dot {
+.amortexa-pill--info .amortexa-pill__dot {
 	background: #3b82f6;
 	box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
@@ -155,21 +155,21 @@
    Two-Column Grid Layout
    ========================================================================== */
 
-.calcforge-settings__layout {
+.amortexa-settings__layout {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) 320px;
 	gap: 24px;
 	align-items: start;
 }
 
-.calcforge-settings__main {
+.amortexa-settings__main {
 	display: flex;
 	flex-direction: column;
 	gap: 0;
 	min-width: 0;
 }
 
-.calcforge-settings__sidebar {
+.amortexa-settings__sidebar {
 	position: sticky;
 	top: 46px;
 	display: flex;
@@ -182,18 +182,18 @@
    Tab Navigation
    ========================================================================== */
 
-.calcforge-settings__tabs {
+.amortexa-settings__tabs {
 	display: flex;
 	align-items: stretch;
-	background: var(--calcforge-admin-slate-100);
-	border: 1px solid var(--calcforge-admin-slate-200);
-	border-radius: var(--calcforge-admin-radius) var(--calcforge-admin-radius) 0 0;
+	background: var(--amortexa-admin-slate-100);
+	border: 1px solid var(--amortexa-admin-slate-200);
+	border-radius: var(--amortexa-admin-radius) var(--amortexa-admin-radius) 0 0;
 	border-bottom: none;
-	box-shadow: var(--calcforge-admin-shadow-sm);
+	box-shadow: var(--amortexa-admin-shadow-sm);
 	overflow: hidden;
 }
 
-.calcforge-settings__tab-btn {
+.amortexa-settings__tab-btn {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -203,26 +203,26 @@
 	border-bottom: 3px solid transparent;
 	font-size: 13.5px;
 	font-weight: 500;
-	color: var(--calcforge-admin-slate-500);
+	color: var(--amortexa-admin-slate-500);
 	cursor: pointer;
 	transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 	white-space: nowrap;
 	font-family: inherit;
 }
 
-.calcforge-settings__tab-btn:hover {
-	color: var(--calcforge-admin-slate-800);
+.amortexa-settings__tab-btn:hover {
+	color: var(--amortexa-admin-slate-800);
 	background: #fff;
 }
 
-.calcforge-settings__tab-btn[aria-selected="true"] {
-	color: var(--calcforge-admin-primary);
-	border-bottom-color: var(--calcforge-admin-primary);
+.amortexa-settings__tab-btn[aria-selected="true"] {
+	color: var(--amortexa-admin-primary);
+	border-bottom-color: var(--amortexa-admin-primary);
 	font-weight: 600;
 	background: #fff;
 }
 
-.calcforge-settings__tab-icon {
+.amortexa-settings__tab-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -232,27 +232,27 @@
 	flex-shrink: 0;
 }
 
-.calcforge-settings__tab-btn[aria-selected="true"] .calcforge-settings__tab-icon--currency {
+.amortexa-settings__tab-btn[aria-selected="true"] .amortexa-settings__tab-icon--currency {
 	background: #f0fdf4;
 	color: #15803d;
 }
 
-.calcforge-settings__tab-btn[aria-selected="true"] .calcforge-settings__tab-icon--loan {
+.amortexa-settings__tab-btn[aria-selected="true"] .amortexa-settings__tab-icon--loan {
 	background: #fffbeb;
 	color: #b45309;
 }
 
-.calcforge-settings__tab-btn[aria-selected="true"] .calcforge-settings__tab-icon--appearance {
+.amortexa-settings__tab-btn[aria-selected="true"] .amortexa-settings__tab-icon--appearance {
 	background: #faf5ff;
 	color: #7c3aed;
 }
 
-.calcforge-settings__tab-btn[aria-selected="true"] .calcforge-settings__tab-icon--shortcode {
+.amortexa-settings__tab-btn[aria-selected="true"] .amortexa-settings__tab-icon--shortcode {
 	background: #eff6ff;
 	color: #1d4ed8;
 }
 
-.calcforge-settings__tab-btn[aria-selected="true"] .calcforge-settings__tab-icon--api {
+.amortexa-settings__tab-btn[aria-selected="true"] .amortexa-settings__tab-icon--api {
 	background: #ecfdf5;
 	color: #047857;
 }
@@ -261,82 +261,82 @@
    Tab Panels
    ========================================================================== */
 
-.calcforge-settings__tab-panels {
+.amortexa-settings__tab-panels {
 	background: #fff;
-	border: 1px solid var(--calcforge-admin-slate-200);
+	border: 1px solid var(--amortexa-admin-slate-200);
 	border-top: none;
-	border-radius: 0 0 var(--calcforge-admin-radius) var(--calcforge-admin-radius);
-	box-shadow: var(--calcforge-admin-shadow-sm);
+	border-radius: 0 0 var(--amortexa-admin-radius) var(--amortexa-admin-radius);
+	box-shadow: var(--amortexa-admin-shadow-sm);
 }
 
-.calcforge-settings__tab-panel {
+.amortexa-settings__tab-panel {
 	display: none;
 }
 
-.calcforge-settings__tab-panel[aria-hidden="false"] {
+.amortexa-settings__tab-panel[aria-hidden="false"] {
 	display: block;
 }
 
-.calcforge-settings__panel-header {
+.amortexa-settings__panel-header {
 	padding: 20px 28px 16px;
-	border-bottom: 1px solid var(--calcforge-admin-slate-100);
+	border-bottom: 1px solid var(--amortexa-admin-slate-100);
 }
 
-.calcforge-settings__panel-description {
+.amortexa-settings__panel-description {
 	margin: 0 !important;
 	font-size: 13px !important;
 	line-height: 1.5 !important;
-	color: var(--calcforge-admin-slate-500) !important;
+	color: var(--amortexa-admin-slate-500) !important;
 }
 
 /* ==========================================================================
    Table & Form Fields
    ========================================================================== */
 
-.calcforge-settings .form-table {
+.amortexa-settings .form-table {
 	margin: 0;
 	padding: 0;
 	width: 100%;
 }
 
-.calcforge-settings .form-table tr {
-	border-bottom: 1px solid var(--calcforge-admin-slate-100);
+.amortexa-settings .form-table tr {
+	border-bottom: 1px solid var(--amortexa-admin-slate-100);
 }
 
-.calcforge-settings .form-table tr:last-child {
+.amortexa-settings .form-table tr:last-child {
 	border-bottom: none;
 }
 
-.calcforge-settings .form-table th {
+.amortexa-settings .form-table th {
 	width: 200px;
 	padding: 18px 16px 18px 28px;
 	font-size: 13.5px;
 	font-weight: 600;
-	color: var(--calcforge-admin-slate-800);
+	color: var(--amortexa-admin-slate-800);
 	vertical-align: top;
 }
 
-.calcforge-settings .form-table td {
+.amortexa-settings .form-table td {
 	padding: 16px 28px 16px 0;
 	vertical-align: top;
 }
 
-.calcforge-settings input[type="text"],
-.calcforge-settings input[type="number"],
-.calcforge-settings select {
+.amortexa-settings input[type="text"],
+.amortexa-settings input[type="number"],
+.amortexa-settings select {
 	background-color: #fff;
-	border: 1px solid var(--calcforge-admin-slate-300);
+	border: 1px solid var(--amortexa-admin-slate-300);
 	border-radius: 8px;
 	padding: 7px 12px;
 	font-size: 13.5px;
-	color: var(--calcforge-admin-slate-800);
+	color: var(--amortexa-admin-slate-800);
 	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 	transition: border-color 0.15s ease, box-shadow 0.15s ease;
 	height: 38px;
 	max-width: 100%;
 }
 
-.calcforge-settings select {
+.amortexa-settings select {
 	appearance: none;
 	background-image: url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20fill=%27none%27%20viewBox=%270%200%2020%2020%27%3E%3Cpath%20stroke=%27%2364748b%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%20stroke-width=%271.5%27%20d=%27M6%208l4%204%204-4%27/%3E%3C/svg%3E);
 	background-position: right 10px center;
@@ -359,47 +359,47 @@
 	padding-bottom: 8px;
 }
 
-.calcforge-settings input[type="text"]:focus,
-.calcforge-settings input[type="number"]:focus,
-.calcforge-settings select:focus {
-	border-color: var(--calcforge-admin-primary);
+.amortexa-settings input[type="text"]:focus,
+.amortexa-settings input[type="number"]:focus,
+.amortexa-settings select:focus {
+	border-color: var(--amortexa-admin-primary);
 	outline: none;
 	box-shadow: 0 0 0 3px rgba(26, 111, 75, 0.15);
 }
 
-.calcforge-settings .regular-text {
+.amortexa-settings .regular-text {
 	width: 260px;
 }
 
-.calcforge-settings .small-text {
+.amortexa-settings .small-text {
 	width: 110px;
 }
 
-.calcforge-settings__input-group {
+.amortexa-settings__input-group {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
 }
 
-.calcforge-settings__suffix-badge {
+.amortexa-settings__suffix-badge {
 	display: inline-flex;
 	align-items: center;
 	padding: 4px 10px;
-	background: var(--calcforge-admin-slate-100);
-	color: var(--calcforge-admin-slate-700);
-	border: 1px solid var(--calcforge-admin-slate-200);
+	background: var(--amortexa-admin-slate-100);
+	color: var(--amortexa-admin-slate-700);
+	border: 1px solid var(--amortexa-admin-slate-200);
 	border-radius: 6px;
 	font-size: 12px;
 	font-weight: 500;
 	white-space: nowrap;
 }
 
-.calcforge-settings .description,
-.calcforge-settings__field-desc {
+.amortexa-settings .description,
+.amortexa-settings__field-desc {
 	margin-top: 6px !important;
 	font-size: 12.5px !important;
 	line-height: 1.5 !important;
-	color: var(--calcforge-admin-slate-500) !important;
+	color: var(--amortexa-admin-slate-500) !important;
 	max-width: 480px;
 }
 
@@ -407,7 +407,7 @@
    Modern Toggle Switch (for checkboxes)
    ========================================================================== */
 
-.calcforge-switch {
+.amortexa-switch {
 	display: inline-flex;
 	align-items: center;
 	gap: 12px;
@@ -415,7 +415,7 @@
 	user-select: none;
 }
 
-.calcforge-switch input[type="checkbox"] {
+.amortexa-switch input[type="checkbox"] {
 	position: absolute;
 	opacity: 0;
 	width: 0;
@@ -423,18 +423,18 @@
 	pointer-events: none;
 }
 
-.calcforge-switch__slider {
+.amortexa-switch__slider {
 	position: relative;
 	display: inline-block;
 	width: 42px;
 	height: 24px;
-	background-color: var(--calcforge-admin-slate-300);
+	background-color: var(--amortexa-admin-slate-300);
 	border-radius: 999px;
 	transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 	flex-shrink: 0;
 }
 
-.calcforge-switch__slider::after {
+.amortexa-switch__slider::after {
 	content: "";
 	position: absolute;
 	top: 2px;
@@ -447,15 +447,15 @@
 	transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.calcforge-switch input:checked + .calcforge-switch__slider {
-	background-color: var(--calcforge-admin-primary);
+.amortexa-switch input:checked + .amortexa-switch__slider {
+	background-color: var(--amortexa-admin-primary);
 }
 
-.calcforge-switch input:checked + .calcforge-switch__slider::after {
+.amortexa-switch input:checked + .amortexa-switch__slider::after {
 	transform: translateX(18px);
 }
 
-.calcforge-switch input:focus-visible + .calcforge-switch__slider {
+.amortexa-switch input:focus-visible + .amortexa-switch__slider {
 	box-shadow: 0 0 0 3px rgba(26, 111, 75, 0.25);
 }
 
@@ -463,13 +463,13 @@
    Save Changes Bar
    ========================================================================== */
 
-.calcforge-settings__save-bar {
+.amortexa-settings__save-bar {
 	display: flex;
 	align-items: center;
 	gap: 16px;
 	padding: 16px 28px;
-	background: var(--calcforge-admin-slate-50);
-	border-top: 1px solid var(--calcforge-admin-slate-200);
+	background: var(--amortexa-admin-slate-50);
+	border-top: 1px solid var(--amortexa-admin-slate-200);
 	margin-top: 0;
 }
 
@@ -478,13 +478,13 @@
  * state has to be restated for the save bar to actually collapse on
  * reference-only tabs such as Shortcode.
  */
-.calcforge-settings__save-bar[hidden] {
+.amortexa-settings__save-bar[hidden] {
 	display: none;
 }
 
-.calcforge-settings__save-bar .button-primary {
-	background: var(--calcforge-admin-primary) !important;
-	border-color: var(--calcforge-admin-primary) !important;
+.amortexa-settings__save-bar .button-primary {
+	background: var(--amortexa-admin-primary) !important;
+	border-color: var(--amortexa-admin-primary) !important;
 	color: #fff !important;
 	padding: 8px 22px !important;
 	height: auto !important;
@@ -496,53 +496,53 @@
 	cursor: pointer;
 }
 
-.calcforge-settings__save-bar .button-primary:hover,
-.calcforge-settings__save-bar .button-primary:focus {
-	background: var(--calcforge-admin-primary-hover) !important;
-	border-color: var(--calcforge-admin-primary-hover) !important;
+.amortexa-settings__save-bar .button-primary:hover,
+.amortexa-settings__save-bar .button-primary:focus {
+	background: var(--amortexa-admin-primary-hover) !important;
+	border-color: var(--amortexa-admin-primary-hover) !important;
 	box-shadow: 0 4px 6px -1px rgba(26, 111, 75, 0.25) !important;
 	transform: translateY(-1px);
 }
 
-.calcforge-settings__save-bar .button-primary:active {
+.amortexa-settings__save-bar .button-primary:active {
 	transform: translateY(0);
 }
 
-.calcforge-settings__save-note {
+.amortexa-settings__save-note {
 	font-size: 12.5px;
-	color: var(--calcforge-admin-slate-500);
+	color: var(--amortexa-admin-slate-500);
 }
 
 /* ==========================================================================
    Sidebar Cards & Documentation
    ========================================================================== */
 
-.calcforge-settings__card {
+.amortexa-settings__card {
 	background: #fff;
-	border: 1px solid var(--calcforge-admin-slate-200);
-	border-radius: var(--calcforge-admin-radius);
-	box-shadow: var(--calcforge-admin-shadow-sm);
+	border: 1px solid var(--amortexa-admin-slate-200);
+	border-radius: var(--amortexa-admin-radius);
+	box-shadow: var(--amortexa-admin-shadow-sm);
 	overflow: hidden;
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.calcforge-settings__card:hover {
+.amortexa-settings__card:hover {
 	border-color: #cbd5e1;
-	box-shadow: var(--calcforge-admin-shadow-md);
+	box-shadow: var(--amortexa-admin-shadow-md);
 }
 
-.calcforge-settings__sidebar .calcforge-settings__card {
+.amortexa-settings__sidebar .amortexa-settings__card {
 	padding: 20px 22px;
 }
 
-.calcforge-settings__card-header {
+.amortexa-settings__card-header {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	margin-bottom: 12px;
 }
 
-.calcforge-settings__card-badge-icon {
+.amortexa-settings__card-badge-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -550,49 +550,49 @@
 	height: 28px;
 	border-radius: 6px;
 	background: #f0fdf4;
-	color: var(--calcforge-admin-primary);
+	color: var(--amortexa-admin-primary);
 	border: 1px solid #bbf7d0;
 	flex-shrink: 0;
 }
 
-.calcforge-settings__card-badge-icon--amber {
+.amortexa-settings__card-badge-icon--amber {
 	background: #fffbeb;
 	color: #b45309;
 	border-color: #fde68a;
 }
 
-.calcforge-settings__card-badge-icon--blue {
+.amortexa-settings__card-badge-icon--blue {
 	background: #eff6ff;
 	color: #1d4ed8;
 	border-color: #bfdbfe;
 }
 
-.calcforge-settings__card-title {
+.amortexa-settings__card-title {
 	margin: 0 !important;
 	padding: 0 !important;
 	border: none !important;
 	font-size: 14.5px !important;
 	font-weight: 600 !important;
-	color: var(--calcforge-admin-slate-900) !important;
+	color: var(--amortexa-admin-slate-900) !important;
 }
 
-.calcforge-settings__subheading {
+.amortexa-settings__subheading {
 	margin: 16px 0 8px !important;
 	font-size: 12.5px !important;
 	font-weight: 600 !important;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
-	color: var(--calcforge-admin-slate-500) !important;
+	color: var(--amortexa-admin-slate-500) !important;
 }
 
-.calcforge-settings__card-text {
+.amortexa-settings__card-text {
 	margin: 0 0 10px !important;
 	font-size: 13px !important;
 	line-height: 1.55 !important;
-	color: var(--calcforge-admin-slate-500) !important;
+	color: var(--amortexa-admin-slate-500) !important;
 }
 
-.calcforge-settings__code-box {
+.amortexa-settings__code-box {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -604,7 +604,7 @@
 	margin: 8px 0 14px;
 }
 
-.calcforge-settings__code-box .calcforge-settings__code {
+.amortexa-settings__code-box .amortexa-settings__code {
 	background: transparent;
 	border: none;
 	padding: 0;
@@ -620,7 +620,7 @@
  * keep their own line breaks, so whitespace is preserved and the block scrolls
  * sideways rather than wrapping mid-token.
  */
-.calcforge-settings__code-box .calcforge-settings__code--pre {
+.amortexa-settings__code-box .amortexa-settings__code--pre {
 	flex: 1;
 	min-width: 0;
 	white-space: pre;
@@ -631,28 +631,28 @@
 	padding-bottom: 4px;
 }
 
-.calcforge-settings__code-box .calcforge-settings__code--pre::-webkit-scrollbar {
+.amortexa-settings__code-box .amortexa-settings__code--pre::-webkit-scrollbar {
 	height: 8px;
 }
 
-.calcforge-settings__code-box .calcforge-settings__code--pre::-webkit-scrollbar-track {
+.amortexa-settings__code-box .amortexa-settings__code--pre::-webkit-scrollbar-track {
 	background: transparent;
 	border-radius: 999px;
 }
 
-.calcforge-settings__code-box .calcforge-settings__code--pre::-webkit-scrollbar-thumb {
+.amortexa-settings__code-box .amortexa-settings__code--pre::-webkit-scrollbar-thumb {
 	border-radius: 999px;
 	border: 2px solid transparent;
 	background-color: #6ee7b7;
 	background-clip: padding-box;
 }
 
-.calcforge-settings__code-box .calcforge-settings__code--pre::-webkit-scrollbar-thumb:hover {
+.amortexa-settings__code-box .amortexa-settings__code--pre::-webkit-scrollbar-thumb:hover {
 	background-color: #34d399;
 	background-clip: padding-box;
 }
 
-.calcforge-copy-btn {
+.amortexa-copy-btn {
 	display: inline-flex;
 	align-items: center;
 	gap: 5px;
@@ -668,13 +668,13 @@
 	flex-shrink: 0;
 }
 
-.calcforge-copy-btn:hover {
+.amortexa-copy-btn:hover {
 	background: #334155;
 	color: #f8fafc;
 	border-color: #475569;
 }
 
-.calcforge-copy-btn.calcforge-copied {
+.amortexa-copy-btn.amortexa-copied {
 	background: #064e3b;
 	color: #34d399;
 	border-color: #059669;
@@ -685,18 +685,18 @@
  * sidebar card, so it carries its own spacing and is allowed to breathe
  * instead of scrolling the attribute list in a narrow column.
  */
-.calcforge-settings__reference {
+.amortexa-settings__reference {
 	padding: 20px 28px 28px;
 }
 
-.calcforge-settings__attr-type {
+.amortexa-settings__attr-type {
 	font-size: 10px;
 	text-transform: uppercase;
 	font-weight: 700;
 	letter-spacing: 0.05em;
 	padding: 1px 5px;
-	background: var(--calcforge-admin-slate-200);
-	color: var(--calcforge-admin-slate-700);
+	background: var(--amortexa-admin-slate-200);
+	color: var(--amortexa-admin-slate-700);
 	border-radius: 3px;
 }
 
@@ -704,28 +704,28 @@
    Developer API Request Builder
    ========================================================================== */
 
-.calcforge-settings__api-grid {
+.amortexa-settings__api-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 	gap: 16px 20px;
 	margin: 4px 0 20px;
 }
 
-.calcforge-settings__api-field {
+.amortexa-settings__api-field {
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
 	min-width: 0;
 }
 
-.calcforge-settings__api-label {
+.amortexa-settings__api-label {
 	display: flex;
 	align-items: center;
 	gap: 6px;
 	font-weight: 600;
 }
 
-.calcforge-settings__api-input {
+.amortexa-settings__api-input {
 	width: 100%;
 }
 
@@ -734,45 +734,45 @@
    * form, so they opt out of the fixed-height input sizing used for the real
    * settings controls.
    */
-.calcforge-settings__api .calcforge-settings__api-input,
-.calcforge-settings__reference .calcforge-settings__api-input {
+.amortexa-settings__api .amortexa-settings__api-input,
+.amortexa-settings__reference .amortexa-settings__api-input {
 	height: auto;
 	line-height: 20px;
 	padding-top: 8px;
 	padding-bottom: 8px;
 }
 
-.calcforge-settings__api-check {
+.amortexa-settings__api-check {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	font-size: 13px;
-	color: var(--calcforge-admin-slate-700);
+	color: var(--amortexa-admin-slate-700);
 }
 
-.calcforge-settings__api-hint {
+.amortexa-settings__api-hint {
 	margin: 0;
 	font-size: 11.5px;
 	line-height: 1.45;
-	color: var(--calcforge-admin-slate-500);
+	color: var(--amortexa-admin-slate-500);
 }
 
-.calcforge-settings__api-warning {
+.amortexa-settings__api-warning {
 	margin: 8px 0 0;
 	font-size: 12px;
 	color: #b91c1c;
 }
 
-.calcforge-settings__api-warning[hidden] {
+.amortexa-settings__api-warning[hidden] {
 	display: none;
 }
 
-.calcforge-copy-btn:disabled {
+.amortexa-copy-btn:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
 
-.calcforge-settings__tips-list {
+.amortexa-settings__tips-list {
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -781,28 +781,28 @@
 	gap: 12px;
 }
 
-.calcforge-settings__tips-list li {
+.amortexa-settings__tips-list li {
 	margin: 0;
 	font-size: 12.5px;
 	line-height: 1.5;
-	color: var(--calcforge-admin-slate-500);
+	color: var(--amortexa-admin-slate-500);
 	padding-left: 18px;
 	position: relative;
 }
 
-.calcforge-settings__tips-list li::before {
+.amortexa-settings__tips-list li::before {
 	content: "";
 	position: absolute;
 	left: 0;
 	top: 6px;
 	width: 6px;
 	height: 6px;
-	background: var(--calcforge-admin-primary);
+	background: var(--amortexa-admin-primary);
 	border-radius: 50%;
 }
 
-.calcforge-settings__tips-list li strong {
-	color: var(--calcforge-admin-slate-800);
+.amortexa-settings__tips-list li strong {
+	color: var(--amortexa-admin-slate-800);
 	font-weight: 600;
 }
 
@@ -812,22 +812,22 @@
 
 @media screen and (max-width: 1080px) {
 
-	.calcforge-settings__layout {
+	.amortexa-settings__layout {
 		grid-template-columns: minmax(0, 1fr);
 	}
 
-	.calcforge-settings__sidebar {
+	.amortexa-settings__sidebar {
 		position: static;
 	}
 }
 
 @media screen and (max-width: 760px) {
 
-	.calcforge-settings__tabs {
+	.amortexa-settings__tabs {
 		flex-wrap: wrap;
 	}
 
-	.calcforge-settings__tab-btn {
+	.amortexa-settings__tab-btn {
 		flex: 1 1 auto;
 		justify-content: center;
 		padding: 12px 14px;
@@ -837,39 +837,39 @@
 
 @media screen and (max-width: 680px) {
 
-	.wrap.calcforge-settings {
+	.wrap.amortexa-settings {
 		margin-right: 12px;
 	}
 
-	.calcforge-settings__header {
+	.amortexa-settings__header {
 		padding: 18px 20px;
 	}
 
-	.calcforge-settings__panel-header {
+	.amortexa-settings__panel-header {
 		padding: 16px 20px 12px;
 	}
 
-	.calcforge-settings__save-bar {
+	.amortexa-settings__save-bar {
 		padding: 14px 20px;
 		flex-direction: column;
 		align-items: stretch;
 		text-align: center;
 	}
 
-	.calcforge-settings .form-table th,
-	.calcforge-settings .form-table td {
+	.amortexa-settings .form-table th,
+	.amortexa-settings .form-table td {
 		display: block;
 		width: 100%;
 		padding: 8px 20px;
 	}
 
-	.calcforge-settings .form-table th {
+	.amortexa-settings .form-table th {
 		padding-top: 14px;
 		padding-bottom: 4px;
 	}
 
-	.calcforge-settings .regular-text,
-	.calcforge-settings select {
+	.amortexa-settings .regular-text,
+	.amortexa-settings select {
 		width: 100%;
 	}
 }

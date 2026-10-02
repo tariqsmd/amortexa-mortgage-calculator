@@ -2,7 +2,7 @@
 /**
  * REST API endpoint for server-side mortgage calculations.
  *
- * @package CalcForge
+ * @package Amortexa
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,17 +10,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Registers the calcforge/v1/calculate route.
+ * Registers the amortexa-mortgage-calculator/v1/calculate route.
  *
  * The endpoint mirrors the PHP calculation used by the block render template,
  * which lets headless clients and third-party integrations reuse the same logic.
  */
-class CalcForge_REST {
+class Amortexa_REST {
 
 	/**
 	 * REST namespace for all plugin routes.
 	 */
-	const NAMESPACE_V1 = 'calcforge/v1';
+	const NAMESPACE_V1 = 'amortexa-mortgage-calculator/v1';
 
 	/**
 	 * Registers the hooks this component responds to.
@@ -86,7 +86,7 @@ class CalcForge_REST {
 	/**
 	 * Builds a REST sanitize callback that clamps a value between two bounds.
 	 *
-	 * `calcforge_clamp_float()` cannot be registered directly as a
+	 * `amortexa_clamp_float()` cannot be registered directly as a
 	 * `sanitize_callback`: WordPress invokes those as
 	 * `callback( $value, $request, $param )`, so the request object would land in
 	 * the `$minimum` argument and the bounds would be garbage. Wrapping it in a
@@ -98,7 +98,7 @@ class CalcForge_REST {
 	 */
 	public static function clamp_to( $minimum, $maximum ) {
 		return static function ( $value ) use ( $minimum, $maximum ) {
-			return calcforge_clamp_float( $value, $minimum, $maximum );
+			return amortexa_clamp_float( $value, $minimum, $maximum );
 		};
 	}
 
@@ -124,12 +124,12 @@ class CalcForge_REST {
 		 * @param bool                    $allowed Whether the request is allowed.
 		 * @param WP_REST_Request<string> $request Current request.
 		 */
-		$allowed = apply_filters( 'calcforge_rest_calculate_allowed', true, $request );
+		$allowed = apply_filters( 'amortexa_rest_calculate_allowed', true, $request );
 
 		if ( true !== $allowed ) {
 			return new WP_Error(
-				'calcforge_rest_forbidden',
-				esc_html__( 'Calculation requests are not permitted.', CALCFORGE_TEXT_DOMAIN ),
+				'amortexa_rest_forbidden',
+				esc_html__( 'Calculation requests are not permitted.', AMORTEXA_TEXT_DOMAIN ),
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
@@ -144,7 +144,7 @@ class CalcForge_REST {
 		 * every caller twice and halve the effective budget. The hit is recorded
 		 * once, in handle_calculate(), after permission has passed.
 		 */
-		$current = calcforge_rate_limit_peek( calcforge_rate_limit_client_key() );
+		$current = amortexa_rate_limit_peek( amortexa_rate_limit_client_key() );
 
 		if ( $max < 1 || $current['count'] < $max ) {
 			return true;
@@ -158,8 +158,8 @@ class CalcForge_REST {
 		 * add_rate_limit_headers() turns it into real response headers.
 		 */
 		return new WP_Error(
-			'calcforge_rest_rate_limited',
-			esc_html__( 'Too many calculation requests. Please retry shortly.', CALCFORGE_TEXT_DOMAIN ),
+			'amortexa_rest_rate_limited',
+			esc_html__( 'Too many calculation requests. Please retry shortly.', AMORTEXA_TEXT_DOMAIN ),
 			array(
 				'status'      => 429,
 				'retry_after' => max( 1, $current['retry_after'] ),
@@ -181,14 +181,14 @@ class CalcForge_REST {
 		 *
 		 * @param int $max Requests permitted per window.
 		 */
-		$max = (int) apply_filters( 'calcforge_rest_calculate_rate_limit', CALCFORGE_RATE_LIMIT_MAX );
+		$max = (int) apply_filters( 'amortexa_rest_calculate_rate_limit', AMORTEXA_RATE_LIMIT_MAX );
 
 		/**
 		 * Filters the length of the calculation rate limit window, in seconds.
 		 *
 		 * @param int $window Window length in seconds.
 		 */
-		$window = (int) apply_filters( 'calcforge_rest_calculate_rate_window', CALCFORGE_RATE_LIMIT_WINDOW );
+		$window = (int) apply_filters( 'amortexa_rest_calculate_rate_window', AMORTEXA_RATE_LIMIT_WINDOW );
 
 		return array( $max, $window );
 	}
@@ -209,7 +209,7 @@ class CalcForge_REST {
 
 		$data = $response->get_data();
 
-		if ( ! is_array( $data ) || ! isset( $data['code'] ) || 'calcforge_rest_rate_limited' !== $data['code'] ) {
+		if ( ! is_array( $data ) || ! isset( $data['code'] ) || 'amortexa_rest_rate_limited' !== $data['code'] ) {
 			return $response;
 		}
 
@@ -236,7 +236,7 @@ class CalcForge_REST {
 	/**
 	 * Handles a calculation request.
 	 *
-	 * Reuses calcforge_calculate() so the `calcforge_calculation_result` filter
+	 * Reuses amortexa_calculate() so the `amortexa_calculation_result` filter
 	 * applies to REST responses exactly as it does to rendered output.
 	 *
 	 * @param WP_REST_Request<array<string,mixed>> $request Current request.
@@ -249,7 +249,7 @@ class CalcForge_REST {
 		 * one unit of the budget.
 		 */
 		list( $max, $window ) = $this->rate_limit_policy();
-		calcforge_rate_limit_hit( calcforge_rate_limit_client_key(), $max, $window );
+		amortexa_rate_limit_hit( amortexa_rate_limit_client_key(), $max, $window );
 
 		$attributes = array(
 			'loanAmount'       => (float) $request['amount'],
@@ -259,6 +259,6 @@ class CalcForge_REST {
 			'showAmortization' => ! empty( $request['with_schedule'] ),
 		);
 
-		return rest_ensure_response( calcforge_calculate( $attributes ) );
+		return rest_ensure_response( amortexa_calculate( $attributes ) );
 	}
 }

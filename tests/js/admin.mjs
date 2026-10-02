@@ -1,8 +1,8 @@
 /**
  * DOM checks for the settings page JavaScript.
  *
- * Mirrors the server-rendered markup from CalcForge_Settings and drives
- * calcforge-admin.js through jsdom. Covers the ARIA tabs pattern (roving
+ * Mirrors the server-rendered markup from Amortexa_Settings and drives
+ * amortexa-admin.js through jsdom. Covers the ARIA tabs pattern (roving
  * tabindex, arrow keys, Home/End, form-only save bar) and the shortcode
  * builder, including per-code-box copy button scoping.
  *
@@ -16,8 +16,8 @@ import { dirname, join } from 'node:path';
 import { JSDOM } from 'jsdom';
 
 const here = dirname( fileURLToPath( import.meta.url ) );
-const adminJs = readFileSync( join( here, '../../assets/admin/calcforge-admin.js' ), 'utf8' );
-const adminCss = readFileSync( join( here, '../../assets/admin/calcforge-admin.css' ), 'utf8' );
+const adminJs = readFileSync( join( here, '../../assets/admin/amortexa-admin.js' ), 'utf8' );
+const adminCss = readFileSync( join( here, '../../assets/admin/amortexa-admin.css' ), 'utf8' );
 
 const TABS = [
 	{ id: 'general', icon: 'sliders', title: 'General' },
@@ -33,7 +33,7 @@ function buildMarkup() {
 	const tabButtons = [ ...TABS, REFERENCE ]
 		.map(
 			( tab, i ) =>
-				`<button id="calcforge-tab-${ tab.id }" class="calcforge-settings__tab-btn" role="tab" type="button" ` +
+				`<button id="amortexa-tab-${ tab.id }" class="amortexa-settings__tab-btn" role="tab" type="button" ` +
 				`data-tab="${ tab.id }" aria-controls="${ tab.id }" ` +
 				`aria-selected="${ i === 0 ? 'true' : 'false' }" tabindex="${ i === 0 ? '0' : '-1' }">${ tab.title }</button>`
 		)
@@ -41,21 +41,21 @@ function buildMarkup() {
 
 	const formPanels = TABS.map(
 		( tab, i ) =>
-			`<div class="calcforge-settings__tab-panel" id="${ tab.id }" role="tabpanel" ` +
-			`aria-labelledby="calcforge-tab-${ tab.id }" aria-hidden="${ i === 0 ? 'false' : 'true' }">` +
+			`<div class="amortexa-settings__tab-panel" id="${ tab.id }" role="tabpanel" ` +
+			`aria-labelledby="amortexa-tab-${ tab.id }" aria-hidden="${ i === 0 ? 'false' : 'true' }">` +
 			shortcodePanel() +
 			`</div>`
 	).join( '' );
 
 	return `<!DOCTYPE html><html><body>
 		<div class="wrap">
-			<div class="calcforge-settings__tabs" role="tablist">${ tabButtons }</div>
-			<div class="calcforge-settings__tab-panels">
+			<div class="amortexa-settings__tabs" role="tablist">${ tabButtons }</div>
+			<div class="amortexa-settings__tab-panels">
 				<form>
 					${ formPanels }
-					<div class="calcforge-settings__save-bar"><input type="submit" value="Save"></div>
+					<div class="amortexa-settings__save-bar"><input type="submit" value="Save"></div>
 				</form>
-				<div class="calcforge-settings__tab-panel" id="reference" role="tabpanel" aria-labelledby="calcforge-tab-reference" aria-hidden="true">Reference</div>
+				<div class="amortexa-settings__tab-panel" id="reference" role="tabpanel" aria-labelledby="amortexa-tab-reference" aria-hidden="true">Reference</div>
 			</div>
 		</div>
 	</body></html>`;
@@ -67,24 +67,24 @@ function buildMarkup() {
  * arrangement that once made the two buttons swap their clipboard text.
  */
 function shortcodePanel() {
-	return `<div data-calcforge-shortcode>
-			<div class="calcforge-settings__code-box" data-box="static">
-				<code>[calcforge]</code>
-				<button class="calcforge-copy-btn" data-clipboard-text="[calcforge]"><span class="calcforge-copy-btn__text">Copy</span></button>
+	return `<div data-amortexa-shortcode>
+			<div class="amortexa-settings__code-box" data-box="static">
+				<code>[amortexa-mortgage-calculator]</code>
+				<button class="amortexa-copy-btn" data-clipboard-text="[amortexa-mortgage-calculator]"><span class="amortexa-copy-btn__text">Copy</span></button>
 			</div>
 			<label>Loan amount <input type="number" data-shortcode-param="loanamount" data-shortcode-integer="true" value="250000"></label>
 			<label>Rate <input type="number" data-shortcode-param="interestrate" value="4.75"></label>
 			<label>Term <input type="number" data-shortcode-param="loanterm" data-shortcode-integer="true" value="30"></label>
 			<label>Down payment <input type="number" data-shortcode-param="downpayment" value=""></label>
 			<label>Theme <input type="text" data-shortcode-param="theme" value=""></label>
-			<div class="calcforge-settings__code-box" data-box="sample">
-				<code data-shortcode-request>[calcforge]</code>
-				<button class="calcforge-copy-btn" data-clipboard-text=""><span class="calcforge-copy-btn__text">Copy</span></button>
+			<div class="amortexa-settings__code-box" data-box="sample">
+				<code data-shortcode-request>[amortexa-mortgage-calculator]</code>
+				<button class="amortexa-copy-btn" data-clipboard-text=""><span class="amortexa-copy-btn__text">Copy</span></button>
 			</div>
 		</div>`;
 }
 
-const ORIGIN = 'http://localhost/wp-admin/options-general.php?page=calcforge';
+const ORIGIN = 'http://localhost/wp-admin/options-general.php?page=amortexa';
 
 function boot() {
 	const dom = new JSDOM( buildMarkup(), {
@@ -113,9 +113,9 @@ function check( condition, label ) {
 
 const dom = start( boot() );
 const { document } = dom.window;
-const btns = [ ...document.querySelectorAll( '.calcforge-settings__tab-btn' ) ];
-const panels = [ ...document.querySelectorAll( '.calcforge-settings__tab-panel' ) ];
-const saveBar = document.querySelector( '.calcforge-settings__save-bar' );
+const btns = [ ...document.querySelectorAll( '.amortexa-settings__tab-btn' ) ];
+const panels = [ ...document.querySelectorAll( '.amortexa-settings__tab-panel' ) ];
+const saveBar = document.querySelector( '.amortexa-settings__save-bar' );
 
 const selected = () => btns.find( ( b ) => 'true' === b.getAttribute( 'aria-selected' ) );
 const panel = ( id ) => document.getElementById( id );
@@ -194,17 +194,17 @@ check( roving().join() === [ '-1', '-1', '0', '-1', '-1' ].join(), 'clicking a t
 // --- session storage still restores ----------------------------------
 // Store a tab, then load a fresh page the way a real reload would.
 const first = start( boot() );
-const firstBtns = [ ...first.window.document.querySelectorAll( '.calcforge-settings__tab-btn' ) ];
+const firstBtns = [ ...first.window.document.querySelectorAll( '.amortexa-settings__tab-btn' ) ];
 firstBtns[ 2 ].dispatchEvent( new first.window.MouseEvent( 'click', { bubbles: true } ) );
 check(
-	first.window.sessionStorage.getItem( 'calcforge_active_tab' ) === 'design',
+	first.window.sessionStorage.getItem( 'amortexa_active_tab' ) === 'design',
 	'choosing a tab is remembered for the next page load'
 );
 
 const dom3 = boot();
-dom3.window.sessionStorage.setItem( 'calcforge_active_tab', 'design' );
+dom3.window.sessionStorage.setItem( 'amortexa_active_tab', 'design' );
 start( dom3 );
-const btns3 = [ ...dom3.window.document.querySelectorAll( '.calcforge-settings__tab-btn' ) ];
+const btns3 = [ ...dom3.window.document.querySelectorAll( '.amortexa-settings__tab-btn' ) ];
 check(
 	btns3.find( ( b ) => 'true' === b.getAttribute( 'aria-selected' ) ) === btns3[ 2 ],
 	'a remembered tab is restored on the next page load'
@@ -215,12 +215,12 @@ check(
 );
 
 // --- shortcode builder -------------------------------------------------
-const scRoot = document.querySelector( '[data-calcforge-shortcode]' );
+const scRoot = document.querySelector( '[data-amortexa-shortcode]' );
 const scOutput = scRoot.querySelector( '[data-shortcode-request]' );
 const scStaticBox = scRoot.querySelector( '[data-box="static"]' );
 const scSampleBox = scRoot.querySelector( '[data-box="sample"]' );
-const staticBtn = scStaticBox.querySelector( '.calcforge-copy-btn' );
-const sampleBtn = scSampleBox.querySelector( '.calcforge-copy-btn' );
+const staticBtn = scStaticBox.querySelector( '.amortexa-copy-btn' );
+const sampleBtn = scSampleBox.querySelector( '.amortexa-copy-btn' );
 const fields = Object.fromEntries(
 	[ ...scRoot.querySelectorAll( '[data-shortcode-param]' ) ].map( ( el ) => [
 		el.getAttribute( 'data-shortcode-param' ),
@@ -234,7 +234,7 @@ function setField( name, value ) {
 }
 
 check(
-	scOutput.textContent === '[calcforge loanamount="250000" interestrate="4.75" loanterm="30"]',
+	scOutput.textContent === '[amortexa-mortgage-calculator loanamount="250000" interestrate="4.75" loanterm="30"]',
 	'the shortcode is built from the prefilled fields, skipping blanks'
 );
 check(
@@ -246,7 +246,7 @@ check(
 	"the sample copy button carries the generated shortcode"
 );
 check(
-	staticBtn.getAttribute( 'data-clipboard-text' ) === '[calcforge]',
+	staticBtn.getAttribute( 'data-clipboard-text' ) === '[amortexa-mortgage-calculator]',
 	'the static copy button keeps its own plain example'
 );
 
@@ -284,7 +284,7 @@ setField( 'theme', '' );
 setField( 'interestrate', '' );
 setField( 'loanamount', '' );
 setField( 'downpayment', '' );
-check( scOutput.textContent === '[calcforge loanterm="30"]', 'clearing every field but one leaves just that attribute' );
+check( scOutput.textContent === '[amortexa-mortgage-calculator loanterm="30"]', 'clearing every field but one leaves just that attribute' );
 
 /*
  * The save notice. The plugin never asks for it - WordPress prints it above the
@@ -297,15 +297,15 @@ check( scOutput.textContent === '[calcforge loanterm="30"]', 'clearing every fie
  */
 function noticeMarkup( notice ) {
 	return `<!DOCTYPE html><html><body>
-		<div class="wrap calcforge-settings">
-			<div class="calcforge-settings__frame">
-				<div class="calcforge-settings__header">
-					<div class="calcforge-settings__header-brand">
+		<div class="wrap amortexa-settings">
+			<div class="amortexa-settings__frame">
+				<div class="amortexa-settings__header">
+					<div class="amortexa-settings__header-brand">
 						<div>
-							<div class="calcforge-settings__title-row">
-								<h1 class="calcforge-settings__title">CalcForge</h1>
+							<div class="amortexa-settings__title-row">
+								<h1 class="amortexa-settings__title">Amortexa</h1>
 								${ notice }
-								<span class="calcforge-settings__version-badge">v1.0.0</span>
+								<span class="amortexa-settings__version-badge">v1.0.0</span>
 							</div>
 						</div>
 					</div>
@@ -323,7 +323,7 @@ function bootNotices( markup ) {
 	const noticeDom = new JSDOM( markup, {
 		runScripts: 'outside-only',
 		pretendToBeVisual: true,
-		url: 'http://localhost/wp-admin/options-general.php?page=calcforge-settings',
+		url: 'http://localhost/wp-admin/options-general.php?page=amortexa-settings',
 	} );
 	noticeDom.window.eval( adminJs );
 	return start( noticeDom );
@@ -333,25 +333,25 @@ function bootNotices( markup ) {
 const present = bootNotices( noticeMarkup( SAVED_NOTICE ) );
 const presentDoc = present.window.document;
 check(
-	! presentDoc.querySelector( '.calcforge-settings__header .notice' ),
+	! presentDoc.querySelector( '.amortexa-settings__header .notice' ),
 	'a notice sitting in the header is moved out of it'
 );
-const presentPage = presentDoc.querySelector( '.wrap.calcforge-settings' );
+const presentPage = presentDoc.querySelector( '.wrap.amortexa-settings' );
 check(
 	presentPage.firstElementChild.classList.contains( 'notice' ),
 	'the relocated notice becomes the first thing on the page, above the frame'
 );
 check(
-	! presentDoc.querySelector( '.calcforge-settings__frame .notice' ),
+	! presentDoc.querySelector( '.amortexa-settings__frame .notice' ),
 	'the relocated notice is not left inside the frame'
 );
 check(
-	!! presentPage.querySelector( '.calcforge-settings__frame' ),
+	!! presentPage.querySelector( '.amortexa-settings__frame' ),
 	'the frame still holds the header after the notice moves out'
 );
 check(
-	presentDoc.querySelector( '.calcforge-settings__title-row' ).textContent.includes( 'CalcForge' ) &&
-		presentDoc.querySelector( '.calcforge-settings__title-row' ).textContent.includes( 'v1.0.0' ),
+	presentDoc.querySelector( '.amortexa-settings__title-row' ).textContent.includes( 'Amortexa' ) &&
+		presentDoc.querySelector( '.amortexa-settings__title-row' ).textContent.includes( 'v1.0.0' ),
 	'the title and version badge are left intact'
 );
 
@@ -362,20 +362,20 @@ const lateDoc = late.window.document;
 const lateNotice = lateDoc.createElement( 'div' );
 lateNotice.className = 'notice notice-success settings-error is-dismissible';
 lateNotice.innerHTML = '<p><strong>Settings saved.</strong></p>';
-lateDoc.querySelector( '.calcforge-settings__version-badge' ).before( lateNotice );
+lateDoc.querySelector( '.amortexa-settings__version-badge' ).before( lateNotice );
 await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 check(
-	! lateDoc.querySelector( '.calcforge-settings__header .notice' ),
+	! lateDoc.querySelector( '.amortexa-settings__header .notice' ),
 	'a notice injected after load is moved out of the header too'
 );
 check(
-	lateDoc.querySelector( '.wrap.calcforge-settings' ).firstElementChild.classList.contains( 'notice' ),
+	lateDoc.querySelector( '.wrap.amortexa-settings' ).firstElementChild.classList.contains( 'notice' ),
 	'a late notice also ends up above the frame'
 );
 
 check(
 	/flex-wrap:\s*wrap/.test(
-		adminCss.match( /\.calcforge-settings__title-row\s*\{([^}]*)\}/ )?.[ 1 ] || ''
+		adminCss.match( /\.amortexa-settings__title-row\s*\{([^}]*)\}/ )?.[ 1 ] || ''
 	),
 	'the title row can still wrap, e.g. for a long translated version badge'
 );

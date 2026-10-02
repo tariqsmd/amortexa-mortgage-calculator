@@ -42,10 +42,10 @@ import DesignControls from './design-controls';
  * translator in the editor bundle like every other inspector string.
  */
 const PANEL_LABELS = {
-	form: __( 'Inputs', 'calcforge' ),
-	results: __( 'Results', 'calcforge' ),
-	charts: __( 'Charts', 'calcforge' ),
-	schedule: __( 'Schedule', 'calcforge' ),
+	form: __( 'Inputs', 'amortexa-mortgage-calculator' ),
+	results: __( 'Results', 'amortexa-mortgage-calculator' ),
+	charts: __( 'Charts', 'amortexa-mortgage-calculator' ),
+	schedule: __( 'Schedule', 'amortexa-mortgage-calculator' ),
 };
 
 /**
@@ -62,7 +62,7 @@ function panelLabel( panel ) {
  * The numeric loan inputs.
  *
  * `min`/`max`/`step` bound what the browser accepts; the server re-clamps every
- * value in calcforge_sanitize_attributes(), so these are a convenience only.
+ * value in amortexa_sanitize_attributes(), so these are a convenience only.
  */
 
 /**
@@ -175,7 +175,10 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Calculator Settings', 'calcforge' ) }
+					title={ __(
+						'Calculator Settings',
+						'amortexa-mortgage-calculator'
+					) }
 					initialOpen
 				>
 					{ NUMERIC_FIELDS.map( ( field ) => (
@@ -187,8 +190,8 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 							help={
 								field.help ||
 								__(
-									'Inherited from Settings → CalcForge.',
-									'calcforge'
+									'Inherited from Settings → Amortexa.',
+									'amortexa-mortgage-calculator'
 								)
 							}
 							value={ String( attributes[ field.key ] ?? '' ) }
@@ -203,10 +206,13 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'Currency Symbol', 'calcforge' ) }
+						label={ __(
+							'Currency Symbol',
+							'amortexa-mortgage-calculator'
+						) }
 						help={ __(
 							'Up to 8 characters, shown next to every amount.',
-							'calcforge'
+							'amortexa-mortgage-calculator'
 						) }
 						value={ attributes.currencySymbol ?? '' }
 						maxLength={ 8 }
@@ -219,7 +225,10 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 					<SelectControl
 						__nextHasNoMarginBottom
-						label={ __( 'Currency Position', 'calcforge' ) }
+						label={ __(
+							'Currency Position',
+							'amortexa-mortgage-calculator'
+						) }
 						value={
 							getCurrencyPositions().some(
 								( option ) =>
@@ -234,37 +243,49 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 				</PanelBody>
 
 				<PanelBody
-					title={ __( 'Display', 'calcforge' ) }
+					title={ __( 'Display', 'amortexa-mortgage-calculator' ) }
 					initialOpen={ false }
 				>
 					<ToggleControl
 						__nextHasNoMarginBottom
-						label={ __( 'Show Results Summary', 'calcforge' ) }
+						label={ __(
+							'Show Results Summary',
+							'amortexa-mortgage-calculator'
+						) }
 						checked={ !! attributes.showResults }
 						onChange={ setToggle( 'showResults' ) }
 					/>
 					<ToggleControl
 						__nextHasNoMarginBottom
-						label={ __( 'Show Sliders', 'calcforge' ) }
+						label={ __(
+							'Show Sliders',
+							'amortexa-mortgage-calculator'
+						) }
 						help={ __(
 							'Front-end visitors can drag the sliders.',
-							'calcforge'
+							'amortexa-mortgage-calculator'
 						) }
 						checked={ !! attributes.showSliders }
 						onChange={ setToggle( 'showSliders' ) }
 					/>
 					<ToggleControl
 						__nextHasNoMarginBottom
-						label={ __( 'Show Charts', 'calcforge' ) }
+						label={ __(
+							'Show Charts',
+							'amortexa-mortgage-calculator'
+						) }
 						checked={ !! attributes.showCharts }
 						onChange={ setToggle( 'showCharts' ) }
 					/>
 					<ToggleControl
 						__nextHasNoMarginBottom
-						label={ __( 'Show Taxes & Costs', 'calcforge' ) }
+						label={ __(
+							'Show Taxes & Costs',
+							'amortexa-mortgage-calculator'
+						) }
 						help={ __(
 							'Adds property tax, insurance, HOA, PMI and other recurring costs, and reports the true total monthly cost alongside the principal and interest payment.',
-							'calcforge'
+							'amortexa-mortgage-calculator'
 						) }
 						checked={ !! attributes.showCosts }
 						onChange={ setToggle( 'showCosts' ) }
@@ -272,7 +293,10 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 					<SelectControl
 						__nextHasNoMarginBottom
-						label={ __( 'Chart Type', 'calcforge' ) }
+						label={ __(
+							'Chart Type',
+							'amortexa-mortgage-calculator'
+						) }
 						value={
 							getChartTypes().some(
 								( option ) =>
@@ -287,10 +311,10 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 					<SelectControl
 						__nextHasNoMarginBottom
-						label={ __( 'Layout', 'calcforge' ) }
+						label={ __( 'Layout', 'amortexa-mortgage-calculator' ) }
 						help={ __(
 							'Two column split places the inputs beside the results on wide screens.',
-							'calcforge'
+							'amortexa-mortgage-calculator'
 						) }
 						value={
 							getLayouts().some(
@@ -305,17 +329,23 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 					<ToggleControl
 						__nextHasNoMarginBottom
-						label={ __( 'Show Amortization Table', 'calcforge' ) }
+						label={ __(
+							'Show Amortization Table',
+							'amortexa-mortgage-calculator'
+						) }
 						checked={ !! attributes.showAmortization }
 						onChange={ setToggle( 'showAmortization' ) }
 					/>
 
 					<SelectControl
 						__nextHasNoMarginBottom
-						label={ __( 'Form Columns', 'calcforge' ) }
+						label={ __(
+							'Form Columns',
+							'amortexa-mortgage-calculator'
+						) }
 						help={ __(
 							'Full width gives each control the whole row. Compact packs more controls per row and drops each input below its slider, which shortens a single column calculator but makes a two column split taller.',
-							'calcforge'
+							'amortexa-mortgage-calculator'
 						) }
 						value={
 							getFormColumns().some(
@@ -331,7 +361,7 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 					<SelectControl
 						__nextHasNoMarginBottom
-						label={ __( 'Skin', 'calcforge' ) }
+						label={ __( 'Skin', 'amortexa-mortgage-calculator' ) }
 						value={
 							skinValues.includes( attributes.theme )
 								? attributes.theme
@@ -343,31 +373,37 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 				</PanelBody>
 
 				<PanelBody
-					title={ __( 'Panel Order', 'calcforge' ) }
+					title={ __(
+						'Panel Order',
+						'amortexa-mortgage-calculator'
+					) }
 					initialOpen={ false }
 				>
 					<BaseControl
 						__nextHasNoMarginBottom
-						id="calcforge-panel-order"
-						label={ __( 'Panel Order', 'calcforge' ) }
+						id="amortexa-panel-order"
+						label={ __(
+							'Panel Order',
+							'amortexa-mortgage-calculator'
+						) }
 						help={ __(
 							'Drag a section to move it, or use the up and down buttons. Every section can go anywhere, including the inputs.',
-							'calcforge'
+							'amortexa-mortgage-calculator'
 						) }
 					>
-						<ul className="calcforge-reorder">
+						<ul className="amortexa-reorder">
 							{ panelOrder.map( ( panel, index ) => (
 								<li
 									key={ panel }
-									className={ `calcforge-reorder__row${
+									className={ `amortexa-reorder__row${
 										dragIndex === index
-											? ' calcforge-reorder__row--dragging'
+											? ' amortexa-reorder__row--dragging'
 											: ''
 									}${
 										null !== overIndex &&
 										overIndex === index &&
 										dragIndex !== index
-											? ' calcforge-reorder__row--over'
+											? ' amortexa-reorder__row--over'
 											: ''
 									}` }
 									draggable
@@ -383,16 +419,16 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 									onDragEnd={ onDragEnd }
 								>
 									<span
-										className="calcforge-reorder__handle"
+										className="amortexa-reorder__handle"
 										aria-hidden="true"
 									>
 										&#8942;&#8942;
 									</span>
-									<span className="calcforge-reorder__name">
+									<span className="amortexa-reorder__name">
 										{ panelLabel( panel ) }
 									</span>
 									<Button
-										className="calcforge-reorder__button"
+										className="amortexa-reorder__button"
 										variant="tertiary"
 										disabled={ 0 === index }
 										onClick={ () =>
@@ -400,14 +436,20 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 										}
 										label={ sprintf(
 											/* translators: %s: panel name, e.g. "Results". */
-											__( 'Move %s up', 'calcforge' ),
+											__(
+												'Move %s up',
+												'amortexa-mortgage-calculator'
+											),
 											panelLabel( panel )
 										) }
 									>
-										{ __( 'Up', 'calcforge' ) }
+										{ __(
+											'Up',
+											'amortexa-mortgage-calculator'
+										) }
 									</Button>
 									<Button
-										className="calcforge-reorder__button"
+										className="amortexa-reorder__button"
 										variant="tertiary"
 										disabled={
 											panelOrder.length - 1 === index
@@ -417,11 +459,17 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 										}
 										label={ sprintf(
 											/* translators: %s: panel name, e.g. "Results". */
-											__( 'Move %s down', 'calcforge' ),
+											__(
+												'Move %s down',
+												'amortexa-mortgage-calculator'
+											),
 											panelLabel( panel )
 										) }
 									>
-										{ __( 'Down', 'calcforge' ) }
+										{ __(
+											'Down',
+											'amortexa-mortgage-calculator'
+										) }
 									</Button>
 								</li>
 							) ) }
@@ -430,12 +478,15 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 				</PanelBody>
 
 				<PanelBody
-					title={ __( 'Typography', 'calcforge' ) }
+					title={ __( 'Typography', 'amortexa-mortgage-calculator' ) }
 					initialOpen={ false }
 				>
 					<SelectControl
 						__nextHasNoMarginBottom
-						label={ __( 'Font Family', 'calcforge' ) }
+						label={ __(
+							'Font Family',
+							'amortexa-mortgage-calculator'
+						) }
 						value={
 							getFontFamilies().some(
 								( option ) =>
@@ -451,10 +502,13 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 					<TextControl
 						__nextHasNoMarginBottom
 						type="number"
-						label={ __( 'Payment Font Size', 'calcforge' ) }
+						label={ __(
+							'Payment Font Size',
+							'amortexa-mortgage-calculator'
+						) }
 						help={ __(
 							'In pixels. Use 0 for the skin default.',
-							'calcforge'
+							'amortexa-mortgage-calculator'
 						) }
 						value={ String(
 							Number( attributes.paymentFontSize ) || 0
@@ -470,7 +524,10 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 					<SelectControl
 						__nextHasNoMarginBottom
-						label={ __( 'Payment Font Weight', 'calcforge' ) }
+						label={ __(
+							'Payment Font Weight',
+							'amortexa-mortgage-calculator'
+						) }
 						value={
 							getFontWeights().some(
 								( option ) =>
@@ -487,14 +544,17 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 				{ Object.keys( defaults ).length > 0 && (
 					<PanelBody
-						title={ __( 'Site Defaults', 'calcforge' ) }
+						title={ __(
+							'Site Defaults',
+							'amortexa-mortgage-calculator'
+						) }
 						initialOpen={ false }
 					>
 						<PanelRow>
-							<p className="calcforge-inspector__note">
+							<p className="amortexa-inspector__note">
 								{ __(
 									'These are the values this site starts new calculators with. Reset to go back to them.',
-									'calcforge'
+									'amortexa-mortgage-calculator'
 								) }
 							</p>
 						</PanelRow>
@@ -505,7 +565,10 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 									setAttributes( { ...defaults } )
 								}
 							>
-								{ __( 'Reset to Site Defaults', 'calcforge' ) }
+								{ __(
+									'Reset to Site Defaults',
+									'amortexa-mortgage-calculator'
+								) }
 							</Button>
 						</PanelRow>
 					</PanelBody>

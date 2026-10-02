@@ -2,7 +2,7 @@
 /**
  * Translation loading.
  *
- * @package CalcForge
+ * @package Amortexa
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Loads the plugin text domain.
  */
-class CalcForge_I18n {
+class Amortexa_I18n {
 
 	/**
 	 * Registers the hooks this component responds to.
@@ -26,9 +26,9 @@ class CalcForge_I18n {
 	 */
 	public function load_textdomain() {
 		load_plugin_textdomain(
-			CALCFORGE_TEXT_DOMAIN,
+			AMORTEXA_TEXT_DOMAIN,
 			false,
-			dirname( plugin_basename( CALCFORGE_PLUGIN_FILE ) ) . '/languages'
+			dirname( plugin_basename( AMORTEXA_PLUGIN_FILE ) ) . '/languages'
 		);
 	}
 }

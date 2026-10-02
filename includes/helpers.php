@@ -10,7 +10,7 @@
  * settings screen, the block.json enum, and the editor inspector can never drift
  * apart: they all read from these functions.
  *
- * @package CalcForge
+ * @package Amortexa
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,12 +20,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Returns the list of valid skin slugs.
  *
- * Keep in sync with the `.calcforge-theme-*` rules in src/style.scss.
+ * Keep in sync with the `.amortexa-theme-*` rules in src/style.scss.
  *
  * @return array<int,string> Skin slugs.
  */
-function calcforge_get_skin_slugs() {
-	return array_keys( calcforge_get_skins() );
+function amortexa_get_skin_slugs() {
+	return array_keys( amortexa_get_skins() );
 }
 
 /**
@@ -36,32 +36,32 @@ function calcforge_get_skin_slugs() {
  *
  * @return array<string,string> Skin slug => label.
  */
-function calcforge_get_skins() {
+function amortexa_get_skins() {
 	$skins = array(
-		'light'    => __( 'Classic Light', CALCFORGE_TEXT_DOMAIN ),
-		'dark'     => __( 'Elegant Dark', CALCFORGE_TEXT_DOMAIN ),
-		'ocean'    => __( 'Ocean Blue', CALCFORGE_TEXT_DOMAIN ),
-		'sunset'   => __( 'Sunset Warm', CALCFORGE_TEXT_DOMAIN ),
-		'forest'   => __( 'Forest Green', CALCFORGE_TEXT_DOMAIN ),
-		'midnight' => __( 'Midnight Violet', CALCFORGE_TEXT_DOMAIN ),
-		'rose'     => __( 'Rose Quartz', CALCFORGE_TEXT_DOMAIN ),
-		'slate'    => __( 'Minimal Slate', CALCFORGE_TEXT_DOMAIN ),
-		'grape'    => __( 'Royal Grape', CALCFORGE_TEXT_DOMAIN ),
-		'aqua'     => __( 'Aqua Fresh', CALCFORGE_TEXT_DOMAIN ),
-		'mocha'    => __( 'Mocha Cream', CALCFORGE_TEXT_DOMAIN ),
-		'cyber'    => __( 'Cyber Neon', CALCFORGE_TEXT_DOMAIN ),
-		'emerald'  => __( 'Emerald Nights', CALCFORGE_TEXT_DOMAIN ),
-		'crimson'  => __( 'Crimson Dusk', CALCFORGE_TEXT_DOMAIN ),
-		'charcoal' => __( 'Graphite', CALCFORGE_TEXT_DOMAIN ),
-		'copper'   => __( 'Copper Forge', CALCFORGE_TEXT_DOMAIN ),
-		'royal'    => __( 'Royal Sapphire', CALCFORGE_TEXT_DOMAIN ),
-		'amber'    => __( 'Amber Gold', CALCFORGE_TEXT_DOMAIN ),
-		'cobalt'   => __( 'Cobalt Blue', CALCFORGE_TEXT_DOMAIN ),
-		'fuchsia'  => __( 'Fuchsia Bloom', CALCFORGE_TEXT_DOMAIN ),
-		'mint'     => __( 'Mint Fresh', CALCFORGE_TEXT_DOMAIN ),
-		'sand'     => __( 'Sandstone', CALCFORGE_TEXT_DOMAIN ),
-		'lemon'    => __( 'Lemon Zest', CALCFORGE_TEXT_DOMAIN ),
-		'steel'    => __( 'Steel Blue', CALCFORGE_TEXT_DOMAIN ),
+		'light'    => __( 'Classic Light', AMORTEXA_TEXT_DOMAIN ),
+		'dark'     => __( 'Elegant Dark', AMORTEXA_TEXT_DOMAIN ),
+		'ocean'    => __( 'Ocean Blue', AMORTEXA_TEXT_DOMAIN ),
+		'sunset'   => __( 'Sunset Warm', AMORTEXA_TEXT_DOMAIN ),
+		'forest'   => __( 'Forest Green', AMORTEXA_TEXT_DOMAIN ),
+		'midnight' => __( 'Midnight Violet', AMORTEXA_TEXT_DOMAIN ),
+		'rose'     => __( 'Rose Quartz', AMORTEXA_TEXT_DOMAIN ),
+		'slate'    => __( 'Minimal Slate', AMORTEXA_TEXT_DOMAIN ),
+		'grape'    => __( 'Royal Grape', AMORTEXA_TEXT_DOMAIN ),
+		'aqua'     => __( 'Aqua Fresh', AMORTEXA_TEXT_DOMAIN ),
+		'mocha'    => __( 'Mocha Cream', AMORTEXA_TEXT_DOMAIN ),
+		'cyber'    => __( 'Cyber Neon', AMORTEXA_TEXT_DOMAIN ),
+		'emerald'  => __( 'Emerald Nights', AMORTEXA_TEXT_DOMAIN ),
+		'crimson'  => __( 'Crimson Dusk', AMORTEXA_TEXT_DOMAIN ),
+		'charcoal' => __( 'Graphite', AMORTEXA_TEXT_DOMAIN ),
+		'copper'   => __( 'Copper Forge', AMORTEXA_TEXT_DOMAIN ),
+		'royal'    => __( 'Royal Sapphire', AMORTEXA_TEXT_DOMAIN ),
+		'amber'    => __( 'Amber Gold', AMORTEXA_TEXT_DOMAIN ),
+		'cobalt'   => __( 'Cobalt Blue', AMORTEXA_TEXT_DOMAIN ),
+		'fuchsia'  => __( 'Fuchsia Bloom', AMORTEXA_TEXT_DOMAIN ),
+		'mint'     => __( 'Mint Fresh', AMORTEXA_TEXT_DOMAIN ),
+		'sand'     => __( 'Sandstone', AMORTEXA_TEXT_DOMAIN ),
+		'lemon'    => __( 'Lemon Zest', AMORTEXA_TEXT_DOMAIN ),
+		'steel'    => __( 'Steel Blue', AMORTEXA_TEXT_DOMAIN ),
 	);
 
 	/**
@@ -69,7 +69,7 @@ function calcforge_get_skins() {
 	 *
 	 * @param array<string,string> $skins Skin slug => translated label.
 	 */
-	return apply_filters( 'calcforge_skins', $skins );
+	return apply_filters( 'amortexa_skins', $skins );
 }
 
 /**
@@ -77,13 +77,13 @@ function calcforge_get_skins() {
  *
  * @return array<string,string> Chart type => label.
  */
-function calcforge_get_chart_types() {
+function amortexa_get_chart_types() {
 	return array(
-		'both'  => __( 'Both charts', CALCFORGE_TEXT_DOMAIN ),
-		'donut' => __( 'Donut only', CALCFORGE_TEXT_DOMAIN ),
-		'line'  => __( 'Line only', CALCFORGE_TEXT_DOMAIN ),
-		'bar'   => __( 'Bar only', CALCFORGE_TEXT_DOMAIN ),
-		'dots'  => __( 'Dot comparison', CALCFORGE_TEXT_DOMAIN ),
+		'both'  => __( 'Both charts', AMORTEXA_TEXT_DOMAIN ),
+		'donut' => __( 'Donut only', AMORTEXA_TEXT_DOMAIN ),
+		'line'  => __( 'Line only', AMORTEXA_TEXT_DOMAIN ),
+		'bar'   => __( 'Bar only', AMORTEXA_TEXT_DOMAIN ),
+		'dots'  => __( 'Dot comparison', AMORTEXA_TEXT_DOMAIN ),
 	);
 }
 
@@ -95,7 +95,7 @@ function calcforge_get_chart_types() {
  *
  * @return array<int,string> Panel keys.
  */
-function calcforge_get_panel_keys() {
+function amortexa_get_panel_keys() {
 	return array( 'form', 'results', 'charts', 'schedule' );
 }
 
@@ -118,35 +118,35 @@ function calcforge_get_panel_keys() {
  *
  * @return array<string,array<string,mixed>> Component key => descriptor.
  */
-function calcforge_get_cost_components() {
+function amortexa_get_cost_components() {
 	return array(
 		'pi'        => array(
-			'label'    => __( 'Principal & Interest', CALCFORGE_TEXT_DOMAIN ),
+			'label'    => __( 'Principal & Interest', AMORTEXA_TEXT_DOMAIN ),
 			'token'    => 'costPi',
 			'percent'  => false,
 		),
 		'tax'       => array(
-			'label'    => __( 'Property Tax', CALCFORGE_TEXT_DOMAIN ),
+			'label'    => __( 'Property Tax', AMORTEXA_TEXT_DOMAIN ),
 			'token'    => 'costTax',
 			'percent'  => true,
 		),
 		'insurance' => array(
-			'label'    => __( 'Home Insurance', CALCFORGE_TEXT_DOMAIN ),
+			'label'    => __( 'Home Insurance', AMORTEXA_TEXT_DOMAIN ),
 			'token'    => 'costInsurance',
 			'percent'  => true,
 		),
 		'hoa'       => array(
-			'label'    => __( 'HOA Fee', CALCFORGE_TEXT_DOMAIN ),
+			'label'    => __( 'HOA Fee', AMORTEXA_TEXT_DOMAIN ),
 			'token'    => 'costHoa',
 			'percent'  => true,
 		),
 		'pmi'       => array(
-			'label'    => __( 'PMI', CALCFORGE_TEXT_DOMAIN ),
+			'label'    => __( 'PMI', AMORTEXA_TEXT_DOMAIN ),
 			'token'    => 'costPmi',
 			'percent'  => true,
 		),
 		'other'     => array(
-			'label'    => __( 'Other Costs', CALCFORGE_TEXT_DOMAIN ),
+			'label'    => __( 'Other Costs', AMORTEXA_TEXT_DOMAIN ),
 			'token'    => 'costOther',
 			'percent'  => true,
 		),
@@ -159,7 +159,7 @@ function calcforge_get_cost_components() {
  * @param string $component Component key, e.g. 'tax'.
  * @return string Block attribute name.
  */
-function calcforge_get_cost_attribute( $component ) {
+function amortexa_get_cost_attribute( $component ) {
 	$map = array(
 		'tax'       => 'propertyTax',
 		'insurance' => 'homeInsurance',
@@ -176,15 +176,15 @@ function calcforge_get_cost_attribute( $component ) {
  *
  * @return array<string,string> Attribute name => 'percent' or 'amount'.
  */
-function calcforge_get_cost_units() {
+function amortexa_get_cost_units() {
 	$units = array();
 
-	foreach ( calcforge_get_cost_components() as $key => $component ) {
+	foreach ( amortexa_get_cost_components() as $key => $component ) {
 		if ( empty( $component['percent'] ) ) {
 			continue;
 		}
 
-		$units[ calcforge_get_cost_attribute( $key ) ] = 'percent';
+		$units[ amortexa_get_cost_attribute( $key ) ] = 'percent';
 	}
 
 	/**
@@ -192,13 +192,13 @@ function calcforge_get_cost_units() {
 	 *
 	 * @param array<string,string> $units Attribute name => 'percent' or 'amount'.
 	 */
-	return apply_filters( 'calcforge_cost_units', $units );
+	return apply_filters( 'amortexa_cost_units', $units );
 }
 
 /**
  * Resolves the display unit for each cost attribute, honouring the saved choice.
  *
- * calcforge_get_cost_units() reports which fields can be a percentage at all,
+ * amortexa_get_cost_units() reports which fields can be a percentage at all,
  * which is a property of the schema. This adds the per-block answer: the author
  * can enter tax as a rate or as the cash amount off a bill, and that decision
  * lives in the saved `homeInsuranceUnit` style attributes. Reading them here is
@@ -207,9 +207,9 @@ function calcforge_get_cost_units() {
  * @param array<string,mixed> $attributes Sanitized or raw block attributes.
  * @return array<string,string> Attribute name => 'percent' or 'amount'.
  */
-function calcforge_resolve_cost_units( $attributes ) {
+function amortexa_resolve_cost_units( $attributes ) {
 	$attributes = is_array( $attributes ) ? $attributes : array();
-	$units      = calcforge_get_cost_units();
+	$units      = amortexa_get_cost_units();
 	$resolved   = array();
 
 	foreach ( $units as $attribute => $default ) {
@@ -242,8 +242,8 @@ function calcforge_resolve_cost_units( $attributes ) {
  * @param array<int,string> $visible Panel keys that should render.
  * @return array<int,string> Ordered, de-duplicated panel keys.
  */
-function calcforge_resolve_panel_order( $order, $visible ) {
-	$allowed = array_flip( calcforge_get_panel_keys() );
+function amortexa_resolve_panel_order( $order, $visible ) {
+	$allowed = array_flip( amortexa_get_panel_keys() );
 	$resolved = array();
 
 	foreach ( (array) $order as $key ) {
@@ -271,15 +271,15 @@ function calcforge_resolve_panel_order( $order, $visible ) {
  * Returns the selectable calculator layouts.
  *
  * Layouts are purely presentational: the markup order never changes, only the
- * CSS grid on `.calcforge-calc__grid`, so a layout can be switched on an
+ * CSS grid on `.amortexa-calc__grid`, so a layout can be switched on an
  * existing block without invalidating anything.
  *
  * @return array<string,string> Layout key => label.
  */
-function calcforge_get_layouts() {
+function amortexa_get_layouts() {
 	return array(
-		'stacked' => __( 'Stacked (single column)', CALCFORGE_TEXT_DOMAIN ),
-		'split'   => __( 'Two column split', CALCFORGE_TEXT_DOMAIN ),
+		'stacked' => __( 'Stacked (single column)', AMORTEXA_TEXT_DOMAIN ),
+		'split'   => __( 'Two column split', AMORTEXA_TEXT_DOMAIN ),
 	);
 }
 
@@ -295,10 +295,10 @@ function calcforge_get_layouts() {
  *
  * @return array<string,string> Form column key => label.
  */
-function calcforge_get_form_columns() {
+function amortexa_get_form_columns() {
 	return array(
-		'wide'    => __( 'Full width controls', CALCFORGE_TEXT_DOMAIN ),
-		'compact' => __( 'Compact rows, input below slider', CALCFORGE_TEXT_DOMAIN ),
+		'wide'    => __( 'Full width controls', AMORTEXA_TEXT_DOMAIN ),
+		'compact' => __( 'Compact rows, input below slider', AMORTEXA_TEXT_DOMAIN ),
 	);
 }
 
@@ -310,12 +310,12 @@ function calcforge_get_form_columns() {
  *
  * @return array<string,string> Font key => label.
  */
-function calcforge_get_font_families() {
+function amortexa_get_font_families() {
 	return array(
-		'inherit' => __( 'Theme default', CALCFORGE_TEXT_DOMAIN ),
-		'sans'    => __( 'Modern Sans (system)', CALCFORGE_TEXT_DOMAIN ),
-		'serif'   => __( 'Classic Serif (system)', CALCFORGE_TEXT_DOMAIN ),
-		'mono'    => __( 'Monospace (system)', CALCFORGE_TEXT_DOMAIN ),
+		'inherit' => __( 'Theme default', AMORTEXA_TEXT_DOMAIN ),
+		'sans'    => __( 'Modern Sans (system)', AMORTEXA_TEXT_DOMAIN ),
+		'serif'   => __( 'Classic Serif (system)', AMORTEXA_TEXT_DOMAIN ),
+		'mono'    => __( 'Monospace (system)', AMORTEXA_TEXT_DOMAIN ),
 	);
 }
 
@@ -324,15 +324,15 @@ function calcforge_get_font_families() {
  *
  * @return array<string,string> Weight => label.
  */
-function calcforge_get_font_weights() {
+function amortexa_get_font_weights() {
 	return array(
-		''     => __( 'Theme default', CALCFORGE_TEXT_DOMAIN ),
-		'300'  => __( 'Light', CALCFORGE_TEXT_DOMAIN ),
-		'400'  => __( 'Normal', CALCFORGE_TEXT_DOMAIN ),
-		'500'  => __( 'Medium', CALCFORGE_TEXT_DOMAIN ),
-		'600'  => __( 'Semi Bold', CALCFORGE_TEXT_DOMAIN ),
-		'700'  => __( 'Bold', CALCFORGE_TEXT_DOMAIN ),
-		'800'  => __( 'Extra Bold', CALCFORGE_TEXT_DOMAIN ),
+		''     => __( 'Theme default', AMORTEXA_TEXT_DOMAIN ),
+		'300'  => __( 'Light', AMORTEXA_TEXT_DOMAIN ),
+		'400'  => __( 'Normal', AMORTEXA_TEXT_DOMAIN ),
+		'500'  => __( 'Medium', AMORTEXA_TEXT_DOMAIN ),
+		'600'  => __( 'Semi Bold', AMORTEXA_TEXT_DOMAIN ),
+		'700'  => __( 'Bold', AMORTEXA_TEXT_DOMAIN ),
+		'800'  => __( 'Extra Bold', AMORTEXA_TEXT_DOMAIN ),
 	);
 }
 
@@ -341,10 +341,10 @@ function calcforge_get_font_weights() {
  *
  * @return array<string,string> Position => label.
  */
-function calcforge_get_currency_positions() {
+function amortexa_get_currency_positions() {
 	return array(
-		'prefix' => __( 'Before amount ($99)', CALCFORGE_TEXT_DOMAIN ),
-		'suffix' => __( 'After amount (99 EUR)', CALCFORGE_TEXT_DOMAIN ),
+		'prefix' => __( 'Before amount ($99)', AMORTEXA_TEXT_DOMAIN ),
+		'suffix' => __( 'After amount (99 EUR)', AMORTEXA_TEXT_DOMAIN ),
 	);
 }
 
@@ -354,7 +354,7 @@ function calcforge_get_currency_positions() {
  * @param string $key Font family key: inherit|sans|serif|mono.
  * @return string CSS font-family value ('' means inherit from the theme).
  */
-function calcforge_get_font_stack( $key ) {
+function amortexa_get_font_stack( $key ) {
 	$stacks = array(
 		'inherit' => '',
 		'sans'    => 'system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif',
@@ -370,7 +370,7 @@ function calcforge_get_font_stack( $key ) {
  *
  * @return array<string,mixed> Default settings keyed by option name.
  */
-function calcforge_get_default_settings() {
+function amortexa_get_default_settings() {
 	$defaults = array(
 		'currency_symbol'       => '$',
 		'currency_position'     => 'prefix',
@@ -386,23 +386,23 @@ function calcforge_get_default_settings() {
 	);
 
 	/*
-	 * Guard against accidental recursion: calcforge_sanitize_settings() (and thus
-	 * calcforge_get_settings()/calcforge_get_default_attributes()) calls this
-	 * function, so a filter on `calcforge_default_settings` that calls back into
+	 * Guard against accidental recursion: amortexa_sanitize_settings() (and thus
+	 * amortexa_get_settings()/amortexa_get_default_attributes()) calls this
+	 * function, so a filter on `amortexa_default_settings` that calls back into
 	 * any settings getter would otherwise loop forever.
 	 */
-	global $calcforge_resolving_defaults;
+	global $amortexa_resolving_defaults;
 
-	if ( ! empty( $calcforge_resolving_defaults ) ) {
+	if ( ! empty( $amortexa_resolving_defaults ) ) {
 		return $defaults;
 	}
 
-	$calcforge_resolving_defaults = true;
+	$amortexa_resolving_defaults = true;
 
 	try {
-		$defaults = apply_filters( 'calcforge_default_settings', $defaults );
+		$defaults = apply_filters( 'amortexa_default_settings', $defaults );
 	} finally {
-		$calcforge_resolving_defaults = false;
+		$amortexa_resolving_defaults = false;
 	}
 
 	return $defaults;
@@ -413,11 +413,11 @@ function calcforge_get_default_settings() {
  *
  * @return array<string,mixed> Effective settings.
  */
-function calcforge_get_settings() {
-	$saved = get_option( 'calcforge_settings', array() );
+function amortexa_get_settings() {
+	$saved = get_option( 'amortexa_settings', array() );
 	$saved = is_array( $saved ) ? $saved : array();
 
-	return calcforge_sanitize_settings( wp_parse_args( $saved, calcforge_get_default_settings() ) );
+	return amortexa_sanitize_settings( wp_parse_args( $saved, amortexa_get_default_settings() ) );
 }
 
 /**
@@ -433,7 +433,7 @@ function calcforge_get_settings() {
  * @param bool  $fallback Value to use when $value carries no boolean meaning.
  * @return bool Normalized boolean.
  */
-function calcforge_sanitize_bool( $value, $fallback = false ) {
+function amortexa_sanitize_bool( $value, $fallback = false ) {
 	if ( is_bool( $value ) ) {
 		return $value;
 	}
@@ -463,13 +463,13 @@ function calcforge_sanitize_bool( $value, $fallback = false ) {
  * Sanitizes a settings array against the known whitelist.
  *
  * Used both by the Settings API sanitize callback and defensively in
- * calcforge_get_settings(), so stored values can never be trusted blindly.
+ * amortexa_get_settings(), so stored values can never be trusted blindly.
  *
  * @param mixed $settings Raw settings value.
  * @return array<string,mixed> Sanitized settings.
  */
-function calcforge_sanitize_settings( $settings ) {
-	$defaults = calcforge_get_default_settings();
+function amortexa_sanitize_settings( $settings ) {
+	$defaults = amortexa_get_default_settings();
 	$raw      = is_array( $settings ) ? $settings : array();
 
 	/*
@@ -485,7 +485,7 @@ function calcforge_sanitize_settings( $settings ) {
 		$symbol = $defaults['currency_symbol'];
 	}
 
-	$positions = calcforge_get_currency_positions();
+	$positions = amortexa_get_currency_positions();
 	$position  = isset( $raw['currency_position'] ) && is_scalar( $raw['currency_position'] )
 		? (string) $raw['currency_position']
 		: (string) $defaults['currency_position'];
@@ -500,7 +500,7 @@ function calcforge_sanitize_settings( $settings ) {
 	$rate = isset( $raw['default_interest_rate'] ) && is_numeric( $raw['default_interest_rate'] )
 		? (float) $raw['default_interest_rate']
 		: (float) $defaults['default_interest_rate'];
-	$rate = calcforge_clamp_float( $rate, 0, 100 );
+	$rate = amortexa_clamp_float( $rate, 0, 100 );
 
 	$precision = isset( $raw['decimal_precision'] ) && is_scalar( $raw['decimal_precision'] )
 		? absint( $raw['decimal_precision'] )
@@ -510,11 +510,11 @@ function calcforge_sanitize_settings( $settings ) {
 	// is_scalar() keeps arrays and objects out, but still admits non-numeric
 	// strings, which would clamp to 0.0. is_numeric() is the tighter test.
 	$loan_amount = isset( $raw['default_loan_amount'] ) && is_numeric( $raw['default_loan_amount'] )
-		? calcforge_clamp_float( $raw['default_loan_amount'], 0, 999999999999 )
+		? amortexa_clamp_float( $raw['default_loan_amount'], 0, 999999999999 )
 		: (float) $defaults['default_loan_amount'];
 
 	$down_payment = isset( $raw['default_down_payment'] ) && is_numeric( $raw['default_down_payment'] )
-		? calcforge_clamp_float( $raw['default_down_payment'], 0, 999999999999 )
+		? amortexa_clamp_float( $raw['default_down_payment'], 0, 999999999999 )
 		: (float) $defaults['default_down_payment'];
 
 	$loan_term = isset( $raw['default_loan_term'] ) && is_numeric( $raw['default_loan_term'] )
@@ -525,8 +525,8 @@ function calcforge_sanitize_settings( $settings ) {
 	$theme = isset( $raw['default_theme'] ) && is_scalar( $raw['default_theme'] )
 		? (string) $raw['default_theme']
 		: (string) $defaults['default_theme'];
-	if ( ! array_key_exists( $theme, calcforge_get_skins() ) ) {
-		$theme = array_key_exists( (string) $defaults['default_theme'], calcforge_get_skins() )
+	if ( ! array_key_exists( $theme, amortexa_get_skins() ) ) {
+		$theme = array_key_exists( (string) $defaults['default_theme'], amortexa_get_skins() )
 			? (string) $defaults['default_theme']
 			: 'light';
 	}
@@ -534,8 +534,8 @@ function calcforge_sanitize_settings( $settings ) {
 	$chart_type = isset( $raw['default_chart_type'] ) && is_scalar( $raw['default_chart_type'] )
 		? (string) $raw['default_chart_type']
 		: (string) $defaults['default_chart_type'];
-	if ( ! array_key_exists( $chart_type, calcforge_get_chart_types() ) ) {
-		$chart_type = array_key_exists( (string) $defaults['default_chart_type'], calcforge_get_chart_types() )
+	if ( ! array_key_exists( $chart_type, amortexa_get_chart_types() ) ) {
+		$chart_type = array_key_exists( (string) $defaults['default_chart_type'], amortexa_get_chart_types() )
 			? (string) $defaults['default_chart_type']
 			: 'both';
 	}
@@ -543,8 +543,8 @@ function calcforge_sanitize_settings( $settings ) {
 	$layout = isset( $raw['default_layout'] ) && is_scalar( $raw['default_layout'] )
 		? (string) $raw['default_layout']
 		: (string) $defaults['default_layout'];
-	if ( ! array_key_exists( $layout, calcforge_get_layouts() ) ) {
-		$layout = array_key_exists( (string) $defaults['default_layout'], calcforge_get_layouts() )
+	if ( ! array_key_exists( $layout, amortexa_get_layouts() ) ) {
+		$layout = array_key_exists( (string) $defaults['default_layout'], amortexa_get_layouts() )
 			? (string) $defaults['default_layout']
 			: 'split';
 	}
@@ -554,7 +554,7 @@ function calcforge_sanitize_settings( $settings ) {
 		'currency_position'     => $position,
 		'default_interest_rate' => $rate,
 		'decimal_precision'     => $precision,
-		'enable_amortization'   => calcforge_sanitize_bool(
+		'enable_amortization'   => amortexa_sanitize_bool(
 			isset( $raw['enable_amortization'] ) ? $raw['enable_amortization'] : $defaults['enable_amortization']
 		),
 		'default_loan_amount'   => $loan_amount,
@@ -574,7 +574,7 @@ function calcforge_sanitize_settings( $settings ) {
  *
  * @return array<string,string> Setting key => block attribute name.
  */
-function calcforge_get_settings_attribute_map() {
+function amortexa_get_settings_attribute_map() {
 	return array(
 		'default_loan_amount'   => 'loanAmount',
 		'default_interest_rate' => 'interestRate',
@@ -592,13 +592,13 @@ function calcforge_get_settings_attribute_map() {
 /**
  * Returns the default block attributes, derived from the site-wide settings.
  *
- * Third parties may override everything via the `calcforge_default_attributes`
+ * Third parties may override everything via the `amortexa_default_attributes`
  * filter.
  *
  * @return array<string,mixed> Default block attributes.
  */
-function calcforge_get_default_attributes() {
-	$settings = calcforge_get_settings();
+function amortexa_get_default_attributes() {
+	$settings = amortexa_get_settings();
 
 	$defaults = array(
 		'loanAmount'           => (float) $settings['default_loan_amount'],
@@ -612,7 +612,7 @@ function calcforge_get_default_attributes() {
 		'chartType'            => (string) $settings['default_chart_type'],
 		'layout'               => (string) $settings['default_layout'],
 		'formColumns'          => 'wide',
-		'panelOrder'           => calcforge_get_panel_keys(),
+		'panelOrder'           => amortexa_get_panel_keys(),
 		'theme'                => (string) $settings['default_theme'],
 		'showSliders'          => true,
 		'showResults'          => true,
@@ -645,7 +645,7 @@ function calcforge_get_default_attributes() {
 	 *
 	 * @param array<string,mixed> $defaults Default attributes for the calculator block.
 	 */
-	return apply_filters( 'calcforge_default_attributes', $defaults );
+	return apply_filters( 'amortexa_default_attributes', $defaults );
 }
 
 /**
@@ -660,10 +660,10 @@ function calcforge_get_default_attributes() {
  *
  * @return array<int,array<string,string>> Colour control descriptors.
  */
-function calcforge_get_color_attributes() {
+function amortexa_get_color_attributes() {
 	$controls = array();
 
-	foreach ( calcforge_get_design_token_map() as $token ) {
+	foreach ( amortexa_get_design_token_map() as $token ) {
 		if ( empty( $token['legacy'] ) ) {
 			continue;
 		}
@@ -688,27 +688,27 @@ function calcforge_get_color_attributes() {
  *
  * @return array<int,array{name:string,color:string}> Swatch list.
  */
-function calcforge_get_color_swatches() {
+function amortexa_get_color_swatches() {
 	$swatches = array(
-		array( '#1a6f4b', __( 'Forest', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#0f766e', __( 'Teal', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#d97706', __( 'Amber', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#b45309', __( 'Bronze', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#b91c1c', __( 'Red', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#be123c', __( 'Crimson', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#7c3aed', __( 'Violet', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#4f46e5', __( 'Indigo', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#1d4ed8', __( 'Blue', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#0369a1', __( 'Sky', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#0e7490', __( 'Cyan', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#15803d', __( 'Green', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#4d7c0f', __( 'Lime', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#111827', __( 'Ink', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#374151', __( 'Slate', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#6b7280', __( 'Gray', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#d1d5db', __( 'Silver', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#f3f4f6', __( 'Mist', CALCFORGE_TEXT_DOMAIN ) ),
-		array( '#ffffff', __( 'White', CALCFORGE_TEXT_DOMAIN ) ),
+		array( '#1a6f4b', __( 'Forest', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#0f766e', __( 'Teal', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#d97706', __( 'Amber', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#b45309', __( 'Bronze', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#b91c1c', __( 'Red', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#be123c', __( 'Crimson', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#7c3aed', __( 'Violet', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#4f46e5', __( 'Indigo', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#1d4ed8', __( 'Blue', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#0369a1', __( 'Sky', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#0e7490', __( 'Cyan', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#15803d', __( 'Green', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#4d7c0f', __( 'Lime', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#111827', __( 'Ink', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#374151', __( 'Slate', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#6b7280', __( 'Gray', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#d1d5db', __( 'Silver', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#f3f4f6', __( 'Mist', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#ffffff', __( 'White', AMORTEXA_TEXT_DOMAIN ) ),
 	);
 
 	$list = array();
@@ -730,7 +730,7 @@ function calcforge_get_color_swatches() {
  * @param float $maximum Upper bound.
  * @return float Clamped float value.
  */
-function calcforge_clamp_float( $value, $minimum, $maximum ) {
+function amortexa_clamp_float( $value, $minimum, $maximum ) {
 	$number = is_numeric( $value ) ? (float) $value : 0.0;
 
 	return min( max( $number, $minimum ), $maximum );
@@ -746,22 +746,22 @@ function calcforge_clamp_float( $value, $minimum, $maximum ) {
  * @param mixed $attributes Raw attributes from the block or REST request.
  * @return array<string,mixed> Sanitized attributes with all keys present.
  */
-function calcforge_sanitize_attributes( $attributes ) {
-	$defaults = calcforge_get_default_attributes();
+function amortexa_sanitize_attributes( $attributes ) {
+	$defaults = amortexa_get_default_attributes();
 	$raw      = is_array( $attributes ) ? $attributes : array();
 
 	/*
 	 * isset() is true for a key that holds garbage, so a present-but-non-numeric
-	 * value would reach calcforge_clamp_float() and clamp to 0.0, quietly
+	 * value would reach amortexa_clamp_float() and clamp to 0.0, quietly
 	 * replacing a configured default with a zero loan or a zero interest rate.
 	 * Requiring is_numeric() sends unusable input down the default path instead.
 	 */
 	$loan_amount = isset( $raw['loanAmount'] ) && is_numeric( $raw['loanAmount'] )
-		? calcforge_clamp_float( $raw['loanAmount'], 0, 999999999999 )
+		? amortexa_clamp_float( $raw['loanAmount'], 0, 999999999999 )
 		: (float) $defaults['loanAmount'];
 
 	$interest_rate = isset( $raw['interestRate'] ) && is_numeric( $raw['interestRate'] )
-		? calcforge_clamp_float( $raw['interestRate'], 0, 100 )
+		? amortexa_clamp_float( $raw['interestRate'], 0, 100 )
 		: (float) $defaults['interestRate'];
 
 	$loan_term = isset( $raw['loanTerm'] ) && is_numeric( $raw['loanTerm'] )
@@ -770,7 +770,7 @@ function calcforge_sanitize_attributes( $attributes ) {
 	$loan_term = min( max( $loan_term, 1 ), 60 );
 
 	$down_payment = isset( $raw['downPayment'] ) && is_numeric( $raw['downPayment'] )
-		? calcforge_clamp_float( $raw['downPayment'], 0, 999999999999 )
+		? amortexa_clamp_float( $raw['downPayment'], 0, 999999999999 )
 		: (float) $defaults['downPayment'];
 	$down_payment = min( $down_payment, $loan_amount );
 
@@ -782,7 +782,7 @@ function calcforge_sanitize_attributes( $attributes ) {
 	}
 	$currency_symbol = wp_html_excerpt( $currency_symbol, 8, '' );
 
-	$skins = calcforge_get_skin_slugs();
+	$skins = amortexa_get_skin_slugs();
 
 	/*
 	 * A skin that is present but unknown - a slug retired in a later version, or
@@ -797,7 +797,7 @@ function calcforge_sanitize_attributes( $attributes ) {
 		$theme = 'light';
 	}
 
-	$chart_types = array_keys( calcforge_get_chart_types() );
+	$chart_types = array_keys( amortexa_get_chart_types() );
 
 	if ( isset( $raw['chartType'] ) && in_array( $raw['chartType'], $chart_types, true ) ) {
 		$chart_type = (string) $raw['chartType'];
@@ -808,7 +808,7 @@ function calcforge_sanitize_attributes( $attributes ) {
 		}
 	}
 
-	$layouts = array_keys( calcforge_get_layouts() );
+	$layouts = array_keys( amortexa_get_layouts() );
 
 	if ( isset( $raw['layout'] ) && in_array( $raw['layout'], $layouts, true ) ) {
 		$layout = (string) $raw['layout'];
@@ -819,7 +819,7 @@ function calcforge_sanitize_attributes( $attributes ) {
 		}
 	}
 
-	$form_columns = array_keys( calcforge_get_form_columns() );
+	$form_columns = array_keys( amortexa_get_form_columns() );
 
 	if ( isset( $raw['formColumns'] ) && in_array( $raw['formColumns'], $form_columns, true ) ) {
 		$form_columns_key = (string) $raw['formColumns'];
@@ -832,26 +832,26 @@ function calcforge_sanitize_attributes( $attributes ) {
 
 	/*
 	 * Panel order is stored as an array of panel keys. It is normalized through
-	 * calcforge_resolve_panel_order() with every panel treated as visible, so an
+	 * amortexa_resolve_panel_order() with every panel treated as visible, so an
 	 * unknown or duplicated key cannot survive into the rendered markup.
 	 */
-	$panel_order = calcforge_resolve_panel_order(
+	$panel_order = amortexa_resolve_panel_order(
 		isset( $raw['panelOrder'] ) ? (array) $raw['panelOrder'] : array(),
-		calcforge_get_panel_keys()
+		amortexa_get_panel_keys()
 	);
 
 	$payment_font_size = array_key_exists( 'paymentFontSize', $raw ) && is_numeric( $raw['paymentFontSize'] )
-		? calcforge_clamp_float( $raw['paymentFontSize'], 0, 120 )
+		? amortexa_clamp_float( $raw['paymentFontSize'], 0, 120 )
 		: (float) $defaults['paymentFontSize'];
 
 	$requested_weight  = isset( $raw['paymentFontWeight'] ) && is_scalar( $raw['paymentFontWeight'] )
 		? (string) $raw['paymentFontWeight']
 		: (string) $defaults['paymentFontWeight'];
-	$payment_font_weight = array_key_exists( $requested_weight, calcforge_get_font_weights() ) && '' !== $requested_weight
+	$payment_font_weight = array_key_exists( $requested_weight, amortexa_get_font_weights() ) && '' !== $requested_weight
 		? $requested_weight
 		: '';
 
-	$positions = array_keys( calcforge_get_currency_positions() );
+	$positions = array_keys( amortexa_get_currency_positions() );
 
 	if ( isset( $raw['currencyPosition'] ) && in_array( $raw['currencyPosition'], $positions, true ) ) {
 		$currency_position = (string) $raw['currencyPosition'];
@@ -868,7 +868,7 @@ function calcforge_sanitize_attributes( $attributes ) {
 	 */
 	$colors = array();
 
-	foreach ( calcforge_get_color_attributes() as $control ) {
+	foreach ( amortexa_get_color_attributes() as $control ) {
 		$key = $control['key'];
 
 		if ( ! isset( $raw[ $key ] ) || ! is_scalar( $raw[ $key ] ) ) {
@@ -880,7 +880,7 @@ function calcforge_sanitize_attributes( $attributes ) {
 		$colors[ $key ] = $color ? $color : '';
 	}
 
-	$font_families = array_keys( calcforge_get_font_families() );
+	$font_families = array_keys( amortexa_get_font_families() );
 	$requested_font = isset( $raw['fontFamily'] ) && is_scalar( $raw['fontFamily'] )
 		? (string) $raw['fontFamily']
 		: (string) $defaults['fontFamily'];
@@ -893,15 +893,15 @@ function calcforge_sanitize_attributes( $attributes ) {
 	 * because a percentage is also allowed to carry an annual cash figure for
 	 * fields that switch units.
 	 */
-	$cost_units = calcforge_get_cost_units();
+	$cost_units = amortexa_get_cost_units();
 	$costs      = array();
 
-	foreach ( calcforge_get_cost_components() as $key => $component ) {
+	foreach ( amortexa_get_cost_components() as $key => $component ) {
 		if ( empty( $component['percent'] ) ) {
 			continue;
 		}
 
-		$attribute = calcforge_get_cost_attribute( $key );
+		$attribute = amortexa_get_cost_attribute( $key );
 
 		/*
 		 * The author's choice of unit is saved alongside the figure. Reading it
@@ -938,13 +938,13 @@ function calcforge_sanitize_attributes( $attributes ) {
 		$maximum = 'amount' === $unit ? 99999999.0 : 100.0;
 
 		if ( isset( $raw[ $attribute ] ) && is_numeric( $raw[ $attribute ] ) ) {
-			$costs[ $attribute ] = calcforge_clamp_float( $raw[ $attribute ], 0, $maximum );
+			$costs[ $attribute ] = amortexa_clamp_float( $raw[ $attribute ], 0, $maximum );
 		} else {
 			$default_unit = isset( $defaults[ $attribute . 'Unit' ] ) ? (string) $defaults[ $attribute . 'Unit' ] : $unit;
 			$default_max  = 'amount' === $default_unit ? 99999999.0 : 100.0;
 
 			$costs[ $attribute ] = isset( $defaults[ $attribute ] )
-				? calcforge_clamp_float( $defaults[ $attribute ], 0, $default_max )
+				? amortexa_clamp_float( $defaults[ $attribute ], 0, $default_max )
 				: 0.0;
 		}
 
@@ -958,10 +958,10 @@ function calcforge_sanitize_attributes( $attributes ) {
 		'downPayment'      => $down_payment,
 		'currencySymbol'   => $currency_symbol,
 		'currencyPosition' => $currency_position,
-		'showAmortization' => calcforge_sanitize_bool(
+		'showAmortization' => amortexa_sanitize_bool(
 			isset( $raw['showAmortization'] ) ? $raw['showAmortization'] : $defaults['showAmortization']
 		),
-		'showCharts'       => calcforge_sanitize_bool(
+		'showCharts'       => amortexa_sanitize_bool(
 			isset( $raw['showCharts'] ) ? $raw['showCharts'] : $defaults['showCharts']
 		),
 		'chartType'        => $chart_type,
@@ -971,13 +971,13 @@ function calcforge_sanitize_attributes( $attributes ) {
 		'paymentFontSize'  => $payment_font_size,
 		'paymentFontWeight' => $payment_font_weight,
 		'theme'            => $theme,
-		'showSliders'      => calcforge_sanitize_bool(
+		'showSliders'      => amortexa_sanitize_bool(
 			isset( $raw['showSliders'] ) ? $raw['showSliders'] : $defaults['showSliders']
 		),
-		'showResults'      => calcforge_sanitize_bool(
+		'showResults'      => amortexa_sanitize_bool(
 			isset( $raw['showResults'] ) ? $raw['showResults'] : $defaults['showResults']
 		),
-		'showCosts'        => calcforge_sanitize_bool(
+		'showCosts'        => amortexa_sanitize_bool(
 			isset( $raw['showCosts'] ) ? $raw['showCosts'] : $defaults['showCosts']
 		),
 		'fontFamily'       => $font_family,
@@ -996,7 +996,7 @@ function calcforge_sanitize_attributes( $attributes ) {
 	 * key => string map, validated against the token schema so only known keys
 	 * with legal values survive, which keeps arbitrary CSS out of post content.
 	 */
-	$sanitized['design'] = calcforge_sanitize_design(
+	$sanitized['design'] = amortexa_sanitize_design(
 		isset( $raw['design'] ) ? $raw['design'] : array()
 	);
 
@@ -1006,12 +1006,12 @@ function calcforge_sanitize_attributes( $attributes ) {
 /**
  * Default number of calculation requests allowed per client per window.
  */
-const CALCFORGE_RATE_LIMIT_MAX = 30;
+const AMORTEXA_RATE_LIMIT_MAX = 30;
 
 /**
  * Default length of the calculation rate limit window, in seconds.
  */
-const CALCFORGE_RATE_LIMIT_WINDOW = MINUTE_IN_SECONDS;
+const AMORTEXA_RATE_LIMIT_WINDOW = MINUTE_IN_SECONDS;
 
 /**
  * Resolves the identifier used to bucket rate limited requests.
@@ -1024,7 +1024,7 @@ const CALCFORGE_RATE_LIMIT_WINDOW = MINUTE_IN_SECONDS;
  *
  * @return string Opaque bucket key for the current caller.
  */
-function calcforge_rate_limit_client_key() {
+function amortexa_rate_limit_client_key() {
 	$remote = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 
 	/**
@@ -1035,7 +1035,7 @@ function calcforge_rate_limit_client_key() {
 	 *
 	 * @param string $remote The remote address reported by the server.
 	 */
-	$key = apply_filters( 'calcforge_rate_limit_client_key', $remote );
+	$key = apply_filters( 'amortexa_rate_limit_client_key', $remote );
 
 	// An empty or over-long key would collapse unrelated callers into one
 	// shared bucket, so fall back to a per-request value that cannot be
@@ -1053,16 +1053,16 @@ function calcforge_rate_limit_client_key() {
  * Kept side-effect free so it is safe to call from a permission callback, which
  * WordPress may invoke more than once for the same request.
  *
- * @param string $bucket Opaque bucket key, typically from calcforge_rate_limit_client_key().
+ * @param string $bucket Opaque bucket key, typically from amortexa_rate_limit_client_key().
  * @return array{count:int,retry_after:int} Requests recorded in the live window, and seconds left in it.
  */
-function calcforge_rate_limit_peek( $bucket ) {
+function amortexa_rate_limit_peek( $bucket ) {
 	$empty = array(
 		'count'       => 0,
 		'retry_after' => 0,
 	);
 
-	$stored = get_transient( 'calcforge_rl_' . md5( $bucket ) );
+	$stored = get_transient( 'amortexa_rl_' . md5( $bucket ) );
 
 	if ( ! is_array( $stored ) || ! isset( $stored['count'], $stored['expires'] ) ) {
 		return $empty;
@@ -1093,12 +1093,12 @@ function calcforge_rate_limit_peek( $bucket ) {
  * not atomic, so concurrent requests can overshoot the limit slightly; that is
  * an acceptable trade for keeping the plugin free of direct database queries.
  *
- * @param string $bucket Opaque bucket key, typically from calcforge_rate_limit_client_key().
+ * @param string $bucket Opaque bucket key, typically from amortexa_rate_limit_client_key().
  * @param int    $limit  Requests permitted per window. Values below 1 disable limiting.
  * @param int    $window Window length in seconds.
  * @return array{count:int,limit:int,exceeded:bool,retry_after:int} Outcome for this hit.
  */
-function calcforge_rate_limit_hit( $bucket, $limit, $window ) {
+function amortexa_rate_limit_hit( $bucket, $limit, $window ) {
 	$limit  = (int) $limit;
 	$window = (int) $window;
 
@@ -1112,7 +1112,7 @@ function calcforge_rate_limit_hit( $bucket, $limit, $window ) {
 	}
 
 	$now     = time();
-	$current = calcforge_rate_limit_peek( $bucket );
+	$current = amortexa_rate_limit_peek( $bucket );
 	$live    = $current['retry_after'] > 0;
 
 	// A live window keeps the expiry it was created with, so it never slides.
@@ -1121,7 +1121,7 @@ function calcforge_rate_limit_hit( $bucket, $limit, $window ) {
 	$exceeded = $count > $limit;
 
 	$retry_after = max( 1, $expires - $now );
-	set_transient( 'calcforge_rl_' . md5( $bucket ), array( 'count' => $count, 'expires' => $expires ), $retry_after );
+	set_transient( 'amortexa_rl_' . md5( $bucket ), array( 'count' => $count, 'expires' => $expires ), $retry_after );
 
 	return array(
 		'count'       => $count,
@@ -1142,7 +1142,7 @@ function calcforge_rate_limit_hit( $bucket, $limit, $window ) {
  * @param int   $term_years  Loan term in whole years.
  * @return float Monthly payment amount, rounded to 2 decimals.
  */
-function calcforge_calculate_monthly_payment( $principal, $annual_rate, $term_years ) {
+function amortexa_calculate_monthly_payment( $principal, $annual_rate, $term_years ) {
 	$principal = (float) $principal;
 	$months    = absint( $term_years ) * 12;
 
@@ -1172,7 +1172,7 @@ function calcforge_calculate_monthly_payment( $principal, $annual_rate, $term_ye
  * @param int   $term_years  Loan term in whole years.
  * @return array<int,array<string,float|int>> Yearly rows with principal, interest, and balance.
  */
-function calcforge_calculate_amortization_schedule( $principal, $annual_rate, $term_years ) {
+function amortexa_calculate_amortization_schedule( $principal, $annual_rate, $term_years ) {
 	$principal    = (float) $principal;
 	$monthly_rate = (float) $annual_rate / 100 / 12;
 	$months       = absint( $term_years ) * 12;
@@ -1181,7 +1181,7 @@ function calcforge_calculate_amortization_schedule( $principal, $annual_rate, $t
 		return array();
 	}
 
-	$payment  = calcforge_calculate_monthly_payment( $principal, $annual_rate, $term_years );
+	$payment  = amortexa_calculate_monthly_payment( $principal, $annual_rate, $term_years );
 	$balance  = $principal;
 	$schedule = array();
 
@@ -1221,8 +1221,8 @@ function calcforge_calculate_amortization_schedule( $principal, $annual_rate, $t
  * @param string              $component  Component key.
  * @return string Hex colour, or '' to defer to the stylesheet.
  */
-function calcforge_get_cost_component_color( $attributes, $component ) {
-	$components = calcforge_get_cost_components();
+function amortexa_get_cost_component_color( $attributes, $component ) {
+	$components = amortexa_get_cost_components();
 
 	if ( ! isset( $components[ $component ] ) ) {
 		return '';
@@ -1231,7 +1231,7 @@ function calcforge_get_cost_component_color( $attributes, $component ) {
 	$token = (string) $components[ $component ]['token'];
 
 	// The swatch is painted inline, so it needs a concrete colour, not a var().
-	$values = calcforge_get_design_values( $attributes );
+	$values = amortexa_get_design_values( $attributes );
 
 	if ( isset( $values[ $token ] ) ) {
 		return $values[ $token ];
@@ -1243,20 +1243,20 @@ function calcforge_get_cost_component_color( $attributes, $component ) {
 /**
  * Returns the cost components that should be drawn, in order.
  *
- * Kept beside calcforge_get_cost_components() so the chart legend and the results
+ * Kept beside amortexa_get_cost_components() so the chart legend and the results
  * panel agree about what exists, and both agree that a zero component is simply
  * absent rather than a zero-width slice.
  *
  * @param array<string,mixed> $result Calculation result.
  * @return array<string,float> Component key => monthly amount, P&I first.
  */
-function calcforge_get_active_costs( $result ) {
+function amortexa_get_active_costs( $result ) {
 	$monthly = isset( $result['monthly_costs'] ) ? (array) $result['monthly_costs'] : array();
 	$active  = array(
 		'pi' => round( isset( $result['monthly_payment'] ) ? (float) $result['monthly_payment'] : 0.0, 2 ),
 	);
 
-	foreach ( calcforge_get_cost_components() as $key => $component ) {
+	foreach ( amortexa_get_cost_components() as $key => $component ) {
 		if ( 'pi' === $key ) {
 			continue;
 		}
@@ -1282,17 +1282,17 @@ function calcforge_get_active_costs( $result ) {
  * @param array<string,mixed> $attrs Sanitized block attributes.
  * @return array<string,float> Component key => annual amount.
  */
-function calcforge_calculate_annual_costs( $attrs ) {
+function amortexa_calculate_annual_costs( $attrs ) {
 	$home_price = (float) $attrs['loanAmount'];
-	$units      = calcforge_resolve_cost_units( $attrs );
+	$units      = amortexa_resolve_cost_units( $attrs );
 	$annual     = array();
 
-	foreach ( calcforge_get_cost_components() as $key => $component ) {
+	foreach ( amortexa_get_cost_components() as $key => $component ) {
 		if ( empty( $component['percent'] ) ) {
 			continue;
 		}
 
-		$attribute = calcforge_get_cost_attribute( $key );
+		$attribute = amortexa_get_cost_attribute( $key );
 		$value     = isset( $attrs[ $attribute ] ) ? (float) $attrs[ $attribute ] : 0.0;
 
 		if ( $value <= 0 ) {
@@ -1329,7 +1329,7 @@ function calcforge_calculate_annual_costs( $attrs ) {
  * @param int   $months      Loan term in months.
  * @return int Month PMI ends, or 0 when there is no PMI or no threshold to reach.
  */
-function calcforge_get_pmi_end_month( $principal, $home_price, $annual_rate, $months ) {
+function amortexa_get_pmi_end_month( $principal, $home_price, $annual_rate, $months ) {
 	if ( $home_price <= 0 || $principal <= 0 || $months <= 0 ) {
 		return 0;
 	}
@@ -1342,7 +1342,7 @@ function calcforge_get_pmi_end_month( $principal, $home_price, $annual_rate, $mo
 	}
 
 	$monthly_rate = $annual_rate / 100 / 12;
-	$payment      = calcforge_calculate_monthly_payment( $principal, $annual_rate, (int) ceil( $months / 12 ) );
+	$payment      = amortexa_calculate_monthly_payment( $principal, $annual_rate, (int) ceil( $months / 12 ) );
 	$balance      = $principal;
 	$threshold    = $home_price * 0.80;
 
@@ -1364,14 +1364,14 @@ function calcforge_get_pmi_end_month( $principal, $home_price, $annual_rate, $mo
 /**
  * Runs the full calculation for a set of block attributes.
  *
- * The result passes through the `calcforge_calculation_result` filter, the
+ * The result passes through the `amortexa_calculation_result` filter, the
  * sanctioned extension point for currency conversion plugins and similar.
  *
  * @param mixed $attributes Raw or partial block attributes.
  * @return array<string,mixed> Calculation result including schedule when enabled.
  */
-function calcforge_calculate( $attributes ) {
-	$attrs  = calcforge_sanitize_attributes( $attributes );
+function amortexa_calculate( $attributes ) {
+	$attrs  = amortexa_sanitize_attributes( $attributes );
 	$months = $attrs['loanTerm'] * 12;
 
 	$result = array(
@@ -1384,7 +1384,7 @@ function calcforge_calculate( $attributes ) {
 	);
 
 	$result['principal']       = max( $result['principal'], 0 );
-	$result['monthly_payment'] = calcforge_calculate_monthly_payment( $result['principal'], $attrs['interestRate'], $attrs['loanTerm'] );
+	$result['monthly_payment'] = amortexa_calculate_monthly_payment( $result['principal'], $attrs['interestRate'], $attrs['loanTerm'] );
 	$result['total_paid']      = round( $result['monthly_payment'] * $months, 2 );
 	$result['total_interest']  = round( max( $result['total_paid'] - $result['principal'], 0 ), 2 );
 
@@ -1396,7 +1396,7 @@ function calcforge_calculate( $attributes ) {
 	 * would inflate every percentage and put PMI on borrowers above 80% LTV.
 	 */
 	$home_price = (float) $attrs['loanAmount'];
-	$annual     = calcforge_calculate_annual_costs( $attrs );
+	$annual     = amortexa_calculate_annual_costs( $attrs );
 
 	/*
 	 * PMI is the one component that stops part way through the loan, so it cannot
@@ -1411,7 +1411,7 @@ function calcforge_calculate( $attributes ) {
 	 * which reads as though something was paid and then stopped.
 	 */
 	$pmi_end = $pmi_base > 0
-		? calcforge_get_pmi_end_month( $result['principal'], $home_price, (float) $attrs['interestRate'], $months )
+		? amortexa_get_pmi_end_month( $result['principal'], $home_price, (float) $attrs['interestRate'], $months )
 		: 0;
 
 	$result['pmi_end_month'] = $pmi_end;
@@ -1441,7 +1441,7 @@ function calcforge_calculate( $attributes ) {
 	$result['total_out_of_pocket'] = round( $result['total_paid'] + $result['total_costs'], 2 );
 
 	if ( $attrs['showAmortization'] ) {
-		$result['schedule'] = calcforge_calculate_amortization_schedule( $result['principal'], $attrs['interestRate'], $attrs['loanTerm'] );
+		$result['schedule'] = amortexa_calculate_amortization_schedule( $result['principal'], $attrs['interestRate'], $attrs['loanTerm'] );
 	}
 
 	/**
@@ -1450,21 +1450,21 @@ function calcforge_calculate( $attributes ) {
 	 * @param array<string,mixed> $result     Computed payment data and schedule.
 	 * @param array<string,mixed> $attributes Sanitized block attributes used for the calculation.
 	 */
-	return apply_filters( 'calcforge_calculation_result', $result, $attrs );
+	return apply_filters( 'amortexa_calculation_result', $result, $attrs );
 }
 
 /**
  * Resolves the currency symbol for a block instance.
  *
  * Falls back to the site-wide setting when the attribute is empty, then defers
- * to the `calcforge_currency_symbol` filter for locale/currency plugins.
+ * to the `amortexa_currency_symbol` filter for locale/currency plugins.
  *
  * @param mixed $attributes Block attributes (sanitized or raw).
  * @return string Currency symbol.
  */
-function calcforge_resolve_currency_symbol( $attributes ) {
+function amortexa_resolve_currency_symbol( $attributes ) {
 	$attributes = is_array( $attributes ) ? $attributes : array();
-	$settings   = calcforge_get_settings();
+	$settings   = amortexa_get_settings();
 
 	$symbol = ! empty( $attributes['currencySymbol'] )
 		? sanitize_text_field( (string) $attributes['currencySymbol'] )
@@ -1480,7 +1480,7 @@ function calcforge_resolve_currency_symbol( $attributes ) {
 	 * @param string              $symbol     Resolved currency symbol.
 	 * @param array<string,mixed> $attributes Block attributes for context.
 	 */
-	return apply_filters( 'calcforge_currency_symbol', wp_html_excerpt( $symbol, 8, '' ), $attributes );
+	return apply_filters( 'amortexa_currency_symbol', wp_html_excerpt( $symbol, 8, '' ), $attributes );
 }
 
 /**
@@ -1494,7 +1494,7 @@ function calcforge_resolve_currency_symbol( $attributes ) {
  * @param string $position Symbol placement: 'prefix' (default) or 'suffix'.
  * @return string Formatted amount such as "$1,234.56".
  */
-function calcforge_format_amount( $amount, $symbol, $decimals = 2, $position = 'prefix' ) {
+function amortexa_format_amount( $amount, $symbol, $decimals = 2, $position = 'prefix' ) {
 	$decimals  = min( max( absint( $decimals ), 0 ), 4 );
 	$formatted = number_format_i18n( (float) $amount, $decimals );
 
@@ -1514,12 +1514,12 @@ function calcforge_format_amount( $amount, $symbol, $decimals = 2, $position = '
  *
  * @return array<string,mixed> Editor data payload.
  */
-function calcforge_get_editor_data() {
-	$settings = calcforge_get_settings();
-	$defaults = calcforge_get_default_attributes();
+function amortexa_get_editor_data() {
+	$settings = amortexa_get_settings();
+	$defaults = amortexa_get_default_attributes();
 
 	$skins = array();
-	foreach ( calcforge_get_skins() as $value => $label ) {
+	foreach ( amortexa_get_skins() as $value => $label ) {
 		$skins[] = array(
 			'value' => $value,
 			'label' => $label,
@@ -1527,7 +1527,7 @@ function calcforge_get_editor_data() {
 	}
 
 	$colors = array();
-	foreach ( calcforge_get_color_attributes() as $control ) {
+	foreach ( amortexa_get_color_attributes() as $control ) {
 		$colors[] = array(
 			'key'    => $control['key'],
 			'label'  => $control['label'],
@@ -1543,7 +1543,7 @@ function calcforge_get_editor_data() {
 	 */
 	$design_groups = array();
 
-	foreach ( calcforge_get_design_groups() as $group ) {
+	foreach ( amortexa_get_design_groups() as $group ) {
 		$tokens = array();
 
 		foreach ( $group['tokens'] as $token ) {
@@ -1565,7 +1565,7 @@ function calcforge_get_editor_data() {
 			}
 
 			if ( 'select' === $token['type'] ) {
-				$lists        = calcforge_get_design_option_lists();
+				$lists        = amortexa_get_design_option_lists();
 				$name         = $token['options'];
 				$list         = isset( $lists[ $name ] ) ? $lists[ $name ] : array();
 				$entry['options'] = array();
@@ -1601,20 +1601,20 @@ function calcforge_get_editor_data() {
 
 	return array(
 		'skins'           => $skins,
-		'chartTypes'      => calcforge_get_chart_types(),
-		'layouts'         => calcforge_get_layouts(),
-		'formColumns'     => calcforge_get_form_columns(),
-		'fontFamilies'    => calcforge_get_font_families(),
-		'fontWeights'     => calcforge_get_font_weights(),
-		'currencyPosition' => calcforge_get_currency_positions(),
+		'chartTypes'      => amortexa_get_chart_types(),
+		'layouts'         => amortexa_get_layouts(),
+		'formColumns'     => amortexa_get_form_columns(),
+		'fontFamilies'    => amortexa_get_font_families(),
+		'fontWeights'     => amortexa_get_font_weights(),
+		'currencyPosition' => amortexa_get_currency_positions(),
 		'colors'          => $colors,
 		'designGroups'    => $design_groups,
-		'colorSwatches'   => calcforge_get_color_swatches(),
+		'colorSwatches'   => amortexa_get_color_swatches(),
 		'fontStacks'      => array(
 			'inherit' => '',
-			'sans'    => calcforge_get_font_stack( 'sans' ),
-			'serif'   => calcforge_get_font_stack( 'serif' ),
-			'mono'    => calcforge_get_font_stack( 'mono' ),
+			'sans'    => amortexa_get_font_stack( 'sans' ),
+			'serif'   => amortexa_get_font_stack( 'serif' ),
+			'mono'    => amortexa_get_font_stack( 'mono' ),
 		),
 		'siteDefaults'    => $defaults,
 		'siteSettings'    => $settings,

@@ -8,7 +8,7 @@
  * cannot express: attach translation catalogues, and hand the editor the option
  * lists that the block inspector builds its controls from.
  *
- * @package CalcForge
+ * @package Amortexa
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,12 +18,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Attaches script translations and editor data to the auto-registered block assets.
  */
-class CalcForge_Assets {
+class Amortexa_Assets {
 
 	/**
 	 * Global JS variable the block editor reads its option lists from.
 	 */
-	const EDITOR_DATA = 'calcforgeData';
+	const EDITOR_DATA = 'amortexaData';
 
 	/**
 	 * Registers the hooks this component responds to.
@@ -40,7 +40,7 @@ class CalcForge_Assets {
 	 * WordPress generates handles cannot silently break translations.
 	 */
 	public function configure_editor_assets() {
-		$block_type = WP_Block_Type_Registry::get_instance()->get_registered( CalcForge_Blocks::BLOCK_NAME );
+		$block_type = WP_Block_Type_Registry::get_instance()->get_registered( Amortexa_Blocks::BLOCK_NAME );
 
 		if ( ! $block_type ) {
 			return;
@@ -57,12 +57,12 @@ class CalcForge_Assets {
 		 * the front end embeds the same data.
 		 */
 		$encoded = wp_json_encode(
-			calcforge_get_editor_data(),
+			amortexa_get_editor_data(),
 			JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
 		);
 
 		foreach ( (array) $block_type->editor_script_handles as $handle ) {
-			wp_set_script_translations( $handle, CALCFORGE_TEXT_DOMAIN );
+			wp_set_script_translations( $handle, AMORTEXA_TEXT_DOMAIN );
 
 			wp_add_inline_script(
 				$handle,

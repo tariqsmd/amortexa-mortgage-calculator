@@ -3,7 +3,7 @@
  *
  * The editor preview renders in JavaScript while the front end renders from
  * PHP, so both sides need the same rule. This module mirrors
- * calcforge_resolve_panel_order() in includes/helpers.php; the two must be
+ * amortexa_resolve_panel_order() in includes/helpers.php; the two must be
  * changed together or the editor will preview a different order from the one
  * visitors get.
  *

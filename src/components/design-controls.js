@@ -55,7 +55,7 @@ function ResetRow( { isSet, onReset } ) {
 				onClick={ onReset }
 				style={ { alignSelf: 'flex-start' } }
 			>
-				{ __( 'Reset', 'calcforge' ) }
+				{ __( 'Reset', 'amortexa-mortgage-calculator' ) }
 			</Button>
 		</PanelRow>
 	);
@@ -82,10 +82,10 @@ function SpacingControl( { token, value, expanded, onChange } ) {
 	const min = Number.isFinite( token.min ) ? token.min : 0;
 	const max = Number.isFinite( token.max ) ? token.max : 120;
 	const labels = [
-		__( 'Top', 'calcforge' ),
-		__( 'Right', 'calcforge' ),
-		__( 'Bottom', 'calcforge' ),
-		__( 'Left', 'calcforge' ),
+		__( 'Top', 'amortexa-mortgage-calculator' ),
+		__( 'Right', 'amortexa-mortgage-calculator' ),
+		__( 'Bottom', 'amortexa-mortgage-calculator' ),
+		__( 'Left', 'amortexa-mortgage-calculator' ),
 	];
 
 	if ( ! expanded ) {
@@ -149,7 +149,7 @@ function TokenControl( { token, value, expanded, onChange } ) {
 		return (
 			<BaseControl
 				label={ token.label }
-				id={ `calcforge-design-${ token.key }` }
+				id={ `amortexa-design-${ token.key }` }
 				__nextHasNoMarginBottom
 			>
 				<ColorPalette
@@ -261,7 +261,7 @@ export default function DesignControls( { attributes, setAttributes } ) {
 	return (
 		<>
 			<PanelBody
-				title={ __( 'Design', 'calcforge' ) }
+				title={ __( 'Design', 'amortexa-mortgage-calculator' ) }
 				initialOpen={ true }
 			>
 				<p
@@ -273,7 +273,7 @@ export default function DesignControls( { attributes, setAttributes } ) {
 				>
 					{ __(
 						'Anything left untouched follows the colour skin. Clearing a control returns that element to the skin value.',
-						'calcforge'
+						'amortexa-mortgage-calculator'
 					) }
 				</p>
 			</PanelBody>
@@ -335,7 +335,7 @@ export default function DesignControls( { attributes, setAttributes } ) {
 							<ToggleControl
 								label={ __(
 									'Set spacing per side',
-									'calcforge'
+									'amortexa-mortgage-calculator'
 								) }
 								checked={ isExpanded }
 								onChange={ ( next ) =>

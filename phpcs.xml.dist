@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="CalcForge" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xml.dist">
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Amortexa Mortgage Calculator" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xml.dist">
 
-	<description>WordPress Coding Standards for the CalcForge plugin.</description>
+	<description>WordPress Coding Standards for the Amortexa Mortgage Calculator plugin.</description>
 
 	<!-- Scan all PHP files in the project root and includes/src directories. -->
 	<file>.</file>
@@ -28,7 +28,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="calcforge"/>
+				<element value="amortexa-mortgage-calculator"/>
 			</property>
 		</properties>
 	</rule>
@@ -37,9 +37,9 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="calcforge_"/>
-				<element value="CalcForge_"/>
-				<element value="CALCFORGE_"/>
+				<element value="amortexa_"/>
+				<element value="Amortexa_"/>
+				<element value="AMORTEXA_"/>
 			</property>
 		</properties>
 	</rule>

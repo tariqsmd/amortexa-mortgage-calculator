@@ -83,9 +83,9 @@ function renderLegendInto( host, items ) {
 		...items.map( ( item ) => {
 			const span = document.createElement( 'span' );
 			const dot = document.createElement( 'span' );
-			dot.className = 'calcforge-calc__legend-dot';
+			dot.className = 'amortexa-calc__legend-dot';
 			dot.style.backgroundColor = item.color;
-			span.className = 'calcforge-calc__legend-item';
+			span.className = 'amortexa-calc__legend-item';
 			span.appendChild( dot );
 			span.appendChild( document.createTextNode( item.label ) );
 			return span;
@@ -151,10 +151,10 @@ export default function Preview( {
 		const styles = window.getComputedStyle( rootRef.current );
 		const palette = {
 			accent:
-				styles.getPropertyValue( '--calcforge-accent' ).trim() ||
+				styles.getPropertyValue( '--amortexa-accent' ).trim() ||
 				'#1a6f4b',
 			accent2:
-				styles.getPropertyValue( '--calcforge-accent-2' ).trim() ||
+				styles.getPropertyValue( '--amortexa-accent-2' ).trim() ||
 				'#d97706',
 		};
 
@@ -173,7 +173,7 @@ export default function Preview( {
 			'other',
 		] ) {
 			costColors[ key ] =
-				styles.getPropertyValue( `--calcforge-cost-${ key }` ).trim() ||
+				styles.getPropertyValue( `--amortexa-cost-${ key }` ).trim() ||
 				'#2563eb';
 		}
 
@@ -210,8 +210,14 @@ export default function Preview( {
 						Math.round( previewDonutSize * 0.135 )
 					),
 					centerTitle: hasPreviewCosts
-						? __( 'Total Monthly Cost', 'calcforge' )
-						: __( 'Monthly Payment', 'calcforge' ),
+						? __(
+								'Total Monthly Cost',
+								'amortexa-mortgage-calculator'
+						  )
+						: __(
+								'Monthly Payment',
+								'amortexa-mortgage-calculator'
+						  ),
 					centerValue: formatAmount(
 						hasPreviewCosts
 							? result.totalMonthlyCost
@@ -289,31 +295,40 @@ export default function Preview( {
 
 		renderLegendInto( legendRef.current, [
 			{
-				label: __( 'Financed Principal', 'calcforge' ),
+				label: __(
+					'Financed Principal',
+					'amortexa-mortgage-calculator'
+				),
 				color: palette.accent,
 			},
 			{
-				label: __( 'Total Interest', 'calcforge' ),
+				label: __( 'Total Interest', 'amortexa-mortgage-calculator' ),
 				color: palette.accent2,
 			},
 		] );
 		renderLegendInto( lineLegendRef.current, [
 			{
-				label: __( 'Remaining Balance', 'calcforge' ),
+				label: __(
+					'Remaining Balance',
+					'amortexa-mortgage-calculator'
+				),
 				color: palette.accent,
 			},
 			{
-				label: __( 'Cumulative Interest', 'calcforge' ),
+				label: __(
+					'Cumulative Interest',
+					'amortexa-mortgage-calculator'
+				),
 				color: palette.accent2,
 			},
 		] );
 		renderLegendInto( barLegendRef.current, [
 			{
-				label: __( 'Principal Paid', 'calcforge' ),
+				label: __( 'Principal Paid', 'amortexa-mortgage-calculator' ),
 				color: palette.accent,
 			},
 			{
-				label: __( 'Interest Paid', 'calcforge' ),
+				label: __( 'Interest Paid', 'amortexa-mortgage-calculator' ),
 				color: palette.accent2,
 			},
 		] );
@@ -335,22 +350,31 @@ export default function Preview( {
 				{
 					value: result.principal,
 					color: palette.accent,
-					label: __( 'Financed Principal', 'calcforge' ),
+					label: __(
+						'Financed Principal',
+						'amortexa-mortgage-calculator'
+					),
 				},
 				{
 					value: yearOneBalance,
 					color: withAlpha( palette.accent, 0.5 ),
-					label: __( 'Balance After Year 1', 'calcforge' ),
+					label: __(
+						'Balance After Year 1',
+						'amortexa-mortgage-calculator'
+					),
 				},
 				{
 					value: result.totalInterest,
 					color: palette.accent2,
-					label: __( 'Total Interest', 'calcforge' ),
+					label: __(
+						'Total Interest',
+						'amortexa-mortgage-calculator'
+					),
 				},
 				{
 					value: result.totalPaid,
 					color: withAlpha( palette.accent2, 0.5 ),
-					label: __( 'Total Paid', 'calcforge' ),
+					label: __( 'Total Paid', 'amortexa-mortgage-calculator' ),
 				},
 			];
 
@@ -460,41 +484,41 @@ export default function Preview( {
 
 	return (
 		<>
-			<p className="calcforge-calc__editor-note">
+			<p className="amortexa-calc__editor-note">
 				{ __(
 					'Live Preview use Settings and Styles sidebar to change values.',
-					'calcforge'
+					'amortexa-mortgage-calculator'
 				) }
 			</p>
 			<div
-				className={ `calcforge-calc__grid calcforge-calc__grid--${
+				className={ `amortexa-calc__grid amortexa-calc__grid--${
 					layout === 'split' ? 'split' : 'stacked'
-				}${ showResults ? '' : ' calcforge-calc__grid--form-only' }` }
+				}${ showResults ? '' : ' amortexa-calc__grid--form-only' }` }
 			>
 				{ orderedPanels.map( ( panel ) => {
 					if ( 'form' === panel ) {
 						return (
 							<form
 								key="form"
-								className="calcforge-calc__form"
+								className="amortexa-calc__form"
 								onSubmit={ ( event ) => event.preventDefault() }
 							>
 								{ NUMERIC_FIELDS.map( ( field ) => (
 									<div
 										key={ field.key }
-										className="calcforge-calc__control"
+										className="amortexa-calc__control"
 									>
 										<label
-											className="calcforge-calc__label"
-											htmlFor={ `calcforge-edit-${ field.key }` }
+											className="amortexa-calc__label"
+											htmlFor={ `amortexa-edit-${ field.key }` }
 										>
 											{ field.label }
 										</label>
-										<div className="calcforge-calc__control-row">
+										<div className="amortexa-calc__control-row">
 											{ showSliders && (
 												<input
 													type="range"
-													className="calcforge-calc__slider"
+													className="amortexa-calc__slider"
 													value={ Number(
 														attributes[ field.key ]
 													) }
@@ -515,8 +539,8 @@ export default function Preview( {
 											) }
 											<input
 												type="number"
-												id={ `calcforge-edit-${ field.key }` }
-												className="calcforge-calc__field"
+												id={ `amortexa-edit-${ field.key }` }
+												className="amortexa-calc__field"
 												value={ String(
 													attributes[ field.key ] ??
 														''
@@ -543,13 +567,16 @@ export default function Preview( {
 						return (
 							<div
 								key="results"
-								className="calcforge-calc__results"
+								className="amortexa-calc__results"
 							>
-								<p className="calcforge-calc__result-label">
-									{ __( 'Monthly Payment', 'calcforge' ) }
+								<p className="amortexa-calc__result-label">
+									{ __(
+										'Monthly Payment',
+										'amortexa-mortgage-calculator'
+									) }
 								</p>
 								<p
-									className="calcforge-calc__result-primary"
+									className="amortexa-calc__result-primary"
 									style={ paymentTypography }
 								>
 									{ formatAmount(
@@ -558,12 +585,12 @@ export default function Preview( {
 										currencyPosition
 									) }
 								</p>
-								<dl className="calcforge-calc__result-list">
-									<div className="calcforge-calc__result-row">
+								<dl className="amortexa-calc__result-list">
+									<div className="amortexa-calc__result-row">
 										<dt>
 											{ __(
 												'Financed Principal',
-												'calcforge'
+												'amortexa-mortgage-calculator'
 											) }
 										</dt>
 										<dd>
@@ -574,11 +601,11 @@ export default function Preview( {
 											) }
 										</dd>
 									</div>
-									<div className="calcforge-calc__result-row">
+									<div className="amortexa-calc__result-row">
 										<dt>
 											{ __(
 												'Total Interest',
-												'calcforge'
+												'amortexa-mortgage-calculator'
 											) }
 										</dt>
 										<dd>
@@ -589,9 +616,12 @@ export default function Preview( {
 											) }
 										</dd>
 									</div>
-									<div className="calcforge-calc__result-row">
+									<div className="amortexa-calc__result-row">
 										<dt>
-											{ __( 'Total Paid', 'calcforge' ) }
+											{ __(
+												'Total Paid',
+												'amortexa-mortgage-calculator'
+											) }
 										</dt>
 										<dd>
 											{ formatAmount(
@@ -608,81 +638,78 @@ export default function Preview( {
 
 					if ( 'charts' === panel ) {
 						return (
-							<div
-								className="calcforge-calc__charts"
-								key="charts"
-							>
+							<div className="amortexa-calc__charts" key="charts">
 								{ [ 'donut', 'both' ].includes( chartType ) && (
-									<figure className="calcforge-calc__chart">
-										<figcaption className="calcforge-calc__chart-title">
+									<figure className="amortexa-calc__chart">
+										<figcaption className="amortexa-calc__chart-title">
 											{ __(
 												'Payment Composition',
-												'calcforge'
+												'amortexa-mortgage-calculator'
 											) }
 										</figcaption>
 										<div
-											className="calcforge-calc__chart-body"
+											className="amortexa-calc__chart-body"
 											ref={ donutRef }
 										/>
 										<figcaption
-											className="calcforge-calc__legend"
+											className="amortexa-calc__legend"
 											ref={ legendRef }
 										/>
 									</figure>
 								) }
 
 								{ [ 'line', 'both' ].includes( chartType ) && (
-									<figure className="calcforge-calc__chart">
-										<figcaption className="calcforge-calc__chart-title">
+									<figure className="amortexa-calc__chart">
+										<figcaption className="amortexa-calc__chart-title">
 											{ __(
 												'Balance Over Time',
-												'calcforge'
+												'amortexa-mortgage-calculator'
 											) }
 										</figcaption>
 										<div
-											className="calcforge-calc__chart-body"
+											className="amortexa-calc__chart-body"
 											ref={ lineRef }
 										/>
 										<figcaption
-											className="calcforge-calc__legend"
+											className="amortexa-calc__legend"
 											ref={ lineLegendRef }
 										/>
 									</figure>
 								) }
 
 								{ chartType === 'bar' && (
-									<figure className="calcforge-calc__chart">
-										<figcaption className="calcforge-calc__chart-title">
+									<figure className="amortexa-calc__chart">
+										<figcaption className="amortexa-calc__chart-title">
 											{ __(
 												'Principal vs Interest by Year',
-												'calcforge'
+												'amortexa-mortgage-calculator'
 											) }
 										</figcaption>
 										<div
-											className="calcforge-calc__chart-body"
+											className="amortexa-calc__chart-body"
 											ref={ barRef }
 										/>
 										<figcaption
-											className="calcforge-calc__legend"
+											className="amortexa-calc__legend"
 											ref={ barLegendRef }
 										/>
 									</figure>
 								) }
 
 								{ chartType === 'dots' && (
-									<figure className="calcforge-calc__chart">
-										<figcaption className="calcforge-calc__chart-title">
+									<figure className="amortexa-calc__chart">
+										<figcaption className="amortexa-calc__chart-title">
 											{ __(
 												'Parameter Comparison',
-												'calcforge'
+												'amortexa-mortgage-calculator'
 											) }
 										</figcaption>
 										<div
-											className="calcforge-calc__chart-body"
+											className="amortexa-calc__chart-body"
 											ref={ dotsRef }
 										/>
 										<figcaption
-											className="calcforge-calc__legend"
+											className="amortexa-calc__legend"
 											ref={ dotsLegendRef }
 										/>
 									</figure>
@@ -692,37 +719,37 @@ export default function Preview( {
 					}
 
 					return (
-						<div
-							key="schedule"
-							className="calcforge-calc__schedule"
-						>
+						<div key="schedule" className="amortexa-calc__schedule">
 							{ /* Mirrors the schedule-body wrapper in render.php so
 							 * the table scrolls horizontally in a narrow
 							 * editor viewport, exactly as it does on the
 							 * frontend. */ }
-							<div className="calcforge-calc__schedule-body">
-								<table className="calcforge-calc__table">
+							<div className="amortexa-calc__schedule-body">
+								<table className="amortexa-calc__table">
 									<thead>
 										<tr>
 											<th scope="col">
-												{ __( 'Year', 'calcforge' ) }
+												{ __(
+													'Year',
+													'amortexa-mortgage-calculator'
+												) }
 											</th>
 											<th scope="col">
 												{ __(
 													'Principal Paid',
-													'calcforge'
+													'amortexa-mortgage-calculator'
 												) }
 											</th>
 											<th scope="col">
 												{ __(
 													'Interest Paid',
-													'calcforge'
+													'amortexa-mortgage-calculator'
 												) }
 											</th>
 											<th scope="col">
 												{ __(
 													'Remaining Balance',
-													'calcforge'
+													'amortexa-mortgage-calculator'
 												) }
 											</th>
 										</tr>

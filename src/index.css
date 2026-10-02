@@ -7,8 +7,8 @@
  */
 
 /* Identifies the interactive preview inside the editor canvas. */
-.calcforge-calc__editor-note,
-.editor-styles-wrapper .calcforge-calc__editor-note {
+.amortexa-calc__editor-note,
+.editor-styles-wrapper .amortexa-calc__editor-note {
 	display: block;
 	margin: 0 0 14px;
 	padding: 8px 12px;
@@ -25,13 +25,13 @@
  * impossible to remove. Values are edited via the Settings sidebar instead;
  * the front end stays fully interactive.
  */
-.calcforge-calc__slider,
-.calcforge-calc__field {
+.amortexa-calc__slider,
+.amortexa-calc__field {
 	pointer-events: none;
 }
 
 /* Helper copy inside inspector panels, e.g. the site-defaults explainer. */
-.calcforge-inspector__note {
+.amortexa-inspector__note {
 	margin: 0 0 12px;
 	font-size: 12px;
 	line-height: 1.5;

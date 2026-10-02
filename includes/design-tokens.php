@@ -24,7 +24,7 @@
  *           custom property.
  * - select  one of the token's declared options, emitted verbatim.
  *
- * @package CalcForge
+ * @package Amortexa
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,18 +40,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @return array<string,array<string,string>> Option list name => value => label.
  */
-function calcforge_get_design_option_lists() {
+function amortexa_get_design_option_lists() {
 	$transforms = array(
-		''             => __( 'As typed', CALCFORGE_TEXT_DOMAIN ),
-		'uppercase'    => __( 'UPPERCASE', CALCFORGE_TEXT_DOMAIN ),
-		'lowercase'    => __( 'lowercase', CALCFORGE_TEXT_DOMAIN ),
-		'capitalize'   => __( 'Capitalize Each Word', CALCFORGE_TEXT_DOMAIN ),
+		''             => __( 'As typed', AMORTEXA_TEXT_DOMAIN ),
+		'uppercase'    => __( 'UPPERCASE', AMORTEXA_TEXT_DOMAIN ),
+		'lowercase'    => __( 'lowercase', AMORTEXA_TEXT_DOMAIN ),
+		'capitalize'   => __( 'Capitalize Each Word', AMORTEXA_TEXT_DOMAIN ),
 	);
 
-	$weights = calcforge_get_font_weights();
+	$weights = amortexa_get_font_weights();
 
 	// A leading empty option already means "inherit", so keep it.
-	$weight_options = array( '' => __( 'Default', CALCFORGE_TEXT_DOMAIN ) );
+	$weight_options = array( '' => __( 'Default', AMORTEXA_TEXT_DOMAIN ) );
 
 	foreach ( $weights as $weight => $label ) {
 		if ( '' === $weight ) {
@@ -61,9 +61,9 @@ function calcforge_get_design_option_lists() {
 		$weight_options[ $weight ] = $label;
 	}
 
-	$family_options = array( '' => __( 'Default', CALCFORGE_TEXT_DOMAIN ) );
+	$family_options = array( '' => __( 'Default', AMORTEXA_TEXT_DOMAIN ) );
 
-	foreach ( calcforge_get_font_families() as $family => $label ) {
+	foreach ( amortexa_get_font_families() as $family => $label ) {
 		if ( 'inherit' === $family ) {
 			continue;
 		}
@@ -78,12 +78,12 @@ function calcforge_get_design_option_lists() {
 	 * between every letter rather than four hundredths of an em.
 	 */
 	$tracking_options = array(
-		''        => __( 'Default', CALCFORGE_TEXT_DOMAIN ),
-		'-0.02em' => __( 'Tighter', CALCFORGE_TEXT_DOMAIN ),
-		'0'       => __( 'Normal', CALCFORGE_TEXT_DOMAIN ),
-		'0.02em'  => __( 'Slightly wide', CALCFORGE_TEXT_DOMAIN ),
-		'0.04em'  => __( 'Wide', CALCFORGE_TEXT_DOMAIN ),
-		'0.08em'  => __( 'Very wide', CALCFORGE_TEXT_DOMAIN ),
+		''        => __( 'Default', AMORTEXA_TEXT_DOMAIN ),
+		'-0.02em' => __( 'Tighter', AMORTEXA_TEXT_DOMAIN ),
+		'0'       => __( 'Normal', AMORTEXA_TEXT_DOMAIN ),
+		'0.02em'  => __( 'Slightly wide', AMORTEXA_TEXT_DOMAIN ),
+		'0.04em'  => __( 'Wide', AMORTEXA_TEXT_DOMAIN ),
+		'0.08em'  => __( 'Very wide', AMORTEXA_TEXT_DOMAIN ),
 	);
 
 	return array(
@@ -104,7 +104,7 @@ function calcforge_get_design_option_lists() {
  * @param int    $min       Smallest accepted value.
  * @return array<string,mixed> Token definition.
  */
-function calcforge_length_token( $key, $var, $label, $max = 64, $min = 0 ) {
+function amortexa_length_token( $key, $var, $label, $max = 64, $min = 0 ) {
 	return array(
 		'key'     => $key,
 		'var'     => $var,
@@ -125,7 +125,7 @@ function calcforge_length_token( $key, $var, $label, $max = 64, $min = 0 ) {
  * @param int    $max   Largest accepted value on any side.
  * @return array<string,mixed> Token definition.
  */
-function calcforge_spacing_token( $key, $var, $label, $max = 120 ) {
+function amortexa_spacing_token( $key, $var, $label, $max = 120 ) {
 	return array(
 		'key'   => $key,
 		'var'   => $var,
@@ -147,7 +147,7 @@ function calcforge_spacing_token( $key, $var, $label, $max = 120 ) {
  * @param string $legacy Optional pre-existing attribute to fall back to.
  * @return array<string,mixed> Token definition.
  */
-function calcforge_color_token( $key, $var, $label, $legacy = '' ) {
+function amortexa_color_token( $key, $var, $label, $legacy = '' ) {
 	return array(
 		'key'    => $key,
 		'var'    => $var,
@@ -166,7 +166,7 @@ function calcforge_color_token( $key, $var, $label, $legacy = '' ) {
  * @param string $options Name of a shared option list.
  * @return array<string,mixed> Token definition.
  */
-function calcforge_select_token( $key, $var, $label, $options ) {
+function amortexa_select_token( $key, $var, $label, $options ) {
 	return array(
 		'key'     => $key,
 		'var'     => $var,
@@ -181,80 +181,80 @@ function calcforge_select_token( $key, $var, $label, $options ) {
  *
  * @return array<int,array<string,mixed>> Token definitions.
  */
-function calcforge_get_design_tokens() {
+function amortexa_get_design_tokens() {
 	$tokens = array();
 
 	// The calculator card itself.
-	$tokens[] = calcforge_color_token( 'rootBg', '--calcforge-bg', __( 'Background', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'rootText', '--calcforge-text', __( 'Text', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'rootBorder', '--calcforge-border', __( 'Border', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_length_token( 'rootRadius', '--calcforge-radius', __( 'Corner radius', CALCFORGE_TEXT_DOMAIN ), 64 );
-	$tokens[] = calcforge_spacing_token( 'rootPadding', '--calcforge-padding', __( 'Padding', CALCFORGE_TEXT_DOMAIN ), 120 );
+	$tokens[] = amortexa_color_token( 'rootBg', '--amortexa-bg', __( 'Background', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'rootText', '--amortexa-text', __( 'Text', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'rootBorder', '--amortexa-border', __( 'Border', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_length_token( 'rootRadius', '--amortexa-radius', __( 'Corner radius', AMORTEXA_TEXT_DOMAIN ), 64 );
+	$tokens[] = amortexa_spacing_token( 'rootPadding', '--amortexa-padding', __( 'Padding', AMORTEXA_TEXT_DOMAIN ), 120 );
 
 	// The panel boxes: inputs, results, charts, schedule.
-	$tokens[] = calcforge_color_token( 'panelBg', '--calcforge-panel-bg', __( 'Background', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_length_token( 'panelRadius', '--calcforge-panel-radius', __( 'Corner radius', CALCFORGE_TEXT_DOMAIN ), 64 );
-	$tokens[] = calcforge_spacing_token( 'panelPadding', '--calcforge-panel-padding', __( 'Padding', CALCFORGE_TEXT_DOMAIN ), 120 );
-	$tokens[] = calcforge_length_token( 'panelGap', '--calcforge-panel-gap', __( 'Gap between panels', CALCFORGE_TEXT_DOMAIN ), 96 );
+	$tokens[] = amortexa_color_token( 'panelBg', '--amortexa-panel-bg', __( 'Background', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_length_token( 'panelRadius', '--amortexa-panel-radius', __( 'Corner radius', AMORTEXA_TEXT_DOMAIN ), 64 );
+	$tokens[] = amortexa_spacing_token( 'panelPadding', '--amortexa-panel-padding', __( 'Padding', AMORTEXA_TEXT_DOMAIN ), 120 );
+	$tokens[] = amortexa_length_token( 'panelGap', '--amortexa-panel-gap', __( 'Gap between panels', AMORTEXA_TEXT_DOMAIN ), 96 );
 
 	// Field labels.
-	$tokens[] = calcforge_color_token( 'labelColor', '--calcforge-label-color', __( 'Colour', CALCFORGE_TEXT_DOMAIN ), 'labelColor' );
-	$tokens[] = calcforge_select_token( 'labelFamily', '--calcforge-label-family', __( 'Font', CALCFORGE_TEXT_DOMAIN ), 'families' );
-	$tokens[] = calcforge_length_token( 'labelSize', '--calcforge-label-size', __( 'Size', CALCFORGE_TEXT_DOMAIN ), 32, 8 );
-	$tokens[] = calcforge_select_token( 'labelWeight', '--calcforge-label-weight', __( 'Weight', CALCFORGE_TEXT_DOMAIN ), 'weights' );
-	$tokens[] = calcforge_select_token( 'labelTransform', '--calcforge-label-transform', __( 'Case', CALCFORGE_TEXT_DOMAIN ), 'transforms' );
-	$tokens[] = calcforge_select_token( 'labelTracking', '--calcforge-label-tracking', __( 'Letter spacing', CALCFORGE_TEXT_DOMAIN ), 'tracking' );
-	$tokens[] = calcforge_spacing_token( 'labelMargin', '--calcforge-label-margin', __( 'Margin', CALCFORGE_TEXT_DOMAIN ), 48 );
+	$tokens[] = amortexa_color_token( 'labelColor', '--amortexa-label-color', __( 'Colour', AMORTEXA_TEXT_DOMAIN ), 'labelColor' );
+	$tokens[] = amortexa_select_token( 'labelFamily', '--amortexa-label-family', __( 'Font', AMORTEXA_TEXT_DOMAIN ), 'families' );
+	$tokens[] = amortexa_length_token( 'labelSize', '--amortexa-label-size', __( 'Size', AMORTEXA_TEXT_DOMAIN ), 32, 8 );
+	$tokens[] = amortexa_select_token( 'labelWeight', '--amortexa-label-weight', __( 'Weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
+	$tokens[] = amortexa_select_token( 'labelTransform', '--amortexa-label-transform', __( 'Case', AMORTEXA_TEXT_DOMAIN ), 'transforms' );
+	$tokens[] = amortexa_select_token( 'labelTracking', '--amortexa-label-tracking', __( 'Letter spacing', AMORTEXA_TEXT_DOMAIN ), 'tracking' );
+	$tokens[] = amortexa_spacing_token( 'labelMargin', '--amortexa-label-margin', __( 'Margin', AMORTEXA_TEXT_DOMAIN ), 48 );
 
 	// Text inputs and selects.
-	$tokens[] = calcforge_color_token( 'fieldText', '--calcforge-field-text', __( 'Text', CALCFORGE_TEXT_DOMAIN ), 'fieldTextColor' );
-	$tokens[] = calcforge_color_token( 'fieldBg', '--calcforge-field-bg', __( 'Background', CALCFORGE_TEXT_DOMAIN ), 'fieldBackgroundColor' );
-	$tokens[] = calcforge_color_token( 'fieldBorder', '--calcforge-field-border', __( 'Border', CALCFORGE_TEXT_DOMAIN ), 'fieldBorderColor' );
-	$tokens[] = calcforge_length_token( 'fieldBorderWidth', '--calcforge-field-border-width', __( 'Border width', CALCFORGE_TEXT_DOMAIN ), 12 );
-	$tokens[] = calcforge_length_token( 'fieldRadius', '--calcforge-field-radius', __( 'Corner radius', CALCFORGE_TEXT_DOMAIN ), 64 );
-	$tokens[] = calcforge_spacing_token( 'fieldPadding', '--calcforge-field-padding', __( 'Padding', CALCFORGE_TEXT_DOMAIN ), 64 );
-	$tokens[] = calcforge_length_token( 'fieldHeight', '--calcforge-field-height', __( 'Field height', CALCFORGE_TEXT_DOMAIN ), 120, 24 );
-	$tokens[] = calcforge_select_token( 'fieldFamily', '--calcforge-field-family', __( 'Font', CALCFORGE_TEXT_DOMAIN ), 'families' );
-	$tokens[] = calcforge_length_token( 'fieldSize', '--calcforge-field-size', __( 'Font size', CALCFORGE_TEXT_DOMAIN ), 32, 8 );
-	$tokens[] = calcforge_select_token( 'fieldWeight', '--calcforge-field-weight', __( 'Weight', CALCFORGE_TEXT_DOMAIN ), 'weights' );
+	$tokens[] = amortexa_color_token( 'fieldText', '--amortexa-field-text', __( 'Text', AMORTEXA_TEXT_DOMAIN ), 'fieldTextColor' );
+	$tokens[] = amortexa_color_token( 'fieldBg', '--amortexa-field-bg', __( 'Background', AMORTEXA_TEXT_DOMAIN ), 'fieldBackgroundColor' );
+	$tokens[] = amortexa_color_token( 'fieldBorder', '--amortexa-field-border', __( 'Border', AMORTEXA_TEXT_DOMAIN ), 'fieldBorderColor' );
+	$tokens[] = amortexa_length_token( 'fieldBorderWidth', '--amortexa-field-border-width', __( 'Border width', AMORTEXA_TEXT_DOMAIN ), 12 );
+	$tokens[] = amortexa_length_token( 'fieldRadius', '--amortexa-field-radius', __( 'Corner radius', AMORTEXA_TEXT_DOMAIN ), 64 );
+	$tokens[] = amortexa_spacing_token( 'fieldPadding', '--amortexa-field-padding', __( 'Padding', AMORTEXA_TEXT_DOMAIN ), 64 );
+	$tokens[] = amortexa_length_token( 'fieldHeight', '--amortexa-field-height', __( 'Field height', AMORTEXA_TEXT_DOMAIN ), 120, 24 );
+	$tokens[] = amortexa_select_token( 'fieldFamily', '--amortexa-field-family', __( 'Font', AMORTEXA_TEXT_DOMAIN ), 'families' );
+	$tokens[] = amortexa_length_token( 'fieldSize', '--amortexa-field-size', __( 'Font size', AMORTEXA_TEXT_DOMAIN ), 32, 8 );
+	$tokens[] = amortexa_select_token( 'fieldWeight', '--amortexa-field-weight', __( 'Weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
 
 	// Range sliders.
-	$tokens[] = calcforge_color_token( 'sliderTrack', '--calcforge-slider-track', __( 'Track', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'sliderAccent', '--calcforge-slider-accent', __( 'Filled track', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_length_token( 'sliderThumbSize', '--calcforge-slider-thumb-size', __( 'Thumb size', CALCFORGE_TEXT_DOMAIN ), 64, 8 );
+	$tokens[] = amortexa_color_token( 'sliderTrack', '--amortexa-slider-track', __( 'Track', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'sliderAccent', '--amortexa-slider-accent', __( 'Filled track', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_length_token( 'sliderThumbSize', '--amortexa-slider-thumb-size', __( 'Thumb size', AMORTEXA_TEXT_DOMAIN ), 64, 8 );
 
 	// The segmented control that switches sliders on and off.
-	$tokens[] = calcforge_color_token( 'toggleBg', '--calcforge-toggle-bg', __( 'Background', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'toggleText', '--calcforge-toggle-text', __( 'Text', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'toggleBorder', '--calcforge-toggle-border', __( 'Border', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_length_token( 'toggleRadius', '--calcforge-toggle-radius', __( 'Corner radius', CALCFORGE_TEXT_DOMAIN ), 64 );
-	$tokens[] = calcforge_spacing_token( 'togglePadding', '--calcforge-toggle-padding', __( 'Padding', CALCFORGE_TEXT_DOMAIN ), 48 );
-	$tokens[] = calcforge_select_token( 'toggleFamily', '--calcforge-toggle-family', __( 'Font', CALCFORGE_TEXT_DOMAIN ), 'families' );
-	$tokens[] = calcforge_length_token( 'toggleSize', '--calcforge-toggle-size', __( 'Font size', CALCFORGE_TEXT_DOMAIN ), 32, 8 );
-	$tokens[] = calcforge_select_token( 'toggleWeight', '--calcforge-toggle-weight', __( 'Weight', CALCFORGE_TEXT_DOMAIN ), 'weights' );
+	$tokens[] = amortexa_color_token( 'toggleBg', '--amortexa-toggle-bg', __( 'Background', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'toggleText', '--amortexa-toggle-text', __( 'Text', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'toggleBorder', '--amortexa-toggle-border', __( 'Border', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_length_token( 'toggleRadius', '--amortexa-toggle-radius', __( 'Corner radius', AMORTEXA_TEXT_DOMAIN ), 64 );
+	$tokens[] = amortexa_spacing_token( 'togglePadding', '--amortexa-toggle-padding', __( 'Padding', AMORTEXA_TEXT_DOMAIN ), 48 );
+	$tokens[] = amortexa_select_token( 'toggleFamily', '--amortexa-toggle-family', __( 'Font', AMORTEXA_TEXT_DOMAIN ), 'families' );
+	$tokens[] = amortexa_length_token( 'toggleSize', '--amortexa-toggle-size', __( 'Font size', AMORTEXA_TEXT_DOMAIN ), 32, 8 );
+	$tokens[] = amortexa_select_token( 'toggleWeight', '--amortexa-toggle-weight', __( 'Weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
 
 	// Result values, and the headline monthly payment.
-	$tokens[] = calcforge_color_token( 'resultPrimaryColor', '--calcforge-result-primary-color', __( 'Headline colour', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_select_token( 'resultPrimaryFamily', '--calcforge-result-primary-family', __( 'Headline font', CALCFORGE_TEXT_DOMAIN ), 'families' );
-	$tokens[] = calcforge_length_token( 'resultPrimarySize', '--calcforge-result-primary-size', __( 'Headline size', CALCFORGE_TEXT_DOMAIN ), 96, 16 );
-	$tokens[] = calcforge_select_token( 'resultPrimaryWeight', '--calcforge-result-primary-weight', __( 'Headline weight', CALCFORGE_TEXT_DOMAIN ), 'weights' );
-	$tokens[] = calcforge_color_token( 'resultLabelColor', '--calcforge-result-label-color', __( 'Label text', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'resultValueColor', '--calcforge-result-value-color', __( 'Value text', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_length_token( 'resultSize', '--calcforge-result-size', __( 'Row font size', CALCFORGE_TEXT_DOMAIN ), 32, 8 );
-	$tokens[] = calcforge_color_token( 'resultRowBorder', '--calcforge-result-row-border', __( 'Row divider', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_spacing_token( 'resultRowPadding', '--calcforge-result-row-padding', __( 'Row padding', CALCFORGE_TEXT_DOMAIN ), 48 );
-	$tokens[] = calcforge_spacing_token( 'resultMargin', '--calcforge-result-margin', __( 'Panel padding', CALCFORGE_TEXT_DOMAIN ), 120 );
+	$tokens[] = amortexa_color_token( 'resultPrimaryColor', '--amortexa-result-primary-color', __( 'Headline colour', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_select_token( 'resultPrimaryFamily', '--amortexa-result-primary-family', __( 'Headline font', AMORTEXA_TEXT_DOMAIN ), 'families' );
+	$tokens[] = amortexa_length_token( 'resultPrimarySize', '--amortexa-result-primary-size', __( 'Headline size', AMORTEXA_TEXT_DOMAIN ), 96, 16 );
+	$tokens[] = amortexa_select_token( 'resultPrimaryWeight', '--amortexa-result-primary-weight', __( 'Headline weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
+	$tokens[] = amortexa_color_token( 'resultLabelColor', '--amortexa-result-label-color', __( 'Label text', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'resultValueColor', '--amortexa-result-value-color', __( 'Value text', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_length_token( 'resultSize', '--amortexa-result-size', __( 'Row font size', AMORTEXA_TEXT_DOMAIN ), 32, 8 );
+	$tokens[] = amortexa_color_token( 'resultRowBorder', '--amortexa-result-row-border', __( 'Row divider', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_spacing_token( 'resultRowPadding', '--amortexa-result-row-padding', __( 'Row padding', AMORTEXA_TEXT_DOMAIN ), 48 );
+	$tokens[] = amortexa_spacing_token( 'resultMargin', '--amortexa-result-margin', __( 'Panel padding', AMORTEXA_TEXT_DOMAIN ), 120 );
 
 	// Charts. Series colours are the same accents the block already exposes, so
 	// they keep honouring the older per-block accent attributes.
-	$tokens[] = calcforge_color_token( 'accent', '--calcforge-accent', __( 'Series 1', CALCFORGE_TEXT_DOMAIN ), 'accentColor' );
-	$tokens[] = calcforge_color_token( 'accentAlt', '--calcforge-accent-2', __( 'Series 2', CALCFORGE_TEXT_DOMAIN ), 'accentAltColor' );
-	$tokens[] = calcforge_length_token( 'chartHeight', '--calcforge-chart-height', __( 'Chart height', CALCFORGE_TEXT_DOMAIN ), 560, 120 );
-	$tokens[] = calcforge_color_token( 'chartAxis', '--calcforge-chart-axis', __( 'Axis and labels', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'chartTitleColor', '--calcforge-chart-title-color', __( 'Title text', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_length_token( 'chartTitleSize', '--calcforge-chart-title-size', __( 'Title size', CALCFORGE_TEXT_DOMAIN ), 32, 8 );
-	$tokens[] = calcforge_select_token( 'chartTitleWeight', '--calcforge-chart-title-weight', __( 'Title weight', CALCFORGE_TEXT_DOMAIN ), 'weights' );
-	$tokens[] = calcforge_spacing_token( 'chartTitleMargin', '--calcforge-chart-title-margin', __( 'Title margin', CALCFORGE_TEXT_DOMAIN ), 48 );
+	$tokens[] = amortexa_color_token( 'accent', '--amortexa-accent', __( 'Series 1', AMORTEXA_TEXT_DOMAIN ), 'accentColor' );
+	$tokens[] = amortexa_color_token( 'accentAlt', '--amortexa-accent-2', __( 'Series 2', AMORTEXA_TEXT_DOMAIN ), 'accentAltColor' );
+	$tokens[] = amortexa_length_token( 'chartHeight', '--amortexa-chart-height', __( 'Chart height', AMORTEXA_TEXT_DOMAIN ), 560, 120 );
+	$tokens[] = amortexa_color_token( 'chartAxis', '--amortexa-chart-axis', __( 'Axis and labels', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'chartTitleColor', '--amortexa-chart-title-color', __( 'Title text', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_length_token( 'chartTitleSize', '--amortexa-chart-title-size', __( 'Title size', AMORTEXA_TEXT_DOMAIN ), 32, 8 );
+	$tokens[] = amortexa_select_token( 'chartTitleWeight', '--amortexa-chart-title-weight', __( 'Title weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
+	$tokens[] = amortexa_spacing_token( 'chartTitleMargin', '--amortexa-chart-title-margin', __( 'Title margin', AMORTEXA_TEXT_DOMAIN ), 48 );
 
 	/*
 	 * One colour per payment component, so the donut, the legend and the results
@@ -267,31 +267,31 @@ function calcforge_get_design_tokens() {
 	 * text as well as a fill, and are far enough apart to be told apart side by
 	 * side. The test suite re-checks both rather than trusting this comment.
 	 */
-	$tokens[] = calcforge_color_token( 'costPi', '--calcforge-cost-pi', __( 'Principal & Interest', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'costTax', '--calcforge-cost-tax', __( 'Property Tax', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'costInsurance', '--calcforge-cost-insurance', __( 'Home Insurance', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'costHoa', '--calcforge-cost-hoa', __( 'HOA Fee', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'costPmi', '--calcforge-cost-pmi', __( 'PMI', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'costOther', '--calcforge-cost-other', __( 'Other Costs', CALCFORGE_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'costPi', '--amortexa-cost-pi', __( 'Principal & Interest', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'costTax', '--amortexa-cost-tax', __( 'Property Tax', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'costInsurance', '--amortexa-cost-insurance', __( 'Home Insurance', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'costHoa', '--amortexa-cost-hoa', __( 'HOA Fee', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'costPmi', '--amortexa-cost-pmi', __( 'PMI', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'costOther', '--amortexa-cost-other', __( 'Other Costs', AMORTEXA_TEXT_DOMAIN ) );
 
 	// Chart legends.
-	$tokens[] = calcforge_color_token( 'legendText', '--calcforge-legend-text', __( 'Text', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_select_token( 'legendFamily', '--calcforge-legend-family', __( 'Font', CALCFORGE_TEXT_DOMAIN ), 'families' );
-	$tokens[] = calcforge_length_token( 'legendSize', '--calcforge-legend-size', __( 'Font size', CALCFORGE_TEXT_DOMAIN ), 24, 8 );
-	$tokens[] = calcforge_select_token( 'legendWeight', '--calcforge-legend-weight', __( 'Weight', CALCFORGE_TEXT_DOMAIN ), 'weights' );
-	$tokens[] = calcforge_length_token( 'legendSwatchSize', '--calcforge-legend-swatch-size', __( 'Swatch size', CALCFORGE_TEXT_DOMAIN ), 40, 6 );
-	$tokens[] = calcforge_length_token( 'legendGap', '--calcforge-legend-gap', __( 'Gap between items', CALCFORGE_TEXT_DOMAIN ), 48 );
+	$tokens[] = amortexa_color_token( 'legendText', '--amortexa-legend-text', __( 'Text', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_select_token( 'legendFamily', '--amortexa-legend-family', __( 'Font', AMORTEXA_TEXT_DOMAIN ), 'families' );
+	$tokens[] = amortexa_length_token( 'legendSize', '--amortexa-legend-size', __( 'Font size', AMORTEXA_TEXT_DOMAIN ), 24, 8 );
+	$tokens[] = amortexa_select_token( 'legendWeight', '--amortexa-legend-weight', __( 'Weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
+	$tokens[] = amortexa_length_token( 'legendSwatchSize', '--amortexa-legend-swatch-size', __( 'Swatch size', AMORTEXA_TEXT_DOMAIN ), 40, 6 );
+	$tokens[] = amortexa_length_token( 'legendGap', '--amortexa-legend-gap', __( 'Gap between items', AMORTEXA_TEXT_DOMAIN ), 48 );
 
 	// The amortization table.
-	$tokens[] = calcforge_color_token( 'tableHeadBg', '--calcforge-table-head-bg', __( 'Header background', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'tableHeadText', '--calcforge-table-head-text', __( 'Header text', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'tableRowBg', '--calcforge-table-row-bg', __( 'Row background', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'tableZebraBg', '--calcforge-table-zebra-bg', __( 'Alternating row', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_color_token( 'tableBorder', '--calcforge-table-border', __( 'Borders', CALCFORGE_TEXT_DOMAIN ) );
-	$tokens[] = calcforge_length_token( 'tableBorderWidth', '--calcforge-table-border-width', __( 'Border width', CALCFORGE_TEXT_DOMAIN ), 12 );
-	$tokens[] = calcforge_spacing_token( 'tableCellPadding', '--calcforge-table-cell-padding', __( 'Cell padding', CALCFORGE_TEXT_DOMAIN ), 48 );
-	$tokens[] = calcforge_length_token( 'tableSize', '--calcforge-table-size', __( 'Font size', CALCFORGE_TEXT_DOMAIN ), 24, 8 );
-	$tokens[] = calcforge_length_token( 'tableRadius', '--calcforge-table-radius', __( 'Corner radius', CALCFORGE_TEXT_DOMAIN ), 64 );
+	$tokens[] = amortexa_color_token( 'tableHeadBg', '--amortexa-table-head-bg', __( 'Header background', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'tableHeadText', '--amortexa-table-head-text', __( 'Header text', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'tableRowBg', '--amortexa-table-row-bg', __( 'Row background', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'tableZebraBg', '--amortexa-table-zebra-bg', __( 'Alternating row', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'tableBorder', '--amortexa-table-border', __( 'Borders', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_length_token( 'tableBorderWidth', '--amortexa-table-border-width', __( 'Border width', AMORTEXA_TEXT_DOMAIN ), 12 );
+	$tokens[] = amortexa_spacing_token( 'tableCellPadding', '--amortexa-table-cell-padding', __( 'Cell padding', AMORTEXA_TEXT_DOMAIN ), 48 );
+	$tokens[] = amortexa_length_token( 'tableSize', '--amortexa-table-size', __( 'Font size', AMORTEXA_TEXT_DOMAIN ), 24, 8 );
+	$tokens[] = amortexa_length_token( 'tableRadius', '--amortexa-table-radius', __( 'Corner radius', AMORTEXA_TEXT_DOMAIN ), 64 );
 
 	return $tokens;
 }
@@ -301,63 +301,63 @@ function calcforge_get_design_tokens() {
  *
  * @return array<int,array<string,mixed>> Group definitions with their tokens.
  */
-function calcforge_get_design_groups() {
+function amortexa_get_design_groups() {
 	$groups = array(
 		'root'    => array(
-			'label'  => __( 'Calculator', CALCFORGE_TEXT_DOMAIN ),
-			'summary' => __( 'The card that wraps the whole block.', CALCFORGE_TEXT_DOMAIN ),
+			'label'  => __( 'Calculator', AMORTEXA_TEXT_DOMAIN ),
+			'summary' => __( 'The card that wraps the whole block.', AMORTEXA_TEXT_DOMAIN ),
 			'tokens' => array( 'rootBg', 'rootText', 'rootBorder', 'rootRadius', 'rootPadding' ),
 		),
 		'panel'   => array(
-			'label'  => __( 'Panels', CALCFORGE_TEXT_DOMAIN ),
-			'summary' => __( 'The boxes around inputs, results, charts and schedule.', CALCFORGE_TEXT_DOMAIN ),
+			'label'  => __( 'Panels', AMORTEXA_TEXT_DOMAIN ),
+			'summary' => __( 'The boxes around inputs, results, charts and schedule.', AMORTEXA_TEXT_DOMAIN ),
 			'tokens' => array( 'panelBg', 'panelRadius', 'panelPadding', 'panelGap' ),
 		),
 		'label'   => array(
-			'label'  => __( 'Field Labels', CALCFORGE_TEXT_DOMAIN ),
-			'summary' => __( 'The text above each input.', CALCFORGE_TEXT_DOMAIN ),
+			'label'  => __( 'Field Labels', AMORTEXA_TEXT_DOMAIN ),
+			'summary' => __( 'The text above each input.', AMORTEXA_TEXT_DOMAIN ),
 			'tokens' => array( 'labelColor', 'labelFamily', 'labelSize', 'labelWeight', 'labelTransform', 'labelTracking', 'labelMargin' ),
 		),
 		'field'   => array(
-			'label'  => __( 'Inputs', CALCFORGE_TEXT_DOMAIN ),
-			'summary' => __( 'Text inputs and dropdowns.', CALCFORGE_TEXT_DOMAIN ),
+			'label'  => __( 'Inputs', AMORTEXA_TEXT_DOMAIN ),
+			'summary' => __( 'Text inputs and dropdowns.', AMORTEXA_TEXT_DOMAIN ),
 			'tokens' => array( 'fieldText', 'fieldBg', 'fieldBorder', 'fieldBorderWidth', 'fieldRadius', 'fieldPadding', 'fieldHeight', 'fieldFamily', 'fieldSize', 'fieldWeight' ),
 		),
 		'slider'  => array(
-			'label'  => __( 'Sliders', CALCFORGE_TEXT_DOMAIN ),
-			'summary' => __( 'The draggable range controls.', CALCFORGE_TEXT_DOMAIN ),
+			'label'  => __( 'Sliders', AMORTEXA_TEXT_DOMAIN ),
+			'summary' => __( 'The draggable range controls.', AMORTEXA_TEXT_DOMAIN ),
 			'tokens' => array( 'sliderTrack', 'sliderAccent', 'sliderThumbSize' ),
 		),
 		'toggle'  => array(
-			'label'  => __( 'Sliders Toggle', CALCFORGE_TEXT_DOMAIN ),
-			'summary' => __( 'The button that shows and hides the sliders.', CALCFORGE_TEXT_DOMAIN ),
+			'label'  => __( 'Sliders Toggle', AMORTEXA_TEXT_DOMAIN ),
+			'summary' => __( 'The button that shows and hides the sliders.', AMORTEXA_TEXT_DOMAIN ),
 			'tokens' => array( 'toggleBg', 'toggleText', 'toggleBorder', 'toggleRadius', 'togglePadding', 'toggleFamily', 'toggleSize', 'toggleWeight' ),
 		),
 		'result'  => array(
-			'label'  => __( 'Results', CALCFORGE_TEXT_DOMAIN ),
-			'summary' => __( 'The monthly payment and the rows beneath it.', CALCFORGE_TEXT_DOMAIN ),
+			'label'  => __( 'Results', AMORTEXA_TEXT_DOMAIN ),
+			'summary' => __( 'The monthly payment and the rows beneath it.', AMORTEXA_TEXT_DOMAIN ),
 			'tokens' => array( 'resultPrimaryColor', 'resultPrimaryFamily', 'resultPrimarySize', 'resultPrimaryWeight', 'resultLabelColor', 'resultValueColor', 'resultSize', 'resultRowBorder', 'resultRowPadding', 'resultMargin' ),
 		),
 		'chart'   => array(
-			'label'  => __( 'Charts', CALCFORGE_TEXT_DOMAIN ),
-			'summary' => __( 'Series colours, size and titles.', CALCFORGE_TEXT_DOMAIN ),
+			'label'  => __( 'Charts', AMORTEXA_TEXT_DOMAIN ),
+			'summary' => __( 'Series colours, size and titles.', AMORTEXA_TEXT_DOMAIN ),
 			'tokens' => array( 'accent', 'accentAlt', 'costPi', 'costTax', 'costInsurance', 'costHoa', 'costPmi', 'costOther', 'chartHeight', 'chartAxis', 'chartTitleColor', 'chartTitleSize', 'chartTitleWeight', 'chartTitleMargin' ),
 		),
 		'legend'  => array(
-			'label'  => __( 'Chart Legends', CALCFORGE_TEXT_DOMAIN ),
-			'summary' => __( 'The colour key under each chart.', CALCFORGE_TEXT_DOMAIN ),
+			'label'  => __( 'Chart Legends', AMORTEXA_TEXT_DOMAIN ),
+			'summary' => __( 'The colour key under each chart.', AMORTEXA_TEXT_DOMAIN ),
 			'tokens' => array( 'legendText', 'legendFamily', 'legendSize', 'legendWeight', 'legendSwatchSize', 'legendGap' ),
 		),
 		'table'   => array(
-			'label'  => __( 'Schedule Table', CALCFORGE_TEXT_DOMAIN ),
-			'summary' => __( 'The amortization table header, rows and borders.', CALCFORGE_TEXT_DOMAIN ),
+			'label'  => __( 'Schedule Table', AMORTEXA_TEXT_DOMAIN ),
+			'summary' => __( 'The amortization table header, rows and borders.', AMORTEXA_TEXT_DOMAIN ),
 			'tokens' => array( 'tableHeadBg', 'tableHeadText', 'tableRowBg', 'tableZebraBg', 'tableBorder', 'tableBorderWidth', 'tableCellPadding', 'tableSize', 'tableRadius' ),
 		),
 	);
 
 	$by_key = array();
 
-	foreach ( calcforge_get_design_tokens() as $token ) {
+	foreach ( amortexa_get_design_tokens() as $token ) {
 		$by_key[ $token['key'] ] = $token;
 	}
 
@@ -376,7 +376,7 @@ function calcforge_get_design_groups() {
 					__FUNCTION__,
 					sprintf(
 						/* translators: 1: group key, 2: token key. */
-						__( 'Design group "%1$s" lists unknown token "%2$s".', 'calcforge' ),
+						__( 'Design group "%1$s" lists unknown token "%2$s".', 'amortexa-mortgage-calculator' ),
 						$key,
 						$token_key
 					),
@@ -400,10 +400,10 @@ function calcforge_get_design_groups() {
  *
  * @return array<string,array<string,mixed>> Tokens keyed by design key.
  */
-function calcforge_get_design_token_map() {
+function amortexa_get_design_token_map() {
 	$map = array();
 
-	foreach ( calcforge_get_design_tokens() as $token ) {
+	foreach ( amortexa_get_design_tokens() as $token ) {
 		$map[ $token['key'] ] = $token;
 	}
 
@@ -417,7 +417,7 @@ function calcforge_get_design_token_map() {
  * @param mixed              $raw   Untrusted value.
  * @return string Sanitized value, or an empty string to inherit.
  */
-function calcforge_sanitize_design_value( $token, $raw ) {
+function amortexa_sanitize_design_value( $token, $raw ) {
 	if ( is_array( $raw ) || is_object( $raw ) || null === $raw ) {
 		return '';
 	}
@@ -446,7 +446,7 @@ function calcforge_sanitize_design_value( $token, $raw ) {
 				return '';
 			}
 
-			return (string) (int) calcforge_clamp_float( $raw, $min, $max );
+			return (string) (int) amortexa_clamp_float( $raw, $min, $max );
 
 		case 'spacing':
 			$parts = preg_split( '/\s+/', $raw );
@@ -457,7 +457,7 @@ function calcforge_sanitize_design_value( $token, $raw ) {
 					continue;
 				}
 
-				$kept[] = (int) calcforge_clamp_float( $part, 0, $max );
+				$kept[] = (int) amortexa_clamp_float( $part, 0, $max );
 			}
 
 			// Zero parts means the value was junk, so inherit instead of clearing.
@@ -468,7 +468,7 @@ function calcforge_sanitize_design_value( $token, $raw ) {
 			return implode( ' ', array_slice( $kept, 0, 4 ) );
 
 		case 'select':
-			$lists = calcforge_get_design_option_lists();
+			$lists = amortexa_get_design_option_lists();
 			$name  = isset( $token['options'] ) ? $token['options'] : '';
 
 			if ( ! isset( $lists[ $name ] ) ) {
@@ -487,19 +487,19 @@ function calcforge_sanitize_design_value( $token, $raw ) {
  * @param mixed $raw Untrusted design object.
  * @return array<string,string> Sanitized key => value, only for set tokens.
  */
-function calcforge_sanitize_design( $raw ) {
+function amortexa_sanitize_design( $raw ) {
 	if ( ! is_array( $raw ) ) {
 		return array();
 	}
 
 	$sanitized = array();
 
-	foreach ( calcforge_get_design_token_map() as $key => $token ) {
+	foreach ( amortexa_get_design_token_map() as $key => $token ) {
 		if ( ! array_key_exists( $key, $raw ) ) {
 			continue;
 		}
 
-		$value = calcforge_sanitize_design_value( $token, $raw[ $key ] );
+		$value = amortexa_sanitize_design_value( $token, $raw[ $key ] );
 
 		if ( '' !== $value ) {
 			$sanitized[ $key ] = $value;
@@ -519,13 +519,13 @@ function calcforge_sanitize_design( $raw ) {
  * @param array<string,mixed> $attributes Sanitized block attributes.
  * @return array<string,string> Resolved key => stored value.
  */
-function calcforge_get_design_values( $attributes ) {
+function amortexa_get_design_values( $attributes ) {
 	$attributes = is_array( $attributes ) ? $attributes : array();
 	$design     = isset( $attributes['design'] ) && is_array( $attributes['design'] )
-		? calcforge_sanitize_design( $attributes['design'] )
+		? amortexa_sanitize_design( $attributes['design'] )
 		: array();
 
-	foreach ( calcforge_get_design_token_map() as $key => $token ) {
+	foreach ( amortexa_get_design_token_map() as $key => $token ) {
 		if ( isset( $design[ $key ] ) ) {
 			continue;
 		}
@@ -534,7 +534,7 @@ function calcforge_get_design_values( $attributes ) {
 			continue;
 		}
 
-		$legacy = calcforge_sanitize_design_value( $token, $attributes[ $token['legacy'] ] );
+		$legacy = amortexa_sanitize_design_value( $token, $attributes[ $token['legacy'] ] );
 
 		if ( '' !== $legacy ) {
 			$design[ $key ] = $legacy;
@@ -551,7 +551,7 @@ function calcforge_get_design_values( $attributes ) {
  * @param string              $value Stored value.
  * @return string CSS value with a unit.
  */
-function calcforge_design_css_value( $token, $value ) {
+function amortexa_design_css_value( $token, $value ) {
 	if ( 'length' === $token['type'] ) {
 		return $value . 'px';
 	}
@@ -575,9 +575,9 @@ function calcforge_design_css_value( $token, $value ) {
  * @param array<string,mixed> $attributes Sanitized block attributes.
  * @return array<int,string> CSS declarations.
  */
-function calcforge_get_design_css( $attributes ) {
-	$tokens = calcforge_get_design_token_map();
-	$values = calcforge_get_design_values( $attributes );
+function amortexa_get_design_css( $attributes ) {
+	$tokens = amortexa_get_design_token_map();
+	$values = amortexa_get_design_values( $attributes );
 	$css    = array();
 
 	foreach ( $tokens as $key => $token ) {
@@ -585,7 +585,7 @@ function calcforge_get_design_css( $attributes ) {
 			continue;
 		}
 
-		$css[] = $token['var'] . ':' . calcforge_design_css_value( $token, $values[ $key ] );
+		$css[] = $token['var'] . ':' . amortexa_design_css_value( $token, $values[ $key ] );
 	}
 
 	return $css;
@@ -600,8 +600,8 @@ function calcforge_get_design_css( $attributes ) {
  * @param array<string,mixed> $attributes Sanitized block attributes.
  * @return array<string,mixed> Chart metrics.
  */
-function calcforge_get_design_chart_metrics( $attributes ) {
-	$values = calcforge_get_design_values( $attributes );
+function amortexa_get_design_chart_metrics( $attributes ) {
+	$values = amortexa_get_design_values( $attributes );
 	$height = isset( $values['chartHeight'] ) ? (int) $values['chartHeight'] : 0;
 
 	return array(

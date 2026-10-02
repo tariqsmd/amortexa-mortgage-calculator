@@ -2,7 +2,7 @@
  * The design token schema, as handed to the editor by PHP.
  *
  * The token list itself is never duplicated here. `includes/design-tokens.php` is
- * the single source of truth and ships the groups through the `calcforgeData`
+ * the single source of truth and ships the groups through the `amortexaData`
  * global, exactly like the skin and font lists. That is deliberate: the two
  * hand-maintained copies that used to exist drifted apart, so the editor wrote
  * CSS variable names the stylesheet never read and two colour controls silently
@@ -54,7 +54,7 @@ export function getDesignTokens() {
 /**
  * Converts a stored token value into the CSS declaration value.
  *
- * Mirrors calcforge_design_css_value() in PHP: lengths and spacing gain a
+ * Mirrors amortexa_design_css_value() in PHP: lengths and spacing gain a
  * pixel unit, colours and selects are emitted verbatim.
  *
  * @param {Object} token Token definition.
@@ -95,7 +95,7 @@ function clamp( value, min, max ) {
  * The editor holds unsaved attribute values, which can be out of range or junk
  * until the block is saved, and the server sanitizes again on render. Without
  * this the preview would show a 9999px chart and a negative swatch that the
- * published page silently corrects. Mirrors calcforge_sanitize_design_value()
+ * published page silently corrects. Mirrors amortexa_sanitize_design_value()
  * in PHP, and tests/parity.php asserts the two stay identical.
  *
  * @param {Object} token Token definition.
@@ -177,7 +177,7 @@ function isNumeric( value ) {
  *
  * A token wins when set; otherwise the older attribute it replaced is honoured,
  * so a block saved before the design tab existed keeps its colours instead of
- * reverting to the skin. Mirrors calcforge_get_design_values() in PHP.
+ * reverting to the skin. Mirrors amortexa_get_design_values() in PHP.
  *
  * @param {Object} attributes Block attributes.
  * @return {Object<string,string>} Resolved key => value.

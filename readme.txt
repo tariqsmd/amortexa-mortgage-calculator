@@ -1,4 +1,4 @@
-=== CalcForge ===
+=== Amortexa Mortgage Calculator ===
 Contributors: mtariqsmd
 Tags: block, gutenberg, mortgage, calculator, finance, loans, real estate, amortization
 Requires at least: 6.5
@@ -12,7 +12,7 @@ An interactive mortgage calculator block for the block editor, with live monthly
 
 == Description ==
 
-CalcForge adds a **Mortgage Calculator** block to the block editor. Drop it on any page and visitors get a working, self-contained mortgage calculator with live results, charts, and a full amortization schedule.
+Amortexa adds a **Mortgage Calculator** block to the block editor. Drop it on any page and visitors get a working, self-contained mortgage calculator with live results, charts, and a full amortization schedule.
 
 = Key features =
 
@@ -31,7 +31,7 @@ CalcForge adds a **Mortgage Calculator** block to the block editor. Drop it on a
 
 = Site-wide defaults =
 
-Under **Settings → CalcForge** you can set the defaults every new calculator block starts from: currency symbol, interest rate, decimal precision, loan amount, down payment, term, default skin, default chart type, and whether the amortization table is shown by default. Individual blocks can still override any of these in the editor.
+Under **Settings → Amortexa** you can set the defaults every new calculator block starts from: currency symbol, interest rate, decimal precision, loan amount, down payment, term, default skin, default chart type, and whether the amortization table is shown by default. Individual blocks can still override any of these in the editor.
 
 = Developer friendly =
 
@@ -41,10 +41,10 @@ The plugin also exposes a REST endpoint and a set of documented actions and filt
 
 == Installation ==
 
-1. Upload the `calcforge` folder to the `/wp-content/plugins/` directory, or install the plugin through the WordPress admin **Plugins** screen.
-2. Activate the plugin. Go to **Plugins → Installed Plugins** and click **Activate** under CalcForge.
-3. Optionally set your site-wide defaults under **Settings → CalcForge**.
-4. Edit any post or page, open the block inserter, search for "Mortgage Calculator", and drag the block into the content area. It appears in the custom **CalcForge** category.
+1. Upload the `amortexa-mortgage-calculator` folder to the `/wp-content/plugins/` directory, or install the plugin through the WordPress admin **Plugins** screen.
+2. Activate the plugin. Go to **Plugins → Installed Plugins** and click **Activate** under Amortexa.
+3. Optionally set your site-wide defaults under **Settings → Amortexa**.
+4. Edit any post or page, open the block inserter, search for "Mortgage Calculator", and drag the block into the content area. It appears in the custom **Amortexa** category.
 
 == Frequently Asked Questions ==
 
@@ -64,53 +64,53 @@ Every cost that can reasonably be quoted as a rate has a unit switch, so you can
 
 = When does PMI stop? =
 
-As soon as the loan balance reaches 80% of the original purchase price, unless that happens later in the schedule. Federal rules require a lender to cancel PMI automatically at 78% and allow you to request cancellation from 80%, so CalcForge uses 80%: it never charges PMI past what you would actually be entitled to stop, and it stops as early as the rules permit. If your loan starts at 80% LTV or below, PMI is not charged at all.
+As soon as the loan balance reaches 80% of the original purchase price, unless that happens later in the schedule. Federal rules require a lender to cancel PMI automatically at 78% and allow you to request cancellation from 80%, so Amortexa uses 80%: it never charges PMI past what you would actually be entitled to stop, and it stops as early as the rules permit. If your loan starts at 80% LTV or below, PMI is not charged at all.
 
 = Can I change the currency symbol? =
 
-Yes. Set it per block using the block's "Currency symbol" setting, site-wide under **Settings → CalcForge**, or programmatically with the `calcforge_currency_symbol` filter. Each block can also place the symbol before the amount ($99) or after it (99 €) using the "Currency position" setting. Amounts are formatted with your locale's number separators.
+Yes. Set it per block using the block's "Currency symbol" setting, site-wide under **Settings → Amortexa**, or programmatically with the `amortexa_currency_symbol` filter. Each block can also place the symbol before the amount ($99) or after it (99 €) using the "Currency position" setting. Amounts are formatted with your locale's number separators.
 
 = Is there a REST API? =
 
-Yes. Send a `POST` request to `/wp-json/calcforge/v1/calculate` with a JSON body such as `{ "amount": 300000, "down_payment": 60000, "interest_rate": 6.5, "term_years": 30 }`. Pass `"with_schedule": true` to include the amortization schedule in the response.
+Yes. Send a `POST` request to `/wp-json/amortexa-mortgage-calculator/v1/calculate` with a JSON body such as `{ "amount": 300000, "down_payment": 60000, "interest_rate": 6.5, "term_years": 30 }`. Pass `"with_schedule": true` to include the amortization schedule in the response.
 
-The endpoint is a stateless calculator that returns only public arithmetic and no private data, so it is open to unauthenticated requests by design. If you need to require authentication, return `false` from the `calcforge_rest_calculate_allowed` filter.
+The endpoint is a stateless calculator that returns only public arithmetic and no private data, so it is open to unauthenticated requests by design. If you need to require authentication, return `false` from the `amortexa_rest_calculate_allowed` filter.
 
-Calls are rate limited per client address: 30 requests per minute by default, after which the endpoint answers `429 Too Many Requests` with a `Retry-After` header. Adjust it with the `calcforge_rest_calculate_rate_limit` and `calcforge_rest_calculate_rate_window` filters, or return `0` from the first to switch throttling off. Buckets are keyed on the remote address only, because forwarded headers can be forged; behind a proxy or CDN, return a trusted client address from the `calcforge_rate_limit_client_key` filter so visitors are not grouped together.
+Calls are rate limited per client address: 30 requests per minute by default, after which the endpoint answers `429 Too Many Requests` with a `Retry-After` header. Adjust it with the `amortexa_rest_calculate_rate_limit` and `amortexa_rest_calculate_rate_window` filters, or return `0` from the first to switch throttling off. Buckets are keyed on the remote address only, because forwarded headers can be forged; behind a proxy or CDN, return a trusted client address from the `amortexa_rate_limit_client_key` filter so visitors are not grouped together.
 
 = Can I insert the calculator with a shortcode? =
 
-The `[calcforge]` shortcode is supported alongside the block and accepts every loan, cost, layout, panel, skin, chart and schedule attribute. The per-element appearance settings from the Design tab are block-only, because they are stilled by your site-wide defaults and a shortcode cannot sensibly reproduce a design token map. On the Settings -> Shortcode screen each exposed attribute has an input, and a sample shortcode rebuilds and copies as you change them:
+The `[amortexa-mortgage-calculator]` shortcode is supported alongside the block and accepts every loan, cost, layout, panel, skin, chart and schedule attribute. The per-element appearance settings from the Design tab are block-only, because they are stilled by your site-wide defaults and a shortcode cannot sensibly reproduce a design token map. On the Settings -> Shortcode screen each exposed attribute has an input, and a sample shortcode rebuilds and copies as you change them:
 
-`[calcforge loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar" showcosts="true" propertytax="1.25"]`
+`[amortexa-mortgage-calculator loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar" showcosts="true" propertytax="1.25"]`
 
 Attributes are lowercase and values are wrapped in double quotes. Clearing a field leaves that attribute out, so the other Settings tabs control it instead. Add the finished shortcode to any post, page, or widget area.
 
 = Can I add the calculator to a sidebar or widget area? =
 
-Yes. Under **Appearance → Widgets** you will find a **Mortgage Calculator** widget. Drag it into a sidebar, footer, or any other widget area and set a title. It is a small wrapper around the `[calcforge]` shortcode, so it renders the same calculator as the block and inherits your site-wide defaults. Only the loan amount, interest rate, loan term, layout, and skin can be overridden per widget, and any field left blank keeps the site default. The widget also appears in the block based widget editor, where you add it with the **Legacy Widget** block.
+Yes. Under **Appearance → Widgets** you will find a **Mortgage Calculator** widget. Drag it into a sidebar, footer, or any other widget area and set a title. It is a small wrapper around the `[amortexa-mortgage-calculator]` shortcode, so it renders the same calculator as the block and inherits your site-wide defaults. Only the loan amount, interest rate, loan term, layout, and skin can be overridden per widget, and any field left blank keeps the site default. The widget also appears in the block based widget editor, where you add it with the **Legacy Widget** block.
 
 = Which actions and filters are available? =
 
 **Filters**
 
-* `calcforge_skins` — add or replace the available visual skins.
-* `calcforge_default_attributes` — override the default loan amount, rate, term, and other block attributes.
-* `calcforge_default_settings` — override the default admin settings.
-* `calcforge_calculation_result` — modify the computed result before output, for example to convert currency.
-* `calcforge_currency_symbol` — replace the resolved currency symbol.
-* `calcforge_cost_units` — change whether a recurring cost is treated as a percentage or a cash amount.
-* `calcforge_shortcode_block` — change the block attributes built from the shortcode's own attributes.
-* `calcforge_rest_calculate_allowed` — return `false` to require authentication for the REST calculation endpoint.
-* `calcforge_rest_calculate_rate_limit` — change how many calculation requests a client may make per window. Return `0` to disable rate limiting.
-* `calcforge_rest_calculate_rate_window` — change the rate limit window length in seconds.
-* `calcforge_rate_limit_client_key` — change the identifier used to bucket rate limited requests, for example to a CDN supplied client address.
-* `calcforge_widget_fields` — add or remove fields on the calculator widget.
+* `amortexa_skins` — add or replace the available visual skins.
+* `amortexa_default_attributes` — override the default loan amount, rate, term, and other block attributes.
+* `amortexa_default_settings` — override the default admin settings.
+* `amortexa_calculation_result` — modify the computed result before output, for example to convert currency.
+* `amortexa_currency_symbol` — replace the resolved currency symbol.
+* `amortexa_cost_units` — change whether a recurring cost is treated as a percentage or a cash amount.
+* `amortexa_shortcode_block` — change the block attributes built from the shortcode's own attributes.
+* `amortexa_rest_calculate_allowed` — return `false` to require authentication for the REST calculation endpoint.
+* `amortexa_rest_calculate_rate_limit` — change how many calculation requests a client may make per window. Return `0` to disable rate limiting.
+* `amortexa_rest_calculate_rate_window` — change the rate limit window length in seconds.
+* `amortexa_rate_limit_client_key` — change the identifier used to bucket rate limited requests, for example to a CDN supplied client address.
+* `amortexa_widget_fields` — add or remove fields on the calculator widget.
 
 **Actions**
 
-* `calcforge_before_calculator_render` and `calcforge_after_calculator_render` — fired immediately before and after the block HTML is generated.
-* `calcforge_settings_saved` — fired after the admin settings have been sanitized and saved.
+* `amortexa_before_calculator_render` and `amortexa_after_calculator_render` — fired immediately before and after the block HTML is generated.
+* `amortexa_settings_saved` — fired after the admin settings have been sanitized and saved.
 
 = Does the plugin collect or transmit any data? =
 
@@ -124,9 +124,9 @@ No. See the Privacy section below.
 
 == Privacy ==
 
-CalcForge does not collect, store, or transmit any personal data.
+Amortexa does not collect, store, or transmit any personal data.
 
-The calculator runs entirely in the browser and on your own server. Visitor input is never saved to the database, never sent to the plugin author, and never used for analytics. The only data the plugin persists is your own site-wide settings (currency symbol, defaults, and so on), stored in a single `calcforge_settings` option in your site's database. That option is deleted automatically when you uninstall the plugin.
+The calculator runs entirely in the browser and on your own server. Visitor input is never saved to the database, never sent to the plugin author, and never used for analytics. The only data the plugin persists is your own site-wide settings (currency symbol, defaults, and so on), stored in a single `amortexa_settings` option in your site's database. That option is deleted automatically when you uninstall the plugin.
 
 == Changelog ==
 
@@ -138,14 +138,14 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 * New: PMI ends the first month the balance reaches 80% of the purchase price, instead of being charged to term end.
 * Improved: cost components each pick up a distinct, automatically chosen colour, with a legend, so the breakdown stays readable across light and dark skins.
 * Improved: cost figures are clamped by the unit the author chose, so an amount-based premium is no longer truncated by a percentage bound.
-* New: `calcforge_skins`, `calcforge_cost_units`, and `calcforge_shortcode_block` filters are now documented.
-* Fixed: the `[calcforge]` shortcode accepts the recurring cost attributes. `showcosts`, `propertytax`, `homeinsurance`, `hoafee`, `pmi`, `othercosts` and their `*unit` counterparts were reachable from the block and the editor but silently ignored in a shortcode.
-* Removed: documentation for a `calcforge_enqueue_assets` filter that was never implemented. Front-end assets are registered from the block metadata for `calcforge/mortgage-calculator`; to replace them, dequeue the handles that block registers and enqueue your own in a theme.
+* New: `amortexa_skins`, `amortexa_cost_units`, and `amortexa_shortcode_block` filters are now documented.
+* Fixed: the `[amortexa-mortgage-calculator]` shortcode accepts the recurring cost attributes. `showcosts`, `propertytax`, `homeinsurance`, `hoafee`, `pmi`, `othercosts` and their `*unit` counterparts were reachable from the block and the editor but silently ignored in a shortcode.
+* Removed: documentation for a `amortexa_enqueue_assets` filter that was never implemented. Front-end assets are registered from the block metadata for `amortexa-mortgage-calculator/mortgage-calculator`; to replace them, dequeue the handles that block registers and enqueue your own in a theme.
 
 = 1.0.0 =
 * New: a Mortgage Calculator widget for sidebars and any other widget area, with optional overrides for amount, rate, term, layout, and skin.
 * New: a shortcode builder on the Settings -> Shortcode screen. Every attribute gets an input and the sample shortcode rebuilds and copies as you change them.
-* New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type under Settings → CalcForge.
+* New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type under Settings → Amortexa.
 * New: per-block toggles to show/hide the results summary and the range sliders.
 * New: currency symbol position option globally and per block — before the amount ($99) or after (99 €).
 * New: shortcode attributes for form layout (`formcolumns`) and panel order (`panelorder`).
@@ -175,4 +175,4 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 Adds opt-in recurring costs (property tax, insurance, HOA, PMI, other) with a real total monthly payment. Nothing changes for existing calculators until you turn costs on.
 
 = 1.0.0 =
-Site-wide defaults for loan amount, down payment, loan term, skin, and chart type are available under Settings → CalcForge.
+Site-wide defaults for loan amount, down payment, loan term, skin, and chart type are available under Settings → Amortexa.

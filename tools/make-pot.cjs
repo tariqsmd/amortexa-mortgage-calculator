@@ -1,10 +1,10 @@
 /**
- * Generates languages/calcforge.pot from the plugin source.
+ * Generates languages/amortexa-mortgage-calculator.pot from the plugin source.
  *
  * Run with: npm run make-pot
  *
  * Covers the three places translatable strings live in this plugin:
- *   - PHP  : calcforge.php, everything under includes/, and src/render.php
+ *   - PHP  : amortexa-mortgage-calculator.php, everything under includes/, and src/render.php
  *   - JS   : every .js file under src/ (via @babel/parser + @babel/traverse)
  *   - JSON : src/block.json (title, description, keywords)
  *
@@ -19,8 +19,8 @@ const { parse: parseJs } = require( '@babel/parser' );
 const traverse = require( '@babel/traverse' ).default;
 
 const PLUGIN_DIR = path.resolve( __dirname, '..' );
-const MAIN_FILE = path.join( PLUGIN_DIR, 'calcforge.php' );
-const TEXT_DOMAIN = 'calcforge';
+const MAIN_FILE = path.join( PLUGIN_DIR, 'amortexa-mortgage-calculator.php' );
+const TEXT_DOMAIN = 'amortexa-mortgage-calculator';
 
 /**
  * Gettext functions understood in JavaScript, with their argument roles.
@@ -260,10 +260,10 @@ const pluginUri = readHeader( 'Plugin URI' );
 const pot = new WP_Pot( {
 	globOpts: { cwd: PLUGIN_DIR },
 	pot: {
-		package: `CalcForge ${ version }`,
+		package: `Amortexa ${ version }`,
 		bugReport: pluginUri,
-		team: 'CalcForge <https://profiles.wordpress.org/mtariqsmd/>',
-		lastTranslator: 'CalcForge <https://profiles.wordpress.org/mtariqsmd/>',
+		team: 'Amortexa <https://profiles.wordpress.org/mtariqsmd/>',
+		lastTranslator: 'Amortexa <https://profiles.wordpress.org/mtariqsmd/>',
 	},
 } );
 
@@ -298,7 +298,7 @@ pot.writePot( destination );
 const unique = new Set( pot.translations.map( ( t ) => t.translationId ) ).size;
 
 console.log(
-	`Generated languages/${ TEXT_DOMAIN }.pot for CalcForge ${ version }`
+	`Generated languages/${ TEXT_DOMAIN }.pot for Amortexa ${ version }`
 );
 console.log(
 	`  PHP: ${ phpCount } | JS: ${ jsTranslations.length } | unique strings: ${ unique }`

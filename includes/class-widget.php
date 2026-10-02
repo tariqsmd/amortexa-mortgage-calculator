@@ -2,7 +2,7 @@
 /**
  * Calculator widget.
  *
- * @package CalcForge
+ * @package Amortexa
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,19 +17,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * widgets screen as well as in the block based widget editor, where WordPress
  * offers any registered widget as a legacy widget block.
  *
- * The widget is a thin shell over the [calcforge] shortcode rather than a second
+ * The widget is a thin shell over the [amortexa-mortgage-calculator] shortcode rather than a second
  * rendering path. That is deliberate: the shortcode already funnels into
  * render_block(), so the widget inherits the block's attribute sanitization,
  * stylesheet, and view script, and it cannot drift from the block when a new
  * attribute is added. Every field is optional - a blank one leaves the attribute
  * out of the shortcode, so the site's own default applies.
  */
-final class CalcForge_Widget extends WP_Widget {
+final class Amortexa_Widget extends WP_Widget {
 
 	/**
 	 * Widget id base.
 	 */
-	const ID_BASE = 'calcforge_calculator';
+	const ID_BASE = 'amortexa_calculator';
 
 	/**
 	 * Registers the widget with WordPress.
@@ -37,10 +37,10 @@ final class CalcForge_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 			self::ID_BASE,
-			__( 'Mortgage Calculator', CALCFORGE_TEXT_DOMAIN ),
+			__( 'Mortgage Calculator', AMORTEXA_TEXT_DOMAIN ),
 			array(
-				'classname'                   => 'calcforge-widget',
-				'description'                 => __( 'Renders the mortgage calculator. Any field left blank follows the site default.', CALCFORGE_TEXT_DOMAIN ),
+				'classname'                   => 'amortexa-widget',
+				'description'                 => __( 'Renders the mortgage calculator. Any field left blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
 				'customize_selective_refresh' => true,
 			)
 		);
@@ -69,37 +69,37 @@ final class CalcForge_Widget extends WP_Widget {
 		$fields = array(
 			'loanamount'   => array(
 				'type'        => 'number',
-				'label'       => __( 'Loan amount', CALCFORGE_TEXT_DOMAIN ),
+				'label'       => __( 'Loan amount', AMORTEXA_TEXT_DOMAIN ),
 				'min'         => 0,
 				'max'         => 999999999999,
-				'description' => __( 'Blank follows the site default.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'interestrate' => array(
 				'type'        => 'number',
-				'label'       => __( 'Interest rate', CALCFORGE_TEXT_DOMAIN ),
+				'label'       => __( 'Interest rate', AMORTEXA_TEXT_DOMAIN ),
 				'min'         => 0,
 				'max'         => 100,
-				'description' => __( 'Percent per year. Blank follows the site default.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Percent per year. Blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'loanterm'     => array(
 				'type'        => 'number',
-				'label'       => __( 'Loan term', CALCFORGE_TEXT_DOMAIN ),
+				'label'       => __( 'Loan term', AMORTEXA_TEXT_DOMAIN ),
 				'min'         => 1,
 				'max'         => 60,
 				'integer'     => true,
-				'description' => __( 'Years. Blank follows the site default.', CALCFORGE_TEXT_DOMAIN ),
+				'description' => __( 'Years. Blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'layout'       => array(
 				'type'        => 'select',
-				'label'       => __( 'Layout', CALCFORGE_TEXT_DOMAIN ),
-				'options'     => 'calcforge_get_layouts',
-				'description' => __( 'Blank follows the site default.', CALCFORGE_TEXT_DOMAIN ),
+				'label'       => __( 'Layout', AMORTEXA_TEXT_DOMAIN ),
+				'options'     => 'amortexa_get_layouts',
+				'description' => __( 'Blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
 			),
 			'theme'        => array(
 				'type'        => 'select',
-				'label'       => __( 'Skin', CALCFORGE_TEXT_DOMAIN ),
-				'options'     => 'calcforge_get_skins',
-				'description' => __( 'Blank follows the site default.', CALCFORGE_TEXT_DOMAIN ),
+				'label'       => __( 'Skin', AMORTEXA_TEXT_DOMAIN ),
+				'options'     => 'amortexa_get_skins',
+				'description' => __( 'Blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
 			),
 		);
 
@@ -108,7 +108,7 @@ final class CalcForge_Widget extends WP_Widget {
 		 *
 		 * @param array<string,array<string,mixed>> $fields Field schema.
 		 */
-		return apply_filters( 'calcforge_widget_fields', $fields );
+		return apply_filters( 'amortexa_widget_fields', $fields );
 	}
 
 	/**
@@ -173,7 +173,7 @@ final class CalcForge_Widget extends WP_Widget {
 			$attributes[] = $key . '="' . str_replace( '"', "'", $value ) . '"';
 		}
 
-		return '[calcforge' . ( $attributes ? ' ' . implode( ' ', $attributes ) : '' ) . ']';
+		return '[amortexa-mortgage-calculator' . ( $attributes ? ' ' . implode( ' ', $attributes ) : '' ) . ']';
 	}
 
 	/**
@@ -201,7 +201,7 @@ final class CalcForge_Widget extends WP_Widget {
 			$value = isset( $instance[ $key ] ) ? (string) $instance[ $key ] : '';
 
 			printf(
-				'<p class="calcforge-widget__field"><label for="%1$s">%2$s</label>',
+				'<p class="amortexa-widget__field"><label for="%1$s">%2$s</label>',
 				esc_attr( $id ),
 				esc_html( $field['label'] )
 			);
@@ -210,7 +210,7 @@ final class CalcForge_Widget extends WP_Widget {
 				$options = call_user_func( $field['options'] );
 
 				printf( '<select id="%1$s" name="%2$s">', esc_attr( $id ), esc_attr( $this->get_field_name( $key ) ) );
-				printf( '<option value="">%s</option>', esc_html__( 'Site default', CALCFORGE_TEXT_DOMAIN ) );
+				printf( '<option value="">%s</option>', esc_html__( 'Site default', AMORTEXA_TEXT_DOMAIN ) );
 
 				foreach ( $options as $option_value => $option_label ) {
 					printf(
@@ -293,7 +293,7 @@ final class CalcForge_Widget extends WP_Widget {
 			return array_key_exists( $value, $options ) ? $value : '';
 		}
 
-		$clamped = calcforge_clamp_float( $value, $field['min'], $field['max'] );
+		$clamped = amortexa_clamp_float( $value, $field['min'], $field['max'] );
 
 		if ( ! empty( $field['integer'] ) ) {
 			return (string) (int) $clamped;

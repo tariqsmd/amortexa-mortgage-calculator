@@ -6,7 +6,7 @@
  * Produces, under ./dist:
  *   trunk/                        the current release (what SVN serves)
  *   tags/<version>/              an immutable copy of the same tree
- *   calcforge.zip
+ *   amortexa-mortgage-calculator.zip
  *
  * Only the allowlist below is packaged. This is deliberate: the repository
  * contains development files (tests, tooling) that must never reach a public
@@ -20,8 +20,8 @@ const AdmZip = require( 'adm-zip' );
 
 const PLUGIN_DIR = path.resolve( __dirname, '..' );
 const DIST_DIR = path.join( PLUGIN_DIR, 'dist' );
-const MAIN_FILE = path.join( PLUGIN_DIR, 'calcforge.php' );
-const SLUG = 'calcforge';
+const MAIN_FILE = path.join( PLUGIN_DIR, 'amortexa-mortgage-calculator.php' );
+const SLUG = 'amortexa-mortgage-calculator';
 const LISTING_SRC = path.join( PLUGIN_DIR, '.wordpress-org', 'assets' );
 const LISTING_OUT = path.join( DIST_DIR, 'assets' );
 
@@ -37,7 +37,7 @@ const LISTING_OUT = path.join( DIST_DIR, 'assets' );
  * main file requires.
  */
 const SHIP = [
-	'calcforge.php',
+	'amortexa-mortgage-calculator.php',
 	'uninstall.php',
 	'readme.txt',
 	'LICENSE',
@@ -137,7 +137,7 @@ const zip = new AdmZip();
 for ( const file of files ) {
 	// AdmZip appends the basename to zipPath, so zipPath must be the entry's
 	// *directory*. Passing the full relative path would produce doubled names
-	// such as "calcforge/calcforge.php/calcforge.php".
+	// such as "amortexa-mortgage-calculator/amortexa-mortgage-calculator.php/amortexa-mortgage-calculator.php".
 	zip.addLocalFile(
 		path.join( trunk, file ),
 		path.join( SLUG, path.dirname( file ) )
@@ -149,7 +149,7 @@ zip.writeZip( zipPath );
 
 const bytes = fs.statSync( zipPath ).size;
 
-console.log( `CalcForge ${ version }` );
+console.log( `Amortexa ${ version }` );
 console.log( `  dist/trunk/          ${ files.length } files` );
 console.log( `  dist/tags/${ version }/` );
 console.log(

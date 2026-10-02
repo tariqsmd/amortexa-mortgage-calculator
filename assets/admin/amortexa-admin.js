@@ -1,5 +1,5 @@
 /**
- * Admin JavaScript for CalcForge settings page.
+ * Admin JavaScript for Amortexa settings page.
  *
  * Handles tab switching and clipboard copy interactivity, and keeps the
  * settings page header free of notices that other admin tooling relocates.
@@ -15,15 +15,15 @@
 		// Tab switching
 		// ---------------------------------------------------------------
 		const tabBtns = document.querySelectorAll(
-			'.calcforge-settings__tab-btn'
+			'.amortexa-settings__tab-btn'
 		);
 		const tabPanels = document.querySelectorAll(
-			'.calcforge-settings__tab-panel'
+			'.amortexa-settings__tab-panel'
 		);
 		const saveBar = document.querySelector(
-			'.calcforge-settings__save-bar'
+			'.amortexa-settings__save-bar'
 		);
-		const STORAGE_KEY = 'calcforge_active_tab';
+		const STORAGE_KEY = 'amortexa_active_tab';
 
 		/*
 		 * A tablist is a single widget, so only the active tab stays in the
@@ -128,7 +128,7 @@
 		// ---------------------------------------------------------------
 		// Clipboard copy
 		// ---------------------------------------------------------------
-		const copyButtons = document.querySelectorAll( '.calcforge-copy-btn' );
+		const copyButtons = document.querySelectorAll( '.amortexa-copy-btn' );
 
 		copyButtons.forEach( function ( button ) {
 			button.addEventListener( 'click', function () {
@@ -139,18 +139,18 @@
 				}
 
 				const label = button.querySelector(
-					'.calcforge-copy-btn__text'
+					'.amortexa-copy-btn__text'
 				);
 				const originalText = label ? label.textContent : '';
 
 				const setCopied = function () {
-					button.classList.add( 'calcforge-copied' );
+					button.classList.add( 'amortexa-copied' );
 					if ( label ) {
 						label.textContent = 'Copied!';
 					}
 
 					setTimeout( function () {
-						button.classList.remove( 'calcforge-copied' );
+						button.classList.remove( 'amortexa-copied' );
 						if ( label ) {
 							label.textContent = originalText;
 						}
@@ -191,16 +191,16 @@
 		// ---------------------------------------------------------------
 		// Developer API sample request builder
 		// ---------------------------------------------------------------
-		const apiRoot = document.querySelector( '[data-calcforge-api]' );
+		const apiRoot = document.querySelector( '[data-amortexa-api]' );
 
 		if ( apiRoot ) {
 			const endpoint = apiRoot.getAttribute( 'data-endpoint' );
 			const output = apiRoot.querySelector( '[data-api-request]' );
 			const copyButton = apiRoot.querySelector(
-				'.calcforge-settings__code-box .calcforge-copy-btn'
+				'.amortexa-settings__code-box .amortexa-copy-btn'
 			);
 			const warning = apiRoot.querySelector(
-				'.calcforge-settings__api-warning'
+				'.amortexa-settings__api-warning'
 			);
 			const inputs = apiRoot.querySelectorAll( '[data-api-param]' );
 
@@ -296,7 +296,7 @@
 		// Shortcode builder
 		// ---------------------------------------------------------------
 		const shortcodeRoot = document.querySelector(
-			'[data-calcforge-shortcode]'
+			'[data-amortexa-shortcode]'
 		);
 
 		if ( shortcodeRoot ) {
@@ -304,7 +304,7 @@
 				'[data-shortcode-request]'
 			);
 			/*
-			 * This panel shows two snippets: the plain [calcforge] example and the
+			 * This panel shows two snippets: the plain [amortexa-mortgage-calculator] example and the
 			 * generated sample further down. The copy button has to be the one
 			 * sitting next to the sample, otherwise the plain example's button
 			 * would be rewritten with the sample and the sample's own button
@@ -312,10 +312,10 @@
 			 * to that code box.
 			 */
 			const sampleBox = output
-				? output.closest( '.calcforge-settings__code-box' )
+				? output.closest( '.amortexa-settings__code-box' )
 				: null;
 			const copyButton = sampleBox
-				? sampleBox.querySelector( '.calcforge-copy-btn' )
+				? sampleBox.querySelector( '.amortexa-copy-btn' )
 				: null;
 			const controls = shortcodeRoot.querySelectorAll(
 				'[data-shortcode-param]'
@@ -368,7 +368,7 @@
 				} );
 
 				const shortcode =
-					'[calcforge' +
+					'[amortexa-mortgage-calculator' +
 					( attrs.length ? ' ' + attrs.join( ' ' ) : '' ) +
 					']';
 
@@ -400,10 +400,10 @@
 		 * script runs after this one.
 		 */
 		const settingsHeader = document.querySelector(
-			'.calcforge-settings__header'
+			'.amortexa-settings__header'
 		);
 		const settingsPage = document.querySelector(
-			'.wrap.calcforge-settings'
+			'.wrap.amortexa-settings'
 		);
 
 		function relocateStrayNotices() {

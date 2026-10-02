@@ -44,7 +44,7 @@ if ( ! payloadPath ) {
  * rewritten to point at the already-loaded module.
  */
 globalThis.window = globalThis.window || {};
-globalThis.window.calcforgeData = JSON.parse( readFileSync( payloadPath, 'utf8' ) );
+globalThis.window.amortexaData = JSON.parse( readFileSync( payloadPath, 'utf8' ) );
 
 const editorDataUrl = asModule( src( 'editor-data.js' ) );
 await import( editorDataUrl );

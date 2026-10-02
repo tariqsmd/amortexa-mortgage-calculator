@@ -1,14 +1,14 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "calcforge/mortgage-calculator",
+	"name": "amortexa-mortgage-calculator/mortgage-calculator",
 	"version": "1.0.0",
 	"title": "Mortgage Calculator",
-	"category": "calcforge",
+	"category": "amortexa-mortgage-calculator",
 	"icon": "calculator",
 	"description": "Interactive mortgage calculator with monthly payments, charts, and an amortization schedule.",
 	"keywords": [ "mortgage", "loan", "calculator", "payment", "amortization" ],
-	"textdomain": "calcforge",
+	"textdomain": "amortexa-mortgage-calculator",
 	"attributes": {
 		"loanAmount": {
 			"type": "number",
@@ -194,7 +194,7 @@
 		"design": {
 			"type": "object",
 			"default": {},
-			"description": "Per-element appearance overrides, keyed by design token. Validated against the token schema in calcforge_sanitize_design()."
+			"description": "Per-element appearance overrides, keyed by design token. Validated against the token schema in amortexa_sanitize_design()."
 		}
 	},
 	"example": {

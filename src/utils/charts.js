@@ -122,7 +122,7 @@ export function createDotsChart( items, opts ) {
 		return svgEl( 'svg', {
 			viewBox: `0 0 ${ width } ${ height }`,
 			role: 'img',
-			class: 'calcforge-chart calcforge-chart--dots',
+			class: 'amortexa-chart amortexa-chart--dots',
 		} );
 	}
 
@@ -133,7 +133,7 @@ export function createDotsChart( items, opts ) {
 	const svg = svgEl( 'svg', {
 		viewBox: `0 0 ${ width } ${ height }`,
 		role: 'img',
-		class: 'calcforge-chart calcforge-chart--dots',
+		class: 'amortexa-chart amortexa-chart--dots',
 	} );
 
 	const toX = ( value ) =>
@@ -146,7 +146,7 @@ export function createDotsChart( items, opts ) {
 			x2: width - pad.right,
 			y1: axisY,
 			y2: axisY,
-			class: 'calcforge-chart__axis-line',
+			class: 'amortexa-chart__axis-line',
 		} )
 	);
 
@@ -155,7 +155,7 @@ export function createDotsChart( items, opts ) {
 			x: toX( value ),
 			y: axisY + 16,
 			'text-anchor': value === 0 ? 'start' : 'end',
-			class: 'calcforge-chart__axis',
+			class: 'amortexa-chart__axis',
 		} );
 		label.textContent = opts.formatY
 			? opts.formatY( value )
@@ -190,7 +190,7 @@ export function createDotsChart( items, opts ) {
 				x2: item.x,
 				y1: axisY - 1,
 				y2: stemTop,
-				class: 'calcforge-chart__dot-stem',
+				class: 'amortexa-chart__dot-stem',
 			} )
 		);
 
@@ -200,7 +200,7 @@ export function createDotsChart( items, opts ) {
 				cy: axisY,
 				r: 6,
 				fill: item.color,
-				class: 'calcforge-chart__dot',
+				class: 'amortexa-chart__dot',
 			} )
 		);
 
@@ -208,7 +208,7 @@ export function createDotsChart( items, opts ) {
 			x: item.x,
 			y: stemTop - 4,
 			'text-anchor': 'middle',
-			class: 'calcforge-chart__dot-label',
+			class: 'amortexa-chart__dot-label',
 		} );
 		label.textContent = opts.formatY
 			? opts.formatY( item.value )
@@ -237,7 +237,7 @@ export function createDonutChart( items, opts ) {
 	const svg = svgEl( 'svg', {
 		viewBox: `0 0 ${ size } ${ size }`,
 		role: 'img',
-		class: 'calcforge-chart calcforge-chart--donut',
+		class: 'amortexa-chart amortexa-chart--donut',
 	} );
 
 	const group = svgEl( 'g', {
@@ -281,7 +281,7 @@ export function createDonutChart( items, opts ) {
 			x: center,
 			y: center - 6,
 			'text-anchor': 'middle',
-			class: 'calcforge-chart__center-title',
+			class: 'amortexa-chart__center-title',
 		} );
 		title.textContent = opts.centerTitle;
 		svg.appendChild( title );
@@ -292,7 +292,7 @@ export function createDonutChart( items, opts ) {
 			x: center,
 			y: center + 14,
 			'text-anchor': 'middle',
-			class: 'calcforge-chart__center-value',
+			class: 'amortexa-chart__center-value',
 		} );
 		value.textContent = opts.centerValue;
 		svg.appendChild( value );
@@ -339,7 +339,7 @@ export function createLineChart( series, opts ) {
 	const svg = svgEl( 'svg', {
 		viewBox: `0 0 ${ width } ${ height }`,
 		role: 'img',
-		class: 'calcforge-chart calcforge-chart--line',
+		class: 'amortexa-chart amortexa-chart--line',
 	} );
 
 	for ( let tick = 0; tick <= 4; tick++ ) {
@@ -352,7 +352,7 @@ export function createLineChart( series, opts ) {
 				x2: width - pad.right,
 				y1: y,
 				y2: y,
-				class: 'calcforge-chart__gridline',
+				class: 'amortexa-chart__gridline',
 			} )
 		);
 
@@ -360,7 +360,7 @@ export function createLineChart( series, opts ) {
 			x: pad.left - 8,
 			y: y + 3,
 			'text-anchor': 'end',
-			class: 'calcforge-chart__axis',
+			class: 'amortexa-chart__axis',
 		} );
 		label.textContent = opts.formatY
 			? opts.formatY( value )
@@ -420,7 +420,7 @@ export function createLineChart( series, opts ) {
 			x: xAt( tick.at ),
 			y: height - 8,
 			'text-anchor': 'middle',
-			class: 'calcforge-chart__axis',
+			class: 'amortexa-chart__axis',
 		} );
 		label.textContent = tick.text;
 		svg.appendChild( label );
@@ -478,7 +478,7 @@ export function createBarChart( series, opts ) {
 	const svg = svgEl( 'svg', {
 		viewBox: `0 0 ${ width } ${ height }`,
 		role: 'img',
-		class: 'calcforge-chart calcforge-chart--bar',
+		class: 'amortexa-chart amortexa-chart--bar',
 	} );
 
 	for ( let tick = 0; tick <= 4; tick++ ) {
@@ -491,7 +491,7 @@ export function createBarChart( series, opts ) {
 				x2: width - pad.right,
 				y1: y,
 				y2: y,
-				class: 'calcforge-chart__gridline',
+				class: 'amortexa-chart__gridline',
 			} )
 		);
 
@@ -499,7 +499,7 @@ export function createBarChart( series, opts ) {
 			x: pad.left - 8,
 			y: y + 3,
 			'text-anchor': 'end',
-			class: 'calcforge-chart__axis',
+			class: 'amortexa-chart__axis',
 		} );
 		label.textContent = opts.formatY
 			? opts.formatY( value )
@@ -529,7 +529,7 @@ export function createBarChart( series, opts ) {
 					height: barH.toFixed( 1 ),
 					fill: group.color,
 					rx: 2,
-					class: 'calcforge-chart__bar',
+					class: 'amortexa-chart__bar',
 				} )
 			);
 		} );
@@ -544,7 +544,7 @@ export function createBarChart( series, opts ) {
 			x: pad.left + slot * tick.at + slot / 2,
 			y: height - 8,
 			'text-anchor': 'middle',
-			class: 'calcforge-chart__axis',
+			class: 'amortexa-chart__axis',
 		} );
 		label.textContent = tick.text;
 		svg.appendChild( label );
