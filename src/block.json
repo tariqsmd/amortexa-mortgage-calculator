@@ -192,16 +192,7 @@
 	},
 	"supports": {
 		"html": false,
-		"align": [ "wide", "full" ],
-		"color": {
-			"background": true,
-			"text": true,
-			"gradients": true
-		},
-		"spacing": {
-			"padding": true,
-			"margin": true
-		}
+		"align": [ "wide", "full" ]
 	},
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",

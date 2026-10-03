@@ -21,7 +21,7 @@ Amortexa adds a **Mortgage Calculator** block to the block editor. Drop it on an
 * **Real monthly cost, not just principal and interest.** Turn on recurring costs to add property tax, home insurance, HOA fees, PMI, and any other monthly costs, and the calculator reports a genuine total monthly payment. Each component is a cash amount or a percentage of the purchase price, and the results and the composition chart both include it.
 * **PMI that cancels itself.** When PMI is set, the balance is walked forward month by month and PMI stops the first month the loan reaches 80% of the purchase price, the later of automatic cancellation and the point you could request it yourself. Charge it to term end and it overstates what you would actually pay.
 * **Twenty-four built-in skins.** Twelve light and twelve dark: Classic Light, Elegant Dark, Ocean Blue, Sunset Warm, Forest Green, Midnight Violet, Rose Quartz, Minimal Slate, Royal Grape, Aqua Fresh, Mocha Cream, Cyber Neon, Emerald Nights, Crimson Dusk, Graphite, Copper Forge, Royal Sapphire, Amber Gold, Cobalt Blue, Fuchsia Bloom, Mint Fresh, Sandstone, Lemon Zest, and Steel Blue — chosen per block.
-* **Colour and typography controls.** Override the accent, secondary accent, label, and field text/background/border colours, pick a font family, and adjust the payment figure's size and weight — all per block, without writing CSS.
+* **Colour and typography controls.** Override the accent, secondary accent, label, and field text/background/border colours, and pick a font family — all per block, without writing CSS.
 * **Dependency-free SVG charts.** A payment-composition donut and a balance-over-time line chart with cumulative interest, drawn in plain SVG. No charting library, no external requests.
 * **Amortization schedule.** Annual rows showing principal paid, interest paid, and remaining balance, collapsible on the front end.
 * **Works without JavaScript.** The block is fully server-rendered, so results and the schedule are correct even with scripting disabled. JavaScript is progressive enhancement that adds live recalculation and the charts.
@@ -31,7 +31,7 @@ Amortexa adds a **Mortgage Calculator** block to the block editor. Drop it on an
 
 = Site-wide defaults =
 
-Under **Settings → Amortexa** you can set the defaults every new calculator block starts from: currency symbol, interest rate, decimal precision, loan amount, down payment, term, default skin, default chart type, and whether the amortization table is shown by default. Individual blocks can still override any of these in the editor.
+Under the **Amortexa** menu you can set the defaults every new calculator block starts from: currency symbol, interest rate, decimal precision, loan amount, down payment, term, default skin, default chart type, and whether the amortization table is shown by default. Individual blocks can still override any of these in the editor.
 
 = Developer friendly =
 
@@ -43,7 +43,7 @@ The plugin also exposes a REST endpoint and a set of documented actions and filt
 
 1. Upload the `amortexa-mortgage-calculator` folder to the `/wp-content/plugins/` directory, or install the plugin through the WordPress admin **Plugins** screen.
 2. Activate the plugin. Go to **Plugins → Installed Plugins** and click **Activate** under Amortexa.
-3. Optionally set your site-wide defaults under **Settings → Amortexa**.
+3. Optionally set your site-wide defaults under the **Amortexa** menu.
 4. Edit any post or page, open the block inserter, search for "Mortgage Calculator", and drag the block into the content area. It appears in the custom **Amortexa** category.
 
 == Frequently Asked Questions ==
@@ -68,7 +68,7 @@ As soon as the loan balance reaches 80% of the original purchase price, unless t
 
 = Can I change the currency symbol? =
 
-Yes. Set it per block using the block's "Currency symbol" setting, site-wide under **Settings → Amortexa**, or programmatically with the `amortexa_currency_symbol` filter. Each block can also place the symbol before the amount ($99) or after it (99 €) using the "Currency position" setting. Amounts are formatted with your locale's number separators.
+Yes. Set it per block using the block's "Currency symbol" setting, site-wide under the **Amortexa** menu, or programmatically with the `amortexa_currency_symbol` filter. Each block can also place the symbol before the amount ($99) or after it (99 €) using the "Currency position" setting. Amounts are formatted with your locale's number separators.
 
 = Is there a REST API? =
 
