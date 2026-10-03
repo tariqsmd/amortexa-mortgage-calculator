@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/plugin.json",
 	"name": "Amortexa Mortgage Calculator",
 	"version": "1.0.0",
-	"description": "An interactive mortgage calculator block for the block editor, with live monthly payment results, down payment support, charts, and an amortization schedule.",
+	"description": "An interactive mortgage calculator block with live payment results, down payment, recurring costs, charts, and an amortization schedule.",
 	"author": "Muhammad Tariq",
 	"authorUrl": "https://profiles.wordpress.org/mtariqsmd/",
 	"homepage": "https://wordpress.org/plugins/amortexa-mortgage-calculator/",

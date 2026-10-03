@@ -10,8 +10,8 @@
  * @wordpress-plugin
  * Plugin Name:       Amortexa Mortgage Calculator
  * Plugin URI:        https://wordpress.org/plugins/amortexa-mortgage-calculator/
- * Description:       An interactive mortgage calculator block with live monthly payment results, down payment support, recurring costs with PMI cancellation, charts, and an amortization schedule.
- * Version:           1.1.0
+ * Description:       An interactive mortgage calculator block with live payment results, down payment, recurring costs, charts, and an amortization schedule.
+ * Version:           1.0.0
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Muhammad Tariq
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AMORTEXA_VERSION', '1.1.0' );
+define( 'AMORTEXA_VERSION', '1.0.0' );
 define( 'AMORTEXA_PLUGIN_FILE', __FILE__ );
 define( 'AMORTEXA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AMORTEXA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

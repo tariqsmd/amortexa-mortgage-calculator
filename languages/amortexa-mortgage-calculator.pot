@@ -1,8 +1,8 @@
-# Copyright (C) 2026 Amortexa 1.1.0
-# This file is distributed under the same license as the Amortexa 1.1.0 package.
+# Copyright (C) 2026 Amortexa 1.0.0
+# This file is distributed under the same license as the Amortexa 1.0.0 package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Amortexa 1.1.0\n"
+"Project-Id-Version: Amortexa 1.0.0\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -422,7 +422,7 @@ msgid "percent or amount, deciding whether othercosts is read as a rate of the p
 msgstr ""
 
 #. Translators: block title shown in the block inserter.
-#: includes/class-widget.php:40, src/block.json:6
+#: includes/class-widget.php:40, src/block.json:5
 msgid "Mortgage Calculator"
 msgstr ""
 
@@ -1345,32 +1345,32 @@ msgid "Length of the loan in years."
 msgstr ""
 
 #. Translators: block title shown in the block inserter.
-#: src/block.json:9
+#: src/block.json:8
 msgid "Interactive mortgage calculator with monthly payments, charts, and an amortization schedule."
 msgstr ""
 
 #. Translators: block keyword used in the block inserter search.
-#: src/block.json:11
+#: src/block.json:10
 msgid "mortgage"
 msgstr ""
 
 #. Translators: block keyword used in the block inserter search.
-#: src/block.json:12
+#: src/block.json:11
 msgid "loan"
 msgstr ""
 
 #. Translators: block keyword used in the block inserter search.
-#: src/block.json:13
+#: src/block.json:12
 msgid "calculator"
 msgstr ""
 
 #. Translators: block keyword used in the block inserter search.
-#: src/block.json:14
+#: src/block.json:13
 msgid "payment"
 msgstr ""
 
 #. Translators: block keyword used in the block inserter search.
-#: src/block.json:15
+#: src/block.json:14
 msgid "amortization"
 msgstr ""
 

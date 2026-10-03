@@ -1,7 +1,7 @@
 {
 	"name": "amortexa-mortgage-calculator",
-	"version": "1.1.0",
-	"description": "An interactive mortgage calculator block for the block editor, with live monthly payments, charts and an amortization schedule.",
+	"version": "1.0.0",
+	"description": "An interactive mortgage calculator block with live payment results, down payment, recurring costs, charts, and an amortization schedule.",
 	"author": "Muhammad Tariq",
 	"license": "GPL-2.0-or-later",
 	"keywords": [
@@ -41,7 +41,7 @@
 		"wp-pot": "^2.0.0"
 	},
 	"scripts": {
-		"build": "wp-scripts build && node tools/strip-bom.cjs",
+		"build": "wp-scripts build && node tools/strip-bom.cjs && node tools/sync-block-version.cjs",
 		"start": "wp-scripts start",
 		"dev": "wp-scripts start",
 		"lint:js": "wp-scripts lint-js src assets webpack.config.js",

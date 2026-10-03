@@ -2288,12 +2288,12 @@ function amortexa_test_version_consistency() {
 	);
 
 	/*
-	 * The costs work ships real behaviour, so a release carrying it must not be
-	 * published under the previous version number.
+	 * The costs work ships real behaviour, so it cannot be published under a
+	 * version that predates it. 1.0.0 is the first release that carries it.
 	 */
 	$report(
-		version_compare( $header, '1.1.0', '>=' ),
-		'the version is at least 1.1.0, which is where recurring costs shipped'
+		version_compare( $header, '1.0.0', '>=' ),
+		'the version is at least 1.0.0, which is where recurring costs shipped'
 	);
 
 	/*
@@ -2319,6 +2319,27 @@ function amortexa_test_version_consistency() {
 		$report(
 			isset( $dest['attributes']['showCosts'] ),
 			'the compiled block metadata declares the cost switch'
+		);
+
+		/*
+		 * WordPress versions the block's front-end assets from this field, and
+		 * the compiled CSS and JS keep stable filenames, so it is the only thing
+		 * that busts the browser cache after an upgrade. It has to track the
+		 * plugin header, which tools/sync-block-version.cjs writes at build time,
+		 * and src/block.json must not carry a second copy to drift out of step.
+		 */
+		$report(
+			isset( $dest['version'] ) && $dest['version'] === $header,
+			sprintf(
+				'the compiled block metadata versions assets with the plugin header (%s), not %s',
+				$header,
+				isset( $dest['version'] ) ? $dest['version'] : 'an unset version'
+			)
+		);
+
+		$report(
+			! isset( $src['version'] ),
+			'src/block.json declares no version, so the plugin header stays the only source'
 		);
 
 		/*

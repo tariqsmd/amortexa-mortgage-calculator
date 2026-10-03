@@ -4,11 +4,11 @@ Tags: mortgage, calculator, real estate, amortization, block
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
-An interactive mortgage calculator block for the block editor, with live monthly payments, charts and an amortization schedule.
+An interactive mortgage calculator block with live payment results, down payment, recurring costs, charts, and an amortization schedule.
 
 == Description ==
 
@@ -130,26 +130,23 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 
 == Changelog ==
 
-= 1.1.0 =
-* New: recurring costs — property tax, home insurance, HOA fees, PMI, and other costs — behind an opt-in **Show costs** switch, so an existing calculator keeps exactly the field list it already had.
+= 1.0.0 =
+* New: recurring costs — property tax, home insurance, HOA fees, PMI, and other costs — behind an opt-in **Show costs** switch, so a calculator only carries the cost fields you ask for.
 * New: every cost that can be quoted as a rate carries a unit switch, so it can be entered as a percentage of the purchase price or as a cash amount. Property tax defaults to a rate, the rest to a cash amount.
 * New: a **Total monthly cost** result and a lifetime out-of-pocket figure alongside the existing principal and interest, total interest, and total paid.
 * New: the payment composition chart gains a slice per active cost, and the amortization schedule carries recurring costs through each year.
 * New: PMI ends the first month the balance reaches 80% of the purchase price, instead of being charged to term end.
 * Improved: cost components each pick up a distinct, automatically chosen colour, with a legend, so the breakdown stays readable across light and dark skins.
 * Improved: cost figures are clamped by the unit the author chose, so an amount-based premium is no longer truncated by a percentage bound.
-* New: two two column layouts that put the inputs beside the rest of the calculator - **Inputs beside details** (inputs in one column, results and charts in the other) and **Chart beside inputs** (inputs and results stacked in one column, charts in the other). The amortization table stays full width underneath both, in every layout, because a four column table is unreadable in a half width column. `stacked` and `split` are unchanged.
-* New: `amortexa_skins`, `amortexa_cost_units`, and `amortexa_shortcode_block` filters are now documented.
-* Fixed: the `[amortexa-mortgage-calculator]` shortcode accepts the recurring cost attributes. `showcosts`, `propertytax`, `homeinsurance`, `hoafee`, `pmi`, `othercosts` and their `*unit` counterparts were reachable from the block and the editor but silently ignored in a shortcode.
-* Removed: documentation for a `amortexa_enqueue_assets` filter that was never implemented. Front-end assets are registered from the block metadata for `amortexa-mortgage-calculator/mortgage-calculator`; to replace them, dequeue the handles that block registers and enqueue your own in a theme.
-
-= 1.0.0 =
+* New: four layouts — **Stacked**, **Two columns**, **Inputs beside details** (inputs in one column, results and charts in the other), and **Chart beside inputs** (inputs and results stacked in one column, charts in the other). The amortization table stays full width underneath every one of them, because a four column table is unreadable in a half width column.
+* New: `amortexa_skins`, `amortexa_cost_units`, and `amortexa_shortcode_block` filters are documented.
 * New: a Mortgage Calculator widget for sidebars and any other widget area, with optional overrides for amount, rate, term, layout, and skin.
 * New: a shortcode builder on the Settings -> Shortcode screen. Every attribute gets an input and the sample shortcode rebuilds and copies as you change them.
 * New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type under Settings → Amortexa.
 * New: per-block toggles to show/hide the results summary and the range sliders.
 * New: currency symbol position option globally and per block — before the amount ($99) or after (99 €).
 * New: shortcode attributes for form layout (`formcolumns`) and panel order (`panelorder`).
+* New: the shortcode carries every recurring cost attribute — `showcosts`, `propertytax`, `homeinsurance`, `hoafee`, `pmi`, `othercosts` and their `*unit` counterparts — matching what the block and the editor expose.
 * New: twenty-four visual skins across light, dark, and accent colourways.
 * New: per-element appearance controls in a dedicated Design tab, covering seventy-six design tokens grouped by calculator region.
 * New: font family selector for the calculator (theme default, modern sans, classic serif, monospace).
@@ -172,8 +169,5 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 
 == Upgrade Notice ==
 
-= 1.1.0 =
-Adds opt-in recurring costs (property tax, insurance, HOA, PMI, other) with a real total monthly payment. Nothing changes for existing calculators until you turn costs on.
-
 = 1.0.0 =
-Site-wide defaults for loan amount, down payment, loan term, skin, and chart type are available under Settings → Amortexa.
+First release. Site-wide defaults for loan amount, down payment, loan term, skin, and chart type are under Settings → Amortexa, and recurring costs (property tax, insurance, HOA, PMI, other) are opt-in behind the **Show costs** switch.
