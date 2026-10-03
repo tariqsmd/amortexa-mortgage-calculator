@@ -66,22 +66,22 @@ $config = array(
 	// as a custom property the way colours do.
 	'chartHeight'      => (int) amortexa_get_design_chart_metrics( $attrs )['height'],
 	'labels'           => array(
-		'monthly'     => __( 'Monthly Payment', 'amortexa-mortgage-calculator' ),
+		'monthly'      => __( 'Monthly Payment', 'amortexa-mortgage-calculator' ),
 		'totalMonthly' => __( 'Total Monthly Cost', 'amortexa-mortgage-calculator' ),
-		'principal'   => __( 'Financed Principal', 'amortexa-mortgage-calculator' ),
-		'totalInt'    => __( 'Total Interest', 'amortexa-mortgage-calculator' ),
-		'totalPaid'   => __( 'Total Paid', 'amortexa-mortgage-calculator' ),
-		'totalCosts'  => __( 'Total Taxes & Costs', 'amortexa-mortgage-calculator' ),
-		'outOfPocket' => __( 'Total Out-of-Pocket', 'amortexa-mortgage-calculator' ),
-		'pi'          => __( 'Principal & Interest', 'amortexa-mortgage-calculator' ),
-		'toggle'      => __( 'Collapse schedule', 'amortexa-mortgage-calculator' ),
-		'toggleOpen'  => __( 'Expand schedule', 'amortexa-mortgage-calculator' ),
-		'year'        => __( 'Year', 'amortexa-mortgage-calculator' ),
-		'prinPaid'    => __( 'Principal Paid', 'amortexa-mortgage-calculator' ),
-		'intPaid'     => __( 'Interest Paid', 'amortexa-mortgage-calculator' ),
-		'balance'     => __( 'Remaining Balance', 'amortexa-mortgage-calculator' ),
-		'balanceY1'   => __( 'Balance After Year 1', 'amortexa-mortgage-calculator' ),
-		'cumInt'      => __( 'Cumulative Interest', 'amortexa-mortgage-calculator' ),
+		'principal'    => __( 'Financed Principal', 'amortexa-mortgage-calculator' ),
+		'totalInt'     => __( 'Total Interest', 'amortexa-mortgage-calculator' ),
+		'totalPaid'    => __( 'Total Paid', 'amortexa-mortgage-calculator' ),
+		'totalCosts'   => __( 'Total Taxes & Costs', 'amortexa-mortgage-calculator' ),
+		'outOfPocket'  => __( 'Total Out-of-Pocket', 'amortexa-mortgage-calculator' ),
+		'pi'           => __( 'Principal & Interest', 'amortexa-mortgage-calculator' ),
+		'toggle'       => __( 'Collapse schedule', 'amortexa-mortgage-calculator' ),
+		'toggleOpen'   => __( 'Expand schedule', 'amortexa-mortgage-calculator' ),
+		'year'         => __( 'Year', 'amortexa-mortgage-calculator' ),
+		'prinPaid'     => __( 'Principal Paid', 'amortexa-mortgage-calculator' ),
+		'intPaid'      => __( 'Interest Paid', 'amortexa-mortgage-calculator' ),
+		'balance'      => __( 'Remaining Balance', 'amortexa-mortgage-calculator' ),
+		'balanceY1'    => __( 'Balance After Year 1', 'amortexa-mortgage-calculator' ),
+		'cumInt'       => __( 'Cumulative Interest', 'amortexa-mortgage-calculator' ),
 	),
 );
 
@@ -169,14 +169,14 @@ if ( ! empty( $attrs['showCosts'] ) ) {
 		$is_amount = isset( $unit[ $attribute ] ) && 'amount' === $unit[ $attribute ];
 
 		$cost_fields[] = array(
-			'id'      => $uid . '-cost-' . $component_key,
-			'name'    => $attribute,
-			'label'   => $component['label'],
-			'value'   => (string) $attrs[ $attribute ],
-			'step'    => $is_amount ? 'any' : '0.01',
-			'min'     => '0',
-			'max'     => '',
-			'unit'    => $unit[ $attribute ],
+			'id'       => $uid . '-cost-' . $component_key,
+			'name'     => $attribute,
+			'label'    => $component['label'],
+			'value'    => (string) $attrs[ $attribute ],
+			'step'     => $is_amount ? 'any' : '0.01',
+			'min'      => '0',
+			'max'      => '',
+			'unit'     => $unit[ $attribute ],
 			'unitAttr' => $attribute . 'Unit',
 		);
 	}
@@ -379,11 +379,11 @@ if ( ! empty( $style_vars ) ) {
 		<?php foreach ( $slots as $slot ) : ?>
 			<?php if ( 'column' === $slot[0] ) : ?>
 		<div class="amortexa-calc__column amortexa-calc__column--<?php echo esc_html( $slot[1] ); ?>">
-			<?php continue; ?>
+				<?php continue; ?>
 			<?php endif; ?>
 			<?php if ( 'column-end' === $slot[0] ) : ?>
 		</div>
-			<?php continue; ?>
+				<?php continue; ?>
 			<?php endif; ?>
 			<?php
 			/*
@@ -394,7 +394,7 @@ if ( ! empty( $style_vars ) ) {
 			?>
 			<?php if ( 'form' === $panel ) : ?>
 		<form class="amortexa-calc__form" autocomplete="off">
-			<?php foreach ( $fields as $field ) : ?>
+				<?php foreach ( $fields as $field ) : ?>
 				<div class="amortexa-calc__control">
 					<label class="amortexa-calc__label" for="<?php echo esc_attr( $field['id'] ); ?>">
 						<?php echo esc_html( $field['label'] ); ?>
@@ -428,12 +428,25 @@ if ( ! empty( $style_vars ) ) {
 					</div>
 				</div>
 			<?php endforeach; ?>
-			<?php if ( $cost_fields ) : ?>
+				<?php if ( $cost_fields ) : ?>
 				<fieldset class="amortexa-calc__costs">
 					<legend class="amortexa-calc__costs-legend">
 						<?php esc_html_e( 'Taxes & Costs (annual)', 'amortexa-mortgage-calculator' ); ?>
 					</legend>
 					<?php foreach ( $cost_fields as $cost_field ) : ?>
+						<?php
+						/*
+						 * Assembled here rather than echoed inside the attribute: an
+						 * inline PHP block in aria-label has to sit on its own line,
+						 * which would emit tabs and newlines into the attribute value.
+						 * Escaping once at the echo also avoids encoding the label twice.
+						 */
+						$unit_toggle_label = sprintf(
+							/* translators: %s: cost component name. */
+							__( 'Toggle %s between a percentage and an amount', 'amortexa-mortgage-calculator' ),
+							$cost_field['label']
+						);
+						?>
 						<div class="amortexa-calc__control">
 							<label class="amortexa-calc__label" for="<?php echo esc_attr( $cost_field['id'] ); ?>">
 								<?php echo esc_html( $cost_field['label'] ); ?>
@@ -453,10 +466,7 @@ if ( ! empty( $style_vars ) ) {
 									type="button"
 									class="amortexa-calc__unit"
 									data-amortexa-unit="<?php echo esc_attr( $cost_field['unitAttr'] ); ?>"
-									aria-label="<?php
-										/* translators: %s: cost component name. */
-										printf( esc_attr__( 'Toggle %s between a percentage and an amount', 'amortexa-mortgage-calculator' ), esc_attr( $cost_field['label'] ) );
-									?>"
+									aria-label="<?php echo esc_attr( $unit_toggle_label ); ?>"
 								>
 									<?php echo esc_html( 'percent' === $cost_field['unit'] ? '%' : __( 'Amount', 'amortexa-mortgage-calculator' ) ); ?>
 								</button>

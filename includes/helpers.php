@@ -121,34 +121,34 @@ function amortexa_get_panel_keys() {
 function amortexa_get_cost_components() {
 	return array(
 		'pi'        => array(
-			'label'    => __( 'Principal & Interest', 'amortexa-mortgage-calculator' ),
-			'token'    => 'costPi',
-			'percent'  => false,
+			'label'   => __( 'Principal & Interest', 'amortexa-mortgage-calculator' ),
+			'token'   => 'costPi',
+			'percent' => false,
 		),
 		'tax'       => array(
-			'label'    => __( 'Property Tax', 'amortexa-mortgage-calculator' ),
-			'token'    => 'costTax',
-			'percent'  => true,
+			'label'   => __( 'Property Tax', 'amortexa-mortgage-calculator' ),
+			'token'   => 'costTax',
+			'percent' => true,
 		),
 		'insurance' => array(
-			'label'    => __( 'Home Insurance', 'amortexa-mortgage-calculator' ),
-			'token'    => 'costInsurance',
-			'percent'  => true,
+			'label'   => __( 'Home Insurance', 'amortexa-mortgage-calculator' ),
+			'token'   => 'costInsurance',
+			'percent' => true,
 		),
 		'hoa'       => array(
-			'label'    => __( 'HOA Fee', 'amortexa-mortgage-calculator' ),
-			'token'    => 'costHoa',
-			'percent'  => true,
+			'label'   => __( 'HOA Fee', 'amortexa-mortgage-calculator' ),
+			'token'   => 'costHoa',
+			'percent' => true,
 		),
 		'pmi'       => array(
-			'label'    => __( 'PMI', 'amortexa-mortgage-calculator' ),
-			'token'    => 'costPmi',
-			'percent'  => true,
+			'label'   => __( 'PMI', 'amortexa-mortgage-calculator' ),
+			'token'   => 'costPmi',
+			'percent' => true,
 		),
 		'other'     => array(
-			'label'    => __( 'Other Costs', 'amortexa-mortgage-calculator' ),
-			'token'    => 'costOther',
-			'percent'  => true,
+			'label'   => __( 'Other Costs', 'amortexa-mortgage-calculator' ),
+			'token'   => 'costOther',
+			'percent' => true,
 		),
 	);
 }
@@ -198,8 +198,8 @@ function amortexa_get_cost_units() {
 /**
  * Resolves the display unit for each cost attribute, honouring the saved choice.
  *
- * amortexa_get_cost_units() reports which fields can be a percentage at all,
- * which is a property of the schema. This adds the per-block answer: the author
+ * Which fields can be a percentage at all is a property of the schema, and
+ * amortexa_get_cost_units() reports it. This adds the per-block answer: the author
  * can enter tax as a rate or as the cash amount off a bill, and that decision
  * lives in the saved `homeInsuranceUnit` style attributes. Reading them here is
  * what stops a field labelled in dollars being multiplied by the home price.
@@ -243,7 +243,7 @@ function amortexa_resolve_cost_units( $attributes ) {
  * @return array<int,string> Ordered, de-duplicated panel keys.
  */
 function amortexa_resolve_panel_order( $order, $visible ) {
-	$allowed = array_flip( amortexa_get_panel_keys() );
+	$allowed  = array_flip( amortexa_get_panel_keys() );
 	$resolved = array();
 
 	foreach ( (array) $order as $key ) {
@@ -333,13 +333,13 @@ function amortexa_get_font_families() {
  */
 function amortexa_get_font_weights() {
 	return array(
-		''     => __( 'Theme default', 'amortexa-mortgage-calculator' ),
-		'300'  => __( 'Light', 'amortexa-mortgage-calculator' ),
-		'400'  => __( 'Normal', 'amortexa-mortgage-calculator' ),
-		'500'  => __( 'Medium', 'amortexa-mortgage-calculator' ),
-		'600'  => __( 'Semi Bold', 'amortexa-mortgage-calculator' ),
-		'700'  => __( 'Bold', 'amortexa-mortgage-calculator' ),
-		'800'  => __( 'Extra Bold', 'amortexa-mortgage-calculator' ),
+		''    => __( 'Theme default', 'amortexa-mortgage-calculator' ),
+		'300' => __( 'Light', 'amortexa-mortgage-calculator' ),
+		'400' => __( 'Normal', 'amortexa-mortgage-calculator' ),
+		'500' => __( 'Medium', 'amortexa-mortgage-calculator' ),
+		'600' => __( 'Semi Bold', 'amortexa-mortgage-calculator' ),
+		'700' => __( 'Bold', 'amortexa-mortgage-calculator' ),
+		'800' => __( 'Extra Bold', 'amortexa-mortgage-calculator' ),
 	);
 }
 
@@ -644,7 +644,7 @@ function amortexa_get_default_attributes() {
 		'fieldTextColor'       => '',
 		'fieldBackgroundColor' => '',
 		'fieldBorderColor'     => '',
-		'design'                => array(),
+		'design'               => array(),
 	);
 
 	/**
@@ -851,7 +851,7 @@ function amortexa_sanitize_attributes( $attributes ) {
 		? amortexa_clamp_float( $raw['paymentFontSize'], 0, 120 )
 		: (float) $defaults['paymentFontSize'];
 
-	$requested_weight  = isset( $raw['paymentFontWeight'] ) && is_scalar( $raw['paymentFontWeight'] )
+	$requested_weight    = isset( $raw['paymentFontWeight'] ) && is_scalar( $raw['paymentFontWeight'] )
 		? (string) $raw['paymentFontWeight']
 		: (string) $defaults['paymentFontWeight'];
 	$payment_font_weight = array_key_exists( $requested_weight, amortexa_get_font_weights() ) && '' !== $requested_weight
@@ -887,7 +887,7 @@ function amortexa_sanitize_attributes( $attributes ) {
 		$colors[ $key ] = $color ? $color : '';
 	}
 
-	$font_families = array_keys( amortexa_get_font_families() );
+	$font_families  = array_keys( amortexa_get_font_families() );
 	$requested_font = isset( $raw['fontFamily'] ) && is_scalar( $raw['fontFamily'] )
 		? (string) $raw['fontFamily']
 		: (string) $defaults['fontFamily'];
@@ -959,35 +959,35 @@ function amortexa_sanitize_attributes( $attributes ) {
 	}
 
 	$sanitized = array(
-		'loanAmount'       => $loan_amount,
-		'interestRate'     => $interest_rate,
-		'loanTerm'         => $loan_term,
-		'downPayment'      => $down_payment,
-		'currencySymbol'   => $currency_symbol,
-		'currencyPosition' => $currency_position,
-		'showAmortization' => amortexa_sanitize_bool(
+		'loanAmount'        => $loan_amount,
+		'interestRate'      => $interest_rate,
+		'loanTerm'          => $loan_term,
+		'downPayment'       => $down_payment,
+		'currencySymbol'    => $currency_symbol,
+		'currencyPosition'  => $currency_position,
+		'showAmortization'  => amortexa_sanitize_bool(
 			isset( $raw['showAmortization'] ) ? $raw['showAmortization'] : $defaults['showAmortization']
 		),
-		'showCharts'       => amortexa_sanitize_bool(
+		'showCharts'        => amortexa_sanitize_bool(
 			isset( $raw['showCharts'] ) ? $raw['showCharts'] : $defaults['showCharts']
 		),
-		'chartType'        => $chart_type,
-		'layout'           => $layout,
-		'formColumns'      => $form_columns_key,
-		'panelOrder'       => $panel_order,
-		'paymentFontSize'  => $payment_font_size,
+		'chartType'         => $chart_type,
+		'layout'            => $layout,
+		'formColumns'       => $form_columns_key,
+		'panelOrder'        => $panel_order,
+		'paymentFontSize'   => $payment_font_size,
 		'paymentFontWeight' => $payment_font_weight,
-		'theme'            => $theme,
-		'showSliders'      => amortexa_sanitize_bool(
+		'theme'             => $theme,
+		'showSliders'       => amortexa_sanitize_bool(
 			isset( $raw['showSliders'] ) ? $raw['showSliders'] : $defaults['showSliders']
 		),
-		'showResults'      => amortexa_sanitize_bool(
+		'showResults'       => amortexa_sanitize_bool(
 			isset( $raw['showResults'] ) ? $raw['showResults'] : $defaults['showResults']
 		),
-		'showCosts'        => amortexa_sanitize_bool(
+		'showCosts'         => amortexa_sanitize_bool(
 			isset( $raw['showCosts'] ) ? $raw['showCosts'] : $defaults['showCosts']
 		),
-		'fontFamily'       => $font_family,
+		'fontFamily'        => $font_family,
 	);
 
 	foreach ( $costs as $cost_key => $cost_value ) {
@@ -1128,7 +1128,14 @@ function amortexa_rate_limit_hit( $bucket, $limit, $window ) {
 	$exceeded = $count > $limit;
 
 	$retry_after = max( 1, $expires - $now );
-	set_transient( 'amortexa_rl_' . md5( $bucket ), array( 'count' => $count, 'expires' => $expires ), $retry_after );
+	set_transient(
+		'amortexa_rl_' . md5( $bucket ),
+		array(
+			'count'   => $count,
+			'expires' => $expires,
+		),
+		$retry_after
+	);
 
 	return array(
 		'count'       => $count,
@@ -1443,8 +1450,8 @@ function amortexa_calculate( $attributes ) {
 
 	$pmi_months = $pmi_end > 0 ? $pmi_end : ( $pmi_base > 0 ? $months : 0 );
 
-	$result['total_pmi']      = round( $pmi_months * ( $pmi_base / 12 ), 2 );
-	$result['total_costs']    = round( $result['total_pmi'] + ( array_sum( $annual ) - $pmi_base ) * ( $months / 12 ), 2 );
+	$result['total_pmi']           = round( $pmi_months * ( $pmi_base / 12 ), 2 );
+	$result['total_costs']         = round( $result['total_pmi'] + ( array_sum( $annual ) - $pmi_base ) * ( $months / 12 ), 2 );
 	$result['total_out_of_pocket'] = round( $result['total_paid'] + $result['total_costs'], 2 );
 
 	if ( $attrs['showAmortization'] ) {
@@ -1572,9 +1579,9 @@ function amortexa_get_editor_data() {
 			}
 
 			if ( 'select' === $token['type'] ) {
-				$lists        = amortexa_get_design_option_lists();
-				$name         = $token['options'];
-				$list         = isset( $lists[ $name ] ) ? $lists[ $name ] : array();
+				$lists            = amortexa_get_design_option_lists();
+				$name             = $token['options'];
+				$list             = isset( $lists[ $name ] ) ? $lists[ $name ] : array();
 				$entry['options'] = array();
 
 				/*
@@ -1607,23 +1614,23 @@ function amortexa_get_editor_data() {
 	}
 
 	return array(
-		'skins'           => $skins,
-		'chartTypes'      => amortexa_get_chart_types(),
-		'layouts'         => amortexa_get_layouts(),
-		'formColumns'     => amortexa_get_form_columns(),
-		'fontFamilies'    => amortexa_get_font_families(),
-		'fontWeights'     => amortexa_get_font_weights(),
+		'skins'            => $skins,
+		'chartTypes'       => amortexa_get_chart_types(),
+		'layouts'          => amortexa_get_layouts(),
+		'formColumns'      => amortexa_get_form_columns(),
+		'fontFamilies'     => amortexa_get_font_families(),
+		'fontWeights'      => amortexa_get_font_weights(),
 		'currencyPosition' => amortexa_get_currency_positions(),
-		'colors'          => $colors,
-		'designGroups'    => $design_groups,
-		'colorSwatches'   => amortexa_get_color_swatches(),
-		'fontStacks'      => array(
+		'colors'           => $colors,
+		'designGroups'     => $design_groups,
+		'colorSwatches'    => amortexa_get_color_swatches(),
+		'fontStacks'       => array(
 			'inherit' => '',
 			'sans'    => amortexa_get_font_stack( 'sans' ),
 			'serif'   => amortexa_get_font_stack( 'serif' ),
 			'mono'    => amortexa_get_font_stack( 'mono' ),
 		),
-		'siteDefaults'    => $defaults,
-		'siteSettings'    => $settings,
+		'siteDefaults'     => $defaults,
+		'siteSettings'     => $settings,
 	);
 }

@@ -44,6 +44,15 @@
 		</properties>
 	</rule>
 
+	<!-- This sniff wants class-settings.php renamed to class-amortexa-settings.php
+		for every class. The plugin directory only asks for descriptive lowercase
+		dashed names, which these already are, and Plugin Check does not raise it,
+		so renaming seven files would decouple the include list from the classes it
+		loads for no functional gain. -->
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<severity>0</severity>
+	</rule>
+
 	<!-- Minimum WordPress version the plugin supports. -->
 	<config name="minimum_supported_wp_version" value="6.5"/>
 

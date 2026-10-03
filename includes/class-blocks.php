@@ -57,8 +57,8 @@ class Amortexa_Blocks {
 	/**
 	 * Registers the block, seeding attribute defaults from the site settings.
 	 *
-	 * block.json carries a static fallback default for every attribute so the
-	 * file is meaningful on its own, but the administrator's global defaults
+	 * The block.json file carries a static fallback default for every attribute so
+	 * the file is meaningful on its own, but the administrator's global defaults
 	 * must win for newly inserted blocks. Overriding the resolved attributes at
 	 * registration time is what keeps the editor and the front end in agreement:
 	 * both read the same injected values instead of two different sources.
@@ -87,7 +87,7 @@ class Amortexa_Blocks {
 	 * @return array<string,array<string,mixed>> Attribute schemas.
 	 */
 	private function get_attributes_with_site_defaults() {
-		$metadata = json_decode( (string) file_get_contents( AMORTEXA_PLUGIN_DIR . 'build/block.json' ), true );
+		$metadata = wp_json_file_decode( AMORTEXA_PLUGIN_DIR . 'build/block.json', array( 'associative' => true ) );
 
 		if ( ! is_array( $metadata ) || empty( $metadata['attributes'] ) || ! is_array( $metadata['attributes'] ) ) {
 			return array();

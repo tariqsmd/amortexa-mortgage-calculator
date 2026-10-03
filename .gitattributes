@@ -1,0 +1,15 @@
+# The coding standards expect LF, and WordPress.org ships the files as committed.
+# Without this, a Windows checkout with core.autocrlf=true rewrites PHP files to
+# CRLF, and the line-ending sniff then fails on files nobody actually edited.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary

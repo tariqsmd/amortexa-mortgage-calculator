@@ -224,100 +224,100 @@ msgstr ""
 msgid "false"
 msgstr ""
 
-#: includes/class-settings.php:853
+#: includes/class-settings.php:859
 msgid "Sample shortcode"
 msgstr ""
 
-#: includes/class-settings.php:874, includes/class-settings.php:883, includes/class-settings.php:892
+#: includes/class-settings.php:880, includes/class-settings.php:889, includes/class-settings.php:898
 msgid "number"
 msgstr ""
 
-#: includes/class-settings.php:875
+#: includes/class-settings.php:881
 msgid "required"
 msgstr ""
 
-#: includes/class-settings.php:876, src/utils/field-definitions.js:24
+#: includes/class-settings.php:882, src/utils/field-definitions.js:24
 msgid "Total amount being financed."
 msgstr ""
 
-#: includes/class-settings.php:884, includes/class-settings.php:893
+#: includes/class-settings.php:890, includes/class-settings.php:899
 msgid "optional, default 0"
 msgstr ""
 
-#: includes/class-settings.php:885, src/utils/field-definitions.js:37
+#: includes/class-settings.php:891, src/utils/field-definitions.js:37
 msgid "Paid up front. Interest is charged on the remainder."
 msgstr ""
 
-#: includes/class-settings.php:894
+#: includes/class-settings.php:900
 msgid "Annual rate as a percentage, up to 100."
 msgstr ""
 
-#: includes/class-settings.php:902
+#: includes/class-settings.php:908
 msgid "integer"
 msgstr ""
 
-#: includes/class-settings.php:903
+#: includes/class-settings.php:909
 msgid "optional, default 30"
 msgstr ""
 
-#: includes/class-settings.php:904
+#: includes/class-settings.php:910
 msgid "Length of the loan in years, from 1 to 60."
 msgstr ""
 
-#: includes/class-settings.php:913
+#: includes/class-settings.php:919
 msgid "boolean"
 msgstr ""
 
-#: includes/class-settings.php:914
+#: includes/class-settings.php:920
 msgid "optional, default false"
 msgstr ""
 
-#: includes/class-settings.php:915
+#: includes/class-settings.php:921
 msgid "Return the year-by-year amortization schedule alongside the totals."
 msgstr ""
 
-#: includes/class-settings.php:926
+#: includes/class-settings.php:932
 msgid "A stateless endpoint that runs the same arithmetic as the calculator. It stores nothing and returns no private data, so it needs no authentication or nonce."
 msgstr ""
 
-#: includes/class-settings.php:934
+#: includes/class-settings.php:940
 msgid "Parameters"
 msgstr ""
 
-#: includes/class-settings.php:937
+#: includes/class-settings.php:943
 msgid "Change any value to rebuild the sample request below."
 msgstr ""
 
-#: includes/class-settings.php:962
+#: includes/class-settings.php:968
 msgid "Include the schedule"
 msgstr ""
 
-#: includes/class-settings.php:986
+#: includes/class-settings.php:998
 msgid "Sample request"
 msgstr ""
 
-#: includes/class-settings.php:993
+#: includes/class-settings.php:1005
 msgid "Enter a loan amount to build a request. It is the only required parameter."
 msgstr ""
 
-#: includes/class-settings.php:998
+#: includes/class-settings.php:1010
 msgid "The response carries principal, monthly_payment, total_paid, total_interest, months, and schedule. The schedule stays empty unless with_schedule is passed. It runs the same calculations as the block, so the amortexa_calculation_result filter applies to responses too."
 msgstr ""
 
 #. translators: %d: Requests allowed per minute.
-#: includes/class-settings.php:1004
+#: includes/class-settings.php:1016
 msgid "Calls are rate limited to %d per minute per client address, after which the endpoint answers 429 with a Retry-After header. Change that with the amortexa_rest_calculate_rate_limit and amortexa_rest_calculate_rate_window filters, or return 0 from the first to switch throttling off. Buckets use the remote address alone, so behind a proxy or CDN supply a trusted client address through the amortexa_rate_limit_client_key filter. Return false from amortexa_rest_calculate_allowed to require authentication instead."
 msgstr ""
 
-#: includes/class-settings.php:1029
+#: includes/class-settings.php:1041
 msgid "Help"
 msgstr ""
 
-#: includes/class-settings.php:1034
+#: includes/class-settings.php:1046
 msgid "Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on."
 msgstr ""
 
-#: includes/class-settings.php:1037
+#: includes/class-settings.php:1049
 msgid "Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar."
 msgstr ""
 
@@ -1116,31 +1116,31 @@ msgid "Taxes & Costs (annual)"
 msgstr ""
 
 #. translators: %s: cost component name.
-#: src/render.php:458
+#: src/render.php:446
 msgid "Toggle %s between a percentage and an amount"
 msgstr ""
 
-#: src/render.php:461, src/components/preview.js:731
+#: src/render.php:471, src/components/preview.js:731
 msgid "Amount"
 msgstr ""
 
-#: src/render.php:558, src/components/preview.js:899
+#: src/render.php:568, src/components/preview.js:899
 msgid "Payment Composition"
 msgstr ""
 
-#: src/render.php:568, src/components/preview.js:918
+#: src/render.php:578, src/components/preview.js:918
 msgid "Balance Over Time"
 msgstr ""
 
-#: src/render.php:578, src/components/preview.js:937
+#: src/render.php:588, src/components/preview.js:937
 msgid "Principal vs Interest by Year"
 msgstr ""
 
-#: src/render.php:588, src/components/preview.js:956
+#: src/render.php:598, src/components/preview.js:956
 msgid "Parameter Comparison"
 msgstr ""
 
-#: src/render.php:623
+#: src/render.php:633
 msgid "Amortization Schedule"
 msgstr ""
 

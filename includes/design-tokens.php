@@ -42,10 +42,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function amortexa_get_design_option_lists() {
 	$transforms = array(
-		''             => __( 'As typed', 'amortexa-mortgage-calculator' ),
-		'uppercase'    => __( 'UPPERCASE', 'amortexa-mortgage-calculator' ),
-		'lowercase'    => __( 'lowercase', 'amortexa-mortgage-calculator' ),
-		'capitalize'   => __( 'Capitalize Each Word', 'amortexa-mortgage-calculator' ),
+		''           => __( 'As typed', 'amortexa-mortgage-calculator' ),
+		'uppercase'  => __( 'UPPERCASE', 'amortexa-mortgage-calculator' ),
+		'lowercase'  => __( 'lowercase', 'amortexa-mortgage-calculator' ),
+		'capitalize' => __( 'Capitalize Each Word', 'amortexa-mortgage-calculator' ),
 	);
 
 	$weights = amortexa_get_font_weights();
@@ -98,21 +98,21 @@ function amortexa_get_design_option_lists() {
  * Builds a length token.
  *
  * @param string $key       Design object key.
- * @param string $var       CSS custom property.
+ * @param string $css_var   CSS custom property.
  * @param string $label     Translated control label.
  * @param int    $max       Largest accepted value.
  * @param int    $min       Smallest accepted value.
  * @return array<string,mixed> Token definition.
  */
-function amortexa_length_token( $key, $var, $label, $max = 64, $min = 0 ) {
+function amortexa_length_token( $key, $css_var, $label, $max = 64, $min = 0 ) {
 	return array(
-		'key'     => $key,
-		'var'     => $var,
-		'label'   => $label,
-		'type'    => 'length',
-		'min'     => $min,
-		'max'     => $max,
-		'step'    => 1,
+		'key'   => $key,
+		'var'   => $css_var,
+		'label' => $label,
+		'type'  => 'length',
+		'min'   => $min,
+		'max'   => $max,
+		'step'  => 1,
 	);
 }
 
@@ -120,15 +120,15 @@ function amortexa_length_token( $key, $var, $label, $max = 64, $min = 0 ) {
  * Builds a spacing token, which accepts a uniform value or a per-side shorthand.
  *
  * @param string $key   Design object key.
- * @param string $var   CSS custom property.
+ * @param string $css_var CSS custom property.
  * @param string $label Translated control label.
  * @param int    $max   Largest accepted value on any side.
  * @return array<string,mixed> Token definition.
  */
-function amortexa_spacing_token( $key, $var, $label, $max = 120 ) {
+function amortexa_spacing_token( $key, $css_var, $label, $max = 120 ) {
 	return array(
 		'key'   => $key,
-		'var'   => $var,
+		'var'   => $css_var,
 		'label' => $label,
 		'type'  => 'spacing',
 		'min'   => 0,
@@ -142,15 +142,15 @@ function amortexa_spacing_token( $key, $var, $label, $max = 120 ) {
  * Builds a colour token.
  *
  * @param string $key    Design object key.
- * @param string $var    CSS custom property.
+ * @param string $css_var CSS custom property.
  * @param string $label  Translated control label.
  * @param string $legacy Optional pre-existing attribute to fall back to.
  * @return array<string,mixed> Token definition.
  */
-function amortexa_color_token( $key, $var, $label, $legacy = '' ) {
+function amortexa_color_token( $key, $css_var, $label, $legacy = '' ) {
 	return array(
 		'key'    => $key,
-		'var'    => $var,
+		'var'    => $css_var,
 		'label'  => $label,
 		'type'   => 'color',
 		'legacy' => $legacy,
@@ -161,15 +161,15 @@ function amortexa_color_token( $key, $var, $label, $legacy = '' ) {
  * Builds a select token.
  *
  * @param string $key     Design object key.
- * @param string $var     CSS custom property.
+ * @param string $css_var CSS custom property.
  * @param string $label   Translated control label.
  * @param string $options Name of a shared option list.
  * @return array<string,mixed> Token definition.
  */
-function amortexa_select_token( $key, $var, $label, $options ) {
+function amortexa_select_token( $key, $css_var, $label, $options ) {
 	return array(
 		'key'     => $key,
-		'var'     => $var,
+		'var'     => $css_var,
 		'label'   => $label,
 		'type'    => 'select',
 		'options' => $options,
@@ -303,55 +303,55 @@ function amortexa_get_design_tokens() {
  */
 function amortexa_get_design_groups() {
 	$groups = array(
-		'root'    => array(
-			'label'  => __( 'Calculator', 'amortexa-mortgage-calculator' ),
+		'root'   => array(
+			'label'   => __( 'Calculator', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'The card that wraps the whole block.', 'amortexa-mortgage-calculator' ),
-			'tokens' => array( 'rootBg', 'rootText', 'rootBorder', 'rootRadius', 'rootPadding' ),
+			'tokens'  => array( 'rootBg', 'rootText', 'rootBorder', 'rootRadius', 'rootPadding' ),
 		),
-		'panel'   => array(
-			'label'  => __( 'Panels', 'amortexa-mortgage-calculator' ),
+		'panel'  => array(
+			'label'   => __( 'Panels', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'The boxes around inputs, results, charts and schedule.', 'amortexa-mortgage-calculator' ),
-			'tokens' => array( 'panelBg', 'panelRadius', 'panelPadding', 'panelGap' ),
+			'tokens'  => array( 'panelBg', 'panelRadius', 'panelPadding', 'panelGap' ),
 		),
-		'label'   => array(
-			'label'  => __( 'Field Labels', 'amortexa-mortgage-calculator' ),
+		'label'  => array(
+			'label'   => __( 'Field Labels', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'The text above each input.', 'amortexa-mortgage-calculator' ),
-			'tokens' => array( 'labelColor', 'labelFamily', 'labelSize', 'labelWeight', 'labelTransform', 'labelTracking', 'labelMargin' ),
+			'tokens'  => array( 'labelColor', 'labelFamily', 'labelSize', 'labelWeight', 'labelTransform', 'labelTracking', 'labelMargin' ),
 		),
-		'field'   => array(
-			'label'  => __( 'Inputs', 'amortexa-mortgage-calculator' ),
+		'field'  => array(
+			'label'   => __( 'Inputs', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'Text inputs and dropdowns.', 'amortexa-mortgage-calculator' ),
-			'tokens' => array( 'fieldText', 'fieldBg', 'fieldBorder', 'fieldBorderWidth', 'fieldRadius', 'fieldPadding', 'fieldHeight', 'fieldFamily', 'fieldSize', 'fieldWeight' ),
+			'tokens'  => array( 'fieldText', 'fieldBg', 'fieldBorder', 'fieldBorderWidth', 'fieldRadius', 'fieldPadding', 'fieldHeight', 'fieldFamily', 'fieldSize', 'fieldWeight' ),
 		),
-		'slider'  => array(
-			'label'  => __( 'Sliders', 'amortexa-mortgage-calculator' ),
+		'slider' => array(
+			'label'   => __( 'Sliders', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'The draggable range controls.', 'amortexa-mortgage-calculator' ),
-			'tokens' => array( 'sliderTrack', 'sliderAccent', 'sliderThumbSize' ),
+			'tokens'  => array( 'sliderTrack', 'sliderAccent', 'sliderThumbSize' ),
 		),
-		'toggle'  => array(
-			'label'  => __( 'Sliders Toggle', 'amortexa-mortgage-calculator' ),
+		'toggle' => array(
+			'label'   => __( 'Sliders Toggle', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'The button that shows and hides the sliders.', 'amortexa-mortgage-calculator' ),
-			'tokens' => array( 'toggleBg', 'toggleText', 'toggleBorder', 'toggleRadius', 'togglePadding', 'toggleFamily', 'toggleSize', 'toggleWeight' ),
+			'tokens'  => array( 'toggleBg', 'toggleText', 'toggleBorder', 'toggleRadius', 'togglePadding', 'toggleFamily', 'toggleSize', 'toggleWeight' ),
 		),
-		'result'  => array(
-			'label'  => __( 'Results', 'amortexa-mortgage-calculator' ),
+		'result' => array(
+			'label'   => __( 'Results', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'The monthly payment and the rows beneath it.', 'amortexa-mortgage-calculator' ),
-			'tokens' => array( 'resultPrimaryColor', 'resultPrimaryFamily', 'resultPrimarySize', 'resultPrimaryWeight', 'resultLabelColor', 'resultValueColor', 'resultSize', 'resultRowBorder', 'resultRowPadding', 'resultMargin' ),
+			'tokens'  => array( 'resultPrimaryColor', 'resultPrimaryFamily', 'resultPrimarySize', 'resultPrimaryWeight', 'resultLabelColor', 'resultValueColor', 'resultSize', 'resultRowBorder', 'resultRowPadding', 'resultMargin' ),
 		),
-		'chart'   => array(
-			'label'  => __( 'Charts', 'amortexa-mortgage-calculator' ),
+		'chart'  => array(
+			'label'   => __( 'Charts', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'Series colours, size and titles.', 'amortexa-mortgage-calculator' ),
-			'tokens' => array( 'accent', 'accentAlt', 'costPi', 'costTax', 'costInsurance', 'costHoa', 'costPmi', 'costOther', 'chartHeight', 'chartAxis', 'chartTitleColor', 'chartTitleSize', 'chartTitleWeight', 'chartTitleMargin' ),
+			'tokens'  => array( 'accent', 'accentAlt', 'costPi', 'costTax', 'costInsurance', 'costHoa', 'costPmi', 'costOther', 'chartHeight', 'chartAxis', 'chartTitleColor', 'chartTitleSize', 'chartTitleWeight', 'chartTitleMargin' ),
 		),
-		'legend'  => array(
-			'label'  => __( 'Chart Legends', 'amortexa-mortgage-calculator' ),
+		'legend' => array(
+			'label'   => __( 'Chart Legends', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'The colour key under each chart.', 'amortexa-mortgage-calculator' ),
-			'tokens' => array( 'legendText', 'legendFamily', 'legendSize', 'legendWeight', 'legendSwatchSize', 'legendGap' ),
+			'tokens'  => array( 'legendText', 'legendFamily', 'legendSize', 'legendWeight', 'legendSwatchSize', 'legendGap' ),
 		),
-		'table'   => array(
-			'label'  => __( 'Schedule Table', 'amortexa-mortgage-calculator' ),
+		'table'  => array(
+			'label'   => __( 'Schedule Table', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'The amortization table header, rows and borders.', 'amortexa-mortgage-calculator' ),
-			'tokens' => array( 'tableHeadBg', 'tableHeadText', 'tableRowBg', 'tableZebraBg', 'tableBorder', 'tableBorderWidth', 'tableCellPadding', 'tableSize', 'tableRadius' ),
+			'tokens'  => array( 'tableHeadBg', 'tableHeadText', 'tableRowBg', 'tableZebraBg', 'tableBorder', 'tableBorderWidth', 'tableCellPadding', 'tableSize', 'tableRadius' ),
 		),
 	);
 
@@ -365,7 +365,7 @@ function amortexa_get_design_groups() {
 
 	foreach ( $groups as $key => $group ) {
 		$token_keys = $group['tokens'];
-		$resolved    = array();
+		$resolved   = array();
 
 		foreach ( $token_keys as $token_key ) {
 			if ( isset( $by_key[ $token_key ] ) ) {
@@ -416,7 +416,7 @@ function amortexa_get_design_token_map() {
  * Normalises one raw token value into the string that gets stored and emitted.
  *
  * @param array<string,mixed> $token Token definition.
- * @param mixed              $raw   Untrusted value.
+ * @param mixed               $raw   Untrusted value.
  * @return string Sanitized value, or an empty string to inherit.
  */
 function amortexa_sanitize_design_value( $token, $raw ) {

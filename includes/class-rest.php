@@ -74,9 +74,9 @@ class Amortexa_REST {
 						'sanitize_callback' => 'absint',
 					),
 					'with_schedule' => array(
-						'type'    => 'boolean',
+						'type'     => 'boolean',
 						'required' => false,
-						'default' => false,
+						'default'  => false,
 					),
 				),
 			)

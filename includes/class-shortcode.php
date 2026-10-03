@@ -41,92 +41,92 @@ final class Amortexa_Shortcode {
 	 */
 	public static function get_documented_attributes() {
 		return array(
-			'loanamount'       => array(
+			'loanamount'        => array(
 				'attribute'   => 'loanAmount',
 				'type'        => 'number',
 				'description' => __( 'Financed amount before the down payment, for example 300000.', 'amortexa-mortgage-calculator' ),
 			),
-			'downpayment'      => array(
+			'downpayment'       => array(
 				'attribute'   => 'downPayment',
 				'type'        => 'number',
 				'description' => __( 'Up-front amount deducted from the loan amount.', 'amortexa-mortgage-calculator' ),
 			),
-			'interestrate'     => array(
+			'interestrate'      => array(
 				'attribute'   => 'interestRate',
 				'type'        => 'number',
 				'description' => __( 'Annual interest rate as a percentage, for example 5.5.', 'amortexa-mortgage-calculator' ),
 			),
-			'loanterm'         => array(
+			'loanterm'          => array(
 				'attribute'   => 'loanTerm',
 				'type'        => 'number',
 				'description' => __( 'Term in years, from 1 to 60.', 'amortexa-mortgage-calculator' ),
 			),
-			'currencysymbol'   => array(
+			'currencysymbol'    => array(
 				'attribute'   => 'currencySymbol',
 				'type'        => 'text',
 				'description' => __( 'Symbol shown next to every amount, for example $ or EUR.', 'amortexa-mortgage-calculator' ),
 			),
-			'currencyposition' => array(
+			'currencyposition'  => array(
 				'attribute'   => 'currencyPosition',
 				'type'        => 'text',
 				'description' => __( 'prefix or suffix, deciding which side of the number the symbol sits on.', 'amortexa-mortgage-calculator' ),
 			),
-			'showcharts'       => array(
+			'showcharts'        => array(
 				'attribute'   => 'showCharts',
 				'type'        => 'boolean',
 				'description' => __( 'false hides the charts.', 'amortexa-mortgage-calculator' ),
 			),
-			'charttype'        => array(
+			'charttype'         => array(
 				'attribute'   => 'chartType',
 				'type'        => 'text',
 				'description' => __( 'donut, line, bar, dots, or both.', 'amortexa-mortgage-calculator' ),
 			),
-			'formcolumns'      => array(
+			'formcolumns'       => array(
 				'attribute'   => 'formColumns',
 				'type'        => 'text',
 				'description' => __( 'wide or compact, deciding how the form fields are laid out.', 'amortexa-mortgage-calculator' ),
 			),
-			'panelorder'       => array(
+			'panelorder'        => array(
 				'attribute'   => 'panelOrder',
 				'type'        => 'list',
 				'description' => __( 'Comma separated panel order, for example form,results,charts,schedule.', 'amortexa-mortgage-calculator' ),
 			),
-			'layout'           => array(
+			'layout'            => array(
 				'attribute'   => 'layout',
 				'type'        => 'text',
 				'description' => __( 'stacked, split, aside or chart-aside.', 'amortexa-mortgage-calculator' ),
 			),
-			'theme'            => array(
+			'theme'             => array(
 				'attribute'   => 'theme',
 				'type'        => 'text',
 				'description' => __( 'Skin slug for the calculator, for example light or dark.', 'amortexa-mortgage-calculator' ),
 			),
-			'showamortization' => array(
+			'showamortization'  => array(
 				'attribute'   => 'showAmortization',
 				'type'        => 'boolean',
 				'description' => __( 'false hides the year-by-year schedule.', 'amortexa-mortgage-calculator' ),
 			),
-			'showsliders'      => array(
+			'showsliders'       => array(
 				'attribute'   => 'showSliders',
 				'type'        => 'boolean',
 				'description' => __( 'false replaces the sliders with plain inputs.', 'amortexa-mortgage-calculator' ),
 			),
-			'showresults'      => array(
+			'showresults'       => array(
 				'attribute'   => 'showResults',
 				'type'        => 'boolean',
 				'description' => __( 'false hides the results summary.', 'amortexa-mortgage-calculator' ),
 			),
-			'showcosts'       => array(
+			'showcosts'         => array(
 				'attribute'   => 'showCosts',
 				'type'        => 'boolean',
 				'description' => __( 'true adds the recurring cost inputs and the total monthly cost.', 'amortexa-mortgage-calculator' ),
 			),
-			'propertytax'     => array(
+			'propertytax'       => array(
 				'attribute'   => 'propertyTax',
 				'type'        => 'number',
 				'description' => __( 'Annual property tax, as a rate or an amount, depending on propertytaxunit.', 'amortexa-mortgage-calculator' ),
 			),
-			'propertytaxunit' => array(
+			'propertytaxunit'   => array(
 				'attribute'   => 'propertyTaxUnit',
 				'type'        => 'text',
 				'description' => __( 'percent or amount, deciding whether propertytax is read as a rate of the purchase price.', 'amortexa-mortgage-calculator' ),
@@ -141,32 +141,32 @@ final class Amortexa_Shortcode {
 				'type'        => 'text',
 				'description' => __( 'percent or amount, deciding whether homeinsurance is read as a rate of the purchase price.', 'amortexa-mortgage-calculator' ),
 			),
-			'hoafee'     => array(
+			'hoafee'            => array(
 				'attribute'   => 'hoaFee',
 				'type'        => 'number',
 				'description' => __( 'Annual HOA fee, as a rate or an amount, depending on hoafeeunit.', 'amortexa-mortgage-calculator' ),
 			),
-			'hoafeeunit' => array(
+			'hoafeeunit'        => array(
 				'attribute'   => 'hoaFeeUnit',
 				'type'        => 'text',
 				'description' => __( 'percent or amount, deciding whether hoafee is read as a rate of the purchase price.', 'amortexa-mortgage-calculator' ),
 			),
-			'pmi'     => array(
+			'pmi'               => array(
 				'attribute'   => 'pmi',
 				'type'        => 'number',
 				'description' => __( 'Annual mortgage insurance premium, as a rate or an amount, depending on pmiunit. It stops once the balance reaches 80% of the purchase price.', 'amortexa-mortgage-calculator' ),
 			),
-			'pmiunit' => array(
+			'pmiunit'           => array(
 				'attribute'   => 'pmiUnit',
 				'type'        => 'text',
 				'description' => __( 'percent or amount, deciding whether pmi is read as a rate of the purchase price.', 'amortexa-mortgage-calculator' ),
 			),
-			'othercosts'     => array(
+			'othercosts'        => array(
 				'attribute'   => 'otherCosts',
 				'type'        => 'number',
 				'description' => __( 'Any other annual cost, as a rate or an amount, depending on othercostsunit.', 'amortexa-mortgage-calculator' ),
 			),
-			'othercostsunit' => array(
+			'othercostsunit'    => array(
 				'attribute'   => 'otherCostsUnit',
 				'type'        => 'text',
 				'description' => __( 'percent or amount, deciding whether othercosts is read as a rate of the purchase price.', 'amortexa-mortgage-calculator' ),
@@ -242,8 +242,8 @@ final class Amortexa_Shortcode {
 	 * to the same values render identically. A value that is not numeric falls
 	 * back to the site default rather than becoming 0.
 	 *
-	 * @param array<string,mixed>                               $atts Merged shortcode attributes.
-	 * @param array<string,array<string,string>>                $map  Documented attribute descriptors.
+	 * @param array<string,mixed>                $atts Merged shortcode attributes.
+	 * @param array<string,array<string,string>> $map  Documented attribute descriptors.
 	 * @return array<string,mixed> Block attributes keyed by block attribute name.
 	 */
 	private function to_block_attributes( $atts, $map ) {
@@ -252,6 +252,7 @@ final class Amortexa_Shortcode {
 
 		foreach ( $map as $shortcode_name => $spec ) {
 			$block_key = $spec['attribute'];
+
 			/*
 			 * A third party can remove an attribute from the defaults through
 			 * the amortexa_default_attributes filter, so a missing key is
@@ -281,10 +282,10 @@ final class Amortexa_Shortcode {
 				 * drops any key that is not a real panel.
 				 */
 				case 'list':
-					$parts = is_array( $value )
+					$parts               = is_array( $value )
 						? $value
 						: explode( ',', (string) $value );
-					$parts = array_values(
+					$parts               = array_values(
 						array_filter(
 							array_map(
 								'sanitize_text_field',

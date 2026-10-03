@@ -98,9 +98,9 @@ class Amortexa_Settings {
 				'label'       => __( 'Decimal places', 'amortexa-mortgage-calculator' ),
 				'description' => __( 'Digits shown after the decimal separator, from 0 to 4.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
-					'min'  => 0,
-					'max'  => 4,
-					'step' => 1,
+					'min'   => 0,
+					'max'   => 4,
+					'step'  => 1,
 					'class' => 'small-text',
 				),
 			),
@@ -110,8 +110,8 @@ class Amortexa_Settings {
 				'label'       => __( 'Loan amount', 'amortexa-mortgage-calculator' ),
 				'description' => __( 'Pre-filled amount for a newly inserted calculator.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
-					'min'  => 0,
-					'step' => 'any',
+					'min'   => 0,
+					'step'  => 'any',
 					'class' => 'regular-text',
 				),
 			),
@@ -121,8 +121,8 @@ class Amortexa_Settings {
 				'label'       => __( 'Down payment', 'amortexa-mortgage-calculator' ),
 				'description' => __( 'Pre-filled down payment. Interest is charged on the financed principal only.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
-					'min'  => 0,
-					'step' => 'any',
+					'min'   => 0,
+					'step'  => 'any',
 					'class' => 'regular-text',
 				),
 			),
@@ -133,9 +133,9 @@ class Amortexa_Settings {
 				'suffix'      => __( 'years', 'amortexa-mortgage-calculator' ),
 				'description' => __( 'Term in years, from 1 to 60.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
-					'min'  => 1,
-					'max'  => 60,
-					'step' => 1,
+					'min'   => 1,
+					'max'   => 60,
+					'step'  => 1,
 					'class' => 'small-text',
 				),
 			),
@@ -146,9 +146,9 @@ class Amortexa_Settings {
 				'suffix'      => __( '% per year', 'amortexa-mortgage-calculator' ),
 				'description' => __( 'Annual rate used for new calculators, from 0 to 100.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
-					'min'  => 0,
-					'max'  => 100,
-					'step' => '0.01',
+					'min'   => 0,
+					'max'   => 100,
+					'step'  => '0.01',
 					'class' => 'small-text',
 				),
 			),
@@ -189,15 +189,15 @@ class Amortexa_Settings {
 	 */
 	private function get_sections() {
 		return array(
-			'amortexa_currency'    => array(
+			'amortexa_currency'   => array(
 				'title'       => __( 'Currency and formatting', 'amortexa-mortgage-calculator' ),
 				'description' => __( 'How amounts are written across every calculator on the site.', 'amortexa-mortgage-calculator' ),
 			),
-			'amortexa_loan'        => array(
+			'amortexa_loan'       => array(
 				'title'       => __( 'Loan defaults', 'amortexa-mortgage-calculator' ),
 				'description' => __( 'The figures a brand new calculator block starts with.', 'amortexa-mortgage-calculator' ),
 			),
-			'amortexa_appearance'  => array(
+			'amortexa_appearance' => array(
 				'title'       => __( 'Appearance', 'amortexa-mortgage-calculator' ),
 				'description' => __( 'Default skin and chart selection for new calculators.', 'amortexa-mortgage-calculator' ),
 			),
@@ -238,18 +238,18 @@ class Amortexa_Settings {
 	private function get_reference_tabs() {
 		return array(
 			'amortexa_shortcode' => array(
-				'title'        => __( 'Shortcode', 'amortexa-mortgage-calculator' ),
-				'description'  => __( 'Add the calculator to any post, page, or widget area without using the block editor.', 'amortexa-mortgage-calculator' ),
-				'icon'         => 'shortcode',
-				'section'      => '',
-				'render'       => 'render_shortcode_reference',
+				'title'       => __( 'Shortcode', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Add the calculator to any post, page, or widget area without using the block editor.', 'amortexa-mortgage-calculator' ),
+				'icon'        => 'shortcode',
+				'section'     => '',
+				'render'      => 'render_shortcode_reference',
 			),
 			'amortexa_api'       => array(
-				'title'        => __( 'Developer API', 'amortexa-mortgage-calculator' ),
-				'description'  => __( 'Run the same mortgage arithmetic from your own theme, plugin, or headless front end.', 'amortexa-mortgage-calculator' ),
-				'icon'         => 'api',
-				'section'      => '',
-				'render'       => 'render_api_reference',
+				'title'       => __( 'Developer API', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Run the same mortgage arithmetic from your own theme, plugin, or headless front end.', 'amortexa-mortgage-calculator' ),
+				'icon'        => 'api',
+				'section'     => '',
+				'render'      => 'render_api_reference',
 			),
 		);
 	}
@@ -564,7 +564,7 @@ class Amortexa_Settings {
 				<div class="amortexa-settings__layout">
 					<div class="amortexa-settings__main">
 						<?php
-						$tabs    = $this->get_tabs();
+						$tabs     = $this->get_tabs();
 						$sections = $this->get_sections();
 						?>
 
@@ -797,7 +797,7 @@ class Amortexa_Settings {
 			<div class="amortexa-settings__api-grid">
 				<?php foreach ( $attrs as $attr => $spec ) : ?>
 					<?php
-					$control = isset( $controls[ $attr ] ) ? $controls[ $attr ] : array( 'kind' => 'text' );
+					$control  = isset( $controls[ $attr ] ) ? $controls[ $attr ] : array( 'kind' => 'text' );
 					$field_id = 'amortexa-shortcode-' . $attr;
 					?>
 					<div class="amortexa-settings__api-field">
@@ -838,8 +838,14 @@ class Amortexa_Settings {
 								data-shortcode-param="<?php echo esc_attr( $attr ); ?>"
 								<?php echo ! empty( $control['integer'] ) ? 'data-shortcode-integer="true" ' : ''; ?>
 								value="<?php echo esc_attr( (string) $control['value'] ); ?>"
-								<?php if ( isset( $control['min'] ) ) { echo 'min="' . esc_attr( (string) $control['min'] ) . '" '; } ?>
-								<?php if ( isset( $control['max'] ) ) { echo 'max="' . esc_attr( (string) $control['max'] ) . '" '; } ?>
+								<?php
+								if ( isset( $control['min'] ) ) {
+									echo 'min="' . esc_attr( (string) $control['min'] ) . '" '; }
+								?>
+								<?php
+								if ( isset( $control['max'] ) ) {
+									echo 'max="' . esc_attr( (string) $control['max'] ) . '" '; }
+								?>
 								<?php echo 'number' === $control['kind'] ? 'step="any"' : ''; ?>
 							/>
 						<?php endif; ?>
@@ -903,9 +909,9 @@ class Amortexa_Settings {
 				'meta'    => __( 'optional, default 30', 'amortexa-mortgage-calculator' ),
 				'summary' => __( 'Length of the loan in years, from 1 to 60.', 'amortexa-mortgage-calculator' ),
 				'input'   => array(
-					'value'  => 30,
-					'min'    => 1,
-					'max'    => 60,
+					'value'   => 30,
+					'min'     => 1,
+					'max'     => 60,
 					'integer' => true,
 				),
 			),
@@ -941,9 +947,9 @@ class Amortexa_Settings {
 				<div class="amortexa-settings__api-grid">
 					<?php foreach ( $params as $param => $spec ) : ?>
 						<?php
-						$field_id  = 'amortexa-api-' . str_replace( '_', '-', $param );
-						$is_check  = ! empty( $spec['input']['checkbox'] );
-						$is_int    = ! empty( $spec['input']['integer'] );
+						$field_id = 'amortexa-api-' . str_replace( '_', '-', $param );
+						$is_check = ! empty( $spec['input']['checkbox'] );
+						$is_int   = ! empty( $spec['input']['integer'] );
 						?>
 						<div class="amortexa-settings__api-field">
 							<label class="amortexa-settings__api-label" for="<?php echo esc_attr( $field_id ); ?>">
@@ -969,8 +975,14 @@ class Amortexa_Settings {
 									data-api-param="<?php echo esc_attr( $param ); ?>"
 									<?php echo $is_int ? 'data-api-integer="true" ' : ''; ?>
 									value="<?php echo esc_attr( (string) $spec['input']['value'] ); ?>"
-									<?php if ( isset( $spec['input']['min'] ) ) { echo 'min="' . esc_attr( (string) $spec['input']['min'] ) . '" '; } ?>
-									<?php if ( isset( $spec['input']['max'] ) ) { echo 'max="' . esc_attr( (string) $spec['input']['max'] ) . '" '; } ?>
+									<?php
+									if ( isset( $spec['input']['min'] ) ) {
+										echo 'min="' . esc_attr( (string) $spec['input']['min'] ) . '" '; }
+									?>
+									<?php
+									if ( isset( $spec['input']['max'] ) ) {
+										echo 'max="' . esc_attr( (string) $spec['input']['max'] ) . '" '; }
+									?>
 									step="any"
 								/>
 							<?php endif; ?>
