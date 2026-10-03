@@ -24,7 +24,7 @@ msgstr ""
 msgid "The block build is missing. Run `npm install` then `npm run build` inside the plugin folder."
 msgstr ""
 
-#: includes/class-plugin.php:142
+#: includes/class-plugin.php:141
 msgid "Unserializing Amortexa_Plugin is not allowed."
 msgstr ""
 
@@ -108,7 +108,7 @@ msgstr ""
 msgid "Adds the year-by-year schedule to new calculators."
 msgstr ""
 
-#: includes/class-settings.php:164, includes/class-widget.php:100, src/components/inspector-controls.js:334
+#: includes/class-settings.php:164, includes/class-widget.php:100, src/components/inspector-controls.js:462
 msgid "Skin"
 msgstr ""
 
@@ -116,7 +116,7 @@ msgstr ""
 msgid "Colour scheme applied to new calculators. Each block can change it later."
 msgstr ""
 
-#: includes/class-settings.php:171, includes/design-tokens.php:342, src/components/inspector-controls.js:47
+#: includes/class-settings.php:171, includes/design-tokens.php:342, src/components/inspector-controls.js:48
 msgid "Charts"
 msgstr ""
 
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Which charts new calculators start with."
 msgstr ""
 
-#: includes/class-settings.php:178, includes/class-widget.php:94, src/components/inspector-controls.js:290
+#: includes/class-settings.php:178, includes/class-widget.php:94, src/components/inspector-controls.js:412
 msgid "Layout"
 msgstr ""
 
@@ -172,152 +172,152 @@ msgstr ""
 msgid "Run the same mortgage arithmetic from your own theme, plugin, or headless front end."
 msgstr ""
 
-#: includes/class-settings.php:547
+#: includes/class-settings.php:548
 msgid "These values are the site-wide defaults. Every new Mortgage Calculator block starts with them, and each block can then be adjusted on its own without affecting the others."
 msgstr ""
 
-#: includes/class-settings.php:554
+#: includes/class-settings.php:555
 msgid "Block Active"
 msgstr ""
 
-#: includes/class-settings.php:558
+#: includes/class-settings.php:559
 msgid "REST API Ready"
 msgstr ""
 
-#: includes/class-settings.php:632
+#: includes/class-settings.php:633
 msgid "Save Changes"
 msgstr ""
 
-#: includes/class-settings.php:634
+#: includes/class-settings.php:635
 msgid "Saved defaults immediately apply to all newly inserted calculators."
 msgstr ""
 
-#: includes/class-settings.php:686
+#: includes/class-settings.php:687
 msgid "Copy to clipboard"
 msgstr ""
 
-#: includes/class-settings.php:691
+#: includes/class-settings.php:692
 msgid "Copy"
 msgstr ""
 
-#: includes/class-settings.php:782
+#: includes/class-settings.php:783
 msgid "Paste the calculator into any post, page, or widget area:"
 msgstr ""
 
-#: includes/class-settings.php:790
+#: includes/class-settings.php:791
 msgid "Attributes accept the values below"
 msgstr ""
 
-#: includes/class-settings.php:793
+#: includes/class-settings.php:794
 msgid "Attribute names are lowercase and values are wrapped in quotes. Change any field to rebuild the shortcode; clear a field to leave the attribute out and use the site default instead."
 msgstr ""
 
-#: includes/class-settings.php:824, includes/class-settings.php:814
+#: includes/class-settings.php:825, includes/class-settings.php:815
 msgid "default"
 msgstr ""
 
-#: includes/class-settings.php:815
+#: includes/class-settings.php:816
 msgid "true"
 msgstr ""
 
-#: includes/class-settings.php:816
+#: includes/class-settings.php:817
 msgid "false"
 msgstr ""
 
-#: includes/class-settings.php:852
+#: includes/class-settings.php:853
 msgid "Sample shortcode"
 msgstr ""
 
-#: includes/class-settings.php:873, includes/class-settings.php:882, includes/class-settings.php:891
+#: includes/class-settings.php:874, includes/class-settings.php:883, includes/class-settings.php:892
 msgid "number"
 msgstr ""
 
-#: includes/class-settings.php:874
+#: includes/class-settings.php:875
 msgid "required"
 msgstr ""
 
-#: includes/class-settings.php:875, src/utils/field-definitions.js:23
+#: includes/class-settings.php:876, src/utils/field-definitions.js:24
 msgid "Total amount being financed."
 msgstr ""
 
-#: includes/class-settings.php:883, includes/class-settings.php:892
+#: includes/class-settings.php:884, includes/class-settings.php:893
 msgid "optional, default 0"
 msgstr ""
 
-#: includes/class-settings.php:884, src/utils/field-definitions.js:33
+#: includes/class-settings.php:885, src/utils/field-definitions.js:37
 msgid "Paid up front. Interest is charged on the remainder."
 msgstr ""
 
-#: includes/class-settings.php:893
+#: includes/class-settings.php:894
 msgid "Annual rate as a percentage, up to 100."
 msgstr ""
 
-#: includes/class-settings.php:901
+#: includes/class-settings.php:902
 msgid "integer"
 msgstr ""
 
-#: includes/class-settings.php:902
+#: includes/class-settings.php:903
 msgid "optional, default 30"
 msgstr ""
 
-#: includes/class-settings.php:903
+#: includes/class-settings.php:904
 msgid "Length of the loan in years, from 1 to 60."
 msgstr ""
 
-#: includes/class-settings.php:912
+#: includes/class-settings.php:913
 msgid "boolean"
 msgstr ""
 
-#: includes/class-settings.php:913
+#: includes/class-settings.php:914
 msgid "optional, default false"
 msgstr ""
 
-#: includes/class-settings.php:914
+#: includes/class-settings.php:915
 msgid "Return the year-by-year amortization schedule alongside the totals."
 msgstr ""
 
-#: includes/class-settings.php:925
+#: includes/class-settings.php:926
 msgid "A stateless endpoint that runs the same arithmetic as the calculator. It stores nothing and returns no private data, so it needs no authentication or nonce."
 msgstr ""
 
-#: includes/class-settings.php:933
+#: includes/class-settings.php:934
 msgid "Parameters"
 msgstr ""
 
-#: includes/class-settings.php:936
+#: includes/class-settings.php:937
 msgid "Change any value to rebuild the sample request below."
 msgstr ""
 
-#: includes/class-settings.php:961
+#: includes/class-settings.php:962
 msgid "Include the schedule"
 msgstr ""
 
-#: includes/class-settings.php:985
+#: includes/class-settings.php:986
 msgid "Sample request"
 msgstr ""
 
-#: includes/class-settings.php:992
+#: includes/class-settings.php:993
 msgid "Enter a loan amount to build a request. It is the only required parameter."
 msgstr ""
 
-#: includes/class-settings.php:997
+#: includes/class-settings.php:998
 msgid "The response carries principal, monthly_payment, total_paid, total_interest, months, and schedule. The schedule stays empty unless with_schedule is passed. It runs the same calculations as the block, so the amortexa_calculation_result filter applies to responses too."
 msgstr ""
 
 #. translators: %d: Requests allowed per minute.
-#: includes/class-settings.php:1003
+#: includes/class-settings.php:1004
 msgid "Calls are rate limited to %d per minute per client address, after which the endpoint answers 429 with a Retry-After header. Change that with the amortexa_rest_calculate_rate_limit and amortexa_rest_calculate_rate_window filters, or return 0 from the first to switch throttling off. Buckets use the remote address alone, so behind a proxy or CDN supply a trusted client address through the amortexa_rate_limit_client_key filter. Return false from amortexa_rest_calculate_allowed to require authentication instead."
 msgstr ""
 
-#: includes/class-settings.php:1028
+#: includes/class-settings.php:1029
 msgid "Help"
 msgstr ""
 
-#: includes/class-settings.php:1033
+#: includes/class-settings.php:1034
 msgid "Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on."
 msgstr ""
 
-#: includes/class-settings.php:1036
+#: includes/class-settings.php:1037
 msgid "Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar."
 msgstr ""
 
@@ -358,7 +358,7 @@ msgid "Comma separated panel order, for example form,results,charts,schedule."
 msgstr ""
 
 #: includes/class-shortcode.php:97
-msgid "split or stacked."
+msgid "stacked, split, aside or chart-aside."
 msgstr ""
 
 #: includes/class-shortcode.php:102
@@ -474,7 +474,7 @@ msgstr ""
 msgid "Tighter"
 msgstr ""
 
-#: includes/design-tokens.php:83, includes/helpers.php:331
+#: includes/design-tokens.php:83, includes/helpers.php:338
 msgid "Normal"
 msgstr ""
 
@@ -638,27 +638,27 @@ msgstr ""
 msgid "Title margin"
 msgstr ""
 
-#: includes/design-tokens.php:270, includes/helpers.php:124, src/render.php:62
+#: includes/design-tokens.php:270, includes/helpers.php:124, src/render.php:76, src/components/preview.js:510
 msgid "Principal & Interest"
 msgstr ""
 
-#: includes/design-tokens.php:271, includes/helpers.php:129
+#: includes/design-tokens.php:271, includes/helpers.php:129, src/utils/field-definitions.js:85
 msgid "Property Tax"
 msgstr ""
 
-#: includes/design-tokens.php:272, includes/helpers.php:134
+#: includes/design-tokens.php:272, includes/helpers.php:134, src/utils/field-definitions.js:86
 msgid "Home Insurance"
 msgstr ""
 
-#: includes/design-tokens.php:273, includes/helpers.php:139
+#: includes/design-tokens.php:273, includes/helpers.php:139, src/utils/field-definitions.js:87
 msgid "HOA Fee"
 msgstr ""
 
-#: includes/design-tokens.php:274, includes/helpers.php:144
+#: includes/design-tokens.php:274, includes/helpers.php:144, src/utils/field-definitions.js:88
 msgid "PMI"
 msgstr ""
 
-#: includes/design-tokens.php:275, includes/helpers.php:149
+#: includes/design-tokens.php:275, includes/helpers.php:149, src/utils/field-definitions.js:89
 msgid "Other Costs"
 msgstr ""
 
@@ -718,7 +718,7 @@ msgstr ""
 msgid "The text above each input."
 msgstr ""
 
-#: includes/design-tokens.php:322, src/components/inspector-controls.js:45
+#: includes/design-tokens.php:322, src/components/inspector-controls.js:46
 msgid "Inputs"
 msgstr ""
 
@@ -742,7 +742,7 @@ msgstr ""
 msgid "The button that shows and hides the sliders."
 msgstr ""
 
-#: includes/design-tokens.php:337, src/components/inspector-controls.js:46
+#: includes/design-tokens.php:337, src/components/inspector-controls.js:47
 msgid "Results"
 msgstr ""
 
@@ -771,7 +771,7 @@ msgid "The amortization table header, rows and borders."
 msgstr ""
 
 #. translators: 1: group key, 2: token key.
-#: includes/design-tokens.php:379
+#: includes/design-tokens.php:380
 msgid "Design group \"%1$s\" lists unknown token \"%2$s\"."
 msgstr ""
 
@@ -891,249 +891,257 @@ msgstr ""
 msgid "Dot comparison"
 msgstr ""
 
-#: includes/helpers.php:281
+#: includes/helpers.php:286
 msgid "Stacked (single column)"
 msgstr ""
 
-#: includes/helpers.php:282
+#: includes/helpers.php:287
 msgid "Two column split"
 msgstr ""
 
-#: includes/helpers.php:300
+#: includes/helpers.php:288
+msgid "Inputs beside details"
+msgstr ""
+
+#: includes/helpers.php:289
+msgid "Chart beside inputs"
+msgstr ""
+
+#: includes/helpers.php:307
 msgid "Full width controls"
 msgstr ""
 
-#: includes/helpers.php:301
+#: includes/helpers.php:308
 msgid "Compact rows, input below slider"
 msgstr ""
 
-#: includes/helpers.php:315, includes/helpers.php:329
+#: includes/helpers.php:322, includes/helpers.php:336
 msgid "Theme default"
 msgstr ""
 
-#: includes/helpers.php:316
+#: includes/helpers.php:323
 msgid "Modern Sans (system)"
 msgstr ""
 
-#: includes/helpers.php:317
+#: includes/helpers.php:324
 msgid "Classic Serif (system)"
 msgstr ""
 
-#: includes/helpers.php:318
+#: includes/helpers.php:325
 msgid "Monospace (system)"
 msgstr ""
 
-#: includes/helpers.php:330
+#: includes/helpers.php:337
 msgid "Light"
 msgstr ""
 
-#: includes/helpers.php:332
+#: includes/helpers.php:339
 msgid "Medium"
 msgstr ""
 
-#: includes/helpers.php:333
+#: includes/helpers.php:340
 msgid "Semi Bold"
 msgstr ""
 
-#: includes/helpers.php:334
+#: includes/helpers.php:341
 msgid "Bold"
 msgstr ""
 
-#: includes/helpers.php:335
+#: includes/helpers.php:342
 msgid "Extra Bold"
 msgstr ""
 
-#: includes/helpers.php:346
+#: includes/helpers.php:353
 msgid "Before amount ($99)"
 msgstr ""
 
-#: includes/helpers.php:347
+#: includes/helpers.php:354
 msgid "After amount (99 EUR)"
 msgstr ""
 
-#: includes/helpers.php:693
+#: includes/helpers.php:700
 msgid "Forest"
 msgstr ""
 
-#: includes/helpers.php:694
+#: includes/helpers.php:701
 msgid "Teal"
 msgstr ""
 
-#: includes/helpers.php:695
+#: includes/helpers.php:702
 msgid "Amber"
 msgstr ""
 
-#: includes/helpers.php:696
+#: includes/helpers.php:703
 msgid "Bronze"
 msgstr ""
 
-#: includes/helpers.php:697
+#: includes/helpers.php:704
 msgid "Red"
 msgstr ""
 
-#: includes/helpers.php:698
+#: includes/helpers.php:705
 msgid "Crimson"
 msgstr ""
 
-#: includes/helpers.php:699
+#: includes/helpers.php:706
 msgid "Violet"
 msgstr ""
 
-#: includes/helpers.php:700
+#: includes/helpers.php:707
 msgid "Indigo"
 msgstr ""
 
-#: includes/helpers.php:701
+#: includes/helpers.php:708
 msgid "Blue"
 msgstr ""
 
-#: includes/helpers.php:702
+#: includes/helpers.php:709
 msgid "Sky"
 msgstr ""
 
-#: includes/helpers.php:703
+#: includes/helpers.php:710
 msgid "Cyan"
 msgstr ""
 
-#: includes/helpers.php:704
+#: includes/helpers.php:711
 msgid "Green"
 msgstr ""
 
-#: includes/helpers.php:705
+#: includes/helpers.php:712
 msgid "Lime"
 msgstr ""
 
-#: includes/helpers.php:706
+#: includes/helpers.php:713
 msgid "Ink"
 msgstr ""
 
-#: includes/helpers.php:707
+#: includes/helpers.php:714
 msgid "Slate"
 msgstr ""
 
-#: includes/helpers.php:708
+#: includes/helpers.php:715
 msgid "Gray"
 msgstr ""
 
-#: includes/helpers.php:709
+#: includes/helpers.php:716
 msgid "Silver"
 msgstr ""
 
-#: includes/helpers.php:710
+#: includes/helpers.php:717
 msgid "Mist"
 msgstr ""
 
-#: includes/helpers.php:711
+#: includes/helpers.php:718
 msgid "White"
 msgstr ""
 
-#: src/render.php:55, src/components/preview.js:214, src/components/preview.js:549
+#: src/render.php:69, src/components/preview.js:223, src/components/preview.js:750
 msgid "Monthly Payment"
 msgstr ""
 
-#: src/render.php:56, src/components/preview.js:213
+#: src/render.php:70, src/components/preview.js:219, src/components/preview.js:840
 msgid "Total Monthly Cost"
 msgstr ""
 
-#: src/render.php:57, src/components/preview.js:292, src/components/preview.js:338, src/components/preview.js:564
+#: src/render.php:71, src/components/preview.js:304, src/components/preview.js:359, src/components/preview.js:768
 msgid "Financed Principal"
 msgstr ""
 
-#: src/render.php:58, src/components/preview.js:296, src/components/preview.js:348, src/components/preview.js:579
+#: src/render.php:72, src/components/preview.js:311, src/components/preview.js:375, src/components/preview.js:783
 msgid "Total Interest"
 msgstr ""
 
-#: src/render.php:59, src/components/preview.js:353, src/components/preview.js:594
+#: src/render.php:73, src/components/preview.js:383, src/components/preview.js:798
 msgid "Total Paid"
 msgstr ""
 
-#: src/render.php:60
+#: src/render.php:74, src/components/preview.js:858
 msgid "Total Taxes & Costs"
 msgstr ""
 
-#: src/render.php:61
+#: src/render.php:75, src/components/preview.js:873
 msgid "Total Out-of-Pocket"
 msgstr ""
 
-#: src/render.php:63
+#: src/render.php:77
 msgid "Collapse schedule"
 msgstr ""
 
-#: src/render.php:64
+#: src/render.php:78
 msgid "Expand schedule"
 msgstr ""
 
-#: src/render.php:65, src/components/preview.js:708
+#: src/render.php:79, src/components/preview.js:986
 msgid "Year"
 msgstr ""
 
-#: src/render.php:66, src/components/preview.js:312, src/components/preview.js:711
+#: src/render.php:80, src/components/preview.js:333, src/components/preview.js:992
 msgid "Principal Paid"
 msgstr ""
 
-#: src/render.php:67, src/components/preview.js:316, src/components/preview.js:717
+#: src/render.php:81, src/components/preview.js:337, src/components/preview.js:998
 msgid "Interest Paid"
 msgstr ""
 
-#: src/render.php:68, src/components/preview.js:302, src/components/preview.js:723
+#: src/render.php:82, src/components/preview.js:317, src/components/preview.js:1004
 msgid "Remaining Balance"
 msgstr ""
 
-#: src/render.php:69, src/components/preview.js:343
+#: src/render.php:83, src/components/preview.js:367
 msgid "Balance After Year 1"
 msgstr ""
 
-#: src/render.php:70, src/components/preview.js:306
+#: src/render.php:84, src/components/preview.js:324
 msgid "Cumulative Interest"
 msgstr ""
 
-#: src/render.php:92, src/utils/field-definitions.js:22
+#: src/render.php:106, src/utils/field-definitions.js:23
 msgid "Loan Amount"
 msgstr ""
 
-#: src/render.php:104, src/utils/field-definitions.js:32
+#: src/render.php:118, src/utils/field-definitions.js:36
 msgid "Down Payment"
 msgstr ""
 
-#: src/render.php:116
+#: src/render.php:130
 msgid "Interest Rate (%)"
 msgstr ""
 
-#: src/render.php:128
+#: src/render.php:142
 msgid "Term (Years)"
 msgstr ""
 
-#: src/render.php:402, src/components/preview.js:618
-msgid "Payment Composition"
-msgstr ""
-
-#: src/render.php:412, src/components/preview.js:637
-msgid "Balance Over Time"
-msgstr ""
-
-#: src/render.php:422, src/components/preview.js:656
-msgid "Principal vs Interest by Year"
-msgstr ""
-
-#: src/render.php:432, src/components/preview.js:675
-msgid "Parameter Comparison"
-msgstr ""
-
-#: src/render.php:467
-msgid "Amortization Schedule"
-msgstr ""
-
-#: src/render.php:490
+#: src/render.php:434, src/components/preview.js:672
 msgid "Taxes & Costs (annual)"
 msgstr ""
 
 #. translators: %s: cost component name.
-#: src/render.php:514
+#: src/render.php:458
 msgid "Toggle %s between a percentage and an amount"
 msgstr ""
 
-#: src/render.php:517
+#: src/render.php:461, src/components/preview.js:731
 msgid "Amount"
+msgstr ""
+
+#: src/render.php:558, src/components/preview.js:899
+msgid "Payment Composition"
+msgstr ""
+
+#: src/render.php:568, src/components/preview.js:918
+msgid "Balance Over Time"
+msgstr ""
+
+#: src/render.php:578, src/components/preview.js:937
+msgid "Principal vs Interest by Year"
+msgstr ""
+
+#: src/render.php:588, src/components/preview.js:956
+msgid "Parameter Comparison"
+msgstr ""
+
+#: src/render.php:623
+msgid "Amortization Schedule"
 msgstr ""
 
 #: src/components/design-controls.js:58
@@ -1168,151 +1176,171 @@ msgstr ""
 msgid "Set spacing per side"
 msgstr ""
 
-#: src/components/inspector-controls.js:48
+#: src/components/inspector-controls.js:49
 msgid "Schedule"
 msgstr ""
 
-#: src/components/inspector-controls.js:178
+#: src/components/inspector-controls.js:200
 msgid "Calculator Settings"
 msgstr ""
 
-#: src/components/inspector-controls.js:189
+#: src/components/inspector-controls.js:214
 msgid "Inherited from Settings → Amortexa."
 msgstr ""
 
-#: src/components/inspector-controls.js:206
+#: src/components/inspector-controls.js:231
 msgid "Currency Symbol"
 msgstr ""
 
-#: src/components/inspector-controls.js:207
+#: src/components/inspector-controls.js:235
 msgid "Up to 8 characters, shown next to every amount."
 msgstr ""
 
-#: src/components/inspector-controls.js:222
+#: src/components/inspector-controls.js:250
 msgid "Currency Position"
 msgstr ""
 
-#: src/components/inspector-controls.js:237
+#: src/components/inspector-controls.js:269
+msgid "Taxes & Costs"
+msgstr ""
+
+#: src/components/inspector-controls.js:277
+msgid "Annual figures. A percentage is a share of the purchase price."
+msgstr ""
+
+#: src/components/inspector-controls.js:310
+msgid "%s unit"
+msgstr ""
+
+#: src/components/inspector-controls.js:320
+msgid "Percent of price"
+msgstr ""
+
+#: src/components/inspector-controls.js:327
+msgid "Cash amount"
+msgstr ""
+
+#: src/components/inspector-controls.js:344
 msgid "Display"
 msgstr ""
 
-#: src/components/inspector-controls.js:242
+#: src/components/inspector-controls.js:349
 msgid "Show Results Summary"
 msgstr ""
 
-#: src/components/inspector-controls.js:248
+#: src/components/inspector-controls.js:358
 msgid "Show Sliders"
 msgstr ""
 
-#: src/components/inspector-controls.js:249
+#: src/components/inspector-controls.js:362
 msgid "Front-end visitors can drag the sliders."
 msgstr ""
 
-#: src/components/inspector-controls.js:258
+#: src/components/inspector-controls.js:371
 msgid "Show Charts"
 msgstr ""
 
-#: src/components/inspector-controls.js:264
+#: src/components/inspector-controls.js:380
 msgid "Show Taxes & Costs"
 msgstr ""
 
-#: src/components/inspector-controls.js:265
+#: src/components/inspector-controls.js:384
 msgid "Adds property tax, insurance, HOA, PMI and other recurring costs, and reports the true total monthly cost alongside the principal and interest payment."
 msgstr ""
 
-#: src/components/inspector-controls.js:275
+#: src/components/inspector-controls.js:394
 msgid "Chart Type"
 msgstr ""
 
-#: src/components/inspector-controls.js:291
+#: src/components/inspector-controls.js:413
 msgid "Two column split places the inputs beside the results on wide screens."
 msgstr ""
 
-#: src/components/inspector-controls.js:308
+#: src/components/inspector-controls.js:430
 msgid "Show Amortization Table"
 msgstr ""
 
-#: src/components/inspector-controls.js:315
+#: src/components/inspector-controls.js:440
 msgid "Form Columns"
 msgstr ""
 
-#: src/components/inspector-controls.js:316
+#: src/components/inspector-controls.js:444
 msgid "Full width gives each control the whole row. Compact packs more controls per row and drops each input below its slider, which shortens a single column calculator but makes a two column split taller."
 msgstr ""
 
-#: src/components/inspector-controls.js:346, src/components/inspector-controls.js:352
+#: src/components/inspector-controls.js:474, src/components/inspector-controls.js:483
 msgid "Panel Order"
 msgstr ""
 
-#: src/components/inspector-controls.js:353
+#: src/components/inspector-controls.js:487
 msgid "Drag a section to move it, or use the up and down buttons. Every section can go anywhere, including the inputs."
 msgstr ""
 
-#: src/components/inspector-controls.js:403
+#: src/components/inspector-controls.js:537
 msgid "Move %s up"
 msgstr ""
 
-#: src/components/inspector-controls.js:407
+#: src/components/inspector-controls.js:544
 msgid "Up"
 msgstr ""
 
-#: src/components/inspector-controls.js:420
+#: src/components/inspector-controls.js:560
 msgid "Move %s down"
 msgstr ""
 
-#: src/components/inspector-controls.js:424
+#: src/components/inspector-controls.js:567
 msgid "Down"
 msgstr ""
 
-#: src/components/inspector-controls.js:433
+#: src/components/inspector-controls.js:579
 msgid "Typography"
 msgstr ""
 
-#: src/components/inspector-controls.js:438
+#: src/components/inspector-controls.js:584
 msgid "Font Family"
 msgstr ""
 
-#: src/components/inspector-controls.js:454
+#: src/components/inspector-controls.js:603
 msgid "Payment Font Size"
 msgstr ""
 
-#: src/components/inspector-controls.js:455
+#: src/components/inspector-controls.js:607
 msgid "In pixels. Use 0 for the skin default."
 msgstr ""
 
-#: src/components/inspector-controls.js:473
+#: src/components/inspector-controls.js:625
 msgid "Payment Font Weight"
 msgstr ""
 
-#: src/components/inspector-controls.js:490
+#: src/components/inspector-controls.js:645
 msgid "Site Defaults"
 msgstr ""
 
-#: src/components/inspector-controls.js:495
+#: src/components/inspector-controls.js:653
 msgid "These are the values this site starts new calculators with. Reset to go back to them."
 msgstr ""
 
-#: src/components/inspector-controls.js:508
+#: src/components/inspector-controls.js:666
 msgid "Reset to Site Defaults"
 msgstr ""
 
-#: src/components/preview.js:464
-msgid "Live Preview use Settings and Styles sidebar to change values."
+#: src/components/preview.js:1021
+msgid "Use sidebar settings to change values."
 msgstr ""
 
-#: src/utils/field-definitions.js:45
+#: src/utils/field-definitions.js:49
 msgid "Interest Rate"
 msgstr ""
 
-#: src/utils/field-definitions.js:46
+#: src/utils/field-definitions.js:50
 msgid "Annual rate as a percentage."
 msgstr ""
 
-#: src/utils/field-definitions.js:56
+#: src/utils/field-definitions.js:63
 msgid "Loan Term"
 msgstr ""
 
-#: src/utils/field-definitions.js:57
+#: src/utils/field-definitions.js:64
 msgid "Length of the loan in years."
 msgstr ""
 

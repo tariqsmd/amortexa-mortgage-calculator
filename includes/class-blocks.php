@@ -47,7 +47,7 @@ class Amortexa_Blocks {
 
 		$categories[] = array(
 			'slug'  => self::CATEGORY,
-			'title' => __( 'Amortexa', AMORTEXA_TEXT_DOMAIN ),
+			'title' => __( 'Amortexa', 'amortexa-mortgage-calculator' ),
 			'icon'  => 'calculator',
 		);
 
@@ -69,7 +69,7 @@ class Amortexa_Blocks {
 		if ( ! file_exists( $build_dir . '/block.json' ) ) {
 			_doing_it_wrong(
 				__METHOD__,
-				esc_html__( 'The block build is missing. Run `npm install` then `npm run build` inside the plugin folder.', AMORTEXA_TEXT_DOMAIN ),
+				esc_html__( 'The block build is missing. Run `npm install` then `npm run build` inside the plugin folder.', 'amortexa-mortgage-calculator' ),
 				'1.0.0'
 			);
 			return;

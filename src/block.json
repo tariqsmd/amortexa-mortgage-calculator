@@ -86,17 +86,17 @@
 		},
 		"chartType": {
 			"type": "string",
-			"default": "both",
+			"default": "donut",
 			"enum": [ "donut", "line", "bar", "dots", "both" ]
 		},
 		"layout": {
 			"type": "string",
-			"default": "split",
-			"enum": [ "stacked", "split" ]
+			"default": "aside",
+			"enum": [ "stacked", "split", "aside", "chart-aside" ]
 		},
 		"formColumns": {
 			"type": "string",
-			"default": "wide",
+			"default": "compact",
 			"enum": [ "wide", "compact" ]
 		},
 		"panelOrder": {
@@ -147,7 +147,7 @@
 		},
 		"showAmortization": {
 			"type": "boolean",
-			"default": true
+			"default": false
 		},
 		"showCharts": {
 			"type": "boolean",

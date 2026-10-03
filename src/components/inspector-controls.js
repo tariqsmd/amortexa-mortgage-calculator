@@ -30,7 +30,8 @@ import {
 	getSiteDefaults,
 	getSkins,
 } from '../utils/editor-data';
-import { NUMERIC_FIELDS } from '../utils/field-definitions';
+import { COST_FIELDS, NUMERIC_FIELDS } from '../utils/field-definitions';
+import { round2 } from '../utils/calculator';
 import { PANEL_KEYS, movePanel, resolvePanelOrder } from '../utils/panel-order';
 import { getDesignOverrides } from '../utils/design';
 import DesignControls from './design-controls';
@@ -117,6 +118,27 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 
 	const setSelect = ( key ) => ( value ) =>
 		setAttributes( { [ key ]: value } );
+
+	/*
+	 * Converts a cost when its unit changes so the monthly figure it produces
+	 * does not jump: a percentage is a share of the purchase price (loanAmount),
+	 * a cash amount is the annual figure itself. Mirrors the preview's toggle.
+	 */
+	const setCostUnit = ( attribute, next ) => {
+		const unitKey = `${ attribute }Unit`;
+		const raw = Number( attributes[ attribute ] ) || 0;
+		const price = Number( attributes.loanAmount ) || 0;
+		let value = raw;
+
+		if ( price > 0 ) {
+			value =
+				'amount' === next
+					? round2( ( price * raw ) / 100 )
+					: round2( ( raw / price ) * 100 );
+		}
+
+		setAttributes( { [ attribute ]: value, [ unitKey ]: next } );
+	};
 
 	const skinOptions = getSkins();
 	const skinValues = skinOptions.map( ( skin ) => skin.value );
@@ -241,6 +263,82 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 						onChange={ setSelect( 'currencyPosition' ) }
 					/>
 				</PanelBody>
+
+				{ attributes.showCosts && (
+					<PanelBody
+						title={ __(
+							'Taxes & Costs',
+							'amortexa-mortgage-calculator'
+						) }
+						initialOpen={ false }
+					>
+						<PanelRow>
+							<p className="amortexa-inspector__note">
+								{ __(
+									'Annual figures. A percentage is a share of the purchase price.',
+									'amortexa-mortgage-calculator'
+								) }
+							</p>
+						</PanelRow>
+						{ COST_FIELDS.map( ( field ) => {
+							const unit =
+								'amount' === attributes[ field.unitKey ]
+									? 'amount'
+									: 'percent';
+
+							return (
+								<div key={ field.attribute }>
+									<TextControl
+										__nextHasNoMarginBottom
+										type="number"
+										label={ field.label }
+										value={ String(
+											attributes[ field.attribute ] ?? ''
+										) }
+										min={ 0 }
+										step={
+											'amount' === unit ? 'any' : '0.01'
+										}
+										onChange={ ( value ) =>
+											setNumber( field.attribute, value )
+										}
+									/>
+									<SelectControl
+										__nextHasNoMarginBottom
+										label={ sprintf(
+											/* translators: %s: cost name, e.g. "Property Tax". */
+											__(
+												'%s unit',
+												'amortexa-mortgage-calculator'
+											),
+											field.label
+										) }
+										value={ unit }
+										options={ [
+											{
+												value: 'percent',
+												label: __(
+													'Percent of price',
+													'amortexa-mortgage-calculator'
+												),
+											},
+											{
+												value: 'amount',
+												label: __(
+													'Cash amount',
+													'amortexa-mortgage-calculator'
+												),
+											},
+										] }
+										onChange={ ( next ) =>
+											setCostUnit( field.attribute, next )
+										}
+									/>
+								</div>
+							);
+						} ) }
+					</PanelBody>
+				) }
 
 				<PanelBody
 					title={ __( 'Display', 'amortexa-mortgage-calculator' ) }

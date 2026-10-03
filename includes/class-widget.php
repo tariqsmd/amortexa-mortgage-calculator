@@ -37,10 +37,10 @@ final class Amortexa_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 			self::ID_BASE,
-			__( 'Mortgage Calculator', AMORTEXA_TEXT_DOMAIN ),
+			__( 'Mortgage Calculator', 'amortexa-mortgage-calculator' ),
 			array(
 				'classname'                   => 'amortexa-widget',
-				'description'                 => __( 'Renders the mortgage calculator. Any field left blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
+				'description'                 => __( 'Renders the mortgage calculator. Any field left blank follows the site default.', 'amortexa-mortgage-calculator' ),
 				'customize_selective_refresh' => true,
 			)
 		);
@@ -69,37 +69,37 @@ final class Amortexa_Widget extends WP_Widget {
 		$fields = array(
 			'loanamount'   => array(
 				'type'        => 'number',
-				'label'       => __( 'Loan amount', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Loan amount', 'amortexa-mortgage-calculator' ),
 				'min'         => 0,
 				'max'         => 999999999999,
-				'description' => __( 'Blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
+				'description' => __( 'Blank follows the site default.', 'amortexa-mortgage-calculator' ),
 			),
 			'interestrate' => array(
 				'type'        => 'number',
-				'label'       => __( 'Interest rate', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Interest rate', 'amortexa-mortgage-calculator' ),
 				'min'         => 0,
 				'max'         => 100,
-				'description' => __( 'Percent per year. Blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
+				'description' => __( 'Percent per year. Blank follows the site default.', 'amortexa-mortgage-calculator' ),
 			),
 			'loanterm'     => array(
 				'type'        => 'number',
-				'label'       => __( 'Loan term', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Loan term', 'amortexa-mortgage-calculator' ),
 				'min'         => 1,
 				'max'         => 60,
 				'integer'     => true,
-				'description' => __( 'Years. Blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
+				'description' => __( 'Years. Blank follows the site default.', 'amortexa-mortgage-calculator' ),
 			),
 			'layout'       => array(
 				'type'        => 'select',
-				'label'       => __( 'Layout', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Layout', 'amortexa-mortgage-calculator' ),
 				'options'     => 'amortexa_get_layouts',
-				'description' => __( 'Blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
+				'description' => __( 'Blank follows the site default.', 'amortexa-mortgage-calculator' ),
 			),
 			'theme'        => array(
 				'type'        => 'select',
-				'label'       => __( 'Skin', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Skin', 'amortexa-mortgage-calculator' ),
 				'options'     => 'amortexa_get_skins',
-				'description' => __( 'Blank follows the site default.', AMORTEXA_TEXT_DOMAIN ),
+				'description' => __( 'Blank follows the site default.', 'amortexa-mortgage-calculator' ),
 			),
 		);
 
@@ -210,7 +210,7 @@ final class Amortexa_Widget extends WP_Widget {
 				$options = call_user_func( $field['options'] );
 
 				printf( '<select id="%1$s" name="%2$s">', esc_attr( $id ), esc_attr( $this->get_field_name( $key ) ) );
-				printf( '<option value="">%s</option>', esc_html__( 'Site default', AMORTEXA_TEXT_DOMAIN ) );
+				printf( '<option value="">%s</option>', esc_html__( 'Site default', 'amortexa-mortgage-calculator' ) );
 
 				foreach ( $options as $option_value => $option_label ) {
 					printf(

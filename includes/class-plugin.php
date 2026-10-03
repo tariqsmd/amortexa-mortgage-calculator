@@ -50,7 +50,6 @@ final class Amortexa_Plugin {
 	 */
 	private function init_components() {
 		$components = array(
-			'Amortexa_I18n',
 			'Amortexa_Assets',
 			'Amortexa_Blocks',
 			'Amortexa_REST',
@@ -139,7 +138,7 @@ final class Amortexa_Plugin {
 	public function __wakeup() {
 		_doing_it_wrong(
 			__FUNCTION__,
-			esc_html__( 'Unserializing Amortexa_Plugin is not allowed.', AMORTEXA_TEXT_DOMAIN ),
+			esc_html__( 'Unserializing Amortexa_Plugin is not allowed.', 'amortexa-mortgage-calculator' ),
 			'1.0.0'
 		);
 	}

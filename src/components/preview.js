@@ -10,6 +10,7 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from '@wordpress/element';
 import { getChartHeight } from '../utils/design';
+import { getLayouts } from '../utils/editor-data';
 import {
 	createBarChart,
 	createDotsChart,
@@ -17,7 +18,8 @@ import {
 	createLineChart,
 	withAlpha,
 } from '../utils/charts';
-import { NUMERIC_FIELDS } from '../utils/field-definitions';
+import { round2 } from '../utils/calculator';
+import { COST_FIELDS, NUMERIC_FIELDS } from '../utils/field-definitions';
 import { resolvePanelOrder } from '../utils/panel-order';
 
 /**
@@ -103,6 +105,7 @@ function renderLegendInto( host, items ) {
  * @param {Array}    props.chartSchedule     Annual schedule rows for charts.
  * @param {Object}   props.rootRef           Ref for the root preview node.
  * @param {Object}   props.paymentTypography Inline typography for the payment amount.
+ * @param {string}   props.paletteKey        Serialised palette overrides; changes repaint charts.
  * @return {JSX.Element} Preview markup.
  */
 export default function Preview( {
@@ -112,6 +115,7 @@ export default function Preview( {
 	chartSchedule,
 	rootRef,
 	paymentTypography,
+	paletteKey,
 } ) {
 	const {
 		currencySymbol,
@@ -120,9 +124,11 @@ export default function Preview( {
 		showCharts,
 		showSliders,
 		showResults,
+		showCosts,
 		chartType,
 		layout,
 		panelOrder,
+		theme,
 	} = attributes;
 
 	const donutRef = useRef( null );
@@ -406,6 +412,9 @@ export default function Preview( {
 		// identity across a chart type change and cannot stand in for it.
 		// previewChartHeight likewise has to be listed, or resizing a chart
 		// from the Design tab would leave the old drawing in place.
+		// theme and paletteKey are what actually change the computed accent and
+		// cost custom properties, so without them switching a skin (or editing a
+		// colour token) in the editor would leave the old chart colours behind.
 		// rootRef is a ref, so its identity is stable: listing it satisfies
 		// react-hooks/exhaustive-deps without ever forcing a re-run.
 	}, [
@@ -417,6 +426,8 @@ export default function Preview( {
 		showCharts,
 		previewChartHeight,
 		previewDonutSize,
+		theme,
+		paletteKey,
 		rootRef,
 	] );
 
@@ -434,6 +445,30 @@ export default function Preview( {
 			);
 		}
 		return field.sliderMax;
+	};
+
+	/*
+	 * Converts a cost value when its unit changes so the monthly figure stays
+	 * the same, mirroring the front-end unit toggle. A percentage is a share of
+	 * the purchase price (loanAmount here); a cash amount is the figure as is.
+	 */
+	const setCostUnit = ( attribute ) => {
+		const unitKey = `${ attribute }Unit`;
+		const current =
+			'amount' === attributes[ unitKey ] ? 'amount' : 'percent';
+		const next = 'amount' === current ? 'percent' : 'amount';
+		const raw = Number( attributes[ attribute ] ) || 0;
+		const price = Number( attributes.loanAmount ) || 0;
+		let value = raw;
+
+		if ( price > 0 ) {
+			value =
+				'amount' === next
+					? round2( ( price * raw ) / 100 )
+					: round2( ( raw / price ) * 100 );
+		}
+
+		setAttributes( { [ attribute ]: value, [ unitKey ]: next } );
 	};
 
 	const scheduleRows = chartSchedule.map( ( row ) => (
@@ -463,6 +498,32 @@ export default function Preview( {
 		</tr>
 	) );
 
+	/*
+	 * The cost breakdown mirrors the server render: principal and interest
+	 * always leads, and a component the author left at zero is dropped rather
+	 * than shown as a $0.00 row.
+	 */
+	const monthlyCosts = result.monthlyCosts || {};
+	const costRows = [
+		{
+			key: 'pi',
+			label: __( 'Principal & Interest', 'amortexa-mortgage-calculator' ),
+			amount: result.monthlyPayment,
+		},
+	];
+
+	COST_FIELDS.forEach( ( component ) => {
+		const amount = Number( monthlyCosts[ component.key ] ) || 0;
+
+		if ( amount > 0 ) {
+			costRows.push( {
+				key: component.key,
+				label: component.label,
+				amount,
+			} );
+		}
+	} );
+
 	// Which panels render, and in what order, so the preview matches the front
 	// end exactly. The form is part of the reorderable set, so it appears in
 	// the ordered list rather than being pinned first.
@@ -482,284 +543,504 @@ export default function Preview( {
 
 	const orderedPanels = resolvePanelOrder( panelOrder, visiblePanels );
 
-	return (
-		<>
-			<p className="amortexa-calc__editor-note">
-				{ __(
-					'Live Preview use Settings and Styles sidebar to change values.',
-					'amortexa-mortgage-calculator'
-				) }
-			</p>
-			<div
-				className={ `amortexa-calc__grid amortexa-calc__grid--${
-					layout === 'split' ? 'split' : 'stacked'
-				}${ showResults ? '' : ' amortexa-calc__grid--form-only' }` }
-			>
-				{ orderedPanels.map( ( panel ) => {
-					if ( 'form' === panel ) {
-						return (
-							<form
-								key="form"
-								className="amortexa-calc__form"
-								onSubmit={ ( event ) => event.preventDefault() }
+	/*
+	 * The grid always carries the layout as a modifier, stacked included,
+	 * because the form styling hangs off it. An unknown value falls back to
+	 * stacked, which is what the server side sanitizer does too.
+	 */
+	const layoutClass = getLayouts().some(
+		( option ) => option.value === layout
+	)
+		? layout
+		: 'stacked';
+
+	/*
+	 * Mirrors the column grouping the block renders on the front end: `aside`
+	 * puts the inputs alone in the first column and the results with the charts
+	 * in the second, `chart-aside` puts the inputs with the results in the first
+	 * and the charts in the second, and the amortization table stays outside
+	 * both columns in every layout. Saved panel order decides the sequence
+	 * inside each column.
+	 */
+	const bodyPanels = orderedPanels.filter(
+		( panel ) => 'form' !== panel && 'schedule' !== panel
+	);
+	let columns = [];
+
+	if ( 'aside' === layoutClass ) {
+		columns = [ [ 'form' ], bodyPanels ];
+	} else if ( 'chart-aside' === layoutClass ) {
+		columns = [
+			[
+				'form',
+				...bodyPanels.filter( ( panel ) => 'results' === panel ),
+			],
+			bodyPanels.filter( ( panel ) => 'charts' === panel ),
+		];
+	}
+
+	const filledColumns = columns.filter( ( column ) => 0 < column.length );
+	const groupedPanels = filledColumns.flat();
+
+	/*
+	 * Columns are only printed when there is more than one of them: a layout
+	 * that has collapsed to a single column renders flat, exactly as stacked
+	 * does. The table is then appended after both columns, which is what keeps
+	 * it full width instead of inside one of them.
+	 */
+	const multiColumn = 1 < filledColumns.length;
+
+	let singleColumn = groupedPanels.length <= 1;
+
+	if ( 0 === columns.length ) {
+		singleColumn = ! showResults;
+	}
+	const gridClass = `amortexa-calc__grid amortexa-calc__grid--${ layoutClass }${
+		singleColumn ? ' amortexa-calc__grid--form-only' : ''
+	}`;
+
+	/*
+	 * In the two column layouts the panels are grouped into the columns the grid
+	 * lays out. Every other layout renders the same panels flat, so the column
+	 * wrappers stay out of the markup and only the grid class changes.
+	 */
+	const renderPanel = ( panel ) => {
+		if ( 'form' === panel ) {
+			return (
+				<form
+					key="form"
+					className="amortexa-calc__form"
+					onSubmit={ ( event ) => event.preventDefault() }
+				>
+					{ NUMERIC_FIELDS.map( ( field ) => (
+						<div
+							key={ field.key }
+							className="amortexa-calc__control"
+						>
+							<label
+								className="amortexa-calc__label"
+								htmlFor={ `amortexa-edit-${ field.key }` }
 							>
-								{ NUMERIC_FIELDS.map( ( field ) => (
+								{ field.label }
+							</label>
+							<div className="amortexa-calc__control-row">
+								{ showSliders && (
+									<input
+										type="range"
+										className="amortexa-calc__slider"
+										value={ Number(
+											attributes[ field.key ]
+										) }
+										min={ field.sliderMin }
+										max={ sliderMaxFor( field ) }
+										step={ field.sliderStep }
+										tabIndex={ -1 }
+										aria-label={ field.label }
+										onChange={ ( event ) =>
+											setNumericAttribute(
+												field.key,
+												event.target.value
+											)
+										}
+									/>
+								) }
+								<input
+									type="number"
+									id={ `amortexa-edit-${ field.key }` }
+									className="amortexa-calc__field"
+									value={ String(
+										attributes[ field.key ] ?? ''
+									) }
+									min={ field.min }
+									max={ field.max }
+									step={ field.step }
+									tabIndex={ -1 }
+									onChange={ ( event ) =>
+										setNumericAttribute(
+											field.key,
+											event.target.value
+										)
+									}
+								/>
+							</div>
+						</div>
+					) ) }
+
+					{ showCosts && (
+						<fieldset className="amortexa-calc__costs">
+							<legend className="amortexa-calc__costs-legend">
+								{ __(
+									'Taxes & Costs (annual)',
+									'amortexa-mortgage-calculator'
+								) }
+							</legend>
+							{ COST_FIELDS.map( ( component ) => {
+								const unit =
+									'amount' ===
+									attributes[ `${ component.attribute }Unit` ]
+										? 'amount'
+										: 'percent';
+
+								return (
 									<div
-										key={ field.key }
+										key={ component.key }
 										className="amortexa-calc__control"
 									>
 										<label
 											className="amortexa-calc__label"
-											htmlFor={ `amortexa-edit-${ field.key }` }
+											htmlFor={ `amortexa-edit-${ component.attribute }` }
 										>
-											{ field.label }
+											{ component.label }
 										</label>
 										<div className="amortexa-calc__control-row">
-											{ showSliders && (
-												<input
-													type="range"
-													className="amortexa-calc__slider"
-													value={ Number(
-														attributes[ field.key ]
-													) }
-													min={ field.sliderMin }
-													max={ sliderMaxFor(
-														field
-													) }
-													step={ field.sliderStep }
-													tabIndex={ -1 }
-													aria-label={ field.label }
-													onChange={ ( event ) =>
-														setNumericAttribute(
-															field.key,
-															event.target.value
-														)
-													}
-												/>
-											) }
 											<input
 												type="number"
-												id={ `amortexa-edit-${ field.key }` }
+												id={ `amortexa-edit-${ component.attribute }` }
 												className="amortexa-calc__field"
 												value={ String(
-													attributes[ field.key ] ??
-														''
+													attributes[
+														component.attribute
+													] ?? ''
 												) }
-												min={ field.min }
-												max={ field.max }
-												step={ field.step }
+												step={
+													'amount' === unit
+														? 'any'
+														: '0.01'
+												}
+												min="0"
 												tabIndex={ -1 }
 												onChange={ ( event ) =>
 													setNumericAttribute(
-														field.key,
+														component.attribute,
 														event.target.value
 													)
 												}
 											/>
+											<button
+												type="button"
+												className="amortexa-calc__unit"
+												tabIndex={ -1 }
+												onClick={ () =>
+													setCostUnit(
+														component.attribute
+													)
+												}
+											>
+												{ 'percent' === unit
+													? '%'
+													: __(
+															'Amount',
+															'amortexa-mortgage-calculator'
+													  ) }
+											</button>
 										</div>
 									</div>
-								) ) }
-							</form>
-						);
-					}
+								);
+							} ) }
+						</fieldset>
+					) }
+				</form>
+			);
+		}
 
-					if ( 'results' === panel ) {
-						return (
+		if ( 'results' === panel ) {
+			return (
+				<div key="results" className="amortexa-calc__results">
+					<p className="amortexa-calc__result-label">
+						{ __(
+							'Monthly Payment',
+							'amortexa-mortgage-calculator'
+						) }
+					</p>
+					<p
+						className="amortexa-calc__result-primary"
+						style={ paymentTypography }
+					>
+						{ formatAmount(
+							result.monthlyPayment,
+							currencySymbol,
+							currencyPosition
+						) }
+					</p>
+					<dl className="amortexa-calc__result-list">
+						<div className="amortexa-calc__result-row">
+							<dt>
+								{ __(
+									'Financed Principal',
+									'amortexa-mortgage-calculator'
+								) }
+							</dt>
+							<dd>
+								{ formatAmount(
+									result.principal,
+									currencySymbol,
+									currencyPosition
+								) }
+							</dd>
+						</div>
+						<div className="amortexa-calc__result-row">
+							<dt>
+								{ __(
+									'Total Interest',
+									'amortexa-mortgage-calculator'
+								) }
+							</dt>
+							<dd>
+								{ formatAmount(
+									result.totalInterest,
+									currencySymbol,
+									currencyPosition
+								) }
+							</dd>
+						</div>
+						<div className="amortexa-calc__result-row">
+							<dt>
+								{ __(
+									'Total Paid',
+									'amortexa-mortgage-calculator'
+								) }
+							</dt>
+							<dd>
+								{ formatAmount(
+									result.totalPaid,
+									currencySymbol,
+									currencyPosition
+								) }
+							</dd>
+						</div>
+					</dl>
+
+					{ showCosts && (
+						<>
+							<dl className="amortexa-calc__result-list amortexa-calc__result-list--costs">
+								{ costRows.map( ( row ) => (
+									<div
+										key={ row.key }
+										className="amortexa-calc__result-row amortexa-calc__result-row--cost"
+										data-amortexa-cost={ row.key }
+									>
+										<dt>
+											<span
+												className="amortexa-calc__cost-swatch"
+												aria-hidden="true"
+											></span>
+											{ row.label }
+										</dt>
+										<dd>
+											{ formatAmount(
+												row.amount,
+												currencySymbol,
+												currencyPosition
+											) }
+										</dd>
+									</div>
+								) ) }
+								<div className="amortexa-calc__result-row amortexa-calc__result-row--total">
+									<dt>
+										{ __(
+											'Total Monthly Cost',
+											'amortexa-mortgage-calculator'
+										) }
+									</dt>
+									<dd>
+										{ formatAmount(
+											result.totalMonthlyCost,
+											currencySymbol,
+											currencyPosition
+										) }
+									</dd>
+								</div>
+							</dl>
+
+							<dl className="amortexa-calc__result-list amortexa-calc__result-list--totals">
+								<div className="amortexa-calc__result-row">
+									<dt>
+										{ __(
+											'Total Taxes & Costs',
+											'amortexa-mortgage-calculator'
+										) }
+									</dt>
+									<dd>
+										{ formatAmount(
+											result.totalCosts,
+											currencySymbol,
+											currencyPosition
+										) }
+									</dd>
+								</div>
+								<div className="amortexa-calc__result-row">
+									<dt>
+										{ __(
+											'Total Out-of-Pocket',
+											'amortexa-mortgage-calculator'
+										) }
+									</dt>
+									<dd>
+										{ formatAmount(
+											result.totalOutOfPocket,
+											currencySymbol,
+											currencyPosition
+										) }
+									</dd>
+								</div>
+							</dl>
+						</>
+					) }
+				</div>
+			);
+		}
+
+		if ( 'charts' === panel ) {
+			return (
+				<div className="amortexa-calc__charts" key="charts">
+					{ [ 'donut', 'both' ].includes( chartType ) && (
+						<figure className="amortexa-calc__chart">
+							<figcaption className="amortexa-calc__chart-title">
+								{ __(
+									'Payment Composition',
+									'amortexa-mortgage-calculator'
+								) }
+							</figcaption>
 							<div
-								key="results"
-								className="amortexa-calc__results"
-							>
-								<p className="amortexa-calc__result-label">
+								className="amortexa-calc__chart-body"
+								ref={ donutRef }
+							/>
+							<figcaption
+								className="amortexa-calc__legend"
+								ref={ legendRef }
+							/>
+						</figure>
+					) }
+
+					{ [ 'line', 'both' ].includes( chartType ) && (
+						<figure className="amortexa-calc__chart">
+							<figcaption className="amortexa-calc__chart-title">
+								{ __(
+									'Balance Over Time',
+									'amortexa-mortgage-calculator'
+								) }
+							</figcaption>
+							<div
+								className="amortexa-calc__chart-body"
+								ref={ lineRef }
+							/>
+							<figcaption
+								className="amortexa-calc__legend"
+								ref={ lineLegendRef }
+							/>
+						</figure>
+					) }
+
+					{ chartType === 'bar' && (
+						<figure className="amortexa-calc__chart">
+							<figcaption className="amortexa-calc__chart-title">
+								{ __(
+									'Principal vs Interest by Year',
+									'amortexa-mortgage-calculator'
+								) }
+							</figcaption>
+							<div
+								className="amortexa-calc__chart-body"
+								ref={ barRef }
+							/>
+							<figcaption
+								className="amortexa-calc__legend"
+								ref={ barLegendRef }
+							/>
+						</figure>
+					) }
+
+					{ chartType === 'dots' && (
+						<figure className="amortexa-calc__chart">
+							<figcaption className="amortexa-calc__chart-title">
+								{ __(
+									'Parameter Comparison',
+									'amortexa-mortgage-calculator'
+								) }
+							</figcaption>
+							<div
+								className="amortexa-calc__chart-body"
+								ref={ dotsRef }
+							/>
+							<figcaption
+								className="amortexa-calc__legend"
+								ref={ dotsLegendRef }
+							/>
+						</figure>
+					) }
+				</div>
+			);
+		}
+
+		return (
+			<div key="schedule" className="amortexa-calc__schedule">
+				{ /* Mirrors the schedule-body wrapper in render.php so
+				 * the table scrolls horizontally in a narrow
+				 * editor viewport, exactly as it does on the
+				 * frontend. */ }
+				<div className="amortexa-calc__schedule-body">
+					<table className="amortexa-calc__table">
+						<thead>
+							<tr>
+								<th scope="col">
 									{ __(
-										'Monthly Payment',
+										'Year',
 										'amortexa-mortgage-calculator'
 									) }
-								</p>
-								<p
-									className="amortexa-calc__result-primary"
-									style={ paymentTypography }
-								>
-									{ formatAmount(
-										result.monthlyPayment,
-										currencySymbol,
-										currencyPosition
+								</th>
+								<th scope="col">
+									{ __(
+										'Principal Paid',
+										'amortexa-mortgage-calculator'
 									) }
-								</p>
-								<dl className="amortexa-calc__result-list">
-									<div className="amortexa-calc__result-row">
-										<dt>
-											{ __(
-												'Financed Principal',
-												'amortexa-mortgage-calculator'
-											) }
-										</dt>
-										<dd>
-											{ formatAmount(
-												result.principal,
-												currencySymbol,
-												currencyPosition
-											) }
-										</dd>
-									</div>
-									<div className="amortexa-calc__result-row">
-										<dt>
-											{ __(
-												'Total Interest',
-												'amortexa-mortgage-calculator'
-											) }
-										</dt>
-										<dd>
-											{ formatAmount(
-												result.totalInterest,
-												currencySymbol,
-												currencyPosition
-											) }
-										</dd>
-									</div>
-									<div className="amortexa-calc__result-row">
-										<dt>
-											{ __(
-												'Total Paid',
-												'amortexa-mortgage-calculator'
-											) }
-										</dt>
-										<dd>
-											{ formatAmount(
-												result.totalPaid,
-												currencySymbol,
-												currencyPosition
-											) }
-										</dd>
-									</div>
-								</dl>
-							</div>
-						);
-					}
+								</th>
+								<th scope="col">
+									{ __(
+										'Interest Paid',
+										'amortexa-mortgage-calculator'
+									) }
+								</th>
+								<th scope="col">
+									{ __(
+										'Remaining Balance',
+										'amortexa-mortgage-calculator'
+									) }
+								</th>
+							</tr>
+						</thead>
+						<tbody>{ scheduleRows }</tbody>
+					</table>
+				</div>
+			</div>
+		);
+	};
 
-					if ( 'charts' === panel ) {
-						return (
-							<div className="amortexa-calc__charts" key="charts">
-								{ [ 'donut', 'both' ].includes( chartType ) && (
-									<figure className="amortexa-calc__chart">
-										<figcaption className="amortexa-calc__chart-title">
-											{ __(
-												'Payment Composition',
-												'amortexa-mortgage-calculator'
-											) }
-										</figcaption>
-										<div
-											className="amortexa-calc__chart-body"
-											ref={ donutRef }
-										/>
-										<figcaption
-											className="amortexa-calc__legend"
-											ref={ legendRef }
-										/>
-									</figure>
-								) }
-
-								{ [ 'line', 'both' ].includes( chartType ) && (
-									<figure className="amortexa-calc__chart">
-										<figcaption className="amortexa-calc__chart-title">
-											{ __(
-												'Balance Over Time',
-												'amortexa-mortgage-calculator'
-											) }
-										</figcaption>
-										<div
-											className="amortexa-calc__chart-body"
-											ref={ lineRef }
-										/>
-										<figcaption
-											className="amortexa-calc__legend"
-											ref={ lineLegendRef }
-										/>
-									</figure>
-								) }
-
-								{ chartType === 'bar' && (
-									<figure className="amortexa-calc__chart">
-										<figcaption className="amortexa-calc__chart-title">
-											{ __(
-												'Principal vs Interest by Year',
-												'amortexa-mortgage-calculator'
-											) }
-										</figcaption>
-										<div
-											className="amortexa-calc__chart-body"
-											ref={ barRef }
-										/>
-										<figcaption
-											className="amortexa-calc__legend"
-											ref={ barLegendRef }
-										/>
-									</figure>
-								) }
-
-								{ chartType === 'dots' && (
-									<figure className="amortexa-calc__chart">
-										<figcaption className="amortexa-calc__chart-title">
-											{ __(
-												'Parameter Comparison',
-												'amortexa-mortgage-calculator'
-											) }
-										</figcaption>
-										<div
-											className="amortexa-calc__chart-body"
-											ref={ dotsRef }
-										/>
-										<figcaption
-											className="amortexa-calc__legend"
-											ref={ dotsLegendRef }
-										/>
-									</figure>
+	return (
+		<>
+			<p className="amortexa-calc__editor-note">
+				{ __(
+					'Use sidebar settings to change values.',
+					'amortexa-mortgage-calculator'
+				) }
+			</p>
+			<div className={ gridClass }>
+				{ multiColumn
+					? filledColumns.map( ( column, index ) => (
+							<div
+								key={ `column-${ index }` }
+								className={ `amortexa-calc__column amortexa-calc__column--${
+									0 === index ? 'form' : 'details'
+								}` }
+							>
+								{ column.map( ( panel ) =>
+									renderPanel( panel )
 								) }
 							</div>
-						);
-					}
-
-					return (
-						<div key="schedule" className="amortexa-calc__schedule">
-							{ /* Mirrors the schedule-body wrapper in render.php so
-							 * the table scrolls horizontally in a narrow
-							 * editor viewport, exactly as it does on the
-							 * frontend. */ }
-							<div className="amortexa-calc__schedule-body">
-								<table className="amortexa-calc__table">
-									<thead>
-										<tr>
-											<th scope="col">
-												{ __(
-													'Year',
-													'amortexa-mortgage-calculator'
-												) }
-											</th>
-											<th scope="col">
-												{ __(
-													'Principal Paid',
-													'amortexa-mortgage-calculator'
-												) }
-											</th>
-											<th scope="col">
-												{ __(
-													'Interest Paid',
-													'amortexa-mortgage-calculator'
-												) }
-											</th>
-											<th scope="col">
-												{ __(
-													'Remaining Balance',
-													'amortexa-mortgage-calculator'
-												) }
-											</th>
-										</tr>
-									</thead>
-									<tbody>{ scheduleRows }</tbody>
-								</table>
-							</div>
-						</div>
-					);
-				} ) }
+					  ) )
+					: orderedPanels.map( ( panel ) => renderPanel( panel ) ) }
+				{ multiColumn &&
+					orderedPanels.includes( 'schedule' ) &&
+					renderPanel( 'schedule' ) }
 			</div>
 		</>
 	);

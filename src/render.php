@@ -18,6 +18,20 @@
  * @package Amortexa
  */
 
+/*
+ * WordPress.NamingConventions.PrefixAllGlobals
+ *
+ * Every variable below is a local of this render call, not a global: WordPress
+ * includes a block render template from inside WP_Block::render(), so the file
+ * body runs in that method's scope and nothing here can be overwritten by, or
+ * overwrite, another plugin. The sniff reads a top-level assignment in a file
+ * that is not a class or function as a global definition, which is right for an
+ * included file and wrong for a render callback. Prefixing ~70 template locals
+ * would rename render.php away from the render.php that src/block.json points
+ * at, and would buy nothing.
+ */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Render callback locals, not globals; see above.
+
 // Abort if this file is called directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -52,22 +66,22 @@ $config = array(
 	// as a custom property the way colours do.
 	'chartHeight'      => (int) amortexa_get_design_chart_metrics( $attrs )['height'],
 	'labels'           => array(
-		'monthly'     => __( 'Monthly Payment', AMORTEXA_TEXT_DOMAIN ),
-		'totalMonthly' => __( 'Total Monthly Cost', AMORTEXA_TEXT_DOMAIN ),
-		'principal'   => __( 'Financed Principal', AMORTEXA_TEXT_DOMAIN ),
-		'totalInt'    => __( 'Total Interest', AMORTEXA_TEXT_DOMAIN ),
-		'totalPaid'   => __( 'Total Paid', AMORTEXA_TEXT_DOMAIN ),
-		'totalCosts'  => __( 'Total Taxes & Costs', AMORTEXA_TEXT_DOMAIN ),
-		'outOfPocket' => __( 'Total Out-of-Pocket', AMORTEXA_TEXT_DOMAIN ),
-		'pi'          => __( 'Principal & Interest', AMORTEXA_TEXT_DOMAIN ),
-		'toggle'      => __( 'Collapse schedule', AMORTEXA_TEXT_DOMAIN ),
-		'toggleOpen'  => __( 'Expand schedule', AMORTEXA_TEXT_DOMAIN ),
-		'year'        => __( 'Year', AMORTEXA_TEXT_DOMAIN ),
-		'prinPaid'    => __( 'Principal Paid', AMORTEXA_TEXT_DOMAIN ),
-		'intPaid'     => __( 'Interest Paid', AMORTEXA_TEXT_DOMAIN ),
-		'balance'     => __( 'Remaining Balance', AMORTEXA_TEXT_DOMAIN ),
-		'balanceY1'   => __( 'Balance After Year 1', AMORTEXA_TEXT_DOMAIN ),
-		'cumInt'      => __( 'Cumulative Interest', AMORTEXA_TEXT_DOMAIN ),
+		'monthly'     => __( 'Monthly Payment', 'amortexa-mortgage-calculator' ),
+		'totalMonthly' => __( 'Total Monthly Cost', 'amortexa-mortgage-calculator' ),
+		'principal'   => __( 'Financed Principal', 'amortexa-mortgage-calculator' ),
+		'totalInt'    => __( 'Total Interest', 'amortexa-mortgage-calculator' ),
+		'totalPaid'   => __( 'Total Paid', 'amortexa-mortgage-calculator' ),
+		'totalCosts'  => __( 'Total Taxes & Costs', 'amortexa-mortgage-calculator' ),
+		'outOfPocket' => __( 'Total Out-of-Pocket', 'amortexa-mortgage-calculator' ),
+		'pi'          => __( 'Principal & Interest', 'amortexa-mortgage-calculator' ),
+		'toggle'      => __( 'Collapse schedule', 'amortexa-mortgage-calculator' ),
+		'toggleOpen'  => __( 'Expand schedule', 'amortexa-mortgage-calculator' ),
+		'year'        => __( 'Year', 'amortexa-mortgage-calculator' ),
+		'prinPaid'    => __( 'Principal Paid', 'amortexa-mortgage-calculator' ),
+		'intPaid'     => __( 'Interest Paid', 'amortexa-mortgage-calculator' ),
+		'balance'     => __( 'Remaining Balance', 'amortexa-mortgage-calculator' ),
+		'balanceY1'   => __( 'Balance After Year 1', 'amortexa-mortgage-calculator' ),
+		'cumInt'      => __( 'Cumulative Interest', 'amortexa-mortgage-calculator' ),
 	),
 );
 
@@ -89,7 +103,7 @@ $fields = array(
 	array(
 		'id'    => $uid . '-amount',
 		'name'  => 'loanAmount',
-		'label' => __( 'Loan Amount', AMORTEXA_TEXT_DOMAIN ),
+		'label' => __( 'Loan Amount', 'amortexa-mortgage-calculator' ),
 		'value' => (string) $attrs['loanAmount'],
 		'step'  => 'any',
 		'min'   => '0',
@@ -101,7 +115,7 @@ $fields = array(
 	array(
 		'id'    => $uid . '-down',
 		'name'  => 'downPayment',
-		'label' => __( 'Down Payment', AMORTEXA_TEXT_DOMAIN ),
+		'label' => __( 'Down Payment', 'amortexa-mortgage-calculator' ),
 		'value' => (string) $attrs['downPayment'],
 		'step'  => 'any',
 		'min'   => '0',
@@ -113,7 +127,7 @@ $fields = array(
 	array(
 		'id'    => $uid . '-rate',
 		'name'  => 'interestRate',
-		'label' => __( 'Interest Rate (%)', AMORTEXA_TEXT_DOMAIN ),
+		'label' => __( 'Interest Rate (%)', 'amortexa-mortgage-calculator' ),
 		'value' => (string) $attrs['interestRate'],
 		'step'  => '0.01',
 		'min'   => '0',
@@ -125,7 +139,7 @@ $fields = array(
 	array(
 		'id'    => $uid . '-term',
 		'name'  => 'loanTerm',
-		'label' => __( 'Term (Years)', AMORTEXA_TEXT_DOMAIN ),
+		'label' => __( 'Term (Years)', 'amortexa-mortgage-calculator' ),
 		'value' => (string) $attrs['loanTerm'],
 		'step'  => '1',
 		'min'   => '1',
@@ -259,6 +273,96 @@ if ( ! empty( $attrs['showAmortization'] ) && ! empty( $result['schedule'] ) ) {
 
 $panel_order = amortexa_resolve_panel_order( $attrs['panelOrder'], $visible_panels );
 
+/*
+ * Two of the layouts group the panels into columns. `aside` puts the inputs
+ * alone in the first column and the results with the charts in the second;
+ * `chart-aside` puts the inputs with the results in the first and the charts in
+ * the second. Saved panel order decides the sequence inside each column.
+ *
+ * The amortization table is never grouped. It stays a direct child of the grid
+ * and renders last, so it keeps the full width of the calculator in every
+ * layout instead of being squeezed into a column where a four column table is
+ * unreadable.
+ */
+$layout_columns = array();
+$body_panels    = array_values( array_diff( $panel_order, array( 'form', 'schedule' ) ) );
+
+if ( 'aside' === $attrs['layout'] ) {
+	$layout_columns = array(
+		array( 'form' ),
+		$body_panels,
+	);
+} elseif ( 'chart-aside' === $attrs['layout'] ) {
+	$layout_columns = array(
+		array_merge( array( 'form' ), array_values( array_intersect( $body_panels, array( 'results' ) ) ) ),
+		array_values( array_intersect( $body_panels, array( 'charts' ) ) ),
+	);
+}
+
+$grouped_panels = array();
+
+foreach ( $layout_columns as $column_panels ) {
+	$grouped_panels = array_merge( $grouped_panels, $column_panels );
+}
+
+if ( ! empty( $layout_columns ) ) {
+	$panel_order = $grouped_panels;
+
+	if ( in_array( 'schedule', $visible_panels, true ) ) {
+		$panel_order[] = 'schedule';
+	}
+}
+
+/*
+ * Both columns collapse to one when there is nothing to put beside the form:
+ * stacked and split when results are off, the column layouts when a single
+ * column has anything in it at all.
+ */
+$single_column = ! empty( $layout_columns )
+	? count( $grouped_panels ) <= 1
+	: ! in_array( 'results', $visible_panels, true );
+
+/*
+ * The panels render from a slot list rather than straight from $panel_order, so
+ * one pass can open a column, print a panel, and close that column again
+ * without the panel markup having to be repeated for each layout. A slot is
+ * either a column to open, a panel to print, or a column to close.
+ *
+ * Columns are only emitted when there is more than one of them: a layout that
+ * has collapsed to a single column renders flat, exactly as stacked does.
+ */
+$slots          = array();
+$filled_columns = array_filter( $layout_columns );
+
+if ( 1 < count( $filled_columns ) ) {
+	$column_index = 0;
+
+	foreach ( $filled_columns as $column_panels ) {
+		$slots[] = array( 'column', 0 === $column_index ? 'form' : 'details' );
+
+		foreach ( $column_panels as $column_panel ) {
+			$slots[] = array( 'panel', $column_panel );
+		}
+
+		$slots[] = array( 'column-end' );
+		++$column_index;
+	}
+
+	/*
+	 * The amortization table never joins a column, so it is picked back out of
+	 * the order and printed on its own, after both columns have closed.
+	 */
+	foreach ( $panel_order as $trailing_panel ) {
+		if ( 'schedule' === $trailing_panel ) {
+			$slots[] = array( 'panel', 'schedule' );
+		}
+	}
+} else {
+	foreach ( $panel_order as $flat_panel ) {
+		$slots[] = array( 'panel', $flat_panel );
+	}
+}
+
 $wrapper_args = array(
 	'class' => 'amortexa-calc amortexa-theme-' . esc_attr( $attrs['theme'] ) . ' amortexa-calc--layout-' . esc_attr( $attrs['layout'] ) . ' amortexa-calc--form-columns-' . esc_attr( $attrs['formColumns'] ),
 );
@@ -271,8 +375,23 @@ if ( ! empty( $style_vars ) ) {
 	<?php echo get_block_wrapper_attributes( $wrapper_args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() escapes internally. ?>
 	data-amortexa-config="<?php echo esc_attr( wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) ); ?>"
 >
-	<div class="amortexa-calc__grid amortexa-calc__grid--<?php echo esc_attr( $attrs['layout'] ); ?><?php echo in_array( 'results', $visible_panels, true ) ? '' : ' amortexa-calc__grid--form-only'; ?>">
-		<?php foreach ( $panel_order as $panel ) : ?>
+	<div class="amortexa-calc__grid amortexa-calc__grid--<?php echo esc_attr( $attrs['layout'] ); ?><?php echo $single_column ? ' amortexa-calc__grid--form-only' : ''; ?>">
+		<?php foreach ( $slots as $slot ) : ?>
+			<?php if ( 'column' === $slot[0] ) : ?>
+		<div class="amortexa-calc__column amortexa-calc__column--<?php echo esc_html( $slot[1] ); ?>">
+			<?php continue; ?>
+			<?php endif; ?>
+			<?php if ( 'column-end' === $slot[0] ) : ?>
+		</div>
+			<?php continue; ?>
+			<?php endif; ?>
+			<?php
+			/*
+			 * $panel_order no longer drives this loop, so the slot's panel name
+			 * is what the panel branches below match on.
+			 */
+			$panel = $slot[1];
+			?>
 			<?php if ( 'form' === $panel ) : ?>
 		<form class="amortexa-calc__form" autocomplete="off">
 			<?php foreach ( $fields as $field ) : ?>
@@ -309,6 +428,43 @@ if ( ! empty( $style_vars ) ) {
 					</div>
 				</div>
 			<?php endforeach; ?>
+			<?php if ( $cost_fields ) : ?>
+				<fieldset class="amortexa-calc__costs">
+					<legend class="amortexa-calc__costs-legend">
+						<?php esc_html_e( 'Taxes & Costs (annual)', 'amortexa-mortgage-calculator' ); ?>
+					</legend>
+					<?php foreach ( $cost_fields as $cost_field ) : ?>
+						<div class="amortexa-calc__control">
+							<label class="amortexa-calc__label" for="<?php echo esc_attr( $cost_field['id'] ); ?>">
+								<?php echo esc_html( $cost_field['label'] ); ?>
+							</label>
+							<div class="amortexa-calc__control-row">
+								<input
+									type="number"
+									class="amortexa-calc__field"
+									id="<?php echo esc_attr( $cost_field['id'] ); ?>"
+									data-amortexa-field="<?php echo esc_attr( $cost_field['name'] ); ?>"
+									value="<?php echo esc_attr( $cost_field['value'] ); ?>"
+									step="<?php echo esc_attr( $cost_field['step'] ); ?>"
+									min="<?php echo esc_attr( $cost_field['min'] ); ?>"
+									inputmode="decimal"
+								/>
+								<button
+									type="button"
+									class="amortexa-calc__unit"
+									data-amortexa-unit="<?php echo esc_attr( $cost_field['unitAttr'] ); ?>"
+									aria-label="<?php
+										/* translators: %s: cost component name. */
+										printf( esc_attr__( 'Toggle %s between a percentage and an amount', 'amortexa-mortgage-calculator' ), esc_attr( $cost_field['label'] ) );
+									?>"
+								>
+									<?php echo esc_html( 'percent' === $cost_field['unit'] ? '%' : __( 'Amount', 'amortexa-mortgage-calculator' ) ); ?>
+								</button>
+							</div>
+						</div>
+					<?php endforeach; ?>
+				</fieldset>
+			<?php endif; ?>
 		</form>
 			<?php elseif ( 'results' === $panel ) : ?>
 			<div class="amortexa-calc__results">
@@ -399,7 +555,7 @@ if ( ! empty( $style_vars ) ) {
 				<?php if ( in_array( $attrs['chartType'], array( 'donut', 'both' ), true ) ) : ?>
 					<figure class="amortexa-calc__chart">
 						<figcaption class="amortexa-calc__chart-title">
-							<?php echo esc_html__( 'Payment Composition', AMORTEXA_TEXT_DOMAIN ); ?>
+							<?php echo esc_html__( 'Payment Composition', 'amortexa-mortgage-calculator' ); ?>
 						</figcaption>
 						<div class="amortexa-calc__chart-body" data-amortexa-chart="donut"></div>
 						<figcaption class="amortexa-calc__legend" data-amortexa-legend="donut"></figcaption>
@@ -409,7 +565,7 @@ if ( ! empty( $style_vars ) ) {
 				<?php if ( in_array( $attrs['chartType'], array( 'line', 'both' ), true ) ) : ?>
 					<figure class="amortexa-calc__chart">
 						<figcaption class="amortexa-calc__chart-title">
-							<?php echo esc_html__( 'Balance Over Time', AMORTEXA_TEXT_DOMAIN ); ?>
+							<?php echo esc_html__( 'Balance Over Time', 'amortexa-mortgage-calculator' ); ?>
 						</figcaption>
 						<div class="amortexa-calc__chart-body" data-amortexa-chart="line"></div>
 						<figcaption class="amortexa-calc__legend" data-amortexa-legend="line"></figcaption>
@@ -419,7 +575,7 @@ if ( ! empty( $style_vars ) ) {
 				<?php if ( 'bar' === $attrs['chartType'] ) : ?>
 					<figure class="amortexa-calc__chart">
 						<figcaption class="amortexa-calc__chart-title">
-							<?php echo esc_html__( 'Principal vs Interest by Year', AMORTEXA_TEXT_DOMAIN ); ?>
+							<?php echo esc_html__( 'Principal vs Interest by Year', 'amortexa-mortgage-calculator' ); ?>
 						</figcaption>
 						<div class="amortexa-calc__chart-body" data-amortexa-chart="bar"></div>
 						<figcaption class="amortexa-calc__legend" data-amortexa-legend="bar"></figcaption>
@@ -429,7 +585,7 @@ if ( ! empty( $style_vars ) ) {
 				<?php if ( 'dots' === $attrs['chartType'] ) : ?>
 					<figure class="amortexa-calc__chart">
 						<figcaption class="amortexa-calc__chart-title">
-							<?php echo esc_html__( 'Parameter Comparison', AMORTEXA_TEXT_DOMAIN ); ?>
+							<?php echo esc_html__( 'Parameter Comparison', 'amortexa-mortgage-calculator' ); ?>
 						</figcaption>
 						<div class="amortexa-calc__chart-body" data-amortexa-chart="dots"></div>
 						<figcaption class="amortexa-calc__legend" data-amortexa-legend="dots"></figcaption>
@@ -464,7 +620,7 @@ if ( ! empty( $style_vars ) ) {
 				>
 					<table class="amortexa-calc__table">
 					<caption class="screen-reader-text">
-						<?php echo esc_html__( 'Amortization Schedule', AMORTEXA_TEXT_DOMAIN ); ?>
+						<?php echo esc_html__( 'Amortization Schedule', 'amortexa-mortgage-calculator' ); ?>
 					</caption>
 					<thead>
 						<tr>
@@ -483,44 +639,6 @@ if ( ! empty( $style_vars ) ) {
 								<td><?php echo esc_html( amortexa_format_amount( $row['balance'], $symbol, $decimals, $position ) ); ?></td>
 							</tr>
 			<?php endforeach; ?>
-
-				<?php if ( $cost_fields ) : ?>
-					<fieldset class="amortexa-calc__costs">
-						<legend class="amortexa-calc__costs-legend">
-							<?php esc_html_e( 'Taxes & Costs (annual)', AMORTEXA_TEXT_DOMAIN ); ?>
-						</legend>
-						<?php foreach ( $cost_fields as $cost_field ) : ?>
-							<div class="amortexa-calc__field-group amortexa-calc__field-group--cost">
-								<label class="amortexa-calc__label" for="<?php echo esc_attr( $cost_field['id'] ); ?>">
-									<?php echo esc_html( $cost_field['label'] ); ?>
-								</label>
-								<div class="amortexa-calc__field-row">
-									<input
-										type="number"
-										class="amortexa-calc__field"
-										id="<?php echo esc_attr( $cost_field['id'] ); ?>"
-										data-amortexa-field="<?php echo esc_attr( $cost_field['name'] ); ?>"
-										value="<?php echo esc_attr( $cost_field['value'] ); ?>"
-										step="<?php echo esc_attr( $cost_field['step'] ); ?>"
-										min="<?php echo esc_attr( $cost_field['min'] ); ?>"
-										inputmode="decimal"
-									/>
-									<button
-										type="button"
-										class="amortexa-calc__unit"
-										data-amortexa-unit="<?php echo esc_attr( $cost_field['unitAttr'] ); ?>"
-										aria-label="<?php
-											/* translators: %s: cost component name. */
-											printf( esc_attr__( 'Toggle %s between a percentage and an amount', 'amortexa-mortgage-calculator' ), esc_attr( $cost_field['label'] ) );
-										?>"
-									>
-										<?php echo esc_html( 'percent' === $cost_field['unit'] ? '%' : __( 'Amount', 'amortexa-mortgage-calculator' ) ); ?>
-									</button>
-								</div>
-							</div>
-						<?php endforeach; ?>
-					</fieldset>
-				<?php endif; ?>
 
 					</tbody>
 				</table>

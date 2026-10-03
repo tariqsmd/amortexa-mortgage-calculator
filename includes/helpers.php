@@ -38,30 +38,30 @@ function amortexa_get_skin_slugs() {
  */
 function amortexa_get_skins() {
 	$skins = array(
-		'light'    => __( 'Classic Light', AMORTEXA_TEXT_DOMAIN ),
-		'dark'     => __( 'Elegant Dark', AMORTEXA_TEXT_DOMAIN ),
-		'ocean'    => __( 'Ocean Blue', AMORTEXA_TEXT_DOMAIN ),
-		'sunset'   => __( 'Sunset Warm', AMORTEXA_TEXT_DOMAIN ),
-		'forest'   => __( 'Forest Green', AMORTEXA_TEXT_DOMAIN ),
-		'midnight' => __( 'Midnight Violet', AMORTEXA_TEXT_DOMAIN ),
-		'rose'     => __( 'Rose Quartz', AMORTEXA_TEXT_DOMAIN ),
-		'slate'    => __( 'Minimal Slate', AMORTEXA_TEXT_DOMAIN ),
-		'grape'    => __( 'Royal Grape', AMORTEXA_TEXT_DOMAIN ),
-		'aqua'     => __( 'Aqua Fresh', AMORTEXA_TEXT_DOMAIN ),
-		'mocha'    => __( 'Mocha Cream', AMORTEXA_TEXT_DOMAIN ),
-		'cyber'    => __( 'Cyber Neon', AMORTEXA_TEXT_DOMAIN ),
-		'emerald'  => __( 'Emerald Nights', AMORTEXA_TEXT_DOMAIN ),
-		'crimson'  => __( 'Crimson Dusk', AMORTEXA_TEXT_DOMAIN ),
-		'charcoal' => __( 'Graphite', AMORTEXA_TEXT_DOMAIN ),
-		'copper'   => __( 'Copper Forge', AMORTEXA_TEXT_DOMAIN ),
-		'royal'    => __( 'Royal Sapphire', AMORTEXA_TEXT_DOMAIN ),
-		'amber'    => __( 'Amber Gold', AMORTEXA_TEXT_DOMAIN ),
-		'cobalt'   => __( 'Cobalt Blue', AMORTEXA_TEXT_DOMAIN ),
-		'fuchsia'  => __( 'Fuchsia Bloom', AMORTEXA_TEXT_DOMAIN ),
-		'mint'     => __( 'Mint Fresh', AMORTEXA_TEXT_DOMAIN ),
-		'sand'     => __( 'Sandstone', AMORTEXA_TEXT_DOMAIN ),
-		'lemon'    => __( 'Lemon Zest', AMORTEXA_TEXT_DOMAIN ),
-		'steel'    => __( 'Steel Blue', AMORTEXA_TEXT_DOMAIN ),
+		'light'    => __( 'Classic Light', 'amortexa-mortgage-calculator' ),
+		'dark'     => __( 'Elegant Dark', 'amortexa-mortgage-calculator' ),
+		'ocean'    => __( 'Ocean Blue', 'amortexa-mortgage-calculator' ),
+		'sunset'   => __( 'Sunset Warm', 'amortexa-mortgage-calculator' ),
+		'forest'   => __( 'Forest Green', 'amortexa-mortgage-calculator' ),
+		'midnight' => __( 'Midnight Violet', 'amortexa-mortgage-calculator' ),
+		'rose'     => __( 'Rose Quartz', 'amortexa-mortgage-calculator' ),
+		'slate'    => __( 'Minimal Slate', 'amortexa-mortgage-calculator' ),
+		'grape'    => __( 'Royal Grape', 'amortexa-mortgage-calculator' ),
+		'aqua'     => __( 'Aqua Fresh', 'amortexa-mortgage-calculator' ),
+		'mocha'    => __( 'Mocha Cream', 'amortexa-mortgage-calculator' ),
+		'cyber'    => __( 'Cyber Neon', 'amortexa-mortgage-calculator' ),
+		'emerald'  => __( 'Emerald Nights', 'amortexa-mortgage-calculator' ),
+		'crimson'  => __( 'Crimson Dusk', 'amortexa-mortgage-calculator' ),
+		'charcoal' => __( 'Graphite', 'amortexa-mortgage-calculator' ),
+		'copper'   => __( 'Copper Forge', 'amortexa-mortgage-calculator' ),
+		'royal'    => __( 'Royal Sapphire', 'amortexa-mortgage-calculator' ),
+		'amber'    => __( 'Amber Gold', 'amortexa-mortgage-calculator' ),
+		'cobalt'   => __( 'Cobalt Blue', 'amortexa-mortgage-calculator' ),
+		'fuchsia'  => __( 'Fuchsia Bloom', 'amortexa-mortgage-calculator' ),
+		'mint'     => __( 'Mint Fresh', 'amortexa-mortgage-calculator' ),
+		'sand'     => __( 'Sandstone', 'amortexa-mortgage-calculator' ),
+		'lemon'    => __( 'Lemon Zest', 'amortexa-mortgage-calculator' ),
+		'steel'    => __( 'Steel Blue', 'amortexa-mortgage-calculator' ),
 	);
 
 	/**
@@ -79,11 +79,11 @@ function amortexa_get_skins() {
  */
 function amortexa_get_chart_types() {
 	return array(
-		'both'  => __( 'Both charts', AMORTEXA_TEXT_DOMAIN ),
-		'donut' => __( 'Donut only', AMORTEXA_TEXT_DOMAIN ),
-		'line'  => __( 'Line only', AMORTEXA_TEXT_DOMAIN ),
-		'bar'   => __( 'Bar only', AMORTEXA_TEXT_DOMAIN ),
-		'dots'  => __( 'Dot comparison', AMORTEXA_TEXT_DOMAIN ),
+		'both'  => __( 'Both charts', 'amortexa-mortgage-calculator' ),
+		'donut' => __( 'Donut only', 'amortexa-mortgage-calculator' ),
+		'line'  => __( 'Line only', 'amortexa-mortgage-calculator' ),
+		'bar'   => __( 'Bar only', 'amortexa-mortgage-calculator' ),
+		'dots'  => __( 'Dot comparison', 'amortexa-mortgage-calculator' ),
 	);
 }
 
@@ -121,32 +121,32 @@ function amortexa_get_panel_keys() {
 function amortexa_get_cost_components() {
 	return array(
 		'pi'        => array(
-			'label'    => __( 'Principal & Interest', AMORTEXA_TEXT_DOMAIN ),
+			'label'    => __( 'Principal & Interest', 'amortexa-mortgage-calculator' ),
 			'token'    => 'costPi',
 			'percent'  => false,
 		),
 		'tax'       => array(
-			'label'    => __( 'Property Tax', AMORTEXA_TEXT_DOMAIN ),
+			'label'    => __( 'Property Tax', 'amortexa-mortgage-calculator' ),
 			'token'    => 'costTax',
 			'percent'  => true,
 		),
 		'insurance' => array(
-			'label'    => __( 'Home Insurance', AMORTEXA_TEXT_DOMAIN ),
+			'label'    => __( 'Home Insurance', 'amortexa-mortgage-calculator' ),
 			'token'    => 'costInsurance',
 			'percent'  => true,
 		),
 		'hoa'       => array(
-			'label'    => __( 'HOA Fee', AMORTEXA_TEXT_DOMAIN ),
+			'label'    => __( 'HOA Fee', 'amortexa-mortgage-calculator' ),
 			'token'    => 'costHoa',
 			'percent'  => true,
 		),
 		'pmi'       => array(
-			'label'    => __( 'PMI', AMORTEXA_TEXT_DOMAIN ),
+			'label'    => __( 'PMI', 'amortexa-mortgage-calculator' ),
 			'token'    => 'costPmi',
 			'percent'  => true,
 		),
 		'other'     => array(
-			'label'    => __( 'Other Costs', AMORTEXA_TEXT_DOMAIN ),
+			'label'    => __( 'Other Costs', 'amortexa-mortgage-calculator' ),
 			'token'    => 'costOther',
 			'percent'  => true,
 		),
@@ -270,16 +270,23 @@ function amortexa_resolve_panel_order( $order, $visible ) {
 /**
  * Returns the selectable calculator layouts.
  *
- * Layouts are purely presentational: the markup order never changes, only the
- * CSS grid on `.amortexa-calc__grid`, so a layout can be switched on an
- * existing block without invalidating anything.
+ * Layouts are presentational, so one can be switched on an existing block
+ * without invalidating anything. `stacked` and `split` only restyle the CSS
+ * grid on `.amortexa-calc__grid` and share one flat set of panels.
+ *
+ * `aside` and `chart-aside` group the panels into two columns, which needs a
+ * column div around each side. Those wrappers are added at render time rather
+ * than in saved content, so the flat markup stays the default and existing
+ * blocks are untouched.
  *
  * @return array<string,string> Layout key => label.
  */
 function amortexa_get_layouts() {
 	return array(
-		'stacked' => __( 'Stacked (single column)', AMORTEXA_TEXT_DOMAIN ),
-		'split'   => __( 'Two column split', AMORTEXA_TEXT_DOMAIN ),
+		'stacked'     => __( 'Stacked (single column)', 'amortexa-mortgage-calculator' ),
+		'split'       => __( 'Two column split', 'amortexa-mortgage-calculator' ),
+		'aside'       => __( 'Inputs beside details', 'amortexa-mortgage-calculator' ),
+		'chart-aside' => __( 'Chart beside inputs', 'amortexa-mortgage-calculator' ),
 	);
 }
 
@@ -297,8 +304,8 @@ function amortexa_get_layouts() {
  */
 function amortexa_get_form_columns() {
 	return array(
-		'wide'    => __( 'Full width controls', AMORTEXA_TEXT_DOMAIN ),
-		'compact' => __( 'Compact rows, input below slider', AMORTEXA_TEXT_DOMAIN ),
+		'wide'    => __( 'Full width controls', 'amortexa-mortgage-calculator' ),
+		'compact' => __( 'Compact rows, input below slider', 'amortexa-mortgage-calculator' ),
 	);
 }
 
@@ -312,10 +319,10 @@ function amortexa_get_form_columns() {
  */
 function amortexa_get_font_families() {
 	return array(
-		'inherit' => __( 'Theme default', AMORTEXA_TEXT_DOMAIN ),
-		'sans'    => __( 'Modern Sans (system)', AMORTEXA_TEXT_DOMAIN ),
-		'serif'   => __( 'Classic Serif (system)', AMORTEXA_TEXT_DOMAIN ),
-		'mono'    => __( 'Monospace (system)', AMORTEXA_TEXT_DOMAIN ),
+		'inherit' => __( 'Theme default', 'amortexa-mortgage-calculator' ),
+		'sans'    => __( 'Modern Sans (system)', 'amortexa-mortgage-calculator' ),
+		'serif'   => __( 'Classic Serif (system)', 'amortexa-mortgage-calculator' ),
+		'mono'    => __( 'Monospace (system)', 'amortexa-mortgage-calculator' ),
 	);
 }
 
@@ -326,13 +333,13 @@ function amortexa_get_font_families() {
  */
 function amortexa_get_font_weights() {
 	return array(
-		''     => __( 'Theme default', AMORTEXA_TEXT_DOMAIN ),
-		'300'  => __( 'Light', AMORTEXA_TEXT_DOMAIN ),
-		'400'  => __( 'Normal', AMORTEXA_TEXT_DOMAIN ),
-		'500'  => __( 'Medium', AMORTEXA_TEXT_DOMAIN ),
-		'600'  => __( 'Semi Bold', AMORTEXA_TEXT_DOMAIN ),
-		'700'  => __( 'Bold', AMORTEXA_TEXT_DOMAIN ),
-		'800'  => __( 'Extra Bold', AMORTEXA_TEXT_DOMAIN ),
+		''     => __( 'Theme default', 'amortexa-mortgage-calculator' ),
+		'300'  => __( 'Light', 'amortexa-mortgage-calculator' ),
+		'400'  => __( 'Normal', 'amortexa-mortgage-calculator' ),
+		'500'  => __( 'Medium', 'amortexa-mortgage-calculator' ),
+		'600'  => __( 'Semi Bold', 'amortexa-mortgage-calculator' ),
+		'700'  => __( 'Bold', 'amortexa-mortgage-calculator' ),
+		'800'  => __( 'Extra Bold', 'amortexa-mortgage-calculator' ),
 	);
 }
 
@@ -343,8 +350,8 @@ function amortexa_get_font_weights() {
  */
 function amortexa_get_currency_positions() {
 	return array(
-		'prefix' => __( 'Before amount ($99)', AMORTEXA_TEXT_DOMAIN ),
-		'suffix' => __( 'After amount (99 EUR)', AMORTEXA_TEXT_DOMAIN ),
+		'prefix' => __( 'Before amount ($99)', 'amortexa-mortgage-calculator' ),
+		'suffix' => __( 'After amount (99 EUR)', 'amortexa-mortgage-calculator' ),
 	);
 }
 
@@ -690,25 +697,25 @@ function amortexa_get_color_attributes() {
  */
 function amortexa_get_color_swatches() {
 	$swatches = array(
-		array( '#1a6f4b', __( 'Forest', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#0f766e', __( 'Teal', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#d97706', __( 'Amber', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#b45309', __( 'Bronze', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#b91c1c', __( 'Red', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#be123c', __( 'Crimson', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#7c3aed', __( 'Violet', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#4f46e5', __( 'Indigo', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#1d4ed8', __( 'Blue', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#0369a1', __( 'Sky', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#0e7490', __( 'Cyan', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#15803d', __( 'Green', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#4d7c0f', __( 'Lime', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#111827', __( 'Ink', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#374151', __( 'Slate', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#6b7280', __( 'Gray', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#d1d5db', __( 'Silver', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#f3f4f6', __( 'Mist', AMORTEXA_TEXT_DOMAIN ) ),
-		array( '#ffffff', __( 'White', AMORTEXA_TEXT_DOMAIN ) ),
+		array( '#1a6f4b', __( 'Forest', 'amortexa-mortgage-calculator' ) ),
+		array( '#0f766e', __( 'Teal', 'amortexa-mortgage-calculator' ) ),
+		array( '#d97706', __( 'Amber', 'amortexa-mortgage-calculator' ) ),
+		array( '#b45309', __( 'Bronze', 'amortexa-mortgage-calculator' ) ),
+		array( '#b91c1c', __( 'Red', 'amortexa-mortgage-calculator' ) ),
+		array( '#be123c', __( 'Crimson', 'amortexa-mortgage-calculator' ) ),
+		array( '#7c3aed', __( 'Violet', 'amortexa-mortgage-calculator' ) ),
+		array( '#4f46e5', __( 'Indigo', 'amortexa-mortgage-calculator' ) ),
+		array( '#1d4ed8', __( 'Blue', 'amortexa-mortgage-calculator' ) ),
+		array( '#0369a1', __( 'Sky', 'amortexa-mortgage-calculator' ) ),
+		array( '#0e7490', __( 'Cyan', 'amortexa-mortgage-calculator' ) ),
+		array( '#15803d', __( 'Green', 'amortexa-mortgage-calculator' ) ),
+		array( '#4d7c0f', __( 'Lime', 'amortexa-mortgage-calculator' ) ),
+		array( '#111827', __( 'Ink', 'amortexa-mortgage-calculator' ) ),
+		array( '#374151', __( 'Slate', 'amortexa-mortgage-calculator' ) ),
+		array( '#6b7280', __( 'Gray', 'amortexa-mortgage-calculator' ) ),
+		array( '#d1d5db', __( 'Silver', 'amortexa-mortgage-calculator' ) ),
+		array( '#f3f4f6', __( 'Mist', 'amortexa-mortgage-calculator' ) ),
+		array( '#ffffff', __( 'White', 'amortexa-mortgage-calculator' ) ),
 	);
 
 	$list = array();

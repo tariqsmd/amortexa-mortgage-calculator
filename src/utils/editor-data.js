@@ -117,6 +117,8 @@ export function getLayouts() {
 	return toOptions( getData().layouts, [
 		{ value: 'stacked', label: 'stacked' },
 		{ value: 'split', label: 'split' },
+		{ value: 'aside', label: 'aside' },
+		{ value: 'chart-aside', label: 'chart-aside' },
 	] );
 }
 

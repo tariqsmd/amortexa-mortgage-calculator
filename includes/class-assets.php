@@ -62,7 +62,7 @@ class Amortexa_Assets {
 		);
 
 		foreach ( (array) $block_type->editor_script_handles as $handle ) {
-			wp_set_script_translations( $handle, AMORTEXA_TEXT_DOMAIN );
+			wp_set_script_translations( $handle, 'amortexa-mortgage-calculator' );
 
 			wp_add_inline_script(
 				$handle,

@@ -1,6 +1,6 @@
 === Amortexa Mortgage Calculator ===
 Contributors: mtariqsmd
-Tags: block, gutenberg, mortgage, calculator, finance, loans, real estate, amortization
+Tags: mortgage, calculator, real estate, amortization, block
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -138,6 +138,7 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 * New: PMI ends the first month the balance reaches 80% of the purchase price, instead of being charged to term end.
 * Improved: cost components each pick up a distinct, automatically chosen colour, with a legend, so the breakdown stays readable across light and dark skins.
 * Improved: cost figures are clamped by the unit the author chose, so an amount-based premium is no longer truncated by a percentage bound.
+* New: two two column layouts that put the inputs beside the rest of the calculator - **Inputs beside details** (inputs in one column, results and charts in the other) and **Chart beside inputs** (inputs and results stacked in one column, charts in the other). The amortization table stays full width underneath both, in every layout, because a four column table is unreadable in a half width column. `stacked` and `split` are unchanged.
 * New: `amortexa_skins`, `amortexa_cost_units`, and `amortexa_shortcode_block` filters are now documented.
 * Fixed: the `[amortexa-mortgage-calculator]` shortcode accepts the recurring cost attributes. `showcosts`, `propertytax`, `homeinsurance`, `hoafee`, `pmi`, `othercosts` and their `*unit` counterparts were reachable from the block and the editor but silently ignored in a shortcode.
 * Removed: documentation for a `amortexa_enqueue_assets` filter that was never implemented. Front-end assets are registered from the block metadata for `amortexa-mortgage-calculator/mortgage-calculator`; to replace them, dequeue the handles that block registers and enqueue your own in a theme.

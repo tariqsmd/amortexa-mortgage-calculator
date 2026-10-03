@@ -6,6 +6,7 @@
  */
 
 import { __ } from '@wordpress/i18n';
+import { COST_COMPONENTS } from './calculator';
 
 /**
  * The four numeric loan inputs.
@@ -72,3 +73,31 @@ export const NUMERIC_FIELDS = [
 		sliderStep: 1,
 	},
 ];
+
+/**
+ * Labels for the recurring cost components.
+ *
+ * Written as literals rather than read from COST_COMPONENTS so the i18n
+ * extractor sees each string; that module carries the schema, not the
+ * translations.
+ */
+const COST_LABELS = {
+	tax: __( 'Property Tax', 'amortexa-mortgage-calculator' ),
+	insurance: __( 'Home Insurance', 'amortexa-mortgage-calculator' ),
+	hoa: __( 'HOA Fee', 'amortexa-mortgage-calculator' ),
+	pmi: __( 'PMI', 'amortexa-mortgage-calculator' ),
+	other: __( 'Other Costs', 'amortexa-mortgage-calculator' ),
+};
+
+/**
+ * The recurring cost inputs, paired with their unit attribute.
+ *
+ * Shared by the block inspector and the editor preview so the sidebar and the
+ * canvas list the same components in the same order with the same translated
+ * labels. `unitKey` names the attribute that stores 'percent' or 'amount'.
+ */
+export const COST_FIELDS = COST_COMPONENTS.map( ( component ) => ( {
+	...component,
+	label: COST_LABELS[ component.key ] || component.label,
+	unitKey: `${ component.attribute }Unit`,
+} ) );

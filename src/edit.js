@@ -11,7 +11,7 @@ import {
 	buildAmortizationSchedule,
 	calculateMortgage,
 } from './utils/calculator';
-import { getSkinSlugs } from './utils/editor-data';
+import { getLayouts, getSkinSlugs } from './utils/editor-data';
 import InspectorControls, {
 	getPaletteOverrides,
 } from './components/inspector-controls';
@@ -97,18 +97,29 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const rootRef = useRef( null );
 
+	// The chart preview reads colours back out of the computed CSS custom
+	// properties, so a skin or palette change has to invalidate the chart
+	// effect. Serialising the overrides gives Preview a stable, primitive
+	// dependency that changes only when a colour token actually changes.
+	const paletteOverrides = getPaletteOverrides( attributes, fontFamily );
+	const paletteKey = JSON.stringify( paletteOverrides || {} );
+
 	// useBlockProps() hands back its own ref, which the editor uses to locate the
 	// block node. Spreading the props and then adding `ref={ rootRef }` would
 	// silently drop that ref, so the two are merged instead.
 	const { ref: blockRef, ...restBlockProps } = useBlockProps( {
 		className: `amortexa-calc amortexa-theme-${
 			getSkinSlugs().includes( theme ) ? theme : 'light'
-		} amortexa-calc--layout-${ layout === 'split' ? 'split' : 'stacked' }${
+		} amortexa-calc--layout-${
+			getLayouts().some( ( option ) => option.value === layout )
+				? layout
+				: 'stacked'
+		}${
 			formColumns === 'compact'
 				? ' amortexa-calc--form-columns-compact'
 				: ''
 		}`,
-		style: getPaletteOverrides( attributes, fontFamily ),
+		style: paletteOverrides,
 	} );
 
 	const setBlockRef = useCallback(
@@ -148,6 +159,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					chartSchedule={ chartSchedule }
 					rootRef={ rootRef }
 					paymentTypography={ paymentTypography }
+					paletteKey={ paletteKey }
 				/>
 			</div>
 		</>

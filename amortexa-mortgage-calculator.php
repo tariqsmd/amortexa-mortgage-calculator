@@ -28,14 +28,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'AMORTEXA_VERSION', '1.1.0' );
-define( 'AMORTEXA_TEXT_DOMAIN', 'amortexa-mortgage-calculator' );
 define( 'AMORTEXA_PLUGIN_FILE', __FILE__ );
 define( 'AMORTEXA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AMORTEXA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 require_once AMORTEXA_PLUGIN_DIR . 'includes/helpers.php';
 require_once AMORTEXA_PLUGIN_DIR . 'includes/design-tokens.php';
-require_once AMORTEXA_PLUGIN_DIR . 'includes/class-i18n.php';
 require_once AMORTEXA_PLUGIN_DIR . 'includes/class-assets.php';
 require_once AMORTEXA_PLUGIN_DIR . 'includes/class-blocks.php';
 require_once AMORTEXA_PLUGIN_DIR . 'includes/class-rest.php';

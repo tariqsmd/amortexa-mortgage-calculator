@@ -181,10 +181,40 @@
  * With the results panel hidden, amortexa-calc__grid--form-only already
  * collapses the grid to one column, so the form spans the full width without
  * needing its own override here.
+ *
+ * The two column layouts are the exception: they wrap the panels in columns
+ * first, so the charts are no longer children of the two column grid and stack
+ * inside a column instead of spanning it. The amortization table is never
+ * wrapped, so it stays a direct child of the grid and keeps spanning the full
+ * width in every layout.
  */
 .amortexa-calc__charts,
 .amortexa-calc__schedule {
 	grid-column: 1 / -1;
+}
+
+/*
+ * Two column layouts (attribute: layout=aside or chart-aside)
+ * The inputs and the rest of the calculator are grouped into two columns, so
+ * the amortization table drops below them at full width. Each column is itself
+ * a one column grid so the panels keep the same gap between them as the flat
+ * grid used.
+ */
+.amortexa-calc__grid--aside,
+.amortexa-calc__grid--chart-aside {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.amortexa-calc__column {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--amortexa-panel-gap);
+	align-content: start;
+	align-items: start;
+
+	/* Grids default to min-content sizing, which lets a wide chart or table
+	   push the column past its track. */
+	min-width: 0;
 }
 
 @media (max-width: 600px) {
@@ -192,7 +222,9 @@
 	/* Viewport fallback for browsers without container query support;
 	   the @container rules below are the primary breakpoints. */
 	.amortexa-calc__grid,
-	.amortexa-calc__grid--split {
+	.amortexa-calc__grid--split,
+	.amortexa-calc__grid--aside,
+	.amortexa-calc__grid--chart-aside {
 		grid-template-columns: 1fr;
 	}
 }
@@ -410,7 +442,9 @@
 @container amortexa-calc (max-width: 640px) {
 
 	.amortexa-calc__grid,
-	.amortexa-calc__grid--split {
+	.amortexa-calc__grid--split,
+	.amortexa-calc__grid--aside,
+	.amortexa-calc__grid--chart-aside {
 		grid-template-columns: minmax(0, 1fr);
 	}
 }
@@ -966,6 +1000,9 @@
 
 .amortexa-calc__costs {
 	grid-column: 1 / -1;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 16px;
 	margin: 8px 0 0;
 	padding: 12px;
 	border: 1px solid var(--amortexa-border);
@@ -973,6 +1010,7 @@
 }
 
 .amortexa-calc__costs-legend {
+	grid-column: 1 / -1;
 	padding: 0 6px;
 	font-size: var(--amortexa-label-size, 13px);
 	font-weight: 600;

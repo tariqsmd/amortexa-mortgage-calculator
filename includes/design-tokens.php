@@ -42,16 +42,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function amortexa_get_design_option_lists() {
 	$transforms = array(
-		''             => __( 'As typed', AMORTEXA_TEXT_DOMAIN ),
-		'uppercase'    => __( 'UPPERCASE', AMORTEXA_TEXT_DOMAIN ),
-		'lowercase'    => __( 'lowercase', AMORTEXA_TEXT_DOMAIN ),
-		'capitalize'   => __( 'Capitalize Each Word', AMORTEXA_TEXT_DOMAIN ),
+		''             => __( 'As typed', 'amortexa-mortgage-calculator' ),
+		'uppercase'    => __( 'UPPERCASE', 'amortexa-mortgage-calculator' ),
+		'lowercase'    => __( 'lowercase', 'amortexa-mortgage-calculator' ),
+		'capitalize'   => __( 'Capitalize Each Word', 'amortexa-mortgage-calculator' ),
 	);
 
 	$weights = amortexa_get_font_weights();
 
 	// A leading empty option already means "inherit", so keep it.
-	$weight_options = array( '' => __( 'Default', AMORTEXA_TEXT_DOMAIN ) );
+	$weight_options = array( '' => __( 'Default', 'amortexa-mortgage-calculator' ) );
 
 	foreach ( $weights as $weight => $label ) {
 		if ( '' === $weight ) {
@@ -61,7 +61,7 @@ function amortexa_get_design_option_lists() {
 		$weight_options[ $weight ] = $label;
 	}
 
-	$family_options = array( '' => __( 'Default', AMORTEXA_TEXT_DOMAIN ) );
+	$family_options = array( '' => __( 'Default', 'amortexa-mortgage-calculator' ) );
 
 	foreach ( amortexa_get_font_families() as $family => $label ) {
 		if ( 'inherit' === $family ) {
@@ -78,12 +78,12 @@ function amortexa_get_design_option_lists() {
 	 * between every letter rather than four hundredths of an em.
 	 */
 	$tracking_options = array(
-		''        => __( 'Default', AMORTEXA_TEXT_DOMAIN ),
-		'-0.02em' => __( 'Tighter', AMORTEXA_TEXT_DOMAIN ),
-		'0'       => __( 'Normal', AMORTEXA_TEXT_DOMAIN ),
-		'0.02em'  => __( 'Slightly wide', AMORTEXA_TEXT_DOMAIN ),
-		'0.04em'  => __( 'Wide', AMORTEXA_TEXT_DOMAIN ),
-		'0.08em'  => __( 'Very wide', AMORTEXA_TEXT_DOMAIN ),
+		''        => __( 'Default', 'amortexa-mortgage-calculator' ),
+		'-0.02em' => __( 'Tighter', 'amortexa-mortgage-calculator' ),
+		'0'       => __( 'Normal', 'amortexa-mortgage-calculator' ),
+		'0.02em'  => __( 'Slightly wide', 'amortexa-mortgage-calculator' ),
+		'0.04em'  => __( 'Wide', 'amortexa-mortgage-calculator' ),
+		'0.08em'  => __( 'Very wide', 'amortexa-mortgage-calculator' ),
 	);
 
 	return array(
@@ -185,76 +185,76 @@ function amortexa_get_design_tokens() {
 	$tokens = array();
 
 	// The calculator card itself.
-	$tokens[] = amortexa_color_token( 'rootBg', '--amortexa-bg', __( 'Background', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'rootText', '--amortexa-text', __( 'Text', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'rootBorder', '--amortexa-border', __( 'Border', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_length_token( 'rootRadius', '--amortexa-radius', __( 'Corner radius', AMORTEXA_TEXT_DOMAIN ), 64 );
-	$tokens[] = amortexa_spacing_token( 'rootPadding', '--amortexa-padding', __( 'Padding', AMORTEXA_TEXT_DOMAIN ), 120 );
+	$tokens[] = amortexa_color_token( 'rootBg', '--amortexa-bg', __( 'Background', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'rootText', '--amortexa-text', __( 'Text', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'rootBorder', '--amortexa-border', __( 'Border', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_length_token( 'rootRadius', '--amortexa-radius', __( 'Corner radius', 'amortexa-mortgage-calculator' ), 64 );
+	$tokens[] = amortexa_spacing_token( 'rootPadding', '--amortexa-padding', __( 'Padding', 'amortexa-mortgage-calculator' ), 120 );
 
 	// The panel boxes: inputs, results, charts, schedule.
-	$tokens[] = amortexa_color_token( 'panelBg', '--amortexa-panel-bg', __( 'Background', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_length_token( 'panelRadius', '--amortexa-panel-radius', __( 'Corner radius', AMORTEXA_TEXT_DOMAIN ), 64 );
-	$tokens[] = amortexa_spacing_token( 'panelPadding', '--amortexa-panel-padding', __( 'Padding', AMORTEXA_TEXT_DOMAIN ), 120 );
-	$tokens[] = amortexa_length_token( 'panelGap', '--amortexa-panel-gap', __( 'Gap between panels', AMORTEXA_TEXT_DOMAIN ), 96 );
+	$tokens[] = amortexa_color_token( 'panelBg', '--amortexa-panel-bg', __( 'Background', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_length_token( 'panelRadius', '--amortexa-panel-radius', __( 'Corner radius', 'amortexa-mortgage-calculator' ), 64 );
+	$tokens[] = amortexa_spacing_token( 'panelPadding', '--amortexa-panel-padding', __( 'Padding', 'amortexa-mortgage-calculator' ), 120 );
+	$tokens[] = amortexa_length_token( 'panelGap', '--amortexa-panel-gap', __( 'Gap between panels', 'amortexa-mortgage-calculator' ), 96 );
 
 	// Field labels.
-	$tokens[] = amortexa_color_token( 'labelColor', '--amortexa-label-color', __( 'Colour', AMORTEXA_TEXT_DOMAIN ), 'labelColor' );
-	$tokens[] = amortexa_select_token( 'labelFamily', '--amortexa-label-family', __( 'Font', AMORTEXA_TEXT_DOMAIN ), 'families' );
-	$tokens[] = amortexa_length_token( 'labelSize', '--amortexa-label-size', __( 'Size', AMORTEXA_TEXT_DOMAIN ), 32, 8 );
-	$tokens[] = amortexa_select_token( 'labelWeight', '--amortexa-label-weight', __( 'Weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
-	$tokens[] = amortexa_select_token( 'labelTransform', '--amortexa-label-transform', __( 'Case', AMORTEXA_TEXT_DOMAIN ), 'transforms' );
-	$tokens[] = amortexa_select_token( 'labelTracking', '--amortexa-label-tracking', __( 'Letter spacing', AMORTEXA_TEXT_DOMAIN ), 'tracking' );
-	$tokens[] = amortexa_spacing_token( 'labelMargin', '--amortexa-label-margin', __( 'Margin', AMORTEXA_TEXT_DOMAIN ), 48 );
+	$tokens[] = amortexa_color_token( 'labelColor', '--amortexa-label-color', __( 'Colour', 'amortexa-mortgage-calculator' ), 'labelColor' );
+	$tokens[] = amortexa_select_token( 'labelFamily', '--amortexa-label-family', __( 'Font', 'amortexa-mortgage-calculator' ), 'families' );
+	$tokens[] = amortexa_length_token( 'labelSize', '--amortexa-label-size', __( 'Size', 'amortexa-mortgage-calculator' ), 32, 8 );
+	$tokens[] = amortexa_select_token( 'labelWeight', '--amortexa-label-weight', __( 'Weight', 'amortexa-mortgage-calculator' ), 'weights' );
+	$tokens[] = amortexa_select_token( 'labelTransform', '--amortexa-label-transform', __( 'Case', 'amortexa-mortgage-calculator' ), 'transforms' );
+	$tokens[] = amortexa_select_token( 'labelTracking', '--amortexa-label-tracking', __( 'Letter spacing', 'amortexa-mortgage-calculator' ), 'tracking' );
+	$tokens[] = amortexa_spacing_token( 'labelMargin', '--amortexa-label-margin', __( 'Margin', 'amortexa-mortgage-calculator' ), 48 );
 
 	// Text inputs and selects.
-	$tokens[] = amortexa_color_token( 'fieldText', '--amortexa-field-text', __( 'Text', AMORTEXA_TEXT_DOMAIN ), 'fieldTextColor' );
-	$tokens[] = amortexa_color_token( 'fieldBg', '--amortexa-field-bg', __( 'Background', AMORTEXA_TEXT_DOMAIN ), 'fieldBackgroundColor' );
-	$tokens[] = amortexa_color_token( 'fieldBorder', '--amortexa-field-border', __( 'Border', AMORTEXA_TEXT_DOMAIN ), 'fieldBorderColor' );
-	$tokens[] = amortexa_length_token( 'fieldBorderWidth', '--amortexa-field-border-width', __( 'Border width', AMORTEXA_TEXT_DOMAIN ), 12 );
-	$tokens[] = amortexa_length_token( 'fieldRadius', '--amortexa-field-radius', __( 'Corner radius', AMORTEXA_TEXT_DOMAIN ), 64 );
-	$tokens[] = amortexa_spacing_token( 'fieldPadding', '--amortexa-field-padding', __( 'Padding', AMORTEXA_TEXT_DOMAIN ), 64 );
-	$tokens[] = amortexa_length_token( 'fieldHeight', '--amortexa-field-height', __( 'Field height', AMORTEXA_TEXT_DOMAIN ), 120, 24 );
-	$tokens[] = amortexa_select_token( 'fieldFamily', '--amortexa-field-family', __( 'Font', AMORTEXA_TEXT_DOMAIN ), 'families' );
-	$tokens[] = amortexa_length_token( 'fieldSize', '--amortexa-field-size', __( 'Font size', AMORTEXA_TEXT_DOMAIN ), 32, 8 );
-	$tokens[] = amortexa_select_token( 'fieldWeight', '--amortexa-field-weight', __( 'Weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
+	$tokens[] = amortexa_color_token( 'fieldText', '--amortexa-field-text', __( 'Text', 'amortexa-mortgage-calculator' ), 'fieldTextColor' );
+	$tokens[] = amortexa_color_token( 'fieldBg', '--amortexa-field-bg', __( 'Background', 'amortexa-mortgage-calculator' ), 'fieldBackgroundColor' );
+	$tokens[] = amortexa_color_token( 'fieldBorder', '--amortexa-field-border', __( 'Border', 'amortexa-mortgage-calculator' ), 'fieldBorderColor' );
+	$tokens[] = amortexa_length_token( 'fieldBorderWidth', '--amortexa-field-border-width', __( 'Border width', 'amortexa-mortgage-calculator' ), 12 );
+	$tokens[] = amortexa_length_token( 'fieldRadius', '--amortexa-field-radius', __( 'Corner radius', 'amortexa-mortgage-calculator' ), 64 );
+	$tokens[] = amortexa_spacing_token( 'fieldPadding', '--amortexa-field-padding', __( 'Padding', 'amortexa-mortgage-calculator' ), 64 );
+	$tokens[] = amortexa_length_token( 'fieldHeight', '--amortexa-field-height', __( 'Field height', 'amortexa-mortgage-calculator' ), 120, 24 );
+	$tokens[] = amortexa_select_token( 'fieldFamily', '--amortexa-field-family', __( 'Font', 'amortexa-mortgage-calculator' ), 'families' );
+	$tokens[] = amortexa_length_token( 'fieldSize', '--amortexa-field-size', __( 'Font size', 'amortexa-mortgage-calculator' ), 32, 8 );
+	$tokens[] = amortexa_select_token( 'fieldWeight', '--amortexa-field-weight', __( 'Weight', 'amortexa-mortgage-calculator' ), 'weights' );
 
 	// Range sliders.
-	$tokens[] = amortexa_color_token( 'sliderTrack', '--amortexa-slider-track', __( 'Track', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'sliderAccent', '--amortexa-slider-accent', __( 'Filled track', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_length_token( 'sliderThumbSize', '--amortexa-slider-thumb-size', __( 'Thumb size', AMORTEXA_TEXT_DOMAIN ), 64, 8 );
+	$tokens[] = amortexa_color_token( 'sliderTrack', '--amortexa-slider-track', __( 'Track', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'sliderAccent', '--amortexa-slider-accent', __( 'Filled track', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_length_token( 'sliderThumbSize', '--amortexa-slider-thumb-size', __( 'Thumb size', 'amortexa-mortgage-calculator' ), 64, 8 );
 
 	// The segmented control that switches sliders on and off.
-	$tokens[] = amortexa_color_token( 'toggleBg', '--amortexa-toggle-bg', __( 'Background', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'toggleText', '--amortexa-toggle-text', __( 'Text', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'toggleBorder', '--amortexa-toggle-border', __( 'Border', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_length_token( 'toggleRadius', '--amortexa-toggle-radius', __( 'Corner radius', AMORTEXA_TEXT_DOMAIN ), 64 );
-	$tokens[] = amortexa_spacing_token( 'togglePadding', '--amortexa-toggle-padding', __( 'Padding', AMORTEXA_TEXT_DOMAIN ), 48 );
-	$tokens[] = amortexa_select_token( 'toggleFamily', '--amortexa-toggle-family', __( 'Font', AMORTEXA_TEXT_DOMAIN ), 'families' );
-	$tokens[] = amortexa_length_token( 'toggleSize', '--amortexa-toggle-size', __( 'Font size', AMORTEXA_TEXT_DOMAIN ), 32, 8 );
-	$tokens[] = amortexa_select_token( 'toggleWeight', '--amortexa-toggle-weight', __( 'Weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
+	$tokens[] = amortexa_color_token( 'toggleBg', '--amortexa-toggle-bg', __( 'Background', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'toggleText', '--amortexa-toggle-text', __( 'Text', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'toggleBorder', '--amortexa-toggle-border', __( 'Border', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_length_token( 'toggleRadius', '--amortexa-toggle-radius', __( 'Corner radius', 'amortexa-mortgage-calculator' ), 64 );
+	$tokens[] = amortexa_spacing_token( 'togglePadding', '--amortexa-toggle-padding', __( 'Padding', 'amortexa-mortgage-calculator' ), 48 );
+	$tokens[] = amortexa_select_token( 'toggleFamily', '--amortexa-toggle-family', __( 'Font', 'amortexa-mortgage-calculator' ), 'families' );
+	$tokens[] = amortexa_length_token( 'toggleSize', '--amortexa-toggle-size', __( 'Font size', 'amortexa-mortgage-calculator' ), 32, 8 );
+	$tokens[] = amortexa_select_token( 'toggleWeight', '--amortexa-toggle-weight', __( 'Weight', 'amortexa-mortgage-calculator' ), 'weights' );
 
 	// Result values, and the headline monthly payment.
-	$tokens[] = amortexa_color_token( 'resultPrimaryColor', '--amortexa-result-primary-color', __( 'Headline colour', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_select_token( 'resultPrimaryFamily', '--amortexa-result-primary-family', __( 'Headline font', AMORTEXA_TEXT_DOMAIN ), 'families' );
-	$tokens[] = amortexa_length_token( 'resultPrimarySize', '--amortexa-result-primary-size', __( 'Headline size', AMORTEXA_TEXT_DOMAIN ), 96, 16 );
-	$tokens[] = amortexa_select_token( 'resultPrimaryWeight', '--amortexa-result-primary-weight', __( 'Headline weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
-	$tokens[] = amortexa_color_token( 'resultLabelColor', '--amortexa-result-label-color', __( 'Label text', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'resultValueColor', '--amortexa-result-value-color', __( 'Value text', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_length_token( 'resultSize', '--amortexa-result-size', __( 'Row font size', AMORTEXA_TEXT_DOMAIN ), 32, 8 );
-	$tokens[] = amortexa_color_token( 'resultRowBorder', '--amortexa-result-row-border', __( 'Row divider', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_spacing_token( 'resultRowPadding', '--amortexa-result-row-padding', __( 'Row padding', AMORTEXA_TEXT_DOMAIN ), 48 );
-	$tokens[] = amortexa_spacing_token( 'resultMargin', '--amortexa-result-margin', __( 'Panel padding', AMORTEXA_TEXT_DOMAIN ), 120 );
+	$tokens[] = amortexa_color_token( 'resultPrimaryColor', '--amortexa-result-primary-color', __( 'Headline colour', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_select_token( 'resultPrimaryFamily', '--amortexa-result-primary-family', __( 'Headline font', 'amortexa-mortgage-calculator' ), 'families' );
+	$tokens[] = amortexa_length_token( 'resultPrimarySize', '--amortexa-result-primary-size', __( 'Headline size', 'amortexa-mortgage-calculator' ), 96, 16 );
+	$tokens[] = amortexa_select_token( 'resultPrimaryWeight', '--amortexa-result-primary-weight', __( 'Headline weight', 'amortexa-mortgage-calculator' ), 'weights' );
+	$tokens[] = amortexa_color_token( 'resultLabelColor', '--amortexa-result-label-color', __( 'Label text', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'resultValueColor', '--amortexa-result-value-color', __( 'Value text', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_length_token( 'resultSize', '--amortexa-result-size', __( 'Row font size', 'amortexa-mortgage-calculator' ), 32, 8 );
+	$tokens[] = amortexa_color_token( 'resultRowBorder', '--amortexa-result-row-border', __( 'Row divider', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_spacing_token( 'resultRowPadding', '--amortexa-result-row-padding', __( 'Row padding', 'amortexa-mortgage-calculator' ), 48 );
+	$tokens[] = amortexa_spacing_token( 'resultMargin', '--amortexa-result-margin', __( 'Panel padding', 'amortexa-mortgage-calculator' ), 120 );
 
 	// Charts. Series colours are the same accents the block already exposes, so
 	// they keep honouring the older per-block accent attributes.
-	$tokens[] = amortexa_color_token( 'accent', '--amortexa-accent', __( 'Series 1', AMORTEXA_TEXT_DOMAIN ), 'accentColor' );
-	$tokens[] = amortexa_color_token( 'accentAlt', '--amortexa-accent-2', __( 'Series 2', AMORTEXA_TEXT_DOMAIN ), 'accentAltColor' );
-	$tokens[] = amortexa_length_token( 'chartHeight', '--amortexa-chart-height', __( 'Chart height', AMORTEXA_TEXT_DOMAIN ), 560, 120 );
-	$tokens[] = amortexa_color_token( 'chartAxis', '--amortexa-chart-axis', __( 'Axis and labels', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'chartTitleColor', '--amortexa-chart-title-color', __( 'Title text', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_length_token( 'chartTitleSize', '--amortexa-chart-title-size', __( 'Title size', AMORTEXA_TEXT_DOMAIN ), 32, 8 );
-	$tokens[] = amortexa_select_token( 'chartTitleWeight', '--amortexa-chart-title-weight', __( 'Title weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
-	$tokens[] = amortexa_spacing_token( 'chartTitleMargin', '--amortexa-chart-title-margin', __( 'Title margin', AMORTEXA_TEXT_DOMAIN ), 48 );
+	$tokens[] = amortexa_color_token( 'accent', '--amortexa-accent', __( 'Series 1', 'amortexa-mortgage-calculator' ), 'accentColor' );
+	$tokens[] = amortexa_color_token( 'accentAlt', '--amortexa-accent-2', __( 'Series 2', 'amortexa-mortgage-calculator' ), 'accentAltColor' );
+	$tokens[] = amortexa_length_token( 'chartHeight', '--amortexa-chart-height', __( 'Chart height', 'amortexa-mortgage-calculator' ), 560, 120 );
+	$tokens[] = amortexa_color_token( 'chartAxis', '--amortexa-chart-axis', __( 'Axis and labels', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'chartTitleColor', '--amortexa-chart-title-color', __( 'Title text', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_length_token( 'chartTitleSize', '--amortexa-chart-title-size', __( 'Title size', 'amortexa-mortgage-calculator' ), 32, 8 );
+	$tokens[] = amortexa_select_token( 'chartTitleWeight', '--amortexa-chart-title-weight', __( 'Title weight', 'amortexa-mortgage-calculator' ), 'weights' );
+	$tokens[] = amortexa_spacing_token( 'chartTitleMargin', '--amortexa-chart-title-margin', __( 'Title margin', 'amortexa-mortgage-calculator' ), 48 );
 
 	/*
 	 * One colour per payment component, so the donut, the legend and the results
@@ -267,31 +267,31 @@ function amortexa_get_design_tokens() {
 	 * text as well as a fill, and are far enough apart to be told apart side by
 	 * side. The test suite re-checks both rather than trusting this comment.
 	 */
-	$tokens[] = amortexa_color_token( 'costPi', '--amortexa-cost-pi', __( 'Principal & Interest', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'costTax', '--amortexa-cost-tax', __( 'Property Tax', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'costInsurance', '--amortexa-cost-insurance', __( 'Home Insurance', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'costHoa', '--amortexa-cost-hoa', __( 'HOA Fee', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'costPmi', '--amortexa-cost-pmi', __( 'PMI', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'costOther', '--amortexa-cost-other', __( 'Other Costs', AMORTEXA_TEXT_DOMAIN ) );
+	$tokens[] = amortexa_color_token( 'costPi', '--amortexa-cost-pi', __( 'Principal & Interest', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'costTax', '--amortexa-cost-tax', __( 'Property Tax', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'costInsurance', '--amortexa-cost-insurance', __( 'Home Insurance', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'costHoa', '--amortexa-cost-hoa', __( 'HOA Fee', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'costPmi', '--amortexa-cost-pmi', __( 'PMI', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'costOther', '--amortexa-cost-other', __( 'Other Costs', 'amortexa-mortgage-calculator' ) );
 
 	// Chart legends.
-	$tokens[] = amortexa_color_token( 'legendText', '--amortexa-legend-text', __( 'Text', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_select_token( 'legendFamily', '--amortexa-legend-family', __( 'Font', AMORTEXA_TEXT_DOMAIN ), 'families' );
-	$tokens[] = amortexa_length_token( 'legendSize', '--amortexa-legend-size', __( 'Font size', AMORTEXA_TEXT_DOMAIN ), 24, 8 );
-	$tokens[] = amortexa_select_token( 'legendWeight', '--amortexa-legend-weight', __( 'Weight', AMORTEXA_TEXT_DOMAIN ), 'weights' );
-	$tokens[] = amortexa_length_token( 'legendSwatchSize', '--amortexa-legend-swatch-size', __( 'Swatch size', AMORTEXA_TEXT_DOMAIN ), 40, 6 );
-	$tokens[] = amortexa_length_token( 'legendGap', '--amortexa-legend-gap', __( 'Gap between items', AMORTEXA_TEXT_DOMAIN ), 48 );
+	$tokens[] = amortexa_color_token( 'legendText', '--amortexa-legend-text', __( 'Text', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_select_token( 'legendFamily', '--amortexa-legend-family', __( 'Font', 'amortexa-mortgage-calculator' ), 'families' );
+	$tokens[] = amortexa_length_token( 'legendSize', '--amortexa-legend-size', __( 'Font size', 'amortexa-mortgage-calculator' ), 24, 8 );
+	$tokens[] = amortexa_select_token( 'legendWeight', '--amortexa-legend-weight', __( 'Weight', 'amortexa-mortgage-calculator' ), 'weights' );
+	$tokens[] = amortexa_length_token( 'legendSwatchSize', '--amortexa-legend-swatch-size', __( 'Swatch size', 'amortexa-mortgage-calculator' ), 40, 6 );
+	$tokens[] = amortexa_length_token( 'legendGap', '--amortexa-legend-gap', __( 'Gap between items', 'amortexa-mortgage-calculator' ), 48 );
 
 	// The amortization table.
-	$tokens[] = amortexa_color_token( 'tableHeadBg', '--amortexa-table-head-bg', __( 'Header background', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'tableHeadText', '--amortexa-table-head-text', __( 'Header text', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'tableRowBg', '--amortexa-table-row-bg', __( 'Row background', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'tableZebraBg', '--amortexa-table-zebra-bg', __( 'Alternating row', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_color_token( 'tableBorder', '--amortexa-table-border', __( 'Borders', AMORTEXA_TEXT_DOMAIN ) );
-	$tokens[] = amortexa_length_token( 'tableBorderWidth', '--amortexa-table-border-width', __( 'Border width', AMORTEXA_TEXT_DOMAIN ), 12 );
-	$tokens[] = amortexa_spacing_token( 'tableCellPadding', '--amortexa-table-cell-padding', __( 'Cell padding', AMORTEXA_TEXT_DOMAIN ), 48 );
-	$tokens[] = amortexa_length_token( 'tableSize', '--amortexa-table-size', __( 'Font size', AMORTEXA_TEXT_DOMAIN ), 24, 8 );
-	$tokens[] = amortexa_length_token( 'tableRadius', '--amortexa-table-radius', __( 'Corner radius', AMORTEXA_TEXT_DOMAIN ), 64 );
+	$tokens[] = amortexa_color_token( 'tableHeadBg', '--amortexa-table-head-bg', __( 'Header background', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'tableHeadText', '--amortexa-table-head-text', __( 'Header text', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'tableRowBg', '--amortexa-table-row-bg', __( 'Row background', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'tableZebraBg', '--amortexa-table-zebra-bg', __( 'Alternating row', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_color_token( 'tableBorder', '--amortexa-table-border', __( 'Borders', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_length_token( 'tableBorderWidth', '--amortexa-table-border-width', __( 'Border width', 'amortexa-mortgage-calculator' ), 12 );
+	$tokens[] = amortexa_spacing_token( 'tableCellPadding', '--amortexa-table-cell-padding', __( 'Cell padding', 'amortexa-mortgage-calculator' ), 48 );
+	$tokens[] = amortexa_length_token( 'tableSize', '--amortexa-table-size', __( 'Font size', 'amortexa-mortgage-calculator' ), 24, 8 );
+	$tokens[] = amortexa_length_token( 'tableRadius', '--amortexa-table-radius', __( 'Corner radius', 'amortexa-mortgage-calculator' ), 64 );
 
 	return $tokens;
 }
@@ -304,53 +304,53 @@ function amortexa_get_design_tokens() {
 function amortexa_get_design_groups() {
 	$groups = array(
 		'root'    => array(
-			'label'  => __( 'Calculator', AMORTEXA_TEXT_DOMAIN ),
-			'summary' => __( 'The card that wraps the whole block.', AMORTEXA_TEXT_DOMAIN ),
+			'label'  => __( 'Calculator', 'amortexa-mortgage-calculator' ),
+			'summary' => __( 'The card that wraps the whole block.', 'amortexa-mortgage-calculator' ),
 			'tokens' => array( 'rootBg', 'rootText', 'rootBorder', 'rootRadius', 'rootPadding' ),
 		),
 		'panel'   => array(
-			'label'  => __( 'Panels', AMORTEXA_TEXT_DOMAIN ),
-			'summary' => __( 'The boxes around inputs, results, charts and schedule.', AMORTEXA_TEXT_DOMAIN ),
+			'label'  => __( 'Panels', 'amortexa-mortgage-calculator' ),
+			'summary' => __( 'The boxes around inputs, results, charts and schedule.', 'amortexa-mortgage-calculator' ),
 			'tokens' => array( 'panelBg', 'panelRadius', 'panelPadding', 'panelGap' ),
 		),
 		'label'   => array(
-			'label'  => __( 'Field Labels', AMORTEXA_TEXT_DOMAIN ),
-			'summary' => __( 'The text above each input.', AMORTEXA_TEXT_DOMAIN ),
+			'label'  => __( 'Field Labels', 'amortexa-mortgage-calculator' ),
+			'summary' => __( 'The text above each input.', 'amortexa-mortgage-calculator' ),
 			'tokens' => array( 'labelColor', 'labelFamily', 'labelSize', 'labelWeight', 'labelTransform', 'labelTracking', 'labelMargin' ),
 		),
 		'field'   => array(
-			'label'  => __( 'Inputs', AMORTEXA_TEXT_DOMAIN ),
-			'summary' => __( 'Text inputs and dropdowns.', AMORTEXA_TEXT_DOMAIN ),
+			'label'  => __( 'Inputs', 'amortexa-mortgage-calculator' ),
+			'summary' => __( 'Text inputs and dropdowns.', 'amortexa-mortgage-calculator' ),
 			'tokens' => array( 'fieldText', 'fieldBg', 'fieldBorder', 'fieldBorderWidth', 'fieldRadius', 'fieldPadding', 'fieldHeight', 'fieldFamily', 'fieldSize', 'fieldWeight' ),
 		),
 		'slider'  => array(
-			'label'  => __( 'Sliders', AMORTEXA_TEXT_DOMAIN ),
-			'summary' => __( 'The draggable range controls.', AMORTEXA_TEXT_DOMAIN ),
+			'label'  => __( 'Sliders', 'amortexa-mortgage-calculator' ),
+			'summary' => __( 'The draggable range controls.', 'amortexa-mortgage-calculator' ),
 			'tokens' => array( 'sliderTrack', 'sliderAccent', 'sliderThumbSize' ),
 		),
 		'toggle'  => array(
-			'label'  => __( 'Sliders Toggle', AMORTEXA_TEXT_DOMAIN ),
-			'summary' => __( 'The button that shows and hides the sliders.', AMORTEXA_TEXT_DOMAIN ),
+			'label'  => __( 'Sliders Toggle', 'amortexa-mortgage-calculator' ),
+			'summary' => __( 'The button that shows and hides the sliders.', 'amortexa-mortgage-calculator' ),
 			'tokens' => array( 'toggleBg', 'toggleText', 'toggleBorder', 'toggleRadius', 'togglePadding', 'toggleFamily', 'toggleSize', 'toggleWeight' ),
 		),
 		'result'  => array(
-			'label'  => __( 'Results', AMORTEXA_TEXT_DOMAIN ),
-			'summary' => __( 'The monthly payment and the rows beneath it.', AMORTEXA_TEXT_DOMAIN ),
+			'label'  => __( 'Results', 'amortexa-mortgage-calculator' ),
+			'summary' => __( 'The monthly payment and the rows beneath it.', 'amortexa-mortgage-calculator' ),
 			'tokens' => array( 'resultPrimaryColor', 'resultPrimaryFamily', 'resultPrimarySize', 'resultPrimaryWeight', 'resultLabelColor', 'resultValueColor', 'resultSize', 'resultRowBorder', 'resultRowPadding', 'resultMargin' ),
 		),
 		'chart'   => array(
-			'label'  => __( 'Charts', AMORTEXA_TEXT_DOMAIN ),
-			'summary' => __( 'Series colours, size and titles.', AMORTEXA_TEXT_DOMAIN ),
+			'label'  => __( 'Charts', 'amortexa-mortgage-calculator' ),
+			'summary' => __( 'Series colours, size and titles.', 'amortexa-mortgage-calculator' ),
 			'tokens' => array( 'accent', 'accentAlt', 'costPi', 'costTax', 'costInsurance', 'costHoa', 'costPmi', 'costOther', 'chartHeight', 'chartAxis', 'chartTitleColor', 'chartTitleSize', 'chartTitleWeight', 'chartTitleMargin' ),
 		),
 		'legend'  => array(
-			'label'  => __( 'Chart Legends', AMORTEXA_TEXT_DOMAIN ),
-			'summary' => __( 'The colour key under each chart.', AMORTEXA_TEXT_DOMAIN ),
+			'label'  => __( 'Chart Legends', 'amortexa-mortgage-calculator' ),
+			'summary' => __( 'The colour key under each chart.', 'amortexa-mortgage-calculator' ),
 			'tokens' => array( 'legendText', 'legendFamily', 'legendSize', 'legendWeight', 'legendSwatchSize', 'legendGap' ),
 		),
 		'table'   => array(
-			'label'  => __( 'Schedule Table', AMORTEXA_TEXT_DOMAIN ),
-			'summary' => __( 'The amortization table header, rows and borders.', AMORTEXA_TEXT_DOMAIN ),
+			'label'  => __( 'Schedule Table', 'amortexa-mortgage-calculator' ),
+			'summary' => __( 'The amortization table header, rows and borders.', 'amortexa-mortgage-calculator' ),
 			'tokens' => array( 'tableHeadBg', 'tableHeadText', 'tableRowBg', 'tableZebraBg', 'tableBorder', 'tableBorderWidth', 'tableCellPadding', 'tableSize', 'tableRadius' ),
 		),
 	);
@@ -374,11 +374,13 @@ function amortexa_get_design_groups() {
 				// A typo here would silently drop a control from the inspector.
 				_doing_it_wrong(
 					__FUNCTION__,
-					sprintf(
-						/* translators: 1: group key, 2: token key. */
-						__( 'Design group "%1$s" lists unknown token "%2$s".', 'amortexa-mortgage-calculator' ),
-						$key,
-						$token_key
+					esc_html(
+						sprintf(
+							/* translators: 1: group key, 2: token key. */
+							__( 'Design group "%1$s" lists unknown token "%2$s".', 'amortexa-mortgage-calculator' ),
+							$key,
+							$token_key
+						)
 					),
 					'1.0.0'
 				);

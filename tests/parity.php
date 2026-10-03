@@ -11,8 +11,20 @@
  * Usage: php tests/parity.php
  * Exit code 0 on parity, 1 on mismatch or error.
  *
+ * Never shipped. Both the dist allowlist (tools/build-dist.cjs) and .distignore
+ * drop tests/, so a released zip does not contain this file and the
+ * WordPress.org plugin scanner never sees it. A development checkout installed
+ * straight into wp-content/plugins does contain it, and there the WordPress
+ * Plugin Check tool reads this file as if it were shipped code -- it defines
+ * its own stubs for core functions and calls shell_exec(), which is exactly
+ * what the security sniffs are written to flag. The whole file therefore opts
+ * out of PHPCS rather than annotating hundreds of harness lines individually.
+ * amortexa_test_release_packaging() is what keeps the exclusion honest.
+ *
  * @package Amortexa
  */
+
+// phpcs:ignoreFile -- Dev-only harness. Not part of any release; see above.
 
 error_reporting( E_ALL );
 ini_set( 'display_errors', '1' );
@@ -20,11 +32,6 @@ ini_set( 'display_errors', '1' );
 // The plugin's helpers guard on ABSPATH; satisfy it without booting WP.
 if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', dirname( __DIR__ ) . '/' );
-}
-
-// The plugin's own text domain constant, normally set by amortexa-mortgage-calculator.php.
-if ( ! defined( 'AMORTEXA_TEXT_DOMAIN' ) ) {
-	define( 'AMORTEXA_TEXT_DOMAIN', 'amortexa-mortgage-calculator' );
 }
 
 /*
@@ -2382,6 +2389,98 @@ function amortexa_render_block( array $attributes ) {
 }
 
 /**
+ * Renders a block and decodes the JSON payload the front end reads back.
+ *
+ * Settings that only the browser can act on -- currency position, chart type,
+ * panel visibility -- travel to the front end inside this payload rather than
+ * in markup, so asserting on the markup alone would miss a payload that is
+ * rendered but never honoured.
+ *
+ * @param array<string,mixed> $attributes Block attributes.
+ * @return array<string,mixed>|null Decoded payload, or null when absent.
+ */
+function amortexa_render_config( array $attributes ) {
+	$markup = amortexa_render_block( $attributes );
+
+	if ( ! preg_match( '/data-amortexa-config="([^"]*)"/', $markup, $match ) ) {
+		return null;
+	}
+
+	$decoded = json_decode( html_entity_decode( $match[1], ENT_QUOTES, 'UTF-8' ), true );
+
+	return is_array( $decoded ) ? $decoded : null;
+}
+
+/**
+ * Parses rendered markup so a test can assert how elements nest.
+ *
+ * Nesting is the whole question for the layout tests: whether the amortization
+ * table sits inside a column or beside it cannot be read off the tag sequence
+ * without counting closing tags by hand.
+ *
+ * @param string $markup Rendered markup.
+ * @return DOMDocument Parsed document.
+ */
+function amortexa_parse( $markup ) {
+	$document = new DOMDocument();
+
+	$previous = libxml_use_internal_errors( true );
+
+	$document->loadHTML( '<!DOCTYPE html><html><body>' . $markup . '</body></html>' );
+
+	libxml_clear_errors();
+	libxml_use_internal_errors( $previous );
+
+	return $document;
+}
+
+/**
+ * Finds the first element carrying a class, searching beneath a node.
+ *
+ * The match is on the whole class token rather than a substring, so asking for
+ * `amortexa-calc__grid` never lands on `amortexa-calc__grid--aside`.
+ *
+ * @param DOMNode $context Node to search beneath.
+ * @param string  $selector Class name, with or without a leading dot.
+ * @return DOMElement|null Matching element, or null.
+ */
+function amortexa_first_element( DOMNode $context, $selector ) {
+	$class  = ltrim( $selector, '.' );
+	$xpath  = new DOMXPath( $context instanceof DOMDocument ? $context : $context->ownerDocument );
+	$found  = $xpath->query(
+		'.//*[contains(concat(" ", normalize-space(@class), " "), " ' . $class . ' ")]',
+		$context
+	);
+
+	if ( null === $found || 0 === $found->length ) {
+		return null;
+	}
+
+	return $found->item( 0 );
+}
+
+/**
+ * Lists the class of every element child, in order.
+ *
+ * Whitespace text nodes are skipped, so the result lines up with the panels the
+ * template renders rather than with how it happens to indent them.
+ *
+ * @param DOMNode $context Parent element.
+ * @return string[] Class names of the element children.
+ */
+function amortexa_child_classes( DOMNode $context ) {
+	$classes = array();
+
+	foreach ( $context->childNodes as $child ) {
+		if ( XML_ELEMENT_NODE === $child->nodeType ) {
+			$classes[] = (string) $child->getAttribute( 'class' );
+		}
+	}
+
+	return $classes;
+}
+
+/**
  * Covers the server-rendered markup, which nothing else here exercises.
  *
  * Every calculation in this file is proved through amortexa_calculate(), but the
@@ -2395,12 +2494,23 @@ function amortexa_render_block( array $attributes ) {
  */
 function amortexa_test_ssr() {
 	$failures = 0;
-	$report   = function ( $ok, $message ) use ( &$failures ) {
+
+	/*
+	 * `$detail` carries what the check compared, so a structural failure names
+	 * the markup it was handed instead of only saying it did not match.
+	 */
+	$report = function ( $ok, $message, $detail = array() ) use ( &$failures ) {
 		if ( $ok ) {
 			fwrite( STDOUT, "ok   $message\n" );
-		} else {
-			++$failures;
-			fwrite( STDOUT, "FAIL $message\n" );
+
+			return;
+		}
+
+		++$failures;
+		fwrite( STDOUT, "FAIL $message\n" );
+
+		foreach ( $detail as $label => $value ) {
+			fwrite( STDOUT, '       ' . $label . ': ' . str_replace( array( "\n", '  ' ), array( '', ' ' ), var_export( $value, true ) ) . "\n" );
 		}
 	};
 
@@ -2501,12 +2611,152 @@ function amortexa_test_ssr() {
 	$report( substr_count( $on, '<form' ) === 1, 'still exactly one form with costs on' );
 
 	/*
+	 * The cost inputs drive the live recalculation through the form's input
+	 * listener, so they have to live inside the form element. Rendering them in
+	 * the amortization table body let the HTML parser foster-parent them out of
+	 * the form, which is exactly the regression this guards.
+	 */
+	$form_open  = strpos( $on, '<form' );
+	$form_close = strpos( $on, '</form>' );
+	$costs_at   = strpos( $on, 'amortexa-calc__costs' );
+	$report(
+		false !== $form_open && false !== $form_close && false !== $costs_at && $form_open < $costs_at && $costs_at < $form_close,
+		'the cost inputs render inside the form'
+	);
+
+	/*
 	 * The rendered figures have to be the ones the calculator produced, not just
 	 * plausible looking placeholders. The breakdown is a monthly breakdown, so
 	 * 1.25% of 400,000 is 5,000 a year and therefore 416.67 a month.
 	 */
 	$report( false !== strpos( $on, '416.67' ), 'the percent tax renders as its monthly figure, 416.67' );
 	$report( false !== strpos( $on, '125.00' ), 'an amount-based premium renders as its monthly figure, 125.00' );
+
+	/*
+	 * The two column layouts are the only ones that group panels, and the
+	 * grouping is the whole point: without the column divs the charts keep their
+	 * full width span and drop back underneath the form. The amortization table
+	 * is never grouped, so these read the DOM instead of counting tags.
+	 */
+	fwrite( STDOUT, "-- layouts --\n" );
+
+	$aside = amortexa_render_block( array_merge( $base, array( 'layout' => 'aside' ) ) );
+
+	$report(
+		false !== strpos( $aside, 'amortexa-calc__grid--aside' ),
+		'the aside layout marks the grid'
+	);
+
+	$grid      = amortexa_first_element( amortexa_parse( $aside ), '.amortexa-calc__grid' );
+	$first     = amortexa_first_element( $grid, '.amortexa-calc__column--form' );
+	$second    = amortexa_first_element( $grid, '.amortexa-calc__column--details' );
+	$top_level = amortexa_child_classes( $grid );
+
+	$report(
+		array( 'amortexa-calc__column amortexa-calc__column--form', 'amortexa-calc__column amortexa-calc__column--details', 'amortexa-calc__schedule' ) === $top_level,
+		'the aside layout holds two columns and the full width table',
+		array( 'grid children' => $top_level )
+	);
+
+	$report(
+		array( 'amortexa-calc__form' ) === amortexa_child_classes( $first )
+			&& array( 'amortexa-calc__results', 'amortexa-calc__charts' ) === amortexa_child_classes( $second ),
+		'the aside layout keeps the inputs alone in the first column and the results with the charts in the second'
+	);
+
+	$chart_aside = amortexa_render_block( array_merge( $base, array( 'layout' => 'chart-aside' ) ) );
+
+	$report(
+		false !== strpos( $chart_aside, 'amortexa-calc__grid--chart-aside' ),
+		'the chart-aside layout marks the grid'
+	);
+
+	$grid   = amortexa_first_element( amortexa_parse( $chart_aside ), '.amortexa-calc__grid' );
+	$first  = amortexa_first_element( $grid, '.amortexa-calc__column--form' );
+	$second = amortexa_first_element( $grid, '.amortexa-calc__column--details' );
+
+	$report(
+		array( 'amortexa-calc__column amortexa-calc__column--form', 'amortexa-calc__column amortexa-calc__column--details', 'amortexa-calc__schedule' ) === amortexa_child_classes( $grid )
+			&& array( 'amortexa-calc__form', 'amortexa-calc__results' ) === amortexa_child_classes( $first )
+			&& array( 'amortexa-calc__charts' ) === amortexa_child_classes( $second ),
+		'the chart-aside layout stacks the inputs with the results and gives the charts their own column',
+		array(
+			'grid children'    => amortexa_child_classes( $grid ),
+			'first column'     => amortexa_child_classes( $first ),
+			'second column'    => amortexa_child_classes( $second ),
+		)
+	);
+
+	/*
+	 * Saved order decides the sequence inside a column, and a table saved in the
+	 * middle of that order is still pulled back out to full width.
+	 */
+	$reordered = amortexa_render_block(
+		array_merge(
+			$base,
+			array(
+				'layout'     => 'chart-aside',
+				'panelOrder' => array( 'schedule', 'charts', 'results', 'form' ),
+			)
+		)
+	);
+
+	$grid = amortexa_first_element( amortexa_parse( $reordered ), '.amortexa-calc__grid' );
+
+	$report(
+		array( 'amortexa-calc__column amortexa-calc__column--form', 'amortexa-calc__column amortexa-calc__column--details', 'amortexa-calc__schedule' ) === amortexa_child_classes( $grid )
+			&& array( 'amortexa-calc__form', 'amortexa-calc__results' ) === amortexa_child_classes( amortexa_first_element( $grid, '.amortexa-calc__column--form' ) )
+			&& array( 'amortexa-calc__charts' ) === amortexa_child_classes( amortexa_first_element( $grid, '.amortexa-calc__column--details' ) ),
+		'the saved order holds inside a column and the table still ends up full width',
+		array( 'grid children' => amortexa_child_classes( $grid ) )
+	);
+
+	/* The table belongs to the grid, not to a column, whatever the layout. */
+	foreach ( array_keys( amortexa_get_layouts() ) as $layout_key ) {
+		$rendered = amortexa_render_block( array_merge( $base, array( 'layout' => $layout_key ) ) );
+
+		preg_match( '/amortexa-calc__grid[ "\n]/', $rendered, $grid_class );
+
+		$report(
+			false !== strpos( $rendered, 'amortexa-calc__grid--' . $layout_key ),
+			'the ' . $layout_key . ' layout reaches the markup as its own grid modifier',
+			array( 'grid class' => isset( $grid_class[0] ) ? $grid_class[0] : '' )
+		);
+
+		$layout_grid    = amortexa_first_element( amortexa_parse( $rendered ), '.amortexa-calc__grid' );
+		$layout_classes = amortexa_child_classes( $layout_grid );
+
+		$report(
+			'amortexa-calc__schedule' === end( $layout_classes ),
+			'the amortization table is the last, full width panel in the ' . $layout_key . ' layout',
+			array( 'grid children' => $layout_classes )
+		);
+	}
+
+	/* Nothing to put beside the inputs means there is no second column. */
+	$single = amortexa_render_block(
+		array_merge(
+			$base,
+			array(
+				'layout'           => 'aside',
+				'showResults'      => false,
+				'showCharts'       => false,
+				'showAmortization' => false,
+			)
+		)
+	);
+
+	$report(
+		false !== strpos( $single, 'amortexa-calc__grid--form-only' )
+			&& array( 'amortexa-calc__form' ) === amortexa_child_classes( amortexa_first_element( amortexa_parse( $single ), '.amortexa-calc__grid' ) ),
+		'a column layout collapses to one column when there is nothing to put beside the inputs'
+	);
+
+	/* The flat layouts share one set of panels and need no wrappers. */
+	$report(
+		false === strpos( $off, 'amortexa-calc__column' ),
+		'the stacked and split layouts render no column wrappers'
+	);
 
 	fwrite( STDOUT, "-- escaping --\n" );
 
@@ -2576,7 +2826,255 @@ function amortexa_test_ssr() {
 	return $failures;
 }
 
-$exit = amortexa_test_parity() + amortexa_test_design_schema() + amortexa_test_settings_and_shortcode() + amortexa_test_input_guards() + amortexa_test_rate_limit() + amortexa_test_costs() + amortexa_test_version_consistency() + amortexa_test_ssr();
+/**
+ * Checks that the development-only files stay out of a release.
+ *
+ * WordPress Plugin Check reads every PHP file in the installed plugin folder,
+ * and the one in wp-admin it never asks permission for: the admin UI ignores
+ * both this repository's phpcs.xml.dist and any .plugin-check.json, because a
+ * scanner that a plugin author could configure would not be a scanner. So the
+ * only real defence is that the release does not contain the file at all, and
+ * that holds for two independent build paths -- the dist allowlist in
+ * tools/build-dist.cjs and .distignore for anyone building with
+ * `wp dist-archive` instead. Both are asserted here because a path that is
+ * quietly added to one of them would otherwise only surface as a rejected
+ * upload, or as a wall of false positives in a development checkout.
+ *
+ * @return int Number of failures.
+ */
+function amortexa_test_release_packaging() {
+	$failures = 0;
+	$report   = function ( $ok, $message ) use ( &$failures ) {
+		if ( $ok ) {
+			fwrite( STDOUT, "ok   $message\n" );
+		} else {
+			++$failures;
+			fwrite( STDOUT, "FAIL $message\n" );
+		}
+	};
+
+	$root = dirname( __DIR__ );
+
+	/*
+	 * The allowlist is the canonical build. Reading it rather than trusting
+	 * the comment above it means a path added here is caught on the next run.
+	 */
+	$builder = $root . '/tools/build-dist.cjs';
+
+	if ( ! is_readable( $builder ) ) {
+		$report( false, 'the dist builder is readable' );
+
+		return $failures;
+	}
+
+	$ship_block = array();
+
+	if ( preg_match( '/const SHIP\s*=\s*\[(.*?)\]/s', (string) file_get_contents( $builder ), $match ) ) {
+		preg_match_all( '/[\'"]([^\'"]+)[\'"]/', $match[1], $found );
+		$ship_block = $found[1];
+	}
+
+	$report( array() !== $ship_block, 'the dist builder declares the paths that ship' );
+
+	$ships = array_flip( $ship_block );
+
+	foreach ( array( 'tests', 'src', 'tools', 'node_modules', 'vendor', 'dist' ) as $dev ) {
+		$report( ! isset( $ships[ $dev ] ), sprintf( 'the dist allowlist does not ship %s', $dev ) );
+	}
+
+	/*
+	 * includes/ is the one runtime directory a naive exclusion list gets
+	 * wrong: the main file requires it on every request, so a release built
+	 * without it activates and then fatals on the first page view.
+	 */
+	foreach ( array( 'includes', 'build', 'languages', 'assets' ) as $runtime ) {
+		$report( isset( $ships[ $runtime ] ), sprintf( 'the dist allowlist ships %s, which the plugin needs at runtime', $runtime ) );
+	}
+
+	/* Every file the main plugin file pulls in has to sit inside the allowlist. */
+	$main = (string) file_get_contents( $root . '/amortexa-mortgage-calculator.php' );
+
+	preg_match_all( '/require(?:_once)?\s+[^;]*?\.\s*\'([^\']+)\'/', $main, $requires );
+
+	$orphan = array();
+
+	foreach ( $requires[1] as $required ) {
+		$top = strtok( $required, '/' );
+
+		if ( ! isset( $ships[ $top ] ) ) {
+			$orphan[] = $required;
+		}
+	}
+
+	$report(
+		array() === $orphan,
+		sprintf(
+			'every file the plugin requires at runtime is inside the allowlist (%s)',
+			array() === $orphan ? 'all covered' : 'orphaned: ' . implode( ', ', $orphan )
+		)
+	);
+
+	/* .distignore is the second build path and has to reach the same verdict. */
+	$ignore_file = $root . '/.distignore';
+
+	if ( ! is_readable( $ignore_file ) ) {
+		$report( false, '.distignore is readable' );
+
+		return $failures;
+	}
+
+	$ignored = preg_split( '/[\r\n]+/', (string) file_get_contents( $ignore_file ), -1, PREG_SPLIT_NO_EMPTY );
+
+	foreach ( array( 'tests', 'tools', 'node_modules', 'src/**/*.js' ) as $dev ) {
+		$report( in_array( $dev, $ignored, true ), sprintf( '.distignore excludes %s for a wp dist-archive build', $dev ) );
+	}
+
+	if ( 0 === $failures ) {
+		fwrite( STDOUT, "ok   the harness and sources stay out of the release\n" );
+	}
+
+	return $failures;
+}
+
+/**
+ * Checks that every setting the editor writes changes the front-end markup.
+ *
+ * The editor reads block attributes straight out of JS, so a control looks
+ * like it works the moment it is clicked: the preview renders from whatever
+ * the inspector just set. The front end renders from a different program
+ * entirely -- build/render.php, through the sanitizer and the design token
+ * schema. A setting can therefore save perfectly, reappear in the editor on
+ * reload, and still be dropped on the way to the page, which is the hardest
+ * kind of break to notice by hand because both halves look correct.
+ *
+ * So this asserts the only property that actually matters: flip each
+ * attribute away from its default and the rendered markup has to differ. A
+ * setting that renders identically either side of the change is dead on the
+ * front end, whatever the editor says.
+ *
+ * @return int Number of failures.
+ */
+function amortexa_test_attribute_effects() {
+	$failures = 0;
+	$report   = function ( $ok, $message ) use ( &$failures ) {
+		if ( $ok ) {
+			fwrite( STDOUT, "ok   $message\n" );
+		} else {
+			++$failures;
+			fwrite( STDOUT, "FAIL $message\n" );
+		}
+	};
+
+	$defaults = amortexa_get_default_attributes();
+	$control  = amortexa_render_block( $defaults );
+
+	/*
+	 * Each case names an attribute and a value the default block cannot be
+	 * using, chosen so that a change has to be visible in the output rather
+	 * than merely present in it.
+	 */
+	$cases = array(
+		'loanAmount'        => array( 725000, '725000' ),
+		'downPayment'       => array( 0, 'value="0"' ),
+		'interestRate'      => array( 3.25, '3.25' ),
+		'loanTerm'          => array( 15, 'value="15"' ),
+		'currencySymbol'    => array( 'GBP', 'GBP' ),
+		'showResults'       => array( false, 'amortexa-calc__grid--form-only' ),
+		'showCosts'         => array( true, 'amortexa-calc__costs' ),
+		'layout'            => array( 'stacked', 'amortexa-calc__grid--stacked' ),
+		'formColumns'       => array( 'compact', 'amortexa-calc--form-columns-compact' ),
+		'paymentFontSize'   => array( 41, 'font-size:41px' ),
+		'paymentFontWeight' => array( 700, 'font-weight:700' ),
+		'fontFamily'        => array( 'serif', 'font-family' ),
+		'propertyTax'       => array( 2.5, '2.5' ),
+	);
+
+	foreach ( $cases as $attribute => $case ) {
+		list( $value, $marker ) = $case;
+
+		$changed = amortexa_render_block( array_merge( $defaults, array( $attribute => $value ) ) );
+
+		$report(
+			$changed !== $control,
+			sprintf( 'the "%s" setting changes the front-end markup', $attribute )
+		);
+
+		$report(
+			false !== strpos( $changed, $marker ),
+			sprintf( 'the "%s" setting reaches the page (expects %s)', $attribute, $marker )
+		);
+	}
+
+	/*
+	 * A toggle set to false has to take its markup away rather than add a
+	 * marker, so these are asserted as absence.
+	 */
+	$off_cases = array(
+		'showAmortization' => 'amortexa-calc__schedule',
+		'showCharts'       => 'amortexa-calc__chart',
+		'showSliders'      => 'type="range"',
+	);
+
+	foreach ( $off_cases as $attribute => $absent ) {
+		$changed = amortexa_render_block( array_merge( $defaults, array( $attribute => false ) ) );
+
+		$report(
+			$changed !== $control,
+			sprintf( 'the "%s" setting changes the front-end markup', $attribute )
+		);
+
+		$report(
+			false === strpos( $changed, $absent ),
+			sprintf( 'turning "%s" off removes %s from the page', $attribute, $absent )
+		);
+	}
+
+	/*
+	 * Settings the browser acts on rather than the server travel in the JSON
+	 * payload, so they are asserted there instead of against the markup.
+	 */
+	$payload_cases = array(
+		'currencyPosition' => array( 'suffix', 'position' ),
+		'chartType'        => array( 'donut', 'chartType' ),
+	);
+
+	foreach ( $payload_cases as $attribute => $case ) {
+		list( $value, $key ) = $case;
+
+		$config = amortexa_render_config( array_merge( $defaults, array( $attribute => $value ) ) );
+
+		$report(
+			is_array( $config ) && isset( $config[ $key ] ) && $value === $config[ $key ],
+			sprintf( 'the "%s" setting reaches the front-end config payload', $attribute )
+		);
+	}
+
+	/* A colour override has to land as a custom property on the wrapper. */
+	$colored = amortexa_render_block( array_merge( $defaults, array( 'accentColor' => '#ff0055' ) ) );
+
+	$report(
+		false !== strpos( $colored, '#ff0055' ),
+		'the "accentColor" setting reaches the page as a custom property'
+	);
+
+	/* So does a design token chosen in the Design tab. */
+	$token = amortexa_render_block(
+		array_merge( $defaults, array( 'design' => array( 'resultPrimaryWeight' => 700 ) ) )
+	);
+
+	$report(
+		false !== strpos( $token, '--amortexa-result-primary-weight' ),
+		'the Design tab token reaches the page as CSS'
+	);
+
+	if ( 0 === $failures ) {
+		fwrite( STDOUT, "ok   every editor setting survives the trip to the front end\n" );
+	}
+
+	return $failures;
+}
+
+$exit = amortexa_test_parity() + amortexa_test_design_schema() + amortexa_test_settings_and_shortcode() + amortexa_test_input_guards() + amortexa_test_rate_limit() + amortexa_test_costs() + amortexa_test_version_consistency() + amortexa_test_ssr() + amortexa_test_release_packaging() + amortexa_test_attribute_effects();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

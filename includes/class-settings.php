@@ -60,8 +60,8 @@ class Amortexa_Settings {
 	 */
 	public function add_page() {
 		add_options_page(
-			esc_html__( 'Amortexa', AMORTEXA_TEXT_DOMAIN ),
-			esc_html__( 'Amortexa', AMORTEXA_TEXT_DOMAIN ),
+			esc_html__( 'Amortexa', 'amortexa-mortgage-calculator' ),
+			esc_html__( 'Amortexa', 'amortexa-mortgage-calculator' ),
 			self::CAPABILITY,
 			self::PAGE_SLUG,
 			array( $this, 'render_page' )
@@ -78,8 +78,8 @@ class Amortexa_Settings {
 			'currency_symbol'       => array(
 				'section'     => 'amortexa_currency',
 				'type'        => 'text',
-				'label'       => __( 'Currency symbol', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Shown next to every calculated amount. Up to 8 characters.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Currency symbol', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Shown next to every calculated amount. Up to 8 characters.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
 					'maxlength' => 8,
 					'class'     => 'small-text',
@@ -88,15 +88,15 @@ class Amortexa_Settings {
 			'currency_position'     => array(
 				'section'     => 'amortexa_currency',
 				'type'        => 'select',
-				'label'       => __( 'Symbol position', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Which side of the amount the symbol sits on. Each block can change it later.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Symbol position', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Which side of the amount the symbol sits on. Each block can change it later.', 'amortexa-mortgage-calculator' ),
 				'options'     => 'amortexa_get_currency_positions',
 			),
 			'decimal_precision'     => array(
 				'section'     => 'amortexa_currency',
 				'type'        => 'number',
-				'label'       => __( 'Decimal places', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Digits shown after the decimal separator, from 0 to 4.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Decimal places', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Digits shown after the decimal separator, from 0 to 4.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
 					'min'  => 0,
 					'max'  => 4,
@@ -107,8 +107,8 @@ class Amortexa_Settings {
 			'default_loan_amount'   => array(
 				'section'     => 'amortexa_loan',
 				'type'        => 'number',
-				'label'       => __( 'Loan amount', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Pre-filled amount for a newly inserted calculator.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Loan amount', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Pre-filled amount for a newly inserted calculator.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
 					'min'  => 0,
 					'step' => 'any',
@@ -118,8 +118,8 @@ class Amortexa_Settings {
 			'default_down_payment'  => array(
 				'section'     => 'amortexa_loan',
 				'type'        => 'number',
-				'label'       => __( 'Down payment', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Pre-filled down payment. Interest is charged on the financed principal only.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Down payment', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Pre-filled down payment. Interest is charged on the financed principal only.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
 					'min'  => 0,
 					'step' => 'any',
@@ -129,9 +129,9 @@ class Amortexa_Settings {
 			'default_loan_term'     => array(
 				'section'     => 'amortexa_loan',
 				'type'        => 'number',
-				'label'       => __( 'Loan term', AMORTEXA_TEXT_DOMAIN ),
-				'suffix'      => __( 'years', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Term in years, from 1 to 60.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Loan term', 'amortexa-mortgage-calculator' ),
+				'suffix'      => __( 'years', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Term in years, from 1 to 60.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
 					'min'  => 1,
 					'max'  => 60,
@@ -142,9 +142,9 @@ class Amortexa_Settings {
 			'default_interest_rate' => array(
 				'section'     => 'amortexa_loan',
 				'type'        => 'number',
-				'label'       => __( 'Interest rate', AMORTEXA_TEXT_DOMAIN ),
-				'suffix'      => __( '% per year', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Annual rate used for new calculators, from 0 to 100.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Interest rate', 'amortexa-mortgage-calculator' ),
+				'suffix'      => __( '% per year', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Annual rate used for new calculators, from 0 to 100.', 'amortexa-mortgage-calculator' ),
 				'input'       => array(
 					'min'  => 0,
 					'max'  => 100,
@@ -155,28 +155,28 @@ class Amortexa_Settings {
 			'enable_amortization'   => array(
 				'section'     => 'amortexa_loan',
 				'type'        => 'checkbox',
-				'label'       => __( 'Include the amortization table', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Adds the year-by-year schedule to new calculators.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Include the amortization table', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Adds the year-by-year schedule to new calculators.', 'amortexa-mortgage-calculator' ),
 			),
 			'default_theme'         => array(
 				'section'     => 'amortexa_appearance',
 				'type'        => 'select',
-				'label'       => __( 'Skin', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Colour scheme applied to new calculators. Each block can change it later.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Skin', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Colour scheme applied to new calculators. Each block can change it later.', 'amortexa-mortgage-calculator' ),
 				'options'     => 'amortexa_get_skins',
 			),
 			'default_chart_type'    => array(
 				'section'     => 'amortexa_appearance',
 				'type'        => 'select',
-				'label'       => __( 'Charts', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Which charts new calculators start with.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Charts', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Which charts new calculators start with.', 'amortexa-mortgage-calculator' ),
 				'options'     => 'amortexa_get_chart_types',
 			),
 			'default_layout'        => array(
 				'section'     => 'amortexa_appearance',
 				'type'        => 'select',
-				'label'       => __( 'Layout', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Split places the inputs beside the results on wide screens and stacks them on narrow ones.', AMORTEXA_TEXT_DOMAIN ),
+				'label'       => __( 'Layout', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Split places the inputs beside the results on wide screens and stacks them on narrow ones.', 'amortexa-mortgage-calculator' ),
 				'options'     => 'amortexa_get_layouts',
 			),
 		);
@@ -190,16 +190,16 @@ class Amortexa_Settings {
 	private function get_sections() {
 		return array(
 			'amortexa_currency'    => array(
-				'title'       => __( 'Currency and formatting', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'How amounts are written across every calculator on the site.', AMORTEXA_TEXT_DOMAIN ),
+				'title'       => __( 'Currency and formatting', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'How amounts are written across every calculator on the site.', 'amortexa-mortgage-calculator' ),
 			),
 			'amortexa_loan'        => array(
-				'title'       => __( 'Loan defaults', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'The figures a brand new calculator block starts with.', AMORTEXA_TEXT_DOMAIN ),
+				'title'       => __( 'Loan defaults', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'The figures a brand new calculator block starts with.', 'amortexa-mortgage-calculator' ),
 			),
 			'amortexa_appearance'  => array(
-				'title'       => __( 'Appearance', AMORTEXA_TEXT_DOMAIN ),
-				'description' => __( 'Default skin and chart selection for new calculators.', AMORTEXA_TEXT_DOMAIN ),
+				'title'       => __( 'Appearance', 'amortexa-mortgage-calculator' ),
+				'description' => __( 'Default skin and chart selection for new calculators.', 'amortexa-mortgage-calculator' ),
 			),
 		);
 	}
@@ -238,15 +238,15 @@ class Amortexa_Settings {
 	private function get_reference_tabs() {
 		return array(
 			'amortexa_shortcode' => array(
-				'title'        => __( 'Shortcode', AMORTEXA_TEXT_DOMAIN ),
-				'description'  => __( 'Add the calculator to any post, page, or widget area without using the block editor.', AMORTEXA_TEXT_DOMAIN ),
+				'title'        => __( 'Shortcode', 'amortexa-mortgage-calculator' ),
+				'description'  => __( 'Add the calculator to any post, page, or widget area without using the block editor.', 'amortexa-mortgage-calculator' ),
 				'icon'         => 'shortcode',
 				'section'      => '',
 				'render'       => 'render_shortcode_reference',
 			),
 			'amortexa_api'       => array(
-				'title'        => __( 'Developer API', AMORTEXA_TEXT_DOMAIN ),
-				'description'  => __( 'Run the same mortgage arithmetic from your own theme, plugin, or headless front end.', AMORTEXA_TEXT_DOMAIN ),
+				'title'        => __( 'Developer API', 'amortexa-mortgage-calculator' ),
+				'description'  => __( 'Run the same mortgage arithmetic from your own theme, plugin, or headless front end.', 'amortexa-mortgage-calculator' ),
 				'icon'         => 'api',
 				'section'      => '',
 				'render'       => 'render_api_reference',
@@ -372,7 +372,9 @@ class Amortexa_Settings {
 
 			case 'number':
 				echo '<div class="amortexa-settings__input-group">';
-				printf( '<input type="number" id="%1$s" name="%2$s" value="%3$s" %4$s />', esc_attr( $id ), esc_attr( $name ), esc_attr( (string) $value ), $this->build_input_attributes( $field ) );
+				printf( '<input type="number" id="%1$s" name="%2$s" value="%3$s"', esc_attr( $id ), esc_attr( $name ), esc_attr( (string) $value ) );
+				$this->print_input_attributes( $field );
+				echo ' />';
 				if ( ! empty( $field['suffix'] ) ) {
 					printf( '<span class="amortexa-settings__suffix-badge">%s</span>', esc_html( $field['suffix'] ) );
 				}
@@ -380,12 +382,31 @@ class Amortexa_Settings {
 				break;
 
 			default:
-				printf( '<input type="text" id="%1$s" name="%2$s" value="%3$s" %4$s />', esc_attr( $id ), esc_attr( $name ), esc_attr( (string) $value ), $this->build_input_attributes( $field ) );
+				printf( '<input type="text" id="%1$s" name="%2$s" value="%3$s"', esc_attr( $id ), esc_attr( $name ), esc_attr( (string) $value ) );
+				$this->print_input_attributes( $field );
+				echo ' />';
 				break;
 		}
 
 		if ( ! empty( $field['description'] ) ) {
 			printf( '<p class="description amortexa-settings__field-desc">%s</p>', esc_html( $field['description'] ) );
+		}
+	}
+
+	/**
+	 * Prints the extra DOM attributes a field definition asks for.
+	 *
+	 * Each attribute is escaped as it is printed rather than the finished
+	 * string being escaped once at the call site: the definition supplies both
+	 * the attribute names and their values, and escaping a joined string would
+	 * mangle the quotes that make it valid markup.
+	 *
+	 * @param array<string,mixed> $field Field definition.
+	 * @return void
+	 */
+	private function print_input_attributes( $field ) {
+		foreach ( (array) ( $field['input'] ?? array() ) as $key => $value ) {
+			echo ' ' . esc_attr( $key ) . '="' . esc_attr( (string) $value ) . '"';
 		}
 	}
 
@@ -397,26 +418,6 @@ class Amortexa_Settings {
 	 */
 	private function get_field_id( $key ) {
 		return 'amortexa-' . str_replace( '_', '-', $key );
-	}
-
-	/**
-	 * Builds the HTML attribute string for an input from its field definition.
-	 *
-	 * @param array<string,mixed> $field Field definition.
-	 * @return string Escaped attribute string.
-	 */
-	private function build_input_attributes( $field ) {
-		$attributes = '';
-
-		foreach ( (array) ( $field['input'] ?? array() ) as $key => $value ) {
-			$attributes .= sprintf(
-				' %s="%s"',
-				esc_attr( $key ),
-				esc_attr( (string) $value )
-			);
-		}
-
-		return $attributes;
 	}
 
 	/**
@@ -544,18 +545,18 @@ class Amortexa_Settings {
 								<span class="amortexa-settings__version-badge"><?php echo esc_html( 'v' . AMORTEXA_VERSION ); ?></span>
 							</div>
 							<p class="amortexa-settings__intro">
-								<?php esc_html_e( 'These values are the site-wide defaults. Every new Mortgage Calculator block starts with them, and each block can then be adjusted on its own without affecting the others.', AMORTEXA_TEXT_DOMAIN ); ?>
+								<?php esc_html_e( 'These values are the site-wide defaults. Every new Mortgage Calculator block starts with them, and each block can then be adjusted on its own without affecting the others.', 'amortexa-mortgage-calculator' ); ?>
 							</p>
 						</div>
 					</div>
 					<div class="amortexa-settings__status-pills">
 						<span class="amortexa-pill amortexa-pill--success">
 							<span class="amortexa-pill__dot"></span>
-							<?php esc_html_e( 'Block Active', AMORTEXA_TEXT_DOMAIN ); ?>
+							<?php esc_html_e( 'Block Active', 'amortexa-mortgage-calculator' ); ?>
 						</span>
 						<span class="amortexa-pill amortexa-pill--info">
 							<span class="amortexa-pill__dot"></span>
-							<?php esc_html_e( 'REST API Ready', AMORTEXA_TEXT_DOMAIN ); ?>
+							<?php esc_html_e( 'REST API Ready', 'amortexa-mortgage-calculator' ); ?>
 						</span>
 					</div>
 				</div>
@@ -629,9 +630,9 @@ class Amortexa_Settings {
 								?>
 
 									<div class="amortexa-settings__save-bar">
-									<?php submit_button( __( 'Save Changes', AMORTEXA_TEXT_DOMAIN ), 'primary', 'submit', false ); ?>
+									<?php submit_button( __( 'Save Changes', 'amortexa-mortgage-calculator' ), 'primary', 'submit', false ); ?>
 									<span class="amortexa-settings__save-note">
-										<?php esc_html_e( 'Saved defaults immediately apply to all newly inserted calculators.', AMORTEXA_TEXT_DOMAIN ); ?>
+										<?php esc_html_e( 'Saved defaults immediately apply to all newly inserted calculators.', 'amortexa-mortgage-calculator' ); ?>
 									</span>
 								</div>
 							</form>
@@ -683,12 +684,12 @@ class Amortexa_Settings {
 	 */
 	private function render_copy_button( $text ) {
 		?>
-		<button type="button" class="amortexa-copy-btn" data-clipboard-text="<?php echo esc_attr( $text ); ?>" title="<?php esc_attr_e( 'Copy to clipboard', AMORTEXA_TEXT_DOMAIN ); ?>">
+		<button type="button" class="amortexa-copy-btn" data-clipboard-text="<?php echo esc_attr( $text ); ?>" title="<?php esc_attr_e( 'Copy to clipboard', 'amortexa-mortgage-calculator' ); ?>">
 			<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
 				<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
 				<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
 			</svg>
-			<span class="amortexa-copy-btn__text"><?php esc_html_e( 'Copy', AMORTEXA_TEXT_DOMAIN ); ?></span>
+			<span class="amortexa-copy-btn__text"><?php esc_html_e( 'Copy', 'amortexa-mortgage-calculator' ); ?></span>
 		</button>
 		<?php
 	}
@@ -779,7 +780,7 @@ class Amortexa_Settings {
 		?>
 		<div class="amortexa-settings__reference" data-amortexa-shortcode>
 			<p class="amortexa-settings__card-text">
-				<?php esc_html_e( 'Paste the calculator into any post, page, or widget area:', AMORTEXA_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'Paste the calculator into any post, page, or widget area:', 'amortexa-mortgage-calculator' ); ?>
 			</p>
 			<div class="amortexa-settings__code-box">
 				<code class="amortexa-settings__code"><?php echo esc_html( $plain ); ?></code>
@@ -787,10 +788,10 @@ class Amortexa_Settings {
 			</div>
 
 			<h3 class="amortexa-settings__subheading">
-				<?php esc_html_e( 'Attributes accept the values below', AMORTEXA_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'Attributes accept the values below', 'amortexa-mortgage-calculator' ); ?>
 			</h3>
 			<p class="amortexa-settings__card-text">
-				<?php esc_html_e( 'Attribute names are lowercase and values are wrapped in quotes. Change any field to rebuild the shortcode; clear a field to leave the attribute out and use the site default instead.', AMORTEXA_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'Attribute names are lowercase and values are wrapped in quotes. Change any field to rebuild the shortcode; clear a field to leave the attribute out and use the site default instead.', 'amortexa-mortgage-calculator' ); ?>
 			</p>
 
 			<div class="amortexa-settings__api-grid">
@@ -811,9 +812,9 @@ class Amortexa_Settings {
 								id="<?php echo esc_attr( $field_id ); ?>"
 								data-shortcode-param="<?php echo esc_attr( $attr ); ?>"
 							>
-								<option value=""><?php esc_html_e( 'default', AMORTEXA_TEXT_DOMAIN ); ?></option>
-								<option value="true"><?php esc_html_e( 'true', AMORTEXA_TEXT_DOMAIN ); ?></option>
-								<option value="false"><?php esc_html_e( 'false', AMORTEXA_TEXT_DOMAIN ); ?></option>
+								<option value=""><?php esc_html_e( 'default', 'amortexa-mortgage-calculator' ); ?></option>
+								<option value="true"><?php esc_html_e( 'true', 'amortexa-mortgage-calculator' ); ?></option>
+								<option value="false"><?php esc_html_e( 'false', 'amortexa-mortgage-calculator' ); ?></option>
 							</select>
 						<?php elseif ( 'select' === $control['kind'] ) : ?>
 							<select
@@ -821,7 +822,7 @@ class Amortexa_Settings {
 								id="<?php echo esc_attr( $field_id ); ?>"
 								data-shortcode-param="<?php echo esc_attr( $attr ); ?>"
 							>
-								<option value=""><?php esc_html_e( 'default', AMORTEXA_TEXT_DOMAIN ); ?></option>
+								<option value=""><?php esc_html_e( 'default', 'amortexa-mortgage-calculator' ); ?></option>
 								<?php foreach ( $control['options'] as $option_value => $option_label ) : ?>
 									<option
 										value="<?php echo esc_attr( (string) $option_value ); ?>"
@@ -849,7 +850,7 @@ class Amortexa_Settings {
 			</div>
 
 			<h3 class="amortexa-settings__subheading">
-				<?php esc_html_e( 'Sample shortcode', AMORTEXA_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'Sample shortcode', 'amortexa-mortgage-calculator' ); ?>
 			</h3>
 			<div class="amortexa-settings__code-box">
 				<code class="amortexa-settings__code amortexa-settings__code--pre" data-shortcode-request></code>
@@ -870,27 +871,27 @@ class Amortexa_Settings {
 		$endpoint = rest_url( Amortexa_REST::NAMESPACE_V1 . '/calculate' );
 		$params   = array(
 			'amount'        => array(
-				'type'    => __( 'number', AMORTEXA_TEXT_DOMAIN ),
-				'meta'    => __( 'required', AMORTEXA_TEXT_DOMAIN ),
-				'summary' => __( 'Total amount being financed.', AMORTEXA_TEXT_DOMAIN ),
+				'type'    => __( 'number', 'amortexa-mortgage-calculator' ),
+				'meta'    => __( 'required', 'amortexa-mortgage-calculator' ),
+				'summary' => __( 'Total amount being financed.', 'amortexa-mortgage-calculator' ),
 				'input'   => array(
 					'value' => 350000,
 					'min'   => 0,
 				),
 			),
 			'down_payment'  => array(
-				'type'    => __( 'number', AMORTEXA_TEXT_DOMAIN ),
-				'meta'    => __( 'optional, default 0', AMORTEXA_TEXT_DOMAIN ),
-				'summary' => __( 'Paid up front. Interest is charged on the remainder.', AMORTEXA_TEXT_DOMAIN ),
+				'type'    => __( 'number', 'amortexa-mortgage-calculator' ),
+				'meta'    => __( 'optional, default 0', 'amortexa-mortgage-calculator' ),
+				'summary' => __( 'Paid up front. Interest is charged on the remainder.', 'amortexa-mortgage-calculator' ),
 				'input'   => array(
 					'value' => 0,
 					'min'   => 0,
 				),
 			),
 			'interest_rate' => array(
-				'type'    => __( 'number', AMORTEXA_TEXT_DOMAIN ),
-				'meta'    => __( 'optional, default 0', AMORTEXA_TEXT_DOMAIN ),
-				'summary' => __( 'Annual rate as a percentage, up to 100.', AMORTEXA_TEXT_DOMAIN ),
+				'type'    => __( 'number', 'amortexa-mortgage-calculator' ),
+				'meta'    => __( 'optional, default 0', 'amortexa-mortgage-calculator' ),
+				'summary' => __( 'Annual rate as a percentage, up to 100.', 'amortexa-mortgage-calculator' ),
 				'input'   => array(
 					'value' => 0,
 					'min'   => 0,
@@ -898,9 +899,9 @@ class Amortexa_Settings {
 				),
 			),
 			'term_years'    => array(
-				'type'    => __( 'integer', AMORTEXA_TEXT_DOMAIN ),
-				'meta'    => __( 'optional, default 30', AMORTEXA_TEXT_DOMAIN ),
-				'summary' => __( 'Length of the loan in years, from 1 to 60.', AMORTEXA_TEXT_DOMAIN ),
+				'type'    => __( 'integer', 'amortexa-mortgage-calculator' ),
+				'meta'    => __( 'optional, default 30', 'amortexa-mortgage-calculator' ),
+				'summary' => __( 'Length of the loan in years, from 1 to 60.', 'amortexa-mortgage-calculator' ),
 				'input'   => array(
 					'value'  => 30,
 					'min'    => 1,
@@ -909,9 +910,9 @@ class Amortexa_Settings {
 				),
 			),
 			'with_schedule' => array(
-				'type'    => __( 'boolean', AMORTEXA_TEXT_DOMAIN ),
-				'meta'    => __( 'optional, default false', AMORTEXA_TEXT_DOMAIN ),
-				'summary' => __( 'Return the year-by-year amortization schedule alongside the totals.', AMORTEXA_TEXT_DOMAIN ),
+				'type'    => __( 'boolean', 'amortexa-mortgage-calculator' ),
+				'meta'    => __( 'optional, default false', 'amortexa-mortgage-calculator' ),
+				'summary' => __( 'Return the year-by-year amortization schedule alongside the totals.', 'amortexa-mortgage-calculator' ),
 				'input'   => array(
 					'checkbox' => true,
 				),
@@ -922,7 +923,7 @@ class Amortexa_Settings {
 		?>
 		<div class="amortexa-settings__reference">
 			<p class="amortexa-settings__card-text">
-				<?php esc_html_e( 'A stateless endpoint that runs the same arithmetic as the calculator. It stores nothing and returns no private data, so it needs no authentication or nonce.', AMORTEXA_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'A stateless endpoint that runs the same arithmetic as the calculator. It stores nothing and returns no private data, so it needs no authentication or nonce.', 'amortexa-mortgage-calculator' ); ?>
 			</p>
 			<div class="amortexa-settings__code-box">
 				<code class="amortexa-settings__code"><?php echo esc_html( $endpoint_label ); ?></code>
@@ -930,10 +931,10 @@ class Amortexa_Settings {
 			</div>
 
 			<h3 class="amortexa-settings__subheading">
-				<?php esc_html_e( 'Parameters', AMORTEXA_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'Parameters', 'amortexa-mortgage-calculator' ); ?>
 			</h3>
 			<p class="amortexa-settings__card-text">
-				<?php esc_html_e( 'Change any value to rebuild the sample request below.', AMORTEXA_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'Change any value to rebuild the sample request below.', 'amortexa-mortgage-calculator' ); ?>
 			</p>
 
 			<div class="amortexa-settings__api" data-amortexa-api data-endpoint="<?php echo esc_attr( $endpoint ); ?>">
@@ -958,7 +959,7 @@ class Amortexa_Settings {
 										data-api-param="<?php echo esc_attr( $param ); ?>"
 										data-api-boolean="true"
 									/>
-									<span><?php esc_html_e( 'Include the schedule', AMORTEXA_TEXT_DOMAIN ); ?></span>
+									<span><?php esc_html_e( 'Include the schedule', 'amortexa-mortgage-calculator' ); ?></span>
 								</span>
 							<?php else : ?>
 								<input
@@ -982,25 +983,25 @@ class Amortexa_Settings {
 				</div>
 
 				<h3 class="amortexa-settings__subheading">
-					<?php esc_html_e( 'Sample request', AMORTEXA_TEXT_DOMAIN ); ?>
+					<?php esc_html_e( 'Sample request', 'amortexa-mortgage-calculator' ); ?>
 				</h3>
 				<div class="amortexa-settings__code-box">
 					<code class="amortexa-settings__code amortexa-settings__code--pre" data-api-request></code>
 					<?php $this->render_copy_button( '' ); ?>
 				</div>
 				<p class="amortexa-settings__api-warning" hidden>
-					<?php esc_html_e( 'Enter a loan amount to build a request. It is the only required parameter.', AMORTEXA_TEXT_DOMAIN ); ?>
+					<?php esc_html_e( 'Enter a loan amount to build a request. It is the only required parameter.', 'amortexa-mortgage-calculator' ); ?>
 				</p>
 			</div>
 
 			<p class="amortexa-settings__card-text">
-				<?php esc_html_e( 'The response carries principal, monthly_payment, total_paid, total_interest, months, and schedule. The schedule stays empty unless with_schedule is passed. It runs the same calculations as the block, so the amortexa_calculation_result filter applies to responses too.', AMORTEXA_TEXT_DOMAIN ); ?>
+				<?php esc_html_e( 'The response carries principal, monthly_payment, total_paid, total_interest, months, and schedule. The schedule stays empty unless with_schedule is passed. It runs the same calculations as the block, so the amortexa_calculation_result filter applies to responses too.', 'amortexa-mortgage-calculator' ); ?>
 			</p>
 			<p class="amortexa-settings__card-text">
 				<?php
 				printf(
 					/* translators: %d: Requests allowed per minute. */
-					esc_html__( 'Calls are rate limited to %d per minute per client address, after which the endpoint answers 429 with a Retry-After header. Change that with the amortexa_rest_calculate_rate_limit and amortexa_rest_calculate_rate_window filters, or return 0 from the first to switch throttling off. Buckets use the remote address alone, so behind a proxy or CDN supply a trusted client address through the amortexa_rate_limit_client_key filter. Return false from amortexa_rest_calculate_allowed to require authentication instead.', AMORTEXA_TEXT_DOMAIN ),
+					esc_html__( 'Calls are rate limited to %d per minute per client address, after which the endpoint answers 429 with a Retry-After header. Change that with the amortexa_rest_calculate_rate_limit and amortexa_rest_calculate_rate_window filters, or return 0 from the first to switch throttling off. Buckets use the remote address alone, so behind a proxy or CDN supply a trusted client address through the amortexa_rate_limit_client_key filter. Return false from amortexa_rest_calculate_allowed to require authentication instead.', 'amortexa-mortgage-calculator' ),
 					(int) AMORTEXA_RATE_LIMIT_MAX
 				);
 				?>
@@ -1025,15 +1026,15 @@ class Amortexa_Settings {
 						</svg>
 					</span>
 					<h2 class="amortexa-settings__card-title">
-						<?php esc_html_e( 'Help', AMORTEXA_TEXT_DOMAIN ); ?>
+						<?php esc_html_e( 'Help', 'amortexa-mortgage-calculator' ); ?>
 					</h2>
 				</div>
 				<ul class="amortexa-settings__tips-list">
 					<li>
-						<?php esc_html_e( 'Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on.', AMORTEXA_TEXT_DOMAIN ); ?>
+						<?php esc_html_e( 'Insert the block from the block inserter and search for Mortgage Calculator. Each block keeps its own values, so changing the defaults here only affects calculators inserted from now on.', 'amortexa-mortgage-calculator' ); ?>
 					</li>
 					<li>
-						<?php esc_html_e( 'Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar.', AMORTEXA_TEXT_DOMAIN ); ?>
+						<?php esc_html_e( 'Interest is charged on the financed principal only, which is the loan amount minus the down payment. Charts and the amortization table can be switched off per block from the block sidebar.', 'amortexa-mortgage-calculator' ); ?>
 					</li>
 				</ul>
 			</div>

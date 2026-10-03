@@ -129,7 +129,7 @@ class Amortexa_REST {
 		if ( true !== $allowed ) {
 			return new WP_Error(
 				'amortexa_rest_forbidden',
-				esc_html__( 'Calculation requests are not permitted.', AMORTEXA_TEXT_DOMAIN ),
+				esc_html__( 'Calculation requests are not permitted.', 'amortexa-mortgage-calculator' ),
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
@@ -159,7 +159,7 @@ class Amortexa_REST {
 		 */
 		return new WP_Error(
 			'amortexa_rest_rate_limited',
-			esc_html__( 'Too many calculation requests. Please retry shortly.', AMORTEXA_TEXT_DOMAIN ),
+			esc_html__( 'Too many calculation requests. Please retry shortly.', 'amortexa-mortgage-calculator' ),
 			array(
 				'status'      => 429,
 				'retry_after' => max( 1, $current['retry_after'] ),
