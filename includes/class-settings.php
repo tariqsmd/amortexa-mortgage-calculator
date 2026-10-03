@@ -56,15 +56,26 @@ class Amortexa_Settings {
 	}
 
 	/**
-	 * Adds the settings page under the Settings menu.
+	 * Adds the settings page as its own top-level admin menu.
+	 *
+	 * The calculator is a standalone feature with its own screen, reference tabs
+	 * and asset bundle, so it gets a dedicated menu entry rather than being filed
+	 * under Settings. The Settings screen already hosts dozens of unrelated
+	 * options, which buried it.
+	 *
+	 * The option is still registered and saved through the Settings API against
+	 * the same option group, so `settings_fields()` and options.php keep working
+	 * unchanged from a top-level page.
 	 */
 	public function add_page() {
-		add_options_page(
+		add_menu_page(
 			esc_html__( 'Amortexa', 'amortexa-mortgage-calculator' ),
 			esc_html__( 'Amortexa', 'amortexa-mortgage-calculator' ),
 			self::CAPABILITY,
 			self::PAGE_SLUG,
-			array( $this, 'render_page' )
+			array( $this, 'render_page' ),
+			'dashicons-calculator',
+			58
 		);
 	}
 
@@ -426,7 +437,7 @@ class Amortexa_Settings {
 	 * @param string $hook_suffix Current admin page hook suffix.
 	 */
 	public function enqueue_admin_assets( $hook_suffix ) {
-		if ( 'settings_page_' . self::PAGE_SLUG !== $hook_suffix ) {
+		if ( 'toplevel_page_' . self::PAGE_SLUG !== $hook_suffix ) {
 			return;
 		}
 
@@ -797,7 +808,19 @@ class Amortexa_Settings {
 			<div class="amortexa-settings__api-grid">
 				<?php foreach ( $attrs as $attr => $spec ) : ?>
 					<?php
-					$control  = isset( $controls[ $attr ] ) ? $controls[ $attr ] : array( 'kind' => 'text' );
+					/*
+					 * Any attribute without a bespoke control falls back to a text box
+					 * that starts empty, which is what tells the shortcode builder to
+					 * leave that attribute out and defer to the site default. The
+					 * `value` key therefore has to exist even though it is blank, or
+					 * the field below reads an undefined index.
+					 */
+					$control  = isset( $controls[ $attr ] )
+						? $controls[ $attr ]
+						: array(
+							'kind'  => 'text',
+							'value' => '',
+						);
 					$field_id = 'amortexa-shortcode-' . $attr;
 					?>
 					<div class="amortexa-settings__api-field">

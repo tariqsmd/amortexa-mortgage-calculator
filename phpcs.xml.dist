@@ -53,6 +53,12 @@
 		<severity>0</severity>
 	</rule>
 
+	<!-- The plugin bootstrap header is fixed by the maintainer and carries no
+		@package tag, so this sniff is limited to the rest of the codebase. -->
+	<rule ref="Squiz.Commenting.FileComment.MissingPackageTag">
+		<exclude-pattern>amortexa-mortgage-calculator\.php</exclude-pattern>
+	</rule>
+
 	<!-- Minimum WordPress version the plugin supports. -->
 	<config name="minimum_supported_wp_version" value="6.5"/>
 

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Pure helper functions for the Mortgage Calculator block.
  *
@@ -844,7 +844,6 @@ function amortexa_sanitize_attributes( $attributes ) {
 		amortexa_get_panel_keys()
 	);
 
-
 	$positions = array_keys( amortexa_get_currency_positions() );
 
 	if ( isset( $raw['currencyPosition'] ) && in_array( $raw['currencyPosition'], $positions, true ) ) {
@@ -873,9 +872,6 @@ function amortexa_sanitize_attributes( $attributes ) {
 		$color          = sanitize_hex_color( (string) $raw[ $key ] );
 		$colors[ $key ] = $color ? $color : '';
 	}
-
-	$font_families  = array_keys( amortexa_get_font_families() );
-	$font_family    = in_array( $requested_font, $font_families, true ) ? $requested_font : 'inherit';
 
 	/*
 	 * Recurring ownership costs. Each is stored in whatever unit the author chose,
@@ -943,30 +939,30 @@ function amortexa_sanitize_attributes( $attributes ) {
 	}
 
 	$sanitized = array(
-		'loanAmount'        => $loan_amount,
-		'interestRate'      => $interest_rate,
-		'loanTerm'          => $loan_term,
-		'downPayment'       => $down_payment,
-		'currencySymbol'    => $currency_symbol,
-		'currencyPosition'  => $currency_position,
-		'showAmortization'  => amortexa_sanitize_bool(
+		'loanAmount'       => $loan_amount,
+		'interestRate'     => $interest_rate,
+		'loanTerm'         => $loan_term,
+		'downPayment'      => $down_payment,
+		'currencySymbol'   => $currency_symbol,
+		'currencyPosition' => $currency_position,
+		'showAmortization' => amortexa_sanitize_bool(
 			isset( $raw['showAmortization'] ) ? $raw['showAmortization'] : $defaults['showAmortization']
 		),
-		'showCharts'        => amortexa_sanitize_bool(
+		'showCharts'       => amortexa_sanitize_bool(
 			isset( $raw['showCharts'] ) ? $raw['showCharts'] : $defaults['showCharts']
 		),
-		'chartType'         => $chart_type,
-		'layout'            => $layout,
-		'formColumns'       => $form_columns_key,
-		'panelOrder'        => $panel_order,
-		'theme'             => $theme,
-		'showSliders'       => amortexa_sanitize_bool(
+		'chartType'        => $chart_type,
+		'layout'           => $layout,
+		'formColumns'      => $form_columns_key,
+		'panelOrder'       => $panel_order,
+		'theme'            => $theme,
+		'showSliders'      => amortexa_sanitize_bool(
 			isset( $raw['showSliders'] ) ? $raw['showSliders'] : $defaults['showSliders']
 		),
-		'showResults'       => amortexa_sanitize_bool(
+		'showResults'      => amortexa_sanitize_bool(
 			isset( $raw['showResults'] ) ? $raw['showResults'] : $defaults['showResults']
 		),
-		'showCosts'         => amortexa_sanitize_bool(
+		'showCosts'        => amortexa_sanitize_bool(
 			isset( $raw['showCosts'] ) ? $raw['showCosts'] : $defaults['showCosts']
 		),
 	);
