@@ -205,7 +205,7 @@ export default function Preview( {
 			: [
 					{ value: result.principal, color: palette.accent },
 					{ value: result.totalInterest, color: palette.accent2 },
-			  ];
+				];
 
 		if ( donutRef.current ) {
 			donutRef.current.replaceChildren(
@@ -219,11 +219,11 @@ export default function Preview( {
 						? __(
 								'Total Monthly Cost',
 								'amortexa-mortgage-calculator'
-						  )
+							)
 						: __(
 								'Monthly Payment',
 								'amortexa-mortgage-calculator'
-						  ),
+							),
 					centerValue: formatAmount(
 						hasPreviewCosts
 							? result.totalMonthlyCost
@@ -731,7 +731,7 @@ export default function Preview( {
 													: __(
 															'Amount',
 															'amortexa-mortgage-calculator'
-													  ) }
+														) }
 											</button>
 										</div>
 									</div>
@@ -1036,7 +1036,7 @@ export default function Preview( {
 									renderPanel( panel )
 								) }
 							</div>
-					  ) )
+						) )
 					: orderedPanels.map( ( panel ) => renderPanel( panel ) ) }
 				{ multiColumn &&
 					orderedPanels.includes( 'schedule' ) &&

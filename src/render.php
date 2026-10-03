@@ -223,34 +223,12 @@ foreach ( amortexa_get_cost_components() as $component_key => $component ) {
 $show_costs = ! empty( $attrs['showCosts'] ) && count( $breakdown ) > 0;
 
 /*
- * Inline typography for the primary result. Only emitted when the user set a
- * custom size or weight; otherwise the stylesheet's responsive default wins.
- */
-$typography = array();
-
-if ( (float) $attrs['paymentFontSize'] > 0 ) {
-	$typography[] = sprintf( 'font-size:%dpx', (int) $attrs['paymentFontSize'] );
-}
-
-if ( '' !== $attrs['paymentFontWeight'] ) {
-	$typography[] = sprintf( 'font-weight:%s', (string) $attrs['paymentFontWeight'] );
-}
-
-$typography_attr = implode( ';', $typography );
-
-/*
  * Every appearance override, derived from the design token schema, so the
  * frontend and the editor resolve identical values. Empty values mean "use the
  * active skin" and are skipped, which is what keeps skins working until a value
  * is explicitly set.
  */
 $style_vars = amortexa_get_design_css( $attrs );
-
-$font_stack = amortexa_get_font_stack( isset( $attrs['fontFamily'] ) ? (string) $attrs['fontFamily'] : 'inherit' );
-
-if ( '' !== $font_stack ) {
-	$style_vars[] = 'font-family:' . $font_stack;
-}
 
 /*
  * Which panels are on, and in what order. Every panel including the form is
@@ -486,9 +464,6 @@ if ( ! empty( $style_vars ) ) {
 					data-amortexa-bind="monthlyPayment"
 					aria-live="polite"
 					aria-atomic="true"
-					<?php if ( '' !== $typography_attr ) : ?>
-						style="<?php echo esc_attr( $typography_attr ); ?>"
-					<?php endif; ?>
 				>
 					<?php echo esc_html( amortexa_format_amount( $result['monthly_payment'], $symbol, $decimals, $position ) ); ?>
 				</p>

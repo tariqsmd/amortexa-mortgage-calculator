@@ -5,7 +5,7 @@
  * settings page header free of notices that other admin tooling relocates.
  */
 
-/* global navigator, sessionStorage, MutationObserver */
+/* global MutationObserver */
 
 ( function () {
 	'use strict';
@@ -62,7 +62,7 @@
 
 			try {
 				sessionStorage.setItem( STORAGE_KEY, targetId );
-			} catch ( e ) {
+			} catch {
 				// Storage unavailable; continue silently.
 			}
 		}
@@ -115,7 +115,7 @@
 			let stored = null;
 			try {
 				stored = sessionStorage.getItem( STORAGE_KEY );
-			} catch ( e ) {
+			} catch {
 				// Storage unavailable; continue silently.
 			}
 
@@ -181,7 +181,7 @@
 			try {
 				document.execCommand( 'copy' );
 				callback();
-			} catch ( err ) {
+			} catch {
 				// Copy failed gracefully.
 			}
 

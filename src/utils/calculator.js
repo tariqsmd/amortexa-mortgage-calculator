@@ -325,7 +325,7 @@ export function calculateMortgage( attrs ) {
 					loanAmount,
 					attrs.interestRate,
 					months
-			  )
+				)
 			: 0;
 	let pmiMonths = 0;
 
@@ -363,7 +363,7 @@ export function calculateMortgage( attrs ) {
 						principal,
 						attrs.interestRate,
 						attrs.loanTerm
-				  ),
+					),
 	};
 }
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Pure helper functions for the Mortgage Calculator block.
  *
@@ -635,9 +635,6 @@ function amortexa_get_default_attributes() {
 		'hoaFeeUnit'           => 'amount',
 		'pmiUnit'              => 'amount',
 		'otherCostsUnit'       => 'amount',
-		'paymentFontSize'      => 0,
-		'paymentFontWeight'    => '',
-		'fontFamily'           => 'inherit',
 		'accentColor'          => '',
 		'accentAltColor'       => '',
 		'labelColor'           => '',
@@ -847,16 +844,6 @@ function amortexa_sanitize_attributes( $attributes ) {
 		amortexa_get_panel_keys()
 	);
 
-	$payment_font_size = array_key_exists( 'paymentFontSize', $raw ) && is_numeric( $raw['paymentFontSize'] )
-		? amortexa_clamp_float( $raw['paymentFontSize'], 0, 120 )
-		: (float) $defaults['paymentFontSize'];
-
-	$requested_weight    = isset( $raw['paymentFontWeight'] ) && is_scalar( $raw['paymentFontWeight'] )
-		? (string) $raw['paymentFontWeight']
-		: (string) $defaults['paymentFontWeight'];
-	$payment_font_weight = array_key_exists( $requested_weight, amortexa_get_font_weights() ) && '' !== $requested_weight
-		? $requested_weight
-		: '';
 
 	$positions = array_keys( amortexa_get_currency_positions() );
 
@@ -888,9 +875,6 @@ function amortexa_sanitize_attributes( $attributes ) {
 	}
 
 	$font_families  = array_keys( amortexa_get_font_families() );
-	$requested_font = isset( $raw['fontFamily'] ) && is_scalar( $raw['fontFamily'] )
-		? (string) $raw['fontFamily']
-		: (string) $defaults['fontFamily'];
 	$font_family    = in_array( $requested_font, $font_families, true ) ? $requested_font : 'inherit';
 
 	/*
@@ -975,8 +959,6 @@ function amortexa_sanitize_attributes( $attributes ) {
 		'layout'            => $layout,
 		'formColumns'       => $form_columns_key,
 		'panelOrder'        => $panel_order,
-		'paymentFontSize'   => $payment_font_size,
-		'paymentFontWeight' => $payment_font_weight,
 		'theme'             => $theme,
 		'showSliders'       => amortexa_sanitize_bool(
 			isset( $raw['showSliders'] ) ? $raw['showSliders'] : $defaults['showSliders']
@@ -987,7 +969,6 @@ function amortexa_sanitize_attributes( $attributes ) {
 		'showCosts'         => amortexa_sanitize_bool(
 			isset( $raw['showCosts'] ) ? $raw['showCosts'] : $defaults['showCosts']
 		),
-		'fontFamily'        => $font_family,
 	);
 
 	foreach ( $costs as $cost_key => $cost_value ) {

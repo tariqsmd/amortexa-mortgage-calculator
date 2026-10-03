@@ -85,17 +85,17 @@
 		},
 		"chartType": {
 			"type": "string",
-			"default": "donut",
+			"default": "both",
 			"enum": [ "donut", "line", "bar", "dots", "both" ]
 		},
 		"layout": {
 			"type": "string",
-			"default": "aside",
+			"default": "split",
 			"enum": [ "stacked", "split", "aside", "chart-aside" ]
 		},
 		"formColumns": {
 			"type": "string",
-			"default": "compact",
+			"default": "wide",
 			"enum": [ "wide", "compact" ]
 		},
 		"panelOrder": {
@@ -146,30 +146,16 @@
 		},
 		"showAmortization": {
 			"type": "boolean",
-			"default": false
-		},
-		"showCharts": {
-			"type": "boolean",
 			"default": true
 		},
-		"paymentFontSize": {
-			"type": "number",
-			"default": 0
-		},
-		"paymentFontWeight": {
-			"type": "string",
-			"default": "",
-			"enum": [ "", "300", "400", "500", "600", "700", "800" ]
-		},
-		"fontFamily": {
-			"type": "string",
-			"default": "inherit",
-			"enum": [ "inherit", "sans", "serif", "mono" ]
-		},
-		"accentColor": {
-			"type": "string",
-			"default": ""
-		},
+	"showCharts": {
+		"type": "boolean",
+		"default": true
+	},
+	"accentColor": {
+		"type": "string",
+		"default": ""
+	},
 		"accentAltColor": {
 			"type": "string",
 			"default": ""

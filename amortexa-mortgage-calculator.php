@@ -1,25 +1,17 @@
 <?php
 /**
- * Amortexa
- *
- * @package           Amortexa
- * @author            Muhammad Tariq
- * @copyright         2026 Muhammad Tariq
- * @license           GPL-2.0-or-later
- *
- * @wordpress-plugin
  * Plugin Name:       Amortexa Mortgage Calculator
  * Plugin URI:        https://wordpress.org/plugins/amortexa-mortgage-calculator/
  * Description:       An interactive mortgage calculator block with live payment results, down payment, recurring costs, charts, and an amortization schedule.
- * Version:           1.0.0
- * Requires at least: 6.5
- * Requires PHP:      7.4
  * Author:            Muhammad Tariq
  * Author URI:        https://profiles.wordpress.org/mtariqsmd/
+ * License:           GPLv2 or later
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Version:           1.0.0
+ * Requires at least: 6.8
+ * Requires PHP:      7.4
  * Text Domain:       amortexa-mortgage-calculator
  * Domain Path:       /languages
- * License:           GPL-2.0-or-later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

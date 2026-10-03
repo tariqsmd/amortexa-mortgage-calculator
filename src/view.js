@@ -471,7 +471,7 @@ function renderCharts( root, values, config, result ) {
 			: [
 					{ value: result.principal, color: palette.accent },
 					{ value: result.totalInterest, color: palette.accent2 },
-			  ];
+				];
 
 		const centerValue = costSeries
 			? result.totalMonthlyCost
@@ -504,11 +504,11 @@ function renderCharts( root, values, config, result ) {
 						label: item.label,
 						color: item.color,
 						key: item.key,
-				  } ) )
+					} ) )
 				: [
 						{ label: labels.principal, color: palette.accent },
 						{ label: labels.totalInt, color: palette.accent2 },
-				  ]
+					]
 		);
 	}
 
@@ -684,7 +684,7 @@ function initializeCalculator( root ) {
 
 	try {
 		config = JSON.parse( root.dataset.amortexaConfig || '{}' );
-	} catch ( error ) {
+	} catch {
 		config = {};
 	}
 

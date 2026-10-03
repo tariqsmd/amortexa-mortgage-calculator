@@ -188,6 +188,7 @@ function amortexa_get_design_tokens() {
 	$tokens[] = amortexa_color_token( 'rootBg', '--amortexa-bg', __( 'Background', 'amortexa-mortgage-calculator' ) );
 	$tokens[] = amortexa_color_token( 'rootText', '--amortexa-text', __( 'Text', 'amortexa-mortgage-calculator' ) );
 	$tokens[] = amortexa_color_token( 'rootBorder', '--amortexa-border', __( 'Border', 'amortexa-mortgage-calculator' ) );
+	$tokens[] = amortexa_select_token( 'rootFamily', '--amortexa-font-family', __( 'Font family', 'amortexa-mortgage-calculator' ), 'families' );
 	$tokens[] = amortexa_length_token( 'rootRadius', '--amortexa-radius', __( 'Corner radius', 'amortexa-mortgage-calculator' ), 64 );
 	$tokens[] = amortexa_spacing_token( 'rootPadding', '--amortexa-padding', __( 'Padding', 'amortexa-mortgage-calculator' ), 120 );
 
@@ -306,7 +307,7 @@ function amortexa_get_design_groups() {
 		'root'   => array(
 			'label'   => __( 'Calculator', 'amortexa-mortgage-calculator' ),
 			'summary' => __( 'The card that wraps the whole block.', 'amortexa-mortgage-calculator' ),
-			'tokens'  => array( 'rootBg', 'rootText', 'rootBorder', 'rootRadius', 'rootPadding' ),
+			'tokens'  => array( 'rootBg', 'rootText', 'rootBorder', 'rootFamily', 'rootRadius', 'rootPadding' ),
 		),
 		'panel'  => array(
 			'label'   => __( 'Panels', 'amortexa-mortgage-calculator' ),

@@ -35,8 +35,6 @@ export default function Edit( { attributes, setAttributes } ) {
 		layout,
 		formColumns,
 		fontFamily,
-		paymentFontSize,
-		paymentFontWeight,
 		propertyTax,
 		propertyTaxUnit,
 		homeInsurance,
@@ -136,14 +134,6 @@ export default function Edit( { attributes, setAttributes } ) {
 	);
 
 	const paymentTypography = {};
-
-	if ( Number( paymentFontSize ) > 0 ) {
-		paymentTypography.fontSize = `${ Number( paymentFontSize ) }px`;
-	}
-
-	if ( paymentFontWeight ) {
-		paymentTypography.fontWeight = paymentFontWeight;
-	}
 
 	return (
 		<>

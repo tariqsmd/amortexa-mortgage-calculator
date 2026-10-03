@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Block inspector controls.
  *
  * Every attribute declared in block.json is editable here. Option lists come from
@@ -25,7 +25,6 @@ import {
 	getFormColumns,
 	getFontFamilies,
 	getFontStacks,
-	getFontWeights,
 	getLayouts,
 	getSiteDefaults,
 	getSkins,
@@ -212,7 +211,7 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 							help={
 								field.help ||
 								__(
-									'Inherited from Settings → Amortexa.',
+									'Inherited from Settings â†’ Amortexa.',
 									'amortexa-mortgage-calculator'
 								)
 							}
@@ -575,71 +574,6 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 					</BaseControl>
 				</PanelBody>
 
-				<PanelBody
-					title={ __( 'Typography', 'amortexa-mortgage-calculator' ) }
-					initialOpen={ false }
-				>
-					<SelectControl
-						__nextHasNoMarginBottom
-						label={ __(
-							'Font Family',
-							'amortexa-mortgage-calculator'
-						) }
-						value={
-							getFontFamilies().some(
-								( option ) =>
-									option.value === attributes.fontFamily
-							)
-								? attributes.fontFamily
-								: 'inherit'
-						}
-						options={ getFontFamilies() }
-						onChange={ setSelect( 'fontFamily' ) }
-					/>
-
-					<TextControl
-						__nextHasNoMarginBottom
-						type="number"
-						label={ __(
-							'Payment Font Size',
-							'amortexa-mortgage-calculator'
-						) }
-						help={ __(
-							'In pixels. Use 0 for the skin default.',
-							'amortexa-mortgage-calculator'
-						) }
-						value={ String(
-							Number( attributes.paymentFontSize ) || 0
-						) }
-						min={ 0 }
-						max={ 120 }
-						onChange={ ( value ) =>
-							setAttributes( {
-								paymentFontSize: parseFloat( value ) || 0,
-							} )
-						}
-					/>
-
-					<SelectControl
-						__nextHasNoMarginBottom
-						label={ __(
-							'Payment Font Weight',
-							'amortexa-mortgage-calculator'
-						) }
-						value={
-							getFontWeights().some(
-								( option ) =>
-									option.value ===
-									attributes.paymentFontWeight
-							)
-								? attributes.paymentFontWeight
-								: ''
-						}
-						options={ getFontWeights() }
-						onChange={ setSelect( 'paymentFontWeight' ) }
-					/>
-				</PanelBody>
-
 				{ Object.keys( defaults ).length > 0 && (
 					<PanelBody
 						title={ __(
@@ -664,7 +598,7 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 								}
 							>
 								{ __(
-									'Reset to Site Defaults',
+									'Reset calculator settings',
 									'amortexa-mortgage-calculator'
 								) }
 							</Button>

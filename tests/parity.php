@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Cross-language math parity test for the Mortgage Calculator block.
  *
@@ -1454,9 +1454,6 @@ function amortexa_test_settings_and_shortcode() {
 		 * layout; it cannot sensibly reproduce a design token map.
 		 */
 		'design'                => 'style is set through the Design tab tokens',
-		'paymentFontSize'       => 'typography is set through the Design tab',
-		'paymentFontWeight'     => 'typography is set through the Design tab',
-		'fontFamily'            => 'typography is set through the Design tab',
 		'accentColor'           => 'colours are set through the Design tab',
 		'accentAltColor'        => 'colours are set through the Design tab',
 		'labelColor'            => 'colours are set through the Design tab',
@@ -1683,14 +1680,10 @@ function amortexa_test_input_guards() {
 	$attrs = amortexa_sanitize_attributes( array( 'currencySymbol' => array( 'a' ) ) );
 	$report( '$' === $attrs['currencySymbol'], 'an array posted for the currency symbol falls back to the default' );
 
-	$attrs = amortexa_sanitize_attributes( array( 'fontFamily' => array( 'mono' ) ) );
-	$report( 'inherit' === $attrs['fontFamily'], 'an array posted for the font family falls back to inherit' );
 
 	$attrs = amortexa_sanitize_attributes( array( 'accentColor' => array( '#fff' ) ) );
 	$report( '' === $attrs['accentColor'], 'an array posted for a colour override falls back to the skin value' );
 
-	$attrs = amortexa_sanitize_attributes( array( 'paymentFontWeight' => array( '700' ) ) );
-	$report( '' === $attrs['paymentFontWeight'], 'an array posted for the font weight falls back to auto' );
 
 	// Block booleans stored as strings must not be read as truthy noise.
 	$attrs = amortexa_sanitize_attributes( array( 'showCharts' => 'false' ) );
@@ -3004,9 +2997,6 @@ function amortexa_test_attribute_effects() {
 		'showCosts'         => array( true, 'amortexa-calc__costs' ),
 		'layout'            => array( 'stacked', 'amortexa-calc__grid--stacked' ),
 		'formColumns'       => array( 'compact', 'amortexa-calc--form-columns-compact' ),
-		'paymentFontSize'   => array( 41, 'font-size:41px' ),
-		'paymentFontWeight' => array( 700, 'font-weight:700' ),
-		'fontFamily'        => array( 'serif', 'font-family' ),
 		'propertyTax'       => array( 2.5, '2.5' ),
 	);
 
@@ -3103,3 +3093,5 @@ if ( 0 === $exit ) {
 }
 
 exit( $exit > 0 ? 1 : 0 );
+
+

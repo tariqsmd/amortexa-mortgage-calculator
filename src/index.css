@@ -6,16 +6,24 @@
  * file only adds editor-specific affordances on top of it.
  */
 
-/* Identifies the interactive preview inside the editor canvas. */
+/*
+ * Identifies the interactive preview inside the editor canvas.
+ *
+ * Colours come from the same custom properties as the calculator itself, so the
+ * note follows whichever skin is selected instead of staying a fixed light grey
+ * on a dark preview. The literals stay on as fallbacks for the case where the
+ * token is not defined, which keeps the note readable rather than transparent.
+ */
 .amortexa-calc__editor-note,
 .editor-styles-wrapper .amortexa-calc__editor-note {
 	display: block;
 	margin: 0 0 14px;
 	padding: 8px 12px;
 	font-size: 12px;
-	color: #1e1e2f;
-	background-color: #f0f0f5;
-	border-left: 3px solid #3858e9;
+	font-weight: 600;
+	color: var(--amortexa-text, #1e1e2f);
+	background-color: var(--amortexa-field-bg, #f0f0f5);
+	border-left: 3px solid var(--amortexa-accent, #3858e9);
 	border-radius: 4px;
 }
 
