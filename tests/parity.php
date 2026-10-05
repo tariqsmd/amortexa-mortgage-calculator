@@ -3097,6 +3097,153 @@ function amortexa_test_release_packaging() {
 }
 
 /**
+ * Checks that the editor and the front end call a field the same thing.
+ *
+ * The sidebar labels come from src/utils/field-definitions.js and the front-end
+ * labels from the `$fields` array in src/render.php. They are separate programs
+ * with separate transpilers and no shared module, so nothing stopped them from
+ * drifting: at one point the sidebar said "Loan Term" while the page said
+ * "Term (Years)", and both halves looked correct in isolation. An author reading
+ * the sidebar cannot tell the page is naming the same field differently, which
+ * is exactly the sort of thing that gets reported as "the labels look wrong"
+ * with no way to reproduce it.
+ *
+ * The cost labels have the same shape of problem, except their PHP half is
+ * already callable -- amortexa_get_cost_components() -- so it is compared
+ * directly rather than parsed back out of the source.
+ *
+ * @return int Number of failures.
+ */
+function amortexa_test_label_parity() {
+	$failures = 0;
+	$report   = function ( $ok, $message ) use ( &$failures ) {
+		if ( $ok ) {
+			fwrite( STDOUT, "ok   $message\n" );
+		} else {
+			++$failures;
+			fwrite( STDOUT, "FAIL $message\n" );
+		}
+	};
+
+	$root = dirname( __DIR__ );
+
+	/** Reads a shipped source file, failing the check if it cannot be read. */
+	$read = function ( $relative ) use ( $root, $report ) {
+		$path = $root . '/' . $relative;
+
+		if ( ! is_readable( $path ) ) {
+			$report( false, "$relative is readable" );
+
+			return '';
+		}
+
+		return (string) file_get_contents( $path );
+	};
+
+	/** Pulls `key: __( 'Text'` / `'name' => 'key', 'label' => __( 'Text'` pairs. */
+	$pair = function ( $pattern, $source ) {
+		preg_match_all( $pattern, $source, $found, PREG_SET_ORDER );
+
+		$pairs = array();
+
+		foreach ( $found as $match ) {
+			$pairs[ $match[1] ] = $match[2];
+		}
+
+		return $pairs;
+	};
+
+	$fields_js = $read( 'src/utils/field-definitions.js' );
+	$render    = $read( 'src/render.php' );
+
+	$editor = $pair(
+		"/key:\s*'(\w+)',\s*\r?\n\s*label:\s*__\(\s*'([^']+)'/",
+		$fields_js
+	);
+
+	$front = $pair(
+		"/'name'\s*=>\s*'(\w+)',\s*\r?\n\s*'label'\s*=>\s*__\(\s*'([^']+)'/",
+		$render
+	);
+
+	/*
+	 * Four on both sides today. Asserting the count as well as the contents
+	 * means adding a field to one file and not the other fails loudly instead of
+	 * quietly comparing a subset that happens to agree.
+	 */
+	$report( 4 === count( $editor ), sprintf( 'the editor defines four numeric fields (found %d)', count( $editor ) ) );
+	$report( 4 === count( $front ), sprintf( 'the front end renders four numeric fields (found %d)', count( $front ) ) );
+
+	foreach ( array( 'loanAmount', 'downPayment', 'interestRate', 'loanTerm' ) as $key ) {
+		$report(
+			isset( $editor[ $key ], $front[ $key ] ) && $editor[ $key ] === $front[ $key ],
+			sprintf(
+				'the %s field reads the same in the sidebar and on the page ("%s")',
+				$key,
+				isset( $front[ $key ] ) ? $front[ $key ] : 'missing'
+			)
+		);
+	}
+
+	/* Cost labels: the editor's literal table against the PHP descriptor list. */
+	$labels_block = '';
+
+	if ( preg_match( '/const COST_LABELS = \{(.*?)\};/s', $fields_js, $block ) ) {
+		$labels_block = $block[1];
+	}
+
+	$editor_costs = $pair( "/^\s*(\w+):\s*__\(\s*'([^']+)'/m", $labels_block );
+
+	$report( array() !== $editor_costs, 'the editor declares its cost labels as literals' );
+
+	foreach ( amortexa_get_cost_components() as $key => $component ) {
+		/*
+		 * Principal & Interest has no input of its own -- it already has a
+		 * headline -- so the editor table legitimately omits it.
+		 */
+		if ( 'pi' === $key ) {
+			$report(
+				! isset( $editor_costs[ $key ] ),
+				'principal & interest is absent from the editor cost labels, since it has no input'
+			);
+
+			continue;
+		}
+
+		$report(
+			isset( $editor_costs[ $key ] ) && $editor_costs[ $key ] === $component['label'],
+			sprintf( 'the %s cost label matches the PHP descriptor ("%s")', $key, $component['label'] )
+		);
+	}
+
+	/*
+	 * Every translatable string the front end emits travels through render.php,
+	 * so a double-encoded character there reaches both the page and the
+	 * translation template. The build once shipped "Settings â†' Amortexa"
+	 * because a UTF-8 arrow was read as latin1 and written back out as UTF-8.
+	 *
+	 * Correctly-encoded non-ASCII in this codebase stays above U+00FF (an em
+	 * dash, a euro sign, the disclosure triangles), so anything in U+0080-U+00FF
+	 * is a mojibake lead byte. Checking the range rather than the one string
+	 * that broke catches the next occurrence of the same mistake.
+	 */
+	$mojibake = '/[\x{0080}-\x{00FF}]/u';
+
+	foreach ( array( 'src/render.php', 'src/utils/field-definitions.js', 'src/components/inspector-controls.js' ) as $file ) {
+		$report(
+			1 !== preg_match( $mojibake, $read( $file ) ),
+			"$file contains no double-encoded characters"
+		);
+	}
+
+	if ( 0 === $failures ) {
+		fwrite( STDOUT, "ok   the sidebar and the page name every field the same way\n" );
+	}
+
+	return $failures;
+}
+
+/**
  * Checks that every setting the editor writes changes the front-end markup.
  *
  * The editor reads block attributes straight out of JS, so a control looks
@@ -3231,7 +3378,7 @@ function amortexa_test_attribute_effects() {
 	return $failures;
 }
 
-$exit = amortexa_test_parity() + amortexa_test_design_schema() + amortexa_test_settings_and_shortcode() + amortexa_test_input_guards() + amortexa_test_rate_limit() + amortexa_test_costs() + amortexa_test_version_consistency() + amortexa_test_ssr() + amortexa_test_release_packaging() + amortexa_test_attribute_effects();
+$exit = amortexa_test_parity() + amortexa_test_design_schema() + amortexa_test_settings_and_shortcode() + amortexa_test_input_guards() + amortexa_test_rate_limit() + amortexa_test_costs() + amortexa_test_version_consistency() + amortexa_test_ssr() + amortexa_test_release_packaging() + amortexa_test_label_parity() + amortexa_test_attribute_effects();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

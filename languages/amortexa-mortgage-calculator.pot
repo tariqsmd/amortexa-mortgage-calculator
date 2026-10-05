@@ -232,7 +232,7 @@ msgstr ""
 msgid "required"
 msgstr ""
 
-#: includes/class-settings.php:902, src/utils/field-definitions.js:24
+#: includes/class-settings.php:902, src/utils/field-definitions.js:31
 msgid "Total amount being financed."
 msgstr ""
 
@@ -240,7 +240,7 @@ msgstr ""
 msgid "optional, default 0"
 msgstr ""
 
-#: includes/class-settings.php:911, src/utils/field-definitions.js:37
+#: includes/class-settings.php:911, src/utils/field-definitions.js:44
 msgid "Paid up front. Interest is charged on the remainder."
 msgstr ""
 
@@ -642,23 +642,23 @@ msgstr ""
 msgid "Principal & Interest"
 msgstr ""
 
-#: includes/design-tokens.php:272, includes/helpers.php:129, src/utils/field-definitions.js:85
+#: includes/design-tokens.php:272, includes/helpers.php:129, src/utils/field-definitions.js:92
 msgid "Property Tax"
 msgstr ""
 
-#: includes/design-tokens.php:273, includes/helpers.php:134, src/utils/field-definitions.js:86
+#: includes/design-tokens.php:273, includes/helpers.php:134, src/utils/field-definitions.js:93
 msgid "Home Insurance"
 msgstr ""
 
-#: includes/design-tokens.php:274, includes/helpers.php:139, src/utils/field-definitions.js:87
+#: includes/design-tokens.php:274, includes/helpers.php:139, src/utils/field-definitions.js:94
 msgid "HOA Fee"
 msgstr ""
 
-#: includes/design-tokens.php:275, includes/helpers.php:144, src/utils/field-definitions.js:88
+#: includes/design-tokens.php:275, includes/helpers.php:144, src/utils/field-definitions.js:95
 msgid "PMI"
 msgstr ""
 
-#: includes/design-tokens.php:276, includes/helpers.php:149, src/utils/field-definitions.js:89
+#: includes/design-tokens.php:276, includes/helpers.php:149, src/utils/field-definitions.js:96
 msgid "Other Costs"
 msgstr ""
 
@@ -1095,19 +1095,19 @@ msgstr ""
 msgid "Cumulative Interest"
 msgstr ""
 
-#: src/render.php:106, src/utils/field-definitions.js:23
+#: src/render.php:106, src/utils/field-definitions.js:30
 msgid "Loan Amount"
 msgstr ""
 
-#: src/render.php:118, src/utils/field-definitions.js:36
+#: src/render.php:118, src/utils/field-definitions.js:43
 msgid "Down Payment"
 msgstr ""
 
-#: src/render.php:130
+#: src/render.php:130, src/utils/field-definitions.js:56
 msgid "Interest Rate (%)"
 msgstr ""
 
-#: src/render.php:142
+#: src/render.php:142, src/utils/field-definitions.js:70
 msgid "Term (Years)"
 msgstr ""
 
@@ -1185,7 +1185,7 @@ msgid "Calculator Settings"
 msgstr ""
 
 #: src/components/inspector-controls.js:213
-msgid "Inherited from Settings â†’ Amortexa."
+msgid "Inherited from the Amortexa screen."
 msgstr ""
 
 #: src/components/inspector-controls.js:230
@@ -1308,19 +1308,11 @@ msgstr ""
 msgid "Use sidebar settings to change values."
 msgstr ""
 
-#: src/utils/field-definitions.js:49
-msgid "Interest Rate"
-msgstr ""
-
-#: src/utils/field-definitions.js:50
+#: src/utils/field-definitions.js:57
 msgid "Annual rate as a percentage."
 msgstr ""
 
-#: src/utils/field-definitions.js:63
-msgid "Loan Term"
-msgstr ""
-
-#: src/utils/field-definitions.js:64
+#: src/utils/field-definitions.js:71
 msgid "Length of the loan in years."
 msgstr ""
 

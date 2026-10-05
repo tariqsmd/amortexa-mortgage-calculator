@@ -16,6 +16,13 @@ import { COST_COMPONENTS } from './calculator';
  * only, so a visitor can drag through sensible values without the number input
  * rejecting larger legitimate amounts. `sliderMaxFrom` derives the slider's upper
  * bound from another attribute (a down payment can never exceed the loan).
+ *
+ * The labels are byte-identical to the `$fields` array in src/render.php, and
+ * tests/parity.php asserts it. They name the unit even though the `help` text
+ * below already does, because the sidebar is not where an author has to read it
+ * twice to connect "Interest Rate" to the "4.75" sitting next to it on the front
+ * end. One wording everywhere also means the sidebar shows an author exactly
+ * what a visitor will see.
  */
 export const NUMERIC_FIELDS = [
 	{
@@ -46,7 +53,7 @@ export const NUMERIC_FIELDS = [
 	},
 	{
 		key: 'interestRate',
-		label: __( 'Interest Rate', 'amortexa-mortgage-calculator' ),
+		label: __( 'Interest Rate (%)', 'amortexa-mortgage-calculator' ),
 		help: __(
 			'Annual rate as a percentage.',
 			'amortexa-mortgage-calculator'
@@ -60,7 +67,7 @@ export const NUMERIC_FIELDS = [
 	},
 	{
 		key: 'loanTerm',
-		label: __( 'Loan Term', 'amortexa-mortgage-calculator' ),
+		label: __( 'Term (Years)', 'amortexa-mortgage-calculator' ),
 		help: __(
 			'Length of the loan in years.',
 			'amortexa-mortgage-calculator'

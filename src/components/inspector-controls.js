@@ -211,7 +211,7 @@ export default function CalculatorInspector( { attributes, setAttributes } ) {
 							help={
 								field.help ||
 								__(
-									'Inherited from Settings â†’ Amortexa.',
+									'Inherited from the Amortexa screen.',
 									'amortexa-mortgage-calculator'
 								)
 							}
