@@ -240,7 +240,7 @@ msgstr ""
 msgid "optional, default 0"
 msgstr ""
 
-#: includes/class-settings.php:911, src/utils/field-definitions.js:44
+#: includes/class-settings.php:911, src/utils/field-definitions.js:46
 msgid "Paid up front. Interest is charged on the remainder."
 msgstr ""
 
@@ -638,27 +638,27 @@ msgstr ""
 msgid "Title margin"
 msgstr ""
 
-#: includes/design-tokens.php:271, includes/helpers.php:124, src/render.php:76, src/components/preview.js:510
+#: includes/design-tokens.php:271, includes/helpers.php:124, src/render.php:76, src/components/preview.js:519
 msgid "Principal & Interest"
 msgstr ""
 
-#: includes/design-tokens.php:272, includes/helpers.php:129, src/utils/field-definitions.js:92
+#: includes/design-tokens.php:272, includes/helpers.php:129, src/utils/field-definitions.js:152
 msgid "Property Tax"
 msgstr ""
 
-#: includes/design-tokens.php:273, includes/helpers.php:134, src/utils/field-definitions.js:93
+#: includes/design-tokens.php:273, includes/helpers.php:134, src/utils/field-definitions.js:153
 msgid "Home Insurance"
 msgstr ""
 
-#: includes/design-tokens.php:274, includes/helpers.php:139, src/utils/field-definitions.js:94
+#: includes/design-tokens.php:274, includes/helpers.php:139, src/utils/field-definitions.js:154
 msgid "HOA Fee"
 msgstr ""
 
-#: includes/design-tokens.php:275, includes/helpers.php:144, src/utils/field-definitions.js:95
+#: includes/design-tokens.php:275, includes/helpers.php:144, src/utils/field-definitions.js:155
 msgid "PMI"
 msgstr ""
 
-#: includes/design-tokens.php:276, includes/helpers.php:149, src/utils/field-definitions.js:96
+#: includes/design-tokens.php:276, includes/helpers.php:149, src/utils/field-definitions.js:156
 msgid "Other Costs"
 msgstr ""
 
@@ -1035,31 +1035,31 @@ msgstr ""
 msgid "White"
 msgstr ""
 
-#: src/render.php:69, src/components/preview.js:223, src/components/preview.js:750
+#: src/render.php:69, src/components/preview.js:227, src/components/preview.js:759
 msgid "Monthly Payment"
 msgstr ""
 
-#: src/render.php:70, src/components/preview.js:219, src/components/preview.js:840
+#: src/render.php:70, src/components/preview.js:223, src/components/preview.js:849
 msgid "Total Monthly Cost"
 msgstr ""
 
-#: src/render.php:71, src/components/preview.js:304, src/components/preview.js:359, src/components/preview.js:768
+#: src/render.php:71, src/components/preview.js:308, src/components/preview.js:363, src/components/preview.js:777
 msgid "Financed Principal"
 msgstr ""
 
-#: src/render.php:72, src/components/preview.js:311, src/components/preview.js:375, src/components/preview.js:783
+#: src/render.php:72, src/components/preview.js:315, src/components/preview.js:379, src/components/preview.js:792
 msgid "Total Interest"
 msgstr ""
 
-#: src/render.php:73, src/components/preview.js:383, src/components/preview.js:798
+#: src/render.php:73, src/components/preview.js:387, src/components/preview.js:807
 msgid "Total Paid"
 msgstr ""
 
-#: src/render.php:74, src/components/preview.js:858
+#: src/render.php:74, src/components/preview.js:867
 msgid "Total Taxes & Costs"
 msgstr ""
 
-#: src/render.php:75, src/components/preview.js:873
+#: src/render.php:75, src/components/preview.js:882
 msgid "Total Out-of-Pocket"
 msgstr ""
 
@@ -1071,76 +1071,76 @@ msgstr ""
 msgid "Expand schedule"
 msgstr ""
 
-#: src/render.php:79, src/components/preview.js:986
+#: src/render.php:79, src/components/preview.js:995
 msgid "Year"
 msgstr ""
 
-#: src/render.php:80, src/components/preview.js:333, src/components/preview.js:992
+#: src/render.php:80, src/components/preview.js:337, src/components/preview.js:1001
 msgid "Principal Paid"
 msgstr ""
 
-#: src/render.php:81, src/components/preview.js:337, src/components/preview.js:998
+#: src/render.php:81, src/components/preview.js:341, src/components/preview.js:1007
 msgid "Interest Paid"
 msgstr ""
 
-#: src/render.php:82, src/components/preview.js:317, src/components/preview.js:1004
+#: src/render.php:82, src/components/preview.js:321, src/components/preview.js:1013
 msgid "Remaining Balance"
 msgstr ""
 
-#: src/render.php:83, src/components/preview.js:367
+#: src/render.php:83, src/components/preview.js:371
 msgid "Balance After Year 1"
 msgstr ""
 
-#: src/render.php:84, src/components/preview.js:324
+#: src/render.php:84, src/components/preview.js:328
 msgid "Cumulative Interest"
 msgstr ""
 
-#: src/render.php:106, src/utils/field-definitions.js:30
+#: src/render.php:109, src/utils/field-definitions.js:30
 msgid "Loan Amount"
 msgstr ""
 
-#: src/render.php:118, src/utils/field-definitions.js:43
+#: src/render.php:121, src/utils/field-definitions.js:45
 msgid "Down Payment"
 msgstr ""
 
-#: src/render.php:130, src/utils/field-definitions.js:56
+#: src/render.php:133, src/utils/field-definitions.js:58
 msgid "Interest Rate (%)"
 msgstr ""
 
-#: src/render.php:142, src/utils/field-definitions.js:70
+#: src/render.php:145, src/utils/field-definitions.js:78
 msgid "Term (Years)"
 msgstr ""
 
-#: src/render.php:412, src/components/preview.js:672
+#: src/render.php:415, src/components/preview.js:681
 msgid "Taxes & Costs (annual)"
 msgstr ""
 
 #. translators: %s: cost component name.
-#: src/render.php:424
+#: src/render.php:427
 msgid "Toggle %s between a percentage and an amount"
 msgstr ""
 
-#: src/render.php:449, src/components/preview.js:731
+#: src/render.php:452, src/components/preview.js:740
 msgid "Amount"
 msgstr ""
 
-#: src/render.php:543, src/components/preview.js:899
+#: src/render.php:546, src/components/preview.js:908
 msgid "Payment Composition"
 msgstr ""
 
-#: src/render.php:553, src/components/preview.js:918
+#: src/render.php:556, src/components/preview.js:927
 msgid "Balance Over Time"
 msgstr ""
 
-#: src/render.php:563, src/components/preview.js:937
+#: src/render.php:566, src/components/preview.js:946
 msgid "Principal vs Interest by Year"
 msgstr ""
 
-#: src/render.php:573, src/components/preview.js:956
+#: src/render.php:576, src/components/preview.js:965
 msgid "Parameter Comparison"
 msgstr ""
 
-#: src/render.php:608
+#: src/render.php:611
 msgid "Amortization Schedule"
 msgstr ""
 
@@ -1304,15 +1304,15 @@ msgstr ""
 msgid "Reset calculator settings"
 msgstr ""
 
-#: src/components/preview.js:1021
+#: src/components/preview.js:1030
 msgid "Use sidebar settings to change values."
 msgstr ""
 
-#: src/utils/field-definitions.js:57
+#: src/utils/field-definitions.js:59
 msgid "Annual rate as a percentage."
 msgstr ""
 
-#: src/utils/field-definitions.js:71
+#: src/utils/field-definitions.js:79
 msgid "Length of the loan in years."
 msgstr ""
 
