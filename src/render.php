@@ -97,7 +97,10 @@ foreach ( amortexa_get_cost_components() as $component_key => $component ) {
 /*
  * Field metadata drives both the number inputs and their paired range
  * sliders. `smax` values are display bounds for the slider track only — the
- * number inputs keep accepting any valid value.
+ * number inputs keep accepting any valid value, and src/view.js widens a track
+ * that cannot represent the value beside it. These bounds are mirrored in
+ * src/utils/field-definitions.js, which tests/parity.php compares against this
+ * array so the sidebar and the page cannot drift apart.
  */
 $fields = array(
 	array(
@@ -108,7 +111,7 @@ $fields = array(
 		'step'  => 'any',
 		'min'   => '0',
 		'max'   => '',
-		'smin'  => '10000',
+		'smin'  => '0',
 		'smax'  => '2000000',
 		'sstep' => '5000',
 	),
@@ -145,7 +148,7 @@ $fields = array(
 		'min'   => '1',
 		'max'   => '60',
 		'smin'  => '1',
-		'smax'  => '40',
+		'smax'  => '60',
 		'sstep' => '1',
 	),
 );

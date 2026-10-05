@@ -34,7 +34,9 @@ export const NUMERIC_FIELDS = [
 		),
 		min: 0,
 		step: 'any',
-		sliderMin: 10000,
+		/* Starts at 0, not at a round-looking 10000, so a loan below that
+		 * still gets a thumb in the right place rather than pinned left. */
+		sliderMin: 0,
 		sliderMax: 2000000,
 		sliderStep: 5000,
 	},
@@ -62,6 +64,12 @@ export const NUMERIC_FIELDS = [
 		max: 100,
 		step: '0.01',
 		sliderMin: 0,
+		/*
+		 * Deliberately short of the input's max of 100: nobody borrows at 100%
+		 * and a track spanning 0-100 spends its whole width on rates no
+		 * mortgage reaches. sliderBoundsFor() stretches the track to cover a
+		 * larger typed value, so the two ends never disagree.
+		 */
 		sliderMax: 20,
 		sliderStep: 0.05,
 	},
@@ -76,10 +84,62 @@ export const NUMERIC_FIELDS = [
 		max: 60,
 		step: 1,
 		sliderMin: 1,
-		sliderMax: 40,
+		/* Matches the input's max, so every accepted term is reachable by drag. */
+		sliderMax: 60,
 		sliderStep: 1,
 	},
 ];
+
+/**
+ * Returns a slider track that can represent `value`.
+ *
+ * A range input silently clamps its value to min/max, so a track narrower than
+ * the number input beside it does not refuse the value -- it hides it, leaving
+ * the thumb pinned against an end with no indication that a larger or smaller
+ * number is sitting in the input. The reader then has two controls showing
+ * different things, which is the whole reason the paired slider exists.
+ *
+ * So the track is widened to cover the value rather than the value being forced
+ * into the track. The two rules that keep this honest:
+ *
+ * - It only ever widens, never contracts. Shrinking the track back would move
+ *   the thumb while someone is mid-drag.
+ * - A field whose max comes from another attribute (`sliderMaxFrom`) is left
+ *   alone. That bound encodes a real constraint -- a down payment cannot exceed
+ *   the loan -- so it is enforced by clamping the input, not by stretching the
+ *   track until the constraint stops meaning anything.
+ *
+ * Shared by the front end and the editor preview so both agree on where the
+ * thumb belongs.
+ *
+ * @param {Object}        field         Field definition from NUMERIC_FIELDS.
+ * @param {string|number} value         Current value of the paired number input.
+ * @param {number}        [resolvedMax] Slider max when the field derives one.
+ * @return {{min: number, max: number}} Track bounds.
+ */
+export function sliderBoundsFor( field, value, resolvedMax ) {
+	if ( field.sliderMaxFrom ) {
+		return {
+			min: field.sliderMin,
+			max: Number.isFinite( Number( resolvedMax ) )
+				? Number( resolvedMax )
+				: field.sliderMin,
+		};
+	}
+
+	const current = Number( value );
+
+	return {
+		min: Math.min(
+			field.sliderMin,
+			Number.isFinite( current ) ? current : field.sliderMin
+		),
+		max: Math.max(
+			field.sliderMax,
+			Number.isFinite( current ) ? current : field.sliderMin
+		),
+	};
+}
 
 /**
  * Labels for the recurring cost components.

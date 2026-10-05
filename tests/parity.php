@@ -3097,16 +3097,19 @@ function amortexa_test_release_packaging() {
 }
 
 /**
- * Checks that the editor and the front end call a field the same thing.
+ * Checks that the editor and the front end describe each field identically.
  *
- * The sidebar labels come from src/utils/field-definitions.js and the front-end
- * labels from the `$fields` array in src/render.php. They are separate programs
- * with separate transpilers and no shared module, so nothing stopped them from
- * drifting: at one point the sidebar said "Loan Term" while the page said
- * "Term (Years)", and both halves looked correct in isolation. An author reading
- * the sidebar cannot tell the page is naming the same field differently, which
- * is exactly the sort of thing that gets reported as "the labels look wrong"
- * with no way to reproduce it.
+ * The sidebar reads its labels, input constraints, and slider bounds from
+ * src/utils/field-definitions.js; the front end reads the same facts from the
+ * `$fields` array in src/render.php. They are separate programs with separate
+ * transpilers and no shared module, so nothing stopped them from drifting: at one
+ * point the sidebar said "Loan Term" while the page said "Term (Years)", and
+ * both halves looked correct in isolation. An author reading the sidebar cannot
+ * tell the page is naming the same field differently, which is exactly the sort
+ * of thing that gets reported as "the labels look wrong" with no way to
+ * reproduce it. The numeric bounds matter the same way, and a mismatch there is
+ * worse: the sidebar would offer a term slider that stops at 40 while the page
+ * accepted 60.
  *
  * The cost labels have the same shape of problem, except their PHP half is
  * already callable -- amortexa_get_cost_components() -- so it is compared
@@ -3114,7 +3117,7 @@ function amortexa_test_release_packaging() {
  *
  * @return int Number of failures.
  */
-function amortexa_test_label_parity() {
+function amortexa_test_field_parity() {
 	$failures = 0;
 	$report   = function ( $ok, $message ) use ( &$failures ) {
 		if ( $ok ) {
@@ -3213,6 +3216,142 @@ function amortexa_test_label_parity() {
 		$report(
 			isset( $editor_costs[ $key ] ) && $editor_costs[ $key ] === $component['label'],
 			sprintf( 'the %s cost label matches the PHP descriptor ("%s")', $key, $component['label'] )
+		);
+	}
+
+	/*
+	 * Input constraints and slider bounds, likewise mirrored by hand. Each field
+	 * is isolated first so a property lookup cannot run off into the next entry,
+	 * then the two spellings are normalised: JS carries a number, PHP a quoted
+	 * string, and an omitted PHP max is an empty string rather than an absent key.
+	 */
+	$block = function ( $source, $start, $end ) {
+		$from = strpos( $source, $start );
+
+		if ( false === $from ) {
+			return '';
+		}
+
+		$to = strpos( $source, $end, $from );
+
+		return false === $to ? substr( $source, $from ) : substr( $source, $from, $to - $from );
+	};
+
+	/** Reads one `name: value` or `'name' => value` out of an isolated block. */
+	$property = function ( $chunk, $name, $is_php ) {
+		$pattern = $is_php
+			? "/'$name'\s*=>\s*(.+?),?\s*$/m"
+			: '/(?:^|\s)' . $name . ':\s*(.+?),?\s*$/m';
+
+		if ( ! preg_match( $pattern, $chunk, $found ) ) {
+			return null;
+		}
+
+		return trim( trim( $found[1] ), "'\"" );
+	};
+
+	/*
+	 * JS omits a key where there is no bound; PHP writes an empty string. Both
+	 * mean "unbounded", so normalise before comparing rather than treating one
+	 * spelling as a difference.
+	 */
+	$same = function ( $a, $b ) {
+		$a = ( null === $a ) ? '' : $a;
+		$b = ( null === $b ) ? '' : $b;
+
+		if ( is_numeric( $a ) && is_numeric( $b ) ) {
+			return (float) $a === (float) $b;
+		}
+
+		return $a === $b;
+	};
+
+	$fields = array(
+		'loanAmount'   => array( 'min', 'max', 'step', 'sliderMin', 'sliderMax', 'sliderStep' ),
+		'downPayment'  => array( 'min', 'max', 'step', 'sliderMin', 'sliderStep' ),
+		'interestRate' => array( 'min', 'max', 'step', 'sliderMin', 'sliderMax', 'sliderStep' ),
+		'loanTerm'     => array( 'min', 'max', 'step', 'sliderMin', 'sliderMax', 'sliderStep' ),
+	);
+
+	// PHP spells the four slider properties differently from the JS ones.
+	$php_name = array(
+		'min'        => 'min',
+		'max'        => 'max',
+		'step'       => 'step',
+		'sliderMin'  => 'smin',
+		'sliderMax'  => 'smax',
+		'sliderStep' => 'sstep',
+	);
+
+	foreach ( $fields as $key => $properties ) {
+		$js  = $block( $fields_js, "key: '$key',", "\n\t}," );
+		$php = $block( $render, "'name'  => '$key',", "\n\t)," );
+
+		$report( '' !== $js, "field-definitions.js contains a block for $key" );
+		$report( '' !== $php, "render.php contains a block for $key" );
+
+		if ( '' === $js || '' === $php ) {
+			continue;
+		}
+
+		foreach ( $properties as $property_name ) {
+			$a = $property( $js, $property_name, false );
+			$b = $property( $php, $php_name[ $property_name ], true );
+
+			$report(
+				true === $same( $a, $b ),
+				sprintf(
+					'%s.%s matches in the editor and the front end (%s)',
+					$key,
+					$property_name,
+					( null === $a || '' === $a ) ? 'unbounded' : $a
+				)
+			);
+		}
+	}
+
+	/*
+	 * The down payment's slider max is derived from the loan amount on both sides,
+	 * so there is no literal to compare. Assert the derivation exists instead --
+	 * a hard-coded maximum there would let the track outrun the loan.
+	 */
+	$down_js  = $block( $fields_js, "key: 'downPayment',", "\n\t}," );
+	$down_php = $block( $render, "'name'  => 'downPayment',", "\n\t)," );
+
+	$report(
+		false !== strpos( $down_js, 'sliderMaxFrom' ),
+		'the down payment slider max is derived from the loan amount in the editor'
+	);
+
+	$report(
+		false !== strpos( $down_php, "max( \$attrs['loanAmount']" ),
+		'the down payment slider max is derived from the loan amount on the front end'
+	);
+
+	/*
+	 * A slider narrower than the input beside it is the bug this file exists to
+	 * catch, so assert the property directly rather than only comparing the two
+	 * copies of it: every static slider max must be able to reach the input's own
+	 * max. interestRate is deliberately exempt -- 0-100 would be an unusable track
+	 * for a rate no mortgage reaches, and src/view.js widens the track to cover a
+	 * larger typed value instead -- so it is left out here rather than quietly
+	 * widening the authored bound.
+	 */
+	foreach ( array( 'loanAmount', 'loanTerm' ) as $key ) {
+		$js = $block( $fields_js, "key: '$key',", "\n\t}," );
+
+		$slider_max = (float) $property( $js, 'sliderMax', false );
+		$input_max  = $property( $js, 'max', false );
+		$input_max  = ( '' === $input_max ) ? null : (float) $input_max;
+
+		$report(
+			null === $input_max || $slider_max >= $input_max,
+			sprintf(
+				'the %s slider can reach every value its input accepts (slider to %s, input to %s)',
+				$key,
+				$property( $js, 'sliderMax', false ),
+				null === $input_max ? 'unbounded' : $input_max
+			)
 		);
 	}
 
@@ -3378,7 +3517,7 @@ function amortexa_test_attribute_effects() {
 	return $failures;
 }
 
-$exit = amortexa_test_parity() + amortexa_test_design_schema() + amortexa_test_settings_and_shortcode() + amortexa_test_input_guards() + amortexa_test_rate_limit() + amortexa_test_costs() + amortexa_test_version_consistency() + amortexa_test_ssr() + amortexa_test_release_packaging() + amortexa_test_label_parity() + amortexa_test_attribute_effects();
+$exit = amortexa_test_parity() + amortexa_test_design_schema() + amortexa_test_settings_and_shortcode() + amortexa_test_input_guards() + amortexa_test_rate_limit() + amortexa_test_costs() + amortexa_test_version_consistency() + amortexa_test_ssr() + amortexa_test_release_packaging() + amortexa_test_field_parity() + amortexa_test_attribute_effects();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

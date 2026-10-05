@@ -23,6 +23,7 @@ import {
 	createLineChart,
 	withAlpha,
 } from './utils/charts';
+import { NUMERIC_FIELDS, sliderBoundsFor } from './utils/field-definitions';
 
 const CHART_WIDTH = 520;
 const DEFAULT_CHART_HEIGHT = 250;
@@ -175,28 +176,48 @@ function clampDownPayment( root, loanAmount ) {
 }
 
 /**
- * Keeps each range slider in sync with its number input and clamps the down
- * payment track to the current loan amount.
+ * Keeps each range slider in sync with its number input and widens a track that
+ * cannot represent the value beside it.
+ *
+ * The two controls are independent, and the browser clamps a range input to its
+ * own min/max. A track narrower than the accepted range therefore does not
+ * reject anything -- it just shows the thumb pinned against an end while the
+ * input holds a different number, so the pair disagrees on screen with nothing
+ * to explain it. sliderBoundsFor() stretches the track to cover the value
+ * instead, which is what makes the two controls mean the same thing.
  *
  * @param {HTMLElement} root Calculator container element.
  */
 function syncSliders( root ) {
 	root.querySelectorAll( '[data-amortexa-field]' ).forEach( ( field ) => {
+		const key = field.dataset.amortexaField;
 		const slider = root.querySelector(
-			`[data-amortexa-slider="${ field.dataset.amortexaField }"]`
+			`[data-amortexa-slider="${ key }"]`
 		);
 
-		if ( ! slider || slider.value === field.value ) {
+		if ( ! slider ) {
 			return;
 		}
 
-		if ( field.dataset.amortexaField === 'downPayment' ) {
-			const amount = root.querySelector(
-				'[data-amortexa-field="loanAmount"]'
-			);
-			slider.max = String(
-				Math.max( parseFloat( amount ? amount.value : '0' ), 1 )
-			);
+		const definition = NUMERIC_FIELDS.find(
+			( candidate ) => candidate.key === key
+		);
+
+		/*
+		 * A derived max is a constraint, not a display bound: the down payment
+		 * cannot exceed the loan. clampDownPayment() owns that rule, so leave its
+		 * track alone here -- widening it to reach a value that should have been
+		 * clamped would quietly discard the constraint.
+		 */
+		if ( definition && ! definition.sliderMaxFrom ) {
+			const bounds = sliderBoundsFor( definition, field.value );
+
+			slider.min = String( bounds.min );
+			slider.max = String( Math.max( bounds.max, bounds.min ) );
+		}
+
+		if ( slider.value === field.value ) {
+			return;
 		}
 
 		slider.value = field.value;

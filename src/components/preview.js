@@ -19,7 +19,11 @@ import {
 	withAlpha,
 } from '../utils/charts';
 import { round2 } from '../utils/calculator';
-import { COST_FIELDS, NUMERIC_FIELDS } from '../utils/field-definitions';
+import {
+	COST_FIELDS,
+	NUMERIC_FIELDS,
+	sliderBoundsFor,
+} from '../utils/field-definitions';
 import { resolvePanelOrder } from '../utils/panel-order';
 
 /**
@@ -437,14 +441,19 @@ export default function Preview( {
 		} );
 	};
 
-	const sliderMaxFor = ( field ) => {
-		if ( field.sliderMaxFrom ) {
-			return Math.max(
-				Number( attributes[ field.sliderMaxFrom ] ) || 0,
-				1
-			);
-		}
-		return field.sliderMax;
+	const sliderBounds = ( field ) => {
+		/*
+		 * A derived max is a constraint, not a display bound, so it is passed
+		 * through untouched and the editor keeps enforcing the same rule the
+		 * front end does in clampDownPayment(). Everything else gets the track
+		 * widened to cover the current value, so the canvas thumb and the input
+		 * cannot show two different numbers here either.
+		 */
+		const derived = field.sliderMaxFrom
+			? Math.max( Number( attributes[ field.sliderMaxFrom ] ) || 0, 1 )
+			: undefined;
+
+		return sliderBoundsFor( field, attributes[ field.key ], derived );
 	};
 
 	/*
@@ -631,8 +640,8 @@ export default function Preview( {
 										value={ Number(
 											attributes[ field.key ]
 										) }
-										min={ field.sliderMin }
-										max={ sliderMaxFor( field ) }
+										min={ sliderBounds( field ).min }
+										max={ sliderBounds( field ).max }
 										step={ field.sliderStep }
 										tabIndex={ -1 }
 										aria-label={ field.label }
