@@ -642,9 +642,6 @@ class Amortexa_Settings {
 
 									<div class="amortexa-settings__save-bar">
 									<?php submit_button( __( 'Save Changes', 'amortexa-mortgage-calculator' ), 'primary', 'submit', false ); ?>
-									<span class="amortexa-settings__save-note">
-										<?php esc_html_e( 'Saved defaults immediately apply to all newly inserted calculators.', 'amortexa-mortgage-calculator' ); ?>
-									</span>
 								</div>
 							</form>
 
