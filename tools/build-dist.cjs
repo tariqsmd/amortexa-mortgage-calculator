@@ -30,19 +30,17 @@ const LISTING_OUT = path.join( DIST_DIR, 'assets' );
  *
  * Files (not directories) and directories are both supported.
  *
- * The compiled `build/` directory is what WordPress actually runs, but the
- * unminified sources under `src/` ship alongside it together with the build
- * config. Directory guideline #4 requires the source behind every minified
- * asset to be publicly available, and shipping it here satisfies that without
- * relying on a third-party link staying reachable. Nothing in `src/` is loaded
- * at runtime: the block is registered from build/block.json, so every "file:"
- * reference in that manifest -- including "render": "file:./render.php" --
- * resolves inside build/, and wp-scripts copies render.php there. The only
- * runtime PHP outside build/ is includes/, which the main file requires.
+ * Note that nothing under src/ ships. The block is registered from
+ * build/block.json, so every "file:" reference in that manifest -- including
+ * "render": "file:./render.php" -- resolves inside build/, and wp-scripts copies
+ * render.php there. The only runtime PHP outside build/ is includes/, which the
+ * main file requires.
  *
- * `package-lock.json` is deliberately excluded. It is ~800 KB of dependency
- * hashes that add nothing to reviewing the plugin's own code; `npm install`
- * regenerates it from package.json.
+ * Directory guideline #4 asks that the source behind every minified file be
+ * publicly available. That is satisfied by the public GitHub repository, which
+ * is linked from readme.txt rather than duplicated into every download: it
+ * keeps the shipped plugin to the files WordPress actually loads, and it means
+ * a fork starts from one source of truth instead of a copy that can drift.
  */
 const SHIP = [
 	'amortexa-mortgage-calculator.php',
@@ -54,10 +52,6 @@ const SHIP = [
 	'languages',
 	'assets',
 	'includes',
-	'src',
-	'package.json',
-	'webpack.config.js',
-	'babel.config.js',
 ];
 
 /**

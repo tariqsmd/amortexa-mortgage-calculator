@@ -2895,10 +2895,12 @@ function amortexa_test_ssr() {
  * only real defence against it flagging the test harness is that the release
  * does not contain the file at all.
  *
- * Going the other way, directory guideline #4 requires the unminified source
- * behind every compiled file to be publicly available. Shipping src/ and the
- * build config inside the plugin satisfies that without depending on an external
- * link staying reachable, so both are asserted as shipping.
+ * Going the other way, directory guideline #4 requires the source behind every
+ * minified file to be publicly available. That is satisfied by the public
+ * repository linked from readme.txt rather than by duplicating src/ into every
+ * download, so the assertions here are that neither build path ships the
+ * sources *and* that readme.txt keeps pointing at the repository and naming the
+ * third-party build dependencies.
  *
  * Both build paths are asserted -- the dist allowlist in tools/build-dist.cjs and
  * .distignore for anyone building with `wp dist-archive` -- because a path
@@ -2949,18 +2951,55 @@ function amortexa_test_release_packaging() {
 	 * rejects outright, and Plugin Check would report it in wp-admin where it
 	 * cannot be silenced by configuration.
 	 */
-	foreach ( array( 'tests', 'tools', 'node_modules', 'vendor', 'dist' ) as $dev ) {
+	foreach ( array( 'tests', 'src', 'tools', 'node_modules', 'vendor', 'dist' ) as $dev ) {
 		$report( ! isset( $ships[ $dev ] ), sprintf( 'the dist allowlist does not ship %s', $dev ) );
 	}
 
 	/*
-	 * Directory guideline #4: the source behind the minified files in build/
-	 * has to be publicly available, and the build tooling that produces them
-	 * has to be documented. Shipping both here is what satisfies it.
+	 * Directory guideline #4 asks that the source behind every minified file be
+	 * publicly available. That is satisfied by the public repository linked from
+	 * readme.txt, so src/ and the build config stay out of the download rather
+	 * than being duplicated into it. The readme has to keep saying so: dropping
+	 * that link while also dropping src/ would leave build/index.js and
+	 * build/view.js with no discoverable source at all, which is exactly the
+	 * condition this rule exists to prevent.
 	 */
 	foreach ( array( 'src', 'package.json', 'webpack.config.js', 'babel.config.js' ) as $source ) {
-		$report( isset( $ships[ $source ] ), sprintf( 'the dist allowlist ships %s, so the compiled files have a matching source', $source ) );
+		$report( ! isset( $ships[ $source ] ), sprintf( 'the dist allowlist does not duplicate %s into the download', $source ) );
 	}
+
+	$readme = (string) file_get_contents( $root . '/readme.txt' );
+
+	$report(
+		(bool) preg_match( '#github\.com/tariqsmd/amortexa-mortgage-calculator#', $readme ),
+		'readme.txt links the public source repository (directory guideline #4)'
+	);
+
+	/*
+	 * Third-party code has to be documented by name, version, and repository.
+	 * The plugin bundles none, so the section states that, and the build-time
+	 * packages it does use are listed so a reviewer can see what produced the
+	 * compiled files.
+	 */
+	$report(
+		(bool) preg_match( '/=+ Third-party libraries =+/', $readme ),
+		'readme.txt documents third-party libraries'
+	);
+
+	foreach ( array( '@wordpress/scripts', 'sass', 'adm-zip', 'wp-pot' ) as $dep ) {
+		$report(
+			false !== strpos( $readme, $dep ),
+			sprintf( 'readme.txt names the build-time dependency %s', $dep )
+		);
+	}
+
+	$report(
+		(bool) preg_match(
+			'/Amortexa bundles no third-party code/',
+			$readme
+		),
+		'readme.txt states that no third-party code is bundled'
+	);
 
 	/*
 	 * includes/ is the one runtime directory a naive exclusion list gets
@@ -3005,28 +3044,12 @@ function amortexa_test_release_packaging() {
 
 	$ignored = preg_split( '/[\r\n]+/', (string) file_get_contents( $ignore_file ), -1, PREG_SPLIT_NO_EMPTY );
 
-	foreach ( array( 'tests', 'tools', 'node_modules' ) as $dev ) {
+	foreach ( array( 'tests', 'tools', 'node_modules', 'src/**/*.js', 'src/*.scss', 'package.json', 'webpack.config.js', 'babel.config.js' ) as $dev ) {
 		$report( in_array( $dev, $ignored, true ), sprintf( '.distignore excludes %s for a wp dist-archive build', $dev ) );
 	}
 
-	/*
-	 * The build config must not be excluded here either, or the two build paths
-	 * would disagree about guideline #4: the allowlist ships it while a
-	 * `wp dist-archive` build dropped it.
-	 */
-	$not_ignored = array( 'src', 'src/**/*.js', 'src/*.scss', 'package.json', 'webpack.config.js', 'babel.config.js' );
-	$wrongly     = array_values( array_intersect( $not_ignored, $ignored ) );
-
-	$report(
-		array() === $wrongly,
-		sprintf(
-			'.distignore does not exclude the sources or build config (%s)',
-			array() === $wrongly ? 'all kept' : 'excluded: ' . implode( ', ', $wrongly )
-		)
-	);
-
 	if ( 0 === $failures ) {
-		fwrite( STDOUT, "ok   the release ships its sources and build config, and no harness\n" );
+		fwrite( STDOUT, "ok   both build paths agree, and the release ships no harness\n" );
 	}
 
 	return $failures;

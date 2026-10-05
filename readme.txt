@@ -124,11 +124,11 @@ No. See the Privacy section below.
 
 = Where is the source code? =
 
-The complete, human-readable source for this plugin ships inside the plugin itself, under `src/`, and is also public and maintained on GitHub:
+The complete, human-readable source for this plugin is public and maintained on GitHub:
 
 `https://github.com/tariqsmd/amortexa-mortgage-calculator`
 
-The compiled files under `build/` (`index.js`, `view.js`, and `render.php`) are generated from the unminified sources in `src/` by `@wordpress/scripts`, which is why they are not readable line by line. The build config (`package.json`, `webpack.config.js`, and `babel.config.js`) is included too. The matching sources are:
+The compiled files under `build/` (`index.js`, `view.js`, and `render.php`) are generated from the unminified sources in `src/` by `@wordpress/scripts`, which is why they are not readable line by line. The matching sources are:
 
 * `build/index.js` is built from `src/index.js`, `src/edit.js`, `src/save.js`, and the modules under `src/components/` and `src/utils/`.
 * `build/view.js` is built from `src/view.js`.
@@ -144,6 +144,17 @@ To regenerate every compiled file yourself, clone the repository and run:
 `npm run build` runs `wp-scripts build` (Babel, webpack, and SCSS compilation), then strips byte order marks and syncs the version from the plugin header into `build/block.json`. `npm run release` additionally regenerates the translation template, renders the listing icons and banners, and assembles the WordPress.org-ready archive under `dist/`. The test suite runs with `npm test`, JavaScript and CSS with `npm run lint:js` and `npm run lint:css`, and PHP coding standards with `vendor/bin/phpcs --standard=phpcs.xml.dist`.
 
 Everything ships under the GPL v2 or later. If you fork the plugin, please keep it GPL-compatible and release your version publicly.
+
+= Third-party libraries =
+
+Amortexa bundles no third-party code. Every file it loads is original to this plugin, including the charts, which are drawn in plain SVG rather than by a charting library. There is no jQuery, no Bootstrap, and no charting or animation dependency at runtime.
+
+The packages below are used at build time only, to compile the files in `build/` and assemble the release archive. None is included in the plugin and none runs on a visitor's browser:
+
+* `@wordpress/scripts` (MIT) - `https://github.com/WordPress/gutenberg/tree/trunk/packages/scripts` - Babel, webpack, and SCSS compilation
+* `sass` (MIT) - `https://github.com/sass/sass` - SCSS compiler, pulled in by `@wordpress/scripts`
+* `adm-zip` (MIT) - `https://github.com/cthackers/adm-zip` - writes the release archive
+* `wp-pot` (MIT) - `https://github.com/wp-pot/wp-pot` - generates the translation template
 
 == Privacy ==
 
@@ -164,8 +175,8 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 * New: four layouts — **Stacked**, **Two columns**, **Inputs beside details** (inputs in one column, results and charts in the other), and **Chart beside inputs** (inputs and results stacked in one column, charts in the other). The amortization table stays full width underneath every one of them, because a four column table is unreadable in a half width column.
 * New: `amortexa_skins`, `amortexa_cost_units`, and `amortexa_shortcode_block` filters are documented.
 * New: a Mortgage Calculator widget for sidebars and any other widget area, with optional overrides for amount, rate, term, layout, and skin.
-* New: a shortcode builder on the Settings -> Shortcode screen. Every attribute gets an input and the sample shortcode rebuilds and copies as you change them.
-* New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type under Settings → Amortexa.
+* New: a shortcode builder on the Shortcode tab of the Amortexa screen. Every attribute gets an input and the sample shortcode rebuilds and copies as you change them.
+* New: site-wide defaults for loan amount, down payment, loan term, skin, and chart type on the Amortexa screen, which has its own entry in the admin menu rather than sitting under Settings.
 * New: per-block toggles to show/hide the results summary and the range sliders.
 * New: currency symbol position option globally and per block — before the amount ($99) or after (99 €).
 * New: shortcode attributes for form layout (`formcolumns`) and panel order (`panelorder`).
@@ -177,9 +188,9 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 * New: range sliders paired with every number input for quick value adjustments.
 * Improved: the front-end bundle is registered through the block metadata, so assets load in templates and block widgets where `has_block()` cannot detect the block.
 * Improved: layout adapts to the block's container width — columns stack, sliders wrap, charts reflow, and the amortization table scrolls inside narrow columns with a sticky first column.
-* Improved: the shortcode reference moved to its own tab on the settings screen, and the monthly payment announces changes to screen readers.
-* Improved: the settings tabs follow the ARIA tabs pattern, so they can be reached with the arrow keys, Home, and End, and only the active tab is a tab stop.
-* Improved: settings fields are now labelled once instead of twice, and the first tab is still shown and submittable if the admin script fails to load.
+* Improved: the shortcode reference moved to its own tab on the Amortexa screen, and the monthly payment announces changes to screen readers.
+* Improved: the Amortexa screen's tabs follow the ARIA tabs pattern, so they can be reached with the arrow keys, Home, and End, and only the active tab is a tab stop.
+* Improved: fields are now labelled once instead of twice, and the first tab is still shown and submittable if the admin script fails to load.
 * Fixed: the generated sample shortcode's copy button now copies the sample instead of the plain example above it.
 * Fixed: the amortization schedule toggle no longer hides its own button, so the table can be collapsed and expanded again.
 * Fixed: the schedule toggle is revealed once the collapse behavior is active, instead of staying permanently hidden.
@@ -193,4 +204,4 @@ The calculator runs entirely in the browser and on your own server. Visitor inpu
 == Upgrade Notice ==
 
 = 1.0.0 =
-First release. Site-wide defaults for loan amount, down payment, loan term, skin, and chart type are under Settings → Amortexa, and recurring costs (property tax, insurance, HOA, PMI, other) are opt-in behind the **Show costs** switch.
+First release. Amortexa has its own entry in the admin menu, where site-wide defaults for loan amount, down payment, loan term, skin, and chart type live, and recurring costs (property tax, insurance, HOA, PMI, other) are opt-in behind the **Show costs** switch.

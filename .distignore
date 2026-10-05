@@ -5,30 +5,29 @@
 # who builds with `wp dist-archive` from the 10up/wp-cli-dist-archive package
 # instead, so that the two methods cannot disagree about what ships.
 
-# Dependencies
+# Dependencies and tooling
 node_modules
 vendor
-# package-lock.json is ~800 KB of dependency hashes and adds nothing when
-# reviewing the plugin's own code; `npm install` regenerates it. package.json,
-# webpack.config.js, and babel.config.js DO ship: they are the build tooling that
-# directory guideline #4 asks to be documented and available.
+package.json
 package-lock.json
+webpack.config.js
+babel.config.js
 phpcs.xml.dist
 
-# Development tooling and tests (never part of the release)
+# Development sources and tooling. Directory guideline #4 is satisfied by the
+# public GitHub repository linked from readme.txt, so the unminified sources
+# stay out of the download rather than being duplicated into it.
+src/**/*.js
+src/edit
+src/utils
+src/*.scss
+src/index.css
 tools
 tests
 eslint.config.js
 
-# `src/` is deliberately NOT excluded. Directory guideline #4 requires the
-# unminified source behind every compiled file in build/ to be publicly
-# available, so src/ ships alongside it. Nothing in src/ is loaded at runtime --
-# the block is registered from build/block.json, whose "file:" references all
-# resolve inside build/.
-#
-# `includes/` is also deliberately NOT excluded: amortexa-mortgage-calculator.php
-# requires it on every request, so shipping without it produces a plugin that
-# fatals on activation.
+# `includes/` is deliberately NOT excluded: amortexa-mortgage-calculator.php requires it on every
+# request, so shipping without it produces a plugin that fatals on activation.
 
 # Repository documentation (readme.txt and LICENSE always ship)
 README.md
