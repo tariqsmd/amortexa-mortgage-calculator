@@ -2303,13 +2303,19 @@ function amortexa_test_version_consistency() {
 	 * malformed or placeholder value here is rejected by the listing, and a
 	 * value below the "Requires at least" floor claims support for a release
 	 * older than the plugin admits to needing.
+	 *
+	 * Major.minor only, no patch. The directory flags a patch component as
+	 * invalid_tested_upto_minor, and that check runs against the uploaded
+	 * readme rather than anything the plugin can influence at runtime, so the
+	 * fix belongs here -- alongside the one above, which permitted the patch
+	 * level it should never have allowed.
 	 */
 	$tested = $grab( 'readme.txt', '/^Tested up to:\s*(.+)$/m' );
 	$needs  = $grab( 'amortexa-mortgage-calculator.php', '/^ \* Requires at least:\s*(.+)$/m' );
 
 	$report(
-		'' !== $tested && preg_match( '/^\d+(\.\d+){1,2}$/', $tested ),
-		sprintf( 'the readme "Tested up to" is a plain version number (%s)', $tested ?: 'missing' )
+		'' !== $tested && preg_match( '/^\d+\.\d+$/', $tested ),
+		sprintf( 'the readme "Tested up to" is major.minor with no patch level (%s)', $tested ?: 'missing' )
 	);
 	$report(
 		'' === $needs || '' === $tested || version_compare( $tested, $needs, '>=' ),
