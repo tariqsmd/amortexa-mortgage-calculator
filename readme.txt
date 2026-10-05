@@ -80,11 +80,11 @@ Calls are rate limited per client address: 30 requests per minute by default, af
 
 = Can I insert the calculator with a shortcode? =
 
-The `[amortexa-mortgage-calculator]` shortcode is supported alongside the block and accepts every loan, cost, layout, panel, skin, chart and schedule attribute. The per-element appearance settings from the Design tab are block-only, because they are stilled by your site-wide defaults and a shortcode cannot sensibly reproduce a design token map. On the Settings -> Shortcode screen each exposed attribute has an input, and a sample shortcode rebuilds and copies as you change them:
+The `[amortexa-mortgage-calculator]` shortcode is supported alongside the block and accepts every loan, cost, layout, panel, skin, chart and schedule attribute. The per-element appearance settings from the Design tab are block-only, because they are styled by your site-wide defaults and a shortcode cannot sensibly reproduce a design token map. On the **Amortexa** > **Shortcode** tab each exposed attribute has an input, and a sample shortcode rebuilds and copies as you change them:
 
 `[amortexa-mortgage-calculator loanamount="350000" interestrate="4.75" loanterm="30" charttype="bar" showcosts="true" propertytax="1.25"]`
 
-Attributes are lowercase and values are wrapped in double quotes. Clearing a field leaves that attribute out, so the other Settings tabs control it instead. Add the finished shortcode to any post, page, or widget area.
+Attributes are lowercase and values are wrapped in double quotes. Clearing a field leaves that attribute out, so your site-wide defaults control it instead. Add the finished shortcode to any post, page, or widget area.
 
 = Can I add the calculator to a sidebar or widget area? =
 
