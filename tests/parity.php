@@ -3517,7 +3517,141 @@ function amortexa_test_attribute_effects() {
 	return $failures;
 }
 
-$exit = amortexa_test_parity() + amortexa_test_design_schema() + amortexa_test_settings_and_shortcode() + amortexa_test_input_guards() + amortexa_test_rate_limit() + amortexa_test_costs() + amortexa_test_version_consistency() + amortexa_test_ssr() + amortexa_test_release_packaging() + amortexa_test_field_parity() + amortexa_test_attribute_effects();
+/**
+ * The script field a block declares decides how WordPress loads it, and the two
+ * are not interchangeable.
+ *
+ * `viewScript` is a classic script, so its dependencies are classic script
+ * handles: it can depend on wp-i18n, and @wordpress/scripts compiles it to an
+ * IIFE that reads the wp.* globals it was enqueued alongside.
+ *
+ * `viewScriptModule` is an ES module. Its dependencies have to be registered
+ * script modules, and wp-* handles are not: core builds the module import map
+ * from registered script module IDs (see WP_Script_Modules::get_import_map()),
+ * and @wordpress/i18n is not one of them. Asking for wp-i18n from a module is
+ * therefore rejected as an unregistered dependency, and separately the browser
+ * could not resolve the bare @wordpress/i18n specifier.
+ *
+ * @wordpress/scripts picks both the entry point and the output format from this
+ * field, so the declaration and the compiled bundle have to agree. When they
+ * disagree nothing fails loudly at build time. The page still renders, and the
+ * bundle simply meets a wp.* global it was never given -- so this is asserted
+ * against the built artefact rather than trusted from the source.
+ *
+ * @return int Number of failures.
+ */
+function amortexa_test_asset_shapes() {
+	$failures = 0;
+	$report   = function ( $ok, $message ) use ( &$failures ) {
+		if ( $ok ) {
+			fwrite( STDOUT, "ok   $message\n" );
+		} else {
+			++$failures;
+			fwrite( STDOUT, "FAIL $message\n" );
+		}
+	};
+
+	$root  = dirname( __DIR__ );
+	$block = json_decode( (string) file_get_contents( $root . '/build/block.json' ), true );
+
+	if ( ! is_array( $block ) ) {
+		$report( false, 'build/block.json could be read to check the compiled scripts' );
+
+		return $failures;
+	}
+
+	/*
+	 * editorScript is only ever a classic script, so the view bundle is the one
+	 * whose expected shape moves. Exactly one of the two view fields is declared.
+	 */
+	$expectations = array(
+		'index' => array(
+			'field'  => 'editorScript',
+			'module' => false,
+		),
+		'view'  => array(
+			'field'  => 'viewScript',
+			'module' => false,
+		),
+	);
+
+	if ( isset( $block['viewScriptModule'] ) ) {
+		$expectations['view'] = array(
+			'field'  => 'viewScriptModule',
+			'module' => true,
+		);
+	}
+
+	foreach ( $expectations as $name => $expectation ) {
+		$field    = $expectation['field'];
+		$declared = $block[ $field ] ?? null;
+
+		if ( ! is_string( $declared ) || 0 !== strpos( $declared, 'file:' ) ) {
+			continue;
+		}
+
+		$file = $root . '/build/' . substr( $declared, strlen( 'file:' ) );
+
+		if ( ! is_readable( $file ) ) {
+			$report( false, "build/$name.js exists for $field" );
+
+			continue;
+		}
+
+		$source = (string) file_get_contents( $file );
+
+		/*
+		 * A module is recognised by top-level import or export statements. A
+		 * minified IIFE has none, which is exactly what makes this detectable
+		 * after the fact -- the two formats are not otherwise distinguishable
+		 * from the outside.
+		 */
+		$has_module_syntax = (bool) preg_match( '/^\s*(?:import|export)\s[{*\w]/m', $source );
+
+		/*
+		 * DependencyExtractionWebpackPlugin rewrites @wordpress/i18n to the
+		 * wp.i18n global for classic scripts, so its presence is the marker
+		 * that this bundle was built to be loaded as one.
+		 */
+		$uses_wp_global = (bool) preg_match( '/\bwindow\.wp\.[a-z]/', $source );
+
+		if ( $expectation['module'] ) {
+			$report( $has_module_syntax, "build/$name.js is compiled as an ES module, as $field promises" );
+			$report( ! $uses_wp_global, "build/$name.js does not reach for wp.* globals, which a module is never given" );
+
+			continue;
+		}
+
+		$report( ! $has_module_syntax, "build/$name.js is not compiled as an ES module, as $field promises" );
+		$report( $uses_wp_global, "build/$name.js gets its wp.* dependencies the way $field promises" );
+	}
+
+	/*
+	 * The dependency list core reads out of the .asset.php file has to name
+	 * handles that exist. wp-i18n is the one this bundle actually needs, and it
+	 * is a classic script, so it is only valid here because of the field above --
+	 * which is why the two are asserted together.
+	 */
+	$view_asset = $root . '/build/view.asset.php';
+
+	if ( is_readable( $view_asset ) ) {
+		$asset = require $view_asset;
+		$deps  = is_array( $asset['dependencies'] ?? null ) ? $asset['dependencies'] : array();
+
+		$report(
+			! in_array( 'wp-i18n', $deps, true ) || ! $expectations['view']['module'],
+			'view.asset.php only asks for wp-i18n through a classic script dependency'
+		);
+	}
+
+	if ( 0 === $failures ) {
+		fwrite( STDOUT, "ok   every declared script matches how it was compiled\n" );
+	}
+
+	return $failures;
+}
+
+$exit = amortexa_test_parity() + amortexa_test_design_schema() + amortexa_test_settings_and_shortcode() + amortexa_test_input_guards() + amortexa_test_rate_limit() + amortexa_test_costs() + amortexa_test_version_consistency() + amortexa_test_ssr() + amortexa_test_release_packaging() + amortexa_test_asset_shapes() + amortexa_test_field_parity() + amortexa_test_attribute_effects();
 if ( 0 === $exit ) {
 	fwrite( STDOUT, "\nAll PHP/JS parity checks passed.\n" );
 } else {

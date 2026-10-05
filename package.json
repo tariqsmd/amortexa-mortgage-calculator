@@ -49,7 +49,7 @@
 		"build": "wp-scripts build && node tools/strip-bom.cjs && node tools/sync-block-version.cjs",
 		"start": "wp-scripts start",
 		"dev": "wp-scripts start",
-		"lint:js": "wp-scripts lint-js src assets webpack.config.js",
+		"lint:js": "wp-scripts lint-js src assets",
 		"lint:css": "wp-scripts lint-style \"src/**/*.scss\" \"src/**/*.css\" \"assets/**/*.css\"",
 		"lint:pkg-json": "wp-scripts lint-pkg-json .",
 		"lint:md": "wp-scripts lint-md-docs README.md",
