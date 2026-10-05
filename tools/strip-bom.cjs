@@ -29,6 +29,13 @@
  * A BOM is also stripped from build/render.php, which wp-scripts copies
  * verbatim from src/ and which is included directly by the render callback.
  *
+ * src/ is cleaned too. It ships in the release alongside build/ so the source
+ * behind every minified file is publicly available (directory guideline #4), and
+ * a BOM in a JavaScript source file breaks the first statement for anything
+ * that concatenates or re-parses it. Only build/ *output* is rewritten during a
+ * normal build; the source cleanup is skipped when src/ has no BOM, so it costs
+ * nothing once the tree is clean.
+ *
  * The pass is idempotent and fails loudly if a stylesheet still starts with a
  * BOM afterwards, so this cannot quietly regress.
  */
@@ -38,6 +45,7 @@ const path = require( 'path' );
 
 const PLUGIN_DIR = path.resolve( __dirname, '..' );
 const BUILD_DIR = path.join( PLUGIN_DIR, 'build' );
+const SRC_DIR = path.join( PLUGIN_DIR, 'src' );
 
 const BOM = Buffer.from( [ 0xef, 0xbb, 0xbf ] );
 
@@ -79,21 +87,38 @@ if ( ! fs.existsSync( BUILD_DIR ) ) {
 	throw new Error( 'build/ not found. Run `npm run build` first.' );
 }
 
-const fixed = [];
-
-for ( const file of walk( BUILD_DIR ) ) {
+/**
+ * Strips a leading BOM from a file, if it has one.
+ *
+ * @param {string} file Absolute file path.
+ * @return {boolean} True when a BOM was removed.
+ */
+function stripBom( file ) {
 	if ( ! isTextFile( file ) ) {
-		continue;
+		return false;
 	}
 
 	const buffer = fs.readFileSync( file );
 
 	if ( ! buffer.subarray( 0, 3 ).equals( BOM ) ) {
-		continue;
+		return false;
 	}
 
 	fs.writeFileSync( file, buffer.subarray( 3 ) );
-	fixed.push( path.relative( PLUGIN_DIR, file ) );
+
+	return true;
+}
+
+const fixed = [];
+
+/*
+ * build/ first: a stylesheet there that still opens with a BOM silently breaks
+ * its own first rule, so that output has to be correct before anything else.
+ */
+for ( const file of walk( BUILD_DIR ) ) {
+	if ( stripBom( file ) ) {
+		fixed.push( path.relative( PLUGIN_DIR, file ) );
+	}
 }
 
 console.log( 'Stripping UTF-8 BOMs from build/' );
@@ -102,6 +127,20 @@ if ( fixed.length ) {
 	fixed.forEach( ( file ) => console.log( `  removed  ${ file }` ) );
 } else {
 	console.log( '  none found' );
+}
+
+if ( fs.existsSync( SRC_DIR ) ) {
+	const strippedSources = walk( SRC_DIR ).filter( stripBom );
+
+	console.log( 'Stripping UTF-8 BOMs from src/' );
+
+	if ( strippedSources.length ) {
+		strippedSources.forEach( ( file ) =>
+			console.log( `  removed  ${ path.relative( PLUGIN_DIR, file ) }` )
+		);
+	} else {
+		console.log( '  none found' );
+	}
 }
 
 // Guard: a stylesheet that still opens with a BOM would silently break the

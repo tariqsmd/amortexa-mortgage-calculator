@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Front-end behavior for the Mortgage Calculator block.
  *
  * Progressive enhancement only: results, sliders, and the amortization table

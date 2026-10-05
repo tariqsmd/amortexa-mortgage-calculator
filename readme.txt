@@ -124,11 +124,11 @@ No. See the Privacy section below.
 
 = Where is the source code? =
 
-The complete, human-readable source for this plugin is public and maintained on GitHub:
+The complete, human-readable source for this plugin ships inside the plugin itself, under `src/`, and is also public and maintained on GitHub:
 
 `https://github.com/tariqsmd/amortexa-mortgage-calculator`
 
-The compiled files under `build/` (`index.js`, `view.js`, and the compiled `render.php`) are generated from the unminified sources in `src/` by `@wordpress/scripts`, which is why they are not readable line by line. The matching sources are:
+The compiled files under `build/` (`index.js`, `view.js`, and `render.php`) are generated from the unminified sources in `src/` by `@wordpress/scripts`, which is why they are not readable line by line. The build config (`package.json`, `webpack.config.js`, and `babel.config.js`) is included too. The matching sources are:
 
 * `build/index.js` is built from `src/index.js`, `src/edit.js`, `src/save.js`, and the modules under `src/components/` and `src/utils/`.
 * `build/view.js` is built from `src/view.js`.

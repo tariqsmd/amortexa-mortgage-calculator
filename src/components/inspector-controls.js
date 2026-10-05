@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Block inspector controls.
  *
  * Every attribute declared in block.json is editable here. Option lists come from

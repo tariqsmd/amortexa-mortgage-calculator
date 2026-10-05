@@ -2841,18 +2841,24 @@ function amortexa_test_ssr() {
 }
 
 /**
- * Checks that the development-only files stay out of a release.
+ * Checks that the release ships the sources its build needs, and nothing else.
  *
  * WordPress Plugin Check reads every PHP file in the installed plugin folder,
  * and the one in wp-admin it never asks permission for: the admin UI ignores
  * both this repository's phpcs.xml.dist and any .plugin-check.json, because a
  * scanner that a plugin author could configure would not be a scanner. So the
- * only real defence is that the release does not contain the file at all, and
- * that holds for two independent build paths -- the dist allowlist in
- * tools/build-dist.cjs and .distignore for anyone building with
- * `wp dist-archive` instead. Both are asserted here because a path that is
- * quietly added to one of them would otherwise only surface as a rejected
- * upload, or as a wall of false positives in a development checkout.
+ * only real defence against it flagging the test harness is that the release
+ * does not contain the file at all.
+ *
+ * Going the other way, directory guideline #4 requires the unminified source
+ * behind every compiled file to be publicly available. Shipping src/ and the
+ * build config inside the plugin satisfies that without depending on an external
+ * link staying reachable, so both are asserted as shipping.
+ *
+ * Both build paths are asserted -- the dist allowlist in tools/build-dist.cjs and
+ * .distignore for anyone building with `wp dist-archive` -- because a path
+ * quietly added to one but not the other would otherwise only surface as a
+ * rejected upload, or as a wall of false positives in a development checkout.
  *
  * @return int Number of failures.
  */
@@ -2892,8 +2898,23 @@ function amortexa_test_release_packaging() {
 
 	$ships = array_flip( $ship_block );
 
-	foreach ( array( 'tests', 'src', 'tools', 'node_modules', 'vendor', 'dist' ) as $dev ) {
+	/*
+	 * The harness, the release tooling, and the installed dependencies never
+	 * ship. tests/ in particular calls shell_exec(), which WordPress.org
+	 * rejects outright, and Plugin Check would report it in wp-admin where it
+	 * cannot be silenced by configuration.
+	 */
+	foreach ( array( 'tests', 'tools', 'node_modules', 'vendor', 'dist' ) as $dev ) {
 		$report( ! isset( $ships[ $dev ] ), sprintf( 'the dist allowlist does not ship %s', $dev ) );
+	}
+
+	/*
+	 * Directory guideline #4: the source behind the minified files in build/
+	 * has to be publicly available, and the build tooling that produces them
+	 * has to be documented. Shipping both here is what satisfies it.
+	 */
+	foreach ( array( 'src', 'package.json', 'webpack.config.js', 'babel.config.js' ) as $source ) {
+		$report( isset( $ships[ $source ] ), sprintf( 'the dist allowlist ships %s, so the compiled files have a matching source', $source ) );
 	}
 
 	/*
@@ -2939,12 +2960,28 @@ function amortexa_test_release_packaging() {
 
 	$ignored = preg_split( '/[\r\n]+/', (string) file_get_contents( $ignore_file ), -1, PREG_SPLIT_NO_EMPTY );
 
-	foreach ( array( 'tests', 'tools', 'node_modules', 'src/**/*.js' ) as $dev ) {
+	foreach ( array( 'tests', 'tools', 'node_modules' ) as $dev ) {
 		$report( in_array( $dev, $ignored, true ), sprintf( '.distignore excludes %s for a wp dist-archive build', $dev ) );
 	}
 
+	/*
+	 * The build config must not be excluded here either, or the two build paths
+	 * would disagree about guideline #4: the allowlist ships it while a
+	 * `wp dist-archive` build dropped it.
+	 */
+	$not_ignored = array( 'src', 'src/**/*.js', 'src/*.scss', 'package.json', 'webpack.config.js', 'babel.config.js' );
+	$wrongly     = array_values( array_intersect( $not_ignored, $ignored ) );
+
+	$report(
+		array() === $wrongly,
+		sprintf(
+			'.distignore does not exclude the sources or build config (%s)',
+			array() === $wrongly ? 'all kept' : 'excluded: ' . implode( ', ', $wrongly )
+		)
+	);
+
 	if ( 0 === $failures ) {
-		fwrite( STDOUT, "ok   the harness and sources stay out of the release\n" );
+		fwrite( STDOUT, "ok   the release ships its sources and build config, and no harness\n" );
 	}
 
 	return $failures;

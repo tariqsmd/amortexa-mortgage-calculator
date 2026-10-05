@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Live preview for the Mortgage Calculator block.
  *
  * Renders the same structure/classes as the server-side template so editors
