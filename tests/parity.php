@@ -2968,6 +2968,20 @@ function amortexa_test_release_packaging() {
 		$report( ! isset( $ships[ $source ] ), sprintf( 'the dist allowlist does not duplicate %s into the download', $source ) );
 	}
 
+	/*
+	 * Local-only notes record open decisions against a specific commit. Shipping
+	 * them would be actively misleading rather than merely untidy, so they are
+	 * untracked and stay out of the download. They are asserted here because
+	 * .gitignore alone does not cover them: build-dist.cjs is an allowlist, but
+	 * .distignore is a blocklist, so a `wp dist-archive` build would pick up any
+	 * root-level file that is not named.
+	 */
+	$local_notes = array( 'PUBLISHING.md', 'NEXT-VERSION.md' );
+
+	foreach ( $local_notes as $note ) {
+		$report( ! isset( $ships[ $note ] ), sprintf( 'the dist allowlist does not ship the local-only %s', $note ) );
+	}
+
 	$readme = (string) file_get_contents( $root . '/readme.txt' );
 
 	$report(
@@ -3046,6 +3060,33 @@ function amortexa_test_release_packaging() {
 
 	foreach ( array( 'tests', 'tools', 'node_modules', 'src/**/*.js', 'src/*.scss', 'package.json', 'webpack.config.js', 'babel.config.js' ) as $dev ) {
 		$report( in_array( $dev, $ignored, true ), sprintf( '.distignore excludes %s for a wp dist-archive build', $dev ) );
+	}
+
+	/*
+	 * .distignore is a blocklist, so a new root-level file is included by default
+	 * and has to be named here. The local-only notes are the reason this file
+	 * cannot simply defer to .gitignore.
+	 */
+	foreach ( $local_notes as $note ) {
+		$report( in_array( $note, $ignored, true ), sprintf( '.distignore excludes the local-only %s for a wp dist-archive build', $note ) );
+	}
+
+	/*
+	 * The same two files are untracked, so a fresh clone cannot inherit someone
+	 * else's notes. Checked against .gitignore rather than left implicit, because
+	 * an untracked-but-not-ignored file is the exact shape of bug that only shows
+	 * up as an accidental commit.
+	 */
+	$gitignore_file = $root . '/.gitignore';
+
+	if ( is_readable( $gitignore_file ) ) {
+		$untracked = preg_split( '/[\r\n]+/', (string) file_get_contents( $gitignore_file ), -1, PREG_SPLIT_NO_EMPTY );
+
+		foreach ( $local_notes as $note ) {
+			$report( in_array( '/' . $note, $untracked, true ), sprintf( '.gitignore keeps the local-only %s untracked', $note ) );
+		}
+	} else {
+		$report( false, '.gitignore is readable' );
 	}
 
 	if ( 0 === $failures ) {

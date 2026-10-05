@@ -36,6 +36,13 @@ README.md
 .github
 .git
 
+# Local-only notes. Both are ignored by git as well; listed here because
+# `wp dist-archive` reads this file rather than .gitignore, so without these two
+# lines a `wp dist-archive` build would package working notes that
+# `npm run dist` correctly leaves out.
+PUBLISHING.md
+NEXT-VERSION.md
+
 # Editor and OS noise
 .DS_Store
 Thumbs.db
