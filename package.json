@@ -14,10 +14,10 @@
 	"homepage": "https://wordpress.org/plugins/amortexa-mortgage-calculator/",
 	"repository": {
 		"type": "git",
-		"url": "https://wordpress.org/plugins/amortexa-mortgage-calculator/"
+		"url": "git+https://github.com/tariqsmd/amortexa-mortgage-calculator.git"
 	},
 	"bugs": {
-		"url": "https://wordpress.org/support/plugin/amortexa-mortgage-calculator/"
+		"url": "https://github.com/tariqsmd/amortexa-mortgage-calculator/issues"
 	},
 	"files": [
 		"amortexa-mortgage-calculator.php",

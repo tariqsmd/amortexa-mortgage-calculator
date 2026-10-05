@@ -442,11 +442,11 @@ msgstr ""
 msgid "Years. Blank follows the site default."
 msgstr ""
 
-#: includes/class-widget.php:194
+#: includes/class-widget.php:193
 msgid "Title:"
 msgstr ""
 
-#: includes/class-widget.php:213
+#: includes/class-widget.php:212
 msgid "Site default"
 msgstr ""
 

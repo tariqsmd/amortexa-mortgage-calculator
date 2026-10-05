@@ -190,8 +190,7 @@ final class Amortexa_Widget extends WP_Widget {
 		printf(
 			'<p><label for="%1$s">%2$s</label><input class="widefat" id="%1$s" name="%3$s" type="text" value="%4$s" /></p>',
 			esc_attr( $this->get_field_id( 'title' ) ),
-			// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- "Title:" is a core string, so it is translated from the default domain.
-			esc_html__( 'Title:', 'default' ),
+			esc_html__( 'Title:', 'amortexa-mortgage-calculator' ),
 			esc_attr( $this->get_field_name( 'title' ) ),
 			esc_attr( isset( $instance['title'] ) ? (string) $instance['title'] : '' )
 		);

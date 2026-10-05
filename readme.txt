@@ -118,9 +118,32 @@ No. See the Privacy section below.
 
 = Requirements =
 
-* WordPress 6.5 or higher.
+* WordPress 6.8 or higher.
 * PHP 7.4 or higher.
 * A block theme or a classic theme with the block editor enabled.
+
+= Where is the source code? =
+
+The complete, human-readable source for this plugin is public and maintained on GitHub:
+
+`https://github.com/tariqsmd/amortexa-mortgage-calculator`
+
+The compiled files under `build/` (`index.js`, `view.js`, and the compiled `render.php`) are generated from the unminified sources in `src/` by `@wordpress/scripts`, which is why they are not readable line by line. The matching sources are:
+
+* `build/index.js` is built from `src/index.js`, `src/edit.js`, `src/save.js`, and the modules under `src/components/` and `src/utils/`.
+* `build/view.js` is built from `src/view.js`.
+* `build/render.php` is compiled from `src/render.php`.
+* `build/style-index.css` and `build/index.css` are compiled from `src/style.scss` and `src/index.css`.
+* `build/block.json` is copied and version-synced from `src/block.json`.
+
+To regenerate every compiled file yourself, clone the repository and run:
+
+`npm install`
+`npm run build`
+
+`npm run build` runs `wp-scripts build` (Babel, webpack, and SCSS compilation), then strips byte order marks and syncs the version from the plugin header into `build/block.json`. `npm run release` additionally regenerates the translation template, renders the listing icons and banners, and assembles the WordPress.org-ready archive under `dist/`. The test suite runs with `npm test`, JavaScript and CSS with `npm run lint:js` and `npm run lint:css`, and PHP coding standards with `vendor/bin/phpcs --standard=phpcs.xml.dist`.
+
+Everything ships under the GPL v2 or later. If you fork the plugin, please keep it GPL-compatible and release your version publicly.
 
 == Privacy ==
 

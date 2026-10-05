@@ -6,10 +6,10 @@
 	"author": "Muhammad Tariq",
 	"authorUrl": "https://profiles.wordpress.org/mtariqsmd/",
 	"homepage": "https://wordpress.org/plugins/amortexa-mortgage-calculator/",
-	"repository": "https://wordpress.org/plugins/amortexa-mortgage-calculator/",
+	"repository": "https://github.com/tariqsmd/amortexa-mortgage-calculator",
 	"license": "GPL-2.0-or-later",
 	"textdomain": "amortexa-mortgage-calculator",
-	"requires": "6.5",
+	"requires": "6.8",
 	"requiresPhp": "7.4",
 	"textDomains": [ "amortexa-mortgage-calculator" ]
 }
