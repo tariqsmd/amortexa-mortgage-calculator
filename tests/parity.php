@@ -2271,6 +2271,51 @@ function amortexa_test_version_consistency() {
 	$report( '' !== $constant, 'AMORTEXA_VERSION is defined' );
 	$report( '' !== $readme, 'readme.txt carries a stable tag' );
 
+	/*
+	 * "Requires at least" and "Requires PHP" appear in both the plugin header
+	 * and the readme header, and the directory rejects a submission whose two
+	 * values differ ("Mismatched Requires at least"). Nothing at runtime
+	 * notices: the header value is what WordPress enforces, while the readme is
+	 * only read by the listing and the reviewer. So the drift is invisible until
+	 * an automated check rejects the upload, which is exactly where it is
+	 * cheapest to fix. Both are asserted here against the same readme.txt that
+	 * actually ships.
+	 */
+	foreach ( array(
+		'Requires at least' => '/^Requires at least:\s*(.+)$/m',
+		'Requires PHP'     => '/^Requires PHP:\s*(.+)$/m',
+	) as $field => $pattern ) {
+		$in_header = $grab( 'amortexa-mortgage-calculator.php', '/^ \* ' . preg_quote( $field, '/' ) . ':\s*(.+)$/m' );
+		$in_readme = $grab( 'readme.txt', $pattern );
+
+		$report(
+			'' !== $in_header && '' !== $in_readme && $in_header === $in_readme,
+			sprintf(
+				'the readme "%s" matches the plugin header (%s)',
+				$field,
+				$in_header === $in_readme && '' !== $in_header ? $in_header : sprintf( 'header %s / readme %s', $in_header ?: 'missing', $in_readme ?: 'missing' )
+			)
+		);
+	}
+
+	/*
+	 * "Tested up to" is readme-only and has to be a real WordPress version. A
+	 * malformed or placeholder value here is rejected by the listing, and a
+	 * value below the "Requires at least" floor claims support for a release
+	 * older than the plugin admits to needing.
+	 */
+	$tested = $grab( 'readme.txt', '/^Tested up to:\s*(.+)$/m' );
+	$needs  = $grab( 'amortexa-mortgage-calculator.php', '/^ \* Requires at least:\s*(.+)$/m' );
+
+	$report(
+		'' !== $tested && preg_match( '/^\d+(\.\d+){1,2}$/', $tested ),
+		sprintf( 'the readme "Tested up to" is a plain version number (%s)', $tested ?: 'missing' )
+	);
+	$report(
+		'' === $needs || '' === $tested || version_compare( $tested, $needs, '>=' ),
+		sprintf( 'the readme "Tested up to" (%s) is not below "Requires at least" (%s)', $tested, $needs )
+	);
+
 	$report(
 		$header === $constant,
 		sprintf( 'AMORTEXA_VERSION (%s) matches the plugin header (%s)', $constant, $header )
